@@ -1,0 +1,30 @@
+import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
+import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
+import { RegisterUserDTO } from "../../dtos/auth/RegisterUserDTO";
+import { UserEntity } from "../../../domain/entities/UserEntity";
+
+export class RegisterUserUseCase {
+    constructor(
+        private userRepository:IUserRepository,
+        private passwordService:IPasswordService
+    ){}
+    async execute (dto:RegisterUserDTO):Promise<UserEntity>{
+        const existingUser =  await this.userRepository.findByEmail(dto.email)
+        if(existingUser){
+            throw new Error("User already exists")
+        }
+        const hashedPassword = await this.passwordService.hash(dto.password)
+
+        const user:UserEntity = {
+            firstName:dto.firstName,
+            lastName:dto.lastName,
+            email:dto.email,
+            password:hashedPassword,
+            phone:dto.phone,
+            isEmailVerified:false,
+            createdAt:new Date(),
+            updatedAt:new Date(),
+        }
+        return this.userRepository.create(user)
+    }
+}
