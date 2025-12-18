@@ -1,4 +1,18 @@
-import mongoose from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
+
+export interface UserDocument extends Document {
+  _id: Types.ObjectId;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phone?: string;
+  avatarUrl?: string;
+  isEmailVerified: boolean;
+  lastSeenAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 const userSchema = new mongoose.Schema(
   {
@@ -14,4 +28,4 @@ const userSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-export const UserModel = mongoose.model("User", userSchema);
+export const UserModel = mongoose.model<UserDocument>("User", userSchema);

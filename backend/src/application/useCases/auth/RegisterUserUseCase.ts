@@ -2,12 +2,15 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/RegisterUserDTO";
 import { UserEntity } from "../../../domain/entities/UserEntity";
+import { SendEmailOtpUsecase } from "./SendEmailOtpUseCase";
 
 export class RegisterUserUseCase {
     constructor(
         private userRepository:IUserRepository,
-        private passwordService:IPasswordService
+        private passwordService:IPasswordService,
+        private sendEmailOtpUseCase:SendEmailOtpUsecase
     ){}
+
     async execute (dto:RegisterUserDTO):Promise<UserEntity>{
         const existingUser =  await this.userRepository.findByEmail(dto.email)
         if(existingUser){
@@ -25,6 +28,9 @@ export class RegisterUserUseCase {
             createdAt:new Date(),
             updatedAt:new Date(),
         }
-        return this.userRepository.create(user)
+        
+        const createdUser = await this.userRepository.create(user)
+        await this.sendEmailOtpUseCase.execute(createdUser.id!,createdUser.email)
+        return createdUser
     }
 }

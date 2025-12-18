@@ -1,9 +1,14 @@
 import { Request, Response } from "express";
 import { RegisterUserUseCase } from "../../application/useCases/auth/RegisterUserUseCase";
 import { RegisterUserDTO } from "../../application/dtos/auth/RegisterUserDTO";
+import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailUseCase";
 
 export class AuthController {
-  constructor(private readonly registerUserUseCase: RegisterUserUseCase) {}
+  constructor(
+    private readonly registerUserUseCase: RegisterUserUseCase,
+    private readonly verifyEmailUseCase :VerifyEmailUseCase,
+    
+  ) {}
 
   register = async (req: Request, res: Response): Promise<void> => {
     const dto: RegisterUserDTO = {
@@ -21,6 +26,9 @@ export class AuthController {
       message: "User registered successfully",
       data: safeUser,
     });
-    
-  };
+  }
+  verifyEmail = async(req:Request,res:Response):Promise<void>=>{
+    await this.verifyEmailUseCase.execute(req.body)
+    res.json({ message: "Email verified successfully" });
+  }
 }
