@@ -1,17 +1,17 @@
 import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
-import { UserEntity } from "../../../../domain/entities/UserEntity";
+import { IUserEntity } from "../../../../domain/entities/IUserEntity";
 import { UserModel } from "../models/UserModel";
 import { UserMapper } from "../../../mappers/UserMapper";
 
 export class UserRepository implements IUserRepository {
-  async findByEmail(email: string): Promise<UserEntity | null> {
+  async findByEmail(email: string): Promise<IUserEntity | null> {
     const doc = await UserModel.findOne({ email });
     if (!doc) return null;
     return UserMapper.toEntity(doc);
 
   }
 
-  async create(user: UserEntity): Promise<UserEntity> {
+  async create(user: IUserEntity): Promise<IUserEntity> {
     const created = await UserModel.create({
       firstName: user.firstName,
       lastName: user.lastName,

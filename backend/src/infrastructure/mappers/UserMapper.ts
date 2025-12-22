@@ -1,4 +1,4 @@
-import { UserEntity } from "../../domain/entities/UserEntity";
+import { UserEntity } from "../../domain/entities/IUserEntity";
 import { UserDocument } from "../database/mongo/models/UserModel";
 
 export class UserMapper {

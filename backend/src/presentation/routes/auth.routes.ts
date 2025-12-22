@@ -10,7 +10,7 @@ import { OtpRepository } from '../../infrastructure/database/mongo/repositories/
 
 import { PasswordService } from '../../infrastructure/services/PasswordService'
 import { EmailService } from '../../infrastructure/services/EmailService'
-
+import { OtpService } from '../../infrastructure/services/OtpService'
 
 const router = Router();
 
@@ -21,20 +21,21 @@ const otpRepository = new OtpRepository()
 //service
 const passwordService =  new PasswordService()
 const emailService = new EmailService()
+const otpService = new OtpService()
 
 //otp Usecase
-const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository,emailService)
+const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository,emailService,otpService)
 
 //register usecase
 const registerUserUseCase = new RegisterUserUseCase(userRepository,passwordService,sendEmailOtpUseCase)
 
 //verify email usecase
-const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository)
-
+const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository,otpService)
 
 const authController = new AuthController(registerUserUseCase,verifyEmailUseCase)
 
 router.post('/register',authController.register)
 router.post("/verify-email", authController.verifyEmail);
+
 
 export default router; 

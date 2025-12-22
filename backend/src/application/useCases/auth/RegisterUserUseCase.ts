@@ -1,7 +1,7 @@
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/RegisterUserDTO";
-import { UserEntity } from "../../../domain/entities/UserEntity";
+import { IUserEntity } from "../../../domain/entities/IUserEntity";
 import { SendEmailOtpUsecase } from "./SendEmailOtpUseCase";
 
 export class RegisterUserUseCase {
@@ -11,14 +11,14 @@ export class RegisterUserUseCase {
         private sendEmailOtpUseCase:SendEmailOtpUsecase
     ){}
 
-    async execute (dto:RegisterUserDTO):Promise<UserEntity>{
+    async execute (dto:RegisterUserDTO):Promise<IUserEntity>{
         const existingUser =  await this.userRepository.findByEmail(dto.email)
         if(existingUser){
             throw new Error("User already exists")
         }
         const hashedPassword = await this.passwordService.hash(dto.password)
 
-        const user:UserEntity = {
+        const user:IUserEntity = {
             firstName:dto.firstName,
             lastName:dto.lastName,
             email:dto.email,
@@ -28,7 +28,7 @@ export class RegisterUserUseCase {
             createdAt:new Date(),
             updatedAt:new Date(),
         }
-        
+
         const createdUser = await this.userRepository.create(user)
         await this.sendEmailOtpUseCase.execute(createdUser.id!,createdUser.email)
         return createdUser

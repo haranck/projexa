@@ -1,4 +1,4 @@
-import { OtpEntity } from "../../domain/entities/OtpEntity";
+import { OtpEntity } from "../../domain/entities/IOtpEntity";
 
 export class OtpMapper {
   static toEntity(doc: any): OtpEntity {

@@ -1,4 +1,4 @@
-import { OtpEntity } from "../../../../domain/entities/OtpEntity";
+import { OtpEntity } from "../../../../domain/entities/IOtpEntity";
 import { IOtpRepository } from "../../../../domain/interfaces/repositories/IOtpRepository";
 import { OtpModel } from "../models/OtpModel";
 import { OtpMapper } from "../../../mappers/OtpMapper";
@@ -12,15 +12,14 @@ export class OtpRepository implements IOtpRepository {
       isUsed: otp.isUsed,
     });
   }
-  async findValidOtp(userId: string, code: string): Promise<OtpEntity | null> {
+  async findValidOtp(userId: string): Promise<OtpEntity | null> {
       const doc  = await OtpModel.findOne({
         userId,
-        code,
         isUsed:false,
         expiresAt:{$gt:new Date()}
-      }).lean()
+      }).sort({ createdAt: -1 }).lean()
 
-      if(!doc)return null
+      if(!doc) return null
       return OtpMapper.toEntity(doc)
   }
   async markAsUsed(otpId: string): Promise<void> {
