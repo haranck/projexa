@@ -1,7 +1,8 @@
-import { UserEntity } from "../../entities/IUserEntity";
+import { IUserEntity } from "../../entities/IUserEntity";
 
 export interface IUserRepository {
-  findByEmail(email: string): Promise<UserEntity | null>;
-  create(user: UserEntity): Promise<UserEntity>;
-  markEmailVerified(userId:string):Promise<void>
+  findByEmail(email: string): Promise<IUserEntity | null>;
+  create(user: IUserEntity): Promise<IUserEntity>;
+  markEmailVerified(userId:string):Promise<void>  
+  updatePassword(userId:string,hashedPassword:string):Promise<void>
 }

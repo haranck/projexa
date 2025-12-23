@@ -1,7 +1,7 @@
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
-import { LoginUserDTO } from "../../dtos/auth/LoginUserDTO";
+import { LoginUserDTO } from "../../dtos/auth/requestDTOs/LoginUserDTO";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
 
 export class LoginUserUseCase {

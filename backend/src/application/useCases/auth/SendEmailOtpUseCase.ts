@@ -22,7 +22,7 @@ export class SendEmailOtpUsecase {
       isUsed: false,
       createdAt: new Date(),
     };
-    await this.otpRepo.create(otp);
+    await this.otpRepo.create(otp); 
     await this.emailService.sendOtp(email, otpCode);
   }
 }

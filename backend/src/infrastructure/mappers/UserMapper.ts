@@ -1,8 +1,8 @@
-import { UserEntity } from "../../domain/entities/IUserEntity";
+import { IUserEntity } from "../../domain/entities/IUserEntity";
 import { UserDocument } from "../database/mongo/models/UserModel";
 
 export class UserMapper {
-  static toEntity(doc: UserDocument): UserEntity {
+  static toEntity(doc: UserDocument): IUserEntity {
     return {
       id: doc._id.toString(),
       firstName: doc.firstName,

@@ -6,6 +6,10 @@ import { VerifyEmailUseCase } from '../../application/useCases/auth/VerifyEmailU
 import { SendEmailOtpUsecase } from '../../application/useCases/auth/SendEmailOtpUseCase'
 import { LoginUserUseCase } from '../../application/useCases/auth/LoginUserUseCase'
 
+import { ForgotPassworUseCase } from '../../application/useCases/auth/ForgotPasswordUseCase'
+import { VerifyResetOtpUseCase } from '../../application/useCases/auth/VerifyResetOtpUseCase'
+import { ResetPasswordUseCase } from '../../application/useCases/auth/ResetPasswordUseCase'
+
 import { UserRepository } from '../../infrastructure/database/mongo/repositories/UserRepository'
 import { OtpRepository } from '../../infrastructure/database/mongo/repositories/OtpRepository'
 
@@ -38,10 +42,22 @@ const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository,o
 //Login usecase
 const loginUserUseCase = new LoginUserUseCase(userRepository,passwordService,jwtService)
 
-const authController = new AuthController(registerUserUseCase,verifyEmailUseCase,loginUserUseCase)
+//forgot usecases
+const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository,sendEmailOtpUseCase)
+const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository,otpRepository)
+const resetPasswordUseCase =new ResetPasswordUseCase(userRepository,otpRepository,passwordService)
+
+const authController = new AuthController(
+    registerUserUseCase,verifyEmailUseCase,loginUserUseCase,
+    forgotPasswordUseCase,resetPasswordUseCase,verifyResetOtpUseCase
+)
 
 router.post('/register',authController.register)
 router.post("/verify-email", authController.verifyEmail);
 router.post("/login",authController.login)
+
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/verify-reset-otp", authController.verifyResetOtp);
+router.post("/reset-password", authController.resetPassword);
 
 export default router; 
