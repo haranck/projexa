@@ -1,0 +1,11 @@
+export interface LoginResponseDTO{
+    accessToken:string;
+    refreshToken:string;
+    user:{
+        id:string;
+        firstName:string;
+        lastName:string;
+        email:string;
+        isEmailVerified:boolean
+    }
+}
