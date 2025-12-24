@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { RegisterUserUseCase } from "../../application/useCases/auth/RegisterUserUseCase";
 import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailUseCase";
 import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCase";
@@ -6,6 +6,7 @@ import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCa
 import { IForgotPasswordService } from "../../application/services/IForgotPasswordService";
 import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
 import { IResetPasswordService } from "../../application/services/IResetPasswordService";
+import { ILogoutService } from "../../application/services/ILogoutService";
 
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
@@ -17,7 +18,8 @@ export class AuthController {
     private readonly loginUserUseCase: LoginUserUseCase,
     private readonly forgotPasswordService: IForgotPasswordService,
     private readonly resetPasswordService: IResetPasswordService,
-    private readonly verifyResetOtpService: IVerifyResetOtpService
+    private readonly verifyResetOtpService: IVerifyResetOtpService,
+    private readonly logoutService :ILogoutService
   ) {}
 
   register = async (req: Request, res: Response): Promise<void> => {
@@ -43,13 +45,21 @@ export class AuthController {
     res.json({ message: "Email verified successfully" });
   };
 
-  login = async (req: Request, res: Response): Promise<void> => {
-    const dto: LoginUserDTO = {
-      email: req.body.email,
-      password: req.body.password,
-    };
-    const response = await this.loginUserUseCase.execute(dto);
-    res.status(200).json({ message: "Login Successfull", data: response });
+  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const dto: LoginUserDTO = {
+        email: req.body.email,
+        password: req.body.password,
+      };
+      const response = await this.loginUserUseCase.execute(dto);
+      res.status(200).json({ message: "Login Successfull", data: response });
+    } catch (err: any) {
+      if (err.message === 'Invalid Credentials') {
+        res.status(401).json({ error: 'Invalid credentials' });
+        return
+      }
+      return next(err);
+    }
   };
 
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
@@ -66,4 +76,13 @@ export class AuthController {
     await this.resetPasswordService.execute(req.body);
     res.json({ message: "Password Reset Successfull" });
   };
+
+  logout  = async(req:Request,res:Response):Promise<void> =>{
+    const token = req.headers.authorization?.split(' ')[1]
+    if(token){
+      await this.logoutService.execute(token)
+    }
+    res.json({message:"Logged Out successfully"})
+  }
+
 }
