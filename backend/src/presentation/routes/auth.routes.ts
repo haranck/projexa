@@ -1,12 +1,12 @@
 import {Router} from 'express'
 import { AuthController } from '../controllers/AuthController'
+import { AuthMiddleware } from '../middleware/auth/authMiddleware'
 
 import { RegisterUserUseCase } from '../../application/useCases/auth/RegisterUserUseCase'
 import { VerifyEmailUseCase } from '../../application/useCases/auth/VerifyEmailUseCase'
 import { SendEmailOtpUsecase } from '../../application/useCases/auth/SendEmailOtpUseCase'
 import { LoginUserUseCase } from '../../application/useCases/auth/LoginUserUseCase'
 import { LogoutUseCase } from '../../application/useCases/auth/LogoutUseCase'
-import { GoogleLoginUseCase } from '../../application/useCases/auth/GoogleLoginUseCase'
 
 import { ForgotPassworUseCase } from '../../application/useCases/auth/ForgotPasswordUseCase'
 import { VerifyResetOtpUseCase } from '../../application/useCases/auth/VerifyResetOtpUseCase'
@@ -14,6 +14,7 @@ import { ResetPasswordUseCase } from '../../application/useCases/auth/ResetPassw
 
 import { UserRepository } from '../../infrastructure/database/mongo/repositories/UserRepository'
 import { OtpRepository } from '../../infrastructure/database/mongo/repositories/OtpRepository'
+import { RedisTokenBlacklistRepository } from '../../infrastructure/database/mongo/repositories/RedisTokenBlacklistRepository'
 
 import { PasswordService } from '../../infrastructure/services/PasswordService'
 import { EmailService } from '../../infrastructure/services/EmailService'
@@ -26,6 +27,7 @@ const router = Router();
 // repo
 const userRepository = new UserRepository()
 const otpRepository = new OtpRepository()
+const blacklistRepo = new RedisTokenBlacklistRepository()
 
 //service
 const passwordService =  new PasswordService()
@@ -54,9 +56,6 @@ const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository,sendEmailO
 const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository,otpRepository)
 const resetPasswordUseCase =new ResetPasswordUseCase(userRepository,otpRepository,passwordService)
 
-//Google signup 
-const googleLoginUseCase = new GoogleLoginUseCase(userRepository,jwtService,googleAuthService)
-
 const authController = new AuthController(
     registerUserUseCase,
     verifyEmailUseCase,
@@ -64,8 +63,7 @@ const authController = new AuthController(
     forgotPasswordUseCase,
     resetPasswordUseCase,
     verifyResetOtpUseCase,
-    logoutUserUseCase,
-    googleLoginUseCase
+    logoutUserUseCase
 )
 
 //midleware
@@ -75,5 +73,11 @@ const authMiddleware = new AuthMiddleware(jwtService,blacklistRepo)
 router.post('/register',authController.register)
 router.post("/verify-email", authController.verifyEmail);
 router.post("/login",authController.login)
+
+router.post("/forgot-password", authController.forgotPassword);
+router.post("/verify-reset-otp", authController.verifyResetOtp);
+router.post("/reset-password", authController.resetPassword);
+
+router.post('/logout',authMiddleware.authenticate,authController.logout)
 
 export default router; 

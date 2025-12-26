@@ -1,8 +1,9 @@
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
-import { LoginUserDTO } from "../../dtos/auth/LoginUserDTO";
+import { LoginUserDTO } from "../../dtos/auth/requestDTOs/LoginUserDTO";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
+import bcrypt from "bcrypt";
 
 export class LoginUserUseCase {
   constructor(
@@ -18,10 +19,10 @@ export class LoginUserUseCase {
 
     if (!user.isEmailVerified) throw new Error("Email not Verified");
 
-    const isMatch = await this.passwordService.compare(
-      dto.password,
-      user.password
-    );
+    const storedHash = (user as any).password || (user as any).passwordHash;
+    if (!storedHash) throw new Error("Invalid Credentials");
+
+    const isMatch = await bcrypt.compare(dto.password, storedHash);
 
     if (!isMatch) throw new Error("Invalid Credentials");
 

@@ -1,6 +1,5 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { RegisterUserUseCase } from "../../application/useCases/auth/RegisterUserUseCase";
-import { RegisterUserDTO } from "../../application/dtos/auth/RegisterUserDTO";
 import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailUseCase";
 import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCase";
 
@@ -8,11 +7,9 @@ import { IForgotPasswordService } from "../../application/services/IForgotPasswo
 import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
 import { IResetPasswordService } from "../../application/services/IResetPasswordService";
 import { ILogoutService } from "../../application/services/ILogoutService";
-import { IGoogleLoginService } from "../../application/services/IGoogleLoginService";
 
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
-import { access } from "node:fs";
 
 export class AuthController {
   constructor(
@@ -22,8 +19,7 @@ export class AuthController {
     private readonly forgotPasswordService: IForgotPasswordService,
     private readonly resetPasswordService: IResetPasswordService,
     private readonly verifyResetOtpService: IVerifyResetOtpService,
-    private readonly logoutService :ILogoutService,
-    private readonly googleLoginService:IGoogleLoginService
+    private readonly logoutService :ILogoutService
   ) {}
 
   register = async (req: Request, res: Response): Promise<void> => {
@@ -42,12 +38,12 @@ export class AuthController {
       message: "User registered successfully",
       data: safeUser,
     });
-  }
+  };
 
-  verifyEmail = async(req:Request,res:Response):Promise<void>=>{
-    await this.verifyEmailUseCase.execute(req.body)
+  verifyEmail = async (req: Request, res: Response): Promise<void> => {
+    await this.verifyEmailUseCase.execute(req.body);
     res.json({ message: "Email verified successfully" });
-  }
+  };
 
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
@@ -65,27 +61,6 @@ export class AuthController {
       return next(err);
     }
   };
-
-  googleLogin = async (req:Request , res:Response):Promise<void> => {
-    const {idToken} = req.body
-    const result = await this.googleLoginService.execute(idToken)
-
-    res.json({
-      message:"Google Login Successfull",
-      data:{
-        accessToken:result.accessToken,
-        refreshToken:result.refreshToken,
-        user:{
-          id:result.user.id,
-          email:result.user.email,
-          firstName:result.user.firstName,
-          lastName:result.user.lastName,
-          avatarUrl:result.user.avatarUrl,
-        }
-      }
-    })
-
-  }
 
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
     await this.forgotPasswordService.execute(req.body);

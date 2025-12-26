@@ -29,4 +29,7 @@ export class UserRepository implements IUserRepository {
   async markEmailVerified(userId: string): Promise<void> {
       await UserModel.findByIdAndUpdate(userId,{isEmailVerified:true})
   }
+  async updatePassword(userId: string, hashedPassword: string): Promise<void> {
+    await UserModel.findByIdAndUpdate(userId,{password:hashedPassword,updatedAt: new Date()})
+  }
 }

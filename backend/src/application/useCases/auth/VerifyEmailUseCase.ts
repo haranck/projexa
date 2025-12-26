@@ -1,6 +1,6 @@
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
-import { VerifyEmailDTO } from "../../dtos/auth/VerifyEmailDTO";
+import { VerifyEmailDTO } from "../../dtos/auth/requestDTOs/VerifyEmailDTO";
 import { IOtpService } from "../../../domain/interfaces/services/IOtpService";
 
 export class VerifyEmailUseCase {
