@@ -5,6 +5,12 @@ import { RegisterUserUseCase } from '../../application/useCases/auth/RegisterUse
 import { VerifyEmailUseCase } from '../../application/useCases/auth/VerifyEmailUseCase'
 import { SendEmailOtpUsecase } from '../../application/useCases/auth/SendEmailOtpUseCase'
 import { LoginUserUseCase } from '../../application/useCases/auth/LoginUserUseCase'
+import { LogoutUseCase } from '../../application/useCases/auth/LogoutUseCase'
+import { GoogleLoginUseCase } from '../../application/useCases/auth/GoogleLoginUseCase'
+
+import { ForgotPassworUseCase } from '../../application/useCases/auth/ForgotPasswordUseCase'
+import { VerifyResetOtpUseCase } from '../../application/useCases/auth/VerifyResetOtpUseCase'
+import { ResetPasswordUseCase } from '../../application/useCases/auth/ResetPasswordUseCase'
 
 import { UserRepository } from '../../infrastructure/database/mongo/repositories/UserRepository'
 import { OtpRepository } from '../../infrastructure/database/mongo/repositories/OtpRepository'
@@ -13,6 +19,7 @@ import { PasswordService } from '../../infrastructure/services/PasswordService'
 import { EmailService } from '../../infrastructure/services/EmailService'
 import { OtpService } from '../../infrastructure/services/OtpService'
 import { JwtService } from '../../infrastructure/services/JwtService'
+import { GoogleAuthService } from '../../infrastructure/services/GoogleAuthService'
 
 const router = Router();
 
@@ -25,6 +32,7 @@ const passwordService =  new PasswordService()
 const emailService = new EmailService()
 const otpService = new OtpService()
 const jwtService = new JwtService()
+const googleAuthService = new GoogleAuthService()
 
 //otp Usecase
 const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository,emailService,otpService)
@@ -38,7 +46,31 @@ const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository,o
 //Login usecase
 const loginUserUseCase = new LoginUserUseCase(userRepository,passwordService,jwtService)
 
-const authController = new AuthController(registerUserUseCase,verifyEmailUseCase,loginUserUseCase)
+//Logout
+const logoutUserUseCase = new LogoutUseCase(blacklistRepo,jwtService)
+
+//forgot usecases
+const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository,sendEmailOtpUseCase)
+const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository,otpRepository)
+const resetPasswordUseCase =new ResetPasswordUseCase(userRepository,otpRepository,passwordService)
+
+//Google signup 
+const googleLoginUseCase = new GoogleLoginUseCase(userRepository,jwtService,googleAuthService)
+
+const authController = new AuthController(
+    registerUserUseCase,
+    verifyEmailUseCase,
+    loginUserUseCase,
+    forgotPasswordUseCase,
+    resetPasswordUseCase,
+    verifyResetOtpUseCase,
+    logoutUserUseCase,
+    googleLoginUseCase
+)
+
+//midleware
+const authMiddleware = new AuthMiddleware(jwtService,blacklistRepo)
+
 
 router.post('/register',authController.register)
 router.post("/verify-email", authController.verifyEmail);

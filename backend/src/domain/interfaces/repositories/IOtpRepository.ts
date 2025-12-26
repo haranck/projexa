@@ -5,4 +5,3 @@ export interface IOtpRepository{
     findValidOtp(userId:string):Promise<OtpEntity|null>
     markAsUsed(otpId:string):Promise<void>
 }
-
