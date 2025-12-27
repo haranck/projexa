@@ -11,6 +11,6 @@ export class ForgotPassworUseCase implements IForgotPasswordService {
   async execute(dto: ForgotPasswordDTO): Promise<void> {
     const user = await this.userRepo.findByEmail(dto.email);
     if (!user || !user.id) return;
-    await this.sendEmailOtpUseCase.execute(user.id, user.email);
+    await this.sendEmailOtpUseCase.execute(user);
   }
 }

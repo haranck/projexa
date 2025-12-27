@@ -22,4 +22,5 @@ export abstract class BaseRepo<T> implements IBaseRepository<T> {
     const result = await this.model.findByIdAndDelete(id);
     return !!result;
   }
+
 }

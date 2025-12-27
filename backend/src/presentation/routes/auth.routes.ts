@@ -21,6 +21,7 @@ import { EmailService } from '../../infrastructure/services/EmailService'
 import { OtpService } from '../../infrastructure/services/OtpService'
 import { JwtService } from '../../infrastructure/services/JwtService'
 import { GoogleAuthService } from '../../infrastructure/services/GoogleAuthService'
+import { RedisTempUserStore } from '../../infrastructure/services/RedisTempUserStore'
 
 const router = Router();
 
@@ -35,15 +36,16 @@ const emailService = new EmailService()
 const otpService = new OtpService()
 const jwtService = new JwtService()
 const googleAuthService = new GoogleAuthService()
+const tempUserStore = new RedisTempUserStore()
 
 //otp Usecase
-const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository,emailService,otpService)
+const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository,emailService,tempUserStore)
 
 //register usecase
 const registerUserUseCase = new RegisterUserUseCase(userRepository,passwordService,sendEmailOtpUseCase)
 
 //verify email usecase
-const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository,otpService)
+const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository,tempUserStore)
 
 //Login usecase
 const loginUserUseCase = new LoginUserUseCase(userRepository,passwordService,jwtService)

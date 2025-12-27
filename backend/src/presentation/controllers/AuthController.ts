@@ -19,8 +19,10 @@ export class AuthController {
     private readonly forgotPasswordService: IForgotPasswordService,
     private readonly resetPasswordService: IResetPasswordService,
     private readonly verifyResetOtpService: IVerifyResetOtpService,
-    private readonly logoutService :ILogoutService
+    private readonly logoutService: ILogoutService
   ) {}
+
+
 
   register = async (req: Request, res: Response): Promise<void> => {
     const dto: RegisterUserDTO = {
@@ -31,21 +33,27 @@ export class AuthController {
       phone: req.body.phone,
     };
 
-    const user = await this.registerUserUseCase.execute(dto);
-    const { password, ...safeUser } = user;
+    await this.registerUserUseCase.execute(dto);
 
-    res.status(201).json({
-      message: "User registered successfully",
-      data: safeUser,
+    res.status(200).json({
+      message: "OTP sent to email. Please verify to complete registration",
     });
   };
 
+
   verifyEmail = async (req: Request, res: Response): Promise<void> => {
-    await this.verifyEmailUseCase.execute(req.body);
-    res.json({ message: "Email verified successfully" });
+    const { email, otp } = req.body;
+    console.log(email,otp)
+    await this.verifyEmailUseCase.execute(email, otp);
+
+    res.json({ message: "Email verified successfully. Account created." });
   };
 
-  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  login = async (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ): Promise<void> => {
     try {
       const dto: LoginUserDTO = {
         email: req.body.email,
@@ -54,9 +62,9 @@ export class AuthController {
       const response = await this.loginUserUseCase.execute(dto);
       res.status(200).json({ message: "Login Successfull", data: response });
     } catch (err: any) {
-      if (err.message === 'Invalid Credentials') {
-        res.status(401).json({ error: 'Invalid credentials' });
-        return
+      if (err.message === "Invalid Credentials") {
+        res.status(401).json({ error: "Invalid credentials" });
+        return;
       }
       return next(err);
     }
@@ -73,16 +81,18 @@ export class AuthController {
   };
 
   resetPassword = async (req: Request, res: Response): Promise<void> => {
+
+    console.log('dfs',req.body);
+    
     await this.resetPasswordService.execute(req.body);
     res.json({ message: "Password Reset Successfull" });
   };
 
-  logout  = async(req:Request,res:Response):Promise<void> =>{
-    const token = req.headers.authorization?.split(' ')[1]
-    if(token){
-      await this.logoutService.execute(token)
+  logout = async (req: Request, res: Response): Promise<void> => {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (token) {
+      await this.logoutService.execute(token);
     }
-    res.json({message:"Logged Out successfully"})
-  }
-
+    res.json({ message: "Logged Out successfully" });
+  };
 }

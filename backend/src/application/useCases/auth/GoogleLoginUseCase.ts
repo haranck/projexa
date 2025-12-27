@@ -18,7 +18,7 @@ export class GoogleLoginUseCase implements IGoogleLoginService {
     let user = await this.userRepo.findByEmail(googleUser.email);
 
     if (!user) {
-      user = await this.userRepo.create({
+      user = await this.userRepo.createUser({
         firstName: googleUser.firstName,
         lastName: googleUser.lastName,
         email: googleUser.email,

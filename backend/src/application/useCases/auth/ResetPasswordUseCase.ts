@@ -18,14 +18,9 @@ export class ResetPasswordUseCase implements IResetPasswordService {
       throw new Error("Invalid request");
     }
 
-    const otp = await this.otpRepo.findValidOtp(user.id);
-    if (!otp || !otp.id) {
-      throw new Error("Invalid or expired OTP");
-    }
-
     const hashedPassword = await this.passwordService.hash(dto.newPassword);
 
     await this.userRepo.updatePassword(user.id, hashedPassword);
-    await this.otpRepo.markAsUsed(otp.id);
+    
   }
 }

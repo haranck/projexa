@@ -11,26 +11,34 @@ export class RegisterUserUseCase {
         private sendEmailOtpUseCase:SendEmailOtpUsecase
     ){}
 
-    async execute (dto:RegisterUserDTO):Promise<IUserEntity>{
+    async execute (dto:RegisterUserDTO):Promise<void>{
         const existingUser =  await this.userRepository.findByEmail(dto.email)
         if(existingUser){
             throw new Error("User already exists")
         }
         const hashedPassword = await this.passwordService.hash(dto.password)
 
-        const user:IUserEntity = {
+        // const user:IUserEntity = {
+        //     firstName:dto.firstName,
+        //     lastName:dto.lastName,
+        //     email:dto.email,
+        //     password:hashedPassword,
+        //     phone:dto.phone,
+        //     isEmailVerified:false,
+        //     createdAt:new Date(),
+        //     updatedAt:new Date(),
+        // }
+
+
+        // const createdUser = await this.userRepository.createUser(user)
+        // await this.sendEmailOtpUseCase.execute(createdUser.id!,createdUser.email)
+        // return createdUser
+        await this.sendEmailOtpUseCase.execute({
             firstName:dto.firstName,
             lastName:dto.lastName,
             email:dto.email,
-            password:hashedPassword,
             phone:dto.phone,
-            isEmailVerified:false,
-            createdAt:new Date(),
-            updatedAt:new Date(),
-        }
-
-        const createdUser = await this.userRepository.create(user)
-        await this.sendEmailOtpUseCase.execute(createdUser.id!,createdUser.email)
-        return createdUser
+            password:hashedPassword,
+        })
     }
 }

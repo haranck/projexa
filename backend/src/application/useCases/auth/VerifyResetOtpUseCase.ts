@@ -9,11 +9,13 @@ export class VerifyResetOtpUseCase implements IVerifyResetOtpService {
     private otpRepo: IOtpRepository
   ) {}
   async execute(dto: VerifyResetOtpDTO): Promise<void> {
+    
     const user = await this.userRepo.findByEmail(dto.email);
     if (!user || !user.id) {
       throw new Error("Invalid Request");
     }
-    const otp = await this.otpRepo.findValidOtp(user.id);
+    const otp = await this.otpRepo.findValidOtp(user.email,dto.otp);
     if (!otp || !otp.id) throw new Error("Invalid or expired OTP");
+    await this.otpRepo.markAsUsed(otp.id);
   }
 }
