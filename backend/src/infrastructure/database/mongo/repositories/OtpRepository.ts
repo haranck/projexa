@@ -32,4 +32,11 @@ export class OtpRepository implements IOtpRepository {
   async markAsUsed(otpId: string): Promise<void> {
     await OtpModel.findByIdAndUpdate(otpId, { isUsed: true });
   }
+
+  async invalidateAll(email:string):Promise<void> {
+    await OtpModel.updateMany(
+      {email,isUsed:false},
+      {isUsed:true}
+    )
+  }
 }

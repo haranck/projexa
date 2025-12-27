@@ -7,6 +7,7 @@ import { IForgotPasswordService } from "../../application/services/IForgotPasswo
 import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
 import { IResetPasswordService } from "../../application/services/IResetPasswordService";
 import { ILogoutService } from "../../application/services/ILogoutService";
+import { IResendOtpService } from "../../application/services/IResendOtpService";
 
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
@@ -19,8 +20,9 @@ export class AuthController {
     private readonly forgotPasswordService: IForgotPasswordService,
     private readonly resetPasswordService: IResetPasswordService,
     private readonly verifyResetOtpService: IVerifyResetOtpService,
-    private readonly logoutService: ILogoutService
-  ) {}
+    private readonly logoutService: ILogoutService,
+    private readonly resentOtpService:IResendOtpService
+  ) { }
 
 
 
@@ -43,17 +45,13 @@ export class AuthController {
 
   verifyEmail = async (req: Request, res: Response): Promise<void> => {
     const { email, otp } = req.body;
-    console.log(email,otp)
+    console.log(email, otp)
     await this.verifyEmailUseCase.execute(email, otp);
 
     res.json({ message: "Email verified successfully. Account created." });
   };
 
-  login = async (
-    req: Request,
-    res: Response,
-    next: NextFunction
-  ): Promise<void> => {
+  login = async (req: Request,res: Response,next: NextFunction): Promise<void> => {
     try {
       const dto: LoginUserDTO = {
         email: req.body.email,
@@ -82,11 +80,16 @@ export class AuthController {
 
   resetPassword = async (req: Request, res: Response): Promise<void> => {
 
-    console.log('dfs',req.body);
-    
+    console.log('dfs', req.body);
+
     await this.resetPasswordService.execute(req.body);
     res.json({ message: "Password Reset Successfull" });
   };
+  resendOtp = async (req:Request,res:Response):Promise<void> => {
+    const {email} = req.body
+    await this.resentOtpService.execute(email)
+    res.json({ message: "OTP resent successfully" });
+  }
 
   logout = async (req: Request, res: Response): Promise<void> => {
     const token = req.headers.authorization?.split(" ")[1];

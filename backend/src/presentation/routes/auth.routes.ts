@@ -7,6 +7,7 @@ import { VerifyEmailUseCase } from '../../application/useCases/auth/VerifyEmailU
 import { SendEmailOtpUsecase } from '../../application/useCases/auth/SendEmailOtpUseCase'
 import { LoginUserUseCase } from '../../application/useCases/auth/LoginUserUseCase'
 import { LogoutUseCase } from '../../application/useCases/auth/LogoutUseCase'
+import { ResendOtpUseCase } from '../../application/useCases/auth/ResendOtpUseCase'
 
 import { ForgotPassworUseCase } from '../../application/useCases/auth/ForgotPasswordUseCase'
 import { VerifyResetOtpUseCase } from '../../application/useCases/auth/VerifyResetOtpUseCase'
@@ -53,6 +54,9 @@ const loginUserUseCase = new LoginUserUseCase(userRepository,passwordService,jwt
 //Logout
 const logoutUserUseCase = new LogoutUseCase(blacklistRepo,jwtService)
 
+//resend OtpUsecase
+const resendOtpUseCase = new ResendOtpUseCase(otpRepository,tempUserStore,emailService)
+
 //forgot usecases
 const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository,sendEmailOtpUseCase)
 const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository,otpRepository)
@@ -65,7 +69,8 @@ const authController = new AuthController(
     forgotPasswordUseCase,
     resetPasswordUseCase,
     verifyResetOtpUseCase,
-    logoutUserUseCase
+    logoutUserUseCase,
+    resendOtpUseCase
 )
 
 //midleware
@@ -79,7 +84,7 @@ router.post("/login",authController.login)
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/verify-reset-otp", authController.verifyResetOtp);
 router.post("/reset-password", authController.resetPassword);
-
+router.post('/resend-otp',authController.resendOtp)
 router.post('/logout',authMiddleware.authenticate,authController.logout)
 
 export default router; 
