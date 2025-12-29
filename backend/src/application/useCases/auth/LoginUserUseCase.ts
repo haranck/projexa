@@ -10,7 +10,7 @@ export class LoginUserUseCase {
     private userRepo: IUserRepository,
     private passwordService: IPasswordService,
     private jwtService: IJwtService
-  ) {}
+  ) { }
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
     const user = await this.userRepo.findByEmail(dto.email);

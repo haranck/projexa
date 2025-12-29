@@ -8,6 +8,7 @@ import { IVerifyResetOtpService } from "../../application/services/IVerifyResetO
 import { IResetPasswordService } from "../../application/services/IResetPasswordService";
 import { ILogoutService } from "../../application/services/ILogoutService";
 import { IResendOtpService } from "../../application/services/IResendOtpService";
+import { IGoogleLoginService } from "../../application/services/IGoogleLoginService";
 
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
@@ -21,7 +22,8 @@ export class AuthController {
     private readonly resetPasswordService: IResetPasswordService,
     private readonly verifyResetOtpService: IVerifyResetOtpService,
     private readonly logoutService: ILogoutService,
-    private readonly resentOtpService:IResendOtpService
+    private readonly resentOtpService:IResendOtpService,
+    private readonly googleLoginService:IGoogleLoginService
   ) { }
 
 
@@ -47,7 +49,7 @@ export class AuthController {
     const { email, otp } = req.body;
     console.log(email, otp)
     await this.verifyEmailUseCase.execute(email, otp);
-
+    
     res.json({ message: "Email verified successfully. Account created." });
   };
 
@@ -80,8 +82,6 @@ export class AuthController {
 
   resetPassword = async (req: Request, res: Response): Promise<void> => {
 
-    console.log('dfs', req.body);
-
     await this.resetPasswordService.execute(req.body);
     res.json({ message: "Password Reset Successfull" });
   };
@@ -89,6 +89,12 @@ export class AuthController {
     const {email} = req.body
     await this.resentOtpService.execute(email)
     res.json({ message: "OTP resent successfully" });
+  }
+
+  googleLogin = async (req:Request,res:Response):Promise<void> => {
+    const {idToken} = req.body
+    await this.googleLoginService.execute(idToken)
+    res.json({ message: "Google Login Successfull" });
   }
 
   logout = async (req: Request, res: Response): Promise<void> => {

@@ -38,10 +38,6 @@ export class UserRepository
     return createdDoc;
   }
 
-  // async markEmailVerified(userId: string): Promise<void> {
-  //   await UserModel.findByIdAndUpdate(userId, { isEmailVerified: true });
-  // }
-  
   async updatePassword(userId: string, hashedPassword: string): Promise<void> {
     await UserModel.findByIdAndUpdate(userId, {
       password: hashedPassword,

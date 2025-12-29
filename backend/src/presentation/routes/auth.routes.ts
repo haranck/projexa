@@ -8,6 +8,7 @@ import { SendEmailOtpUsecase } from '../../application/useCases/auth/SendEmailOt
 import { LoginUserUseCase } from '../../application/useCases/auth/LoginUserUseCase'
 import { LogoutUseCase } from '../../application/useCases/auth/LogoutUseCase'
 import { ResendOtpUseCase } from '../../application/useCases/auth/ResendOtpUseCase'
+import { GoogleLoginUseCase } from '../../application/useCases/auth/GoogleLoginUseCase'
 
 import { ForgotPassworUseCase } from '../../application/useCases/auth/ForgotPasswordUseCase'
 import { VerifyResetOtpUseCase } from '../../application/useCases/auth/VerifyResetOtpUseCase'
@@ -62,6 +63,9 @@ const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository,sendEmailO
 const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository,otpRepository)
 const resetPasswordUseCase =new ResetPasswordUseCase(userRepository,otpRepository,passwordService)
 
+//google login usecase
+const googleLoginUseCase = new GoogleLoginUseCase(userRepository,jwtService,googleAuthService)
+
 const authController = new AuthController(
     registerUserUseCase,
     verifyEmailUseCase,
@@ -70,7 +74,8 @@ const authController = new AuthController(
     resetPasswordUseCase,
     verifyResetOtpUseCase,
     logoutUserUseCase,
-    resendOtpUseCase
+    resendOtpUseCase,
+    googleLoginUseCase
 )
 
 //midleware
@@ -86,5 +91,6 @@ router.post("/verify-reset-otp", authController.verifyResetOtp);
 router.post("/reset-password", authController.resetPassword);
 router.post('/resend-otp',authController.resendOtp)
 router.post('/logout',authMiddleware.authenticate,authController.logout)
+router.post('/google-login',authController.googleLogin)
 
 export default router; 
