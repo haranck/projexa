@@ -19,7 +19,7 @@ export class ResendOtpUseCase implements IResendOtpService {
 
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
 
-        const ttlSeconds = 10 * 60
+        const ttlSeconds = 2 * 60
 
         await this.otpRepository.create({
             userId: email,
@@ -32,5 +32,3 @@ export class ResendOtpUseCase implements IResendOtpService {
         await this.emailService.sendOtp(email, otpCode)
     }
 }
-
-

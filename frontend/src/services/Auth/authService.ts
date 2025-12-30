@@ -1,4 +1,4 @@
-import AxiosInstance from "../../axios/axios";
+import { AxiosInstance } from "../../axios/axios";
 import { API_ROUTES } from "../../constants/apiRoutes";
 
 interface RegisterPayload {
@@ -31,13 +31,7 @@ export const googleLogin = async (idToken: string) => {
   return response.data;
 };
 
-
-//       accessToken,
-//       refreshToken,
-//       user: {
-//         id: user.id,
-//         firstName: user.firstName,
-//         lastName: user.lastName,
-//         email: user.email,
-//         isEmailVerified: user.isEmailVerified,
-//       }
+export const loginUser = async (data: { email: string; password: string }) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGIN, data);
+  return response.data;
+};

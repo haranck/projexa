@@ -6,8 +6,7 @@ import { BaseRepo } from "./base/BaseRepo";
 
 export class UserRepository
   extends BaseRepo<IUserEntity>
-  implements IUserRepository
-{
+  implements IUserRepository {
   constructor() {
     super(UserModel);
   }
@@ -16,6 +15,10 @@ export class UserRepository
     const doc = await UserModel.findOne({ email });
     if (!doc) return null;
     return UserMapper.toEntity(doc);
+  }
+
+  async findById(id: string): Promise<IUserEntity | null> {
+    return super.findById(id);
   }
 
   async createUser(user: IUserEntity): Promise<IUserEntity> {

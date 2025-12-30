@@ -1,4 +1,4 @@
-import {Router} from 'express'
+import { Router } from 'express'
 import { AuthController } from '../controllers/AuthController'
 import { AuthMiddleware } from '../middleware/auth/authMiddleware'
 
@@ -9,6 +9,7 @@ import { LoginUserUseCase } from '../../application/useCases/auth/LoginUserUseCa
 import { LogoutUseCase } from '../../application/useCases/auth/LogoutUseCase'
 import { ResendOtpUseCase } from '../../application/useCases/auth/ResendOtpUseCase'
 import { GoogleLoginUseCase } from '../../application/useCases/auth/GoogleLoginUseCase'
+import { RefreshTokenUseCase } from '../../application/useCases/auth/RefreshTokenUseCase'
 
 import { ForgotPassworUseCase } from '../../application/useCases/auth/ForgotPasswordUseCase'
 import { VerifyResetOtpUseCase } from '../../application/useCases/auth/VerifyResetOtpUseCase'
@@ -33,7 +34,7 @@ const otpRepository = new OtpRepository()
 const blacklistRepo = new RedisTokenBlacklistRepository()
 
 //service
-const passwordService =  new PasswordService()
+const passwordService = new PasswordService()
 const emailService = new EmailService()
 const otpService = new OtpService()
 const jwtService = new JwtService()
@@ -41,30 +42,33 @@ const googleAuthService = new GoogleAuthService()
 const tempUserStore = new RedisTempUserStore()
 
 //otp Usecase
-const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository,emailService,tempUserStore)
+const sendEmailOtpUseCase = new SendEmailOtpUsecase(otpRepository, emailService, tempUserStore)
 
 //register usecase
-const registerUserUseCase = new RegisterUserUseCase(userRepository,passwordService,sendEmailOtpUseCase)
+const registerUserUseCase = new RegisterUserUseCase(userRepository, passwordService, sendEmailOtpUseCase)
 
 //verify email usecase
-const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository,userRepository,tempUserStore)
+const verifyEmailUseCase = new VerifyEmailUseCase(otpRepository, userRepository, tempUserStore)
 
 //Login usecase
-const loginUserUseCase = new LoginUserUseCase(userRepository,passwordService,jwtService)
+const loginUserUseCase = new LoginUserUseCase(userRepository, passwordService, jwtService)
 
 //Logout
-const logoutUserUseCase = new LogoutUseCase(blacklistRepo,jwtService)
+const logoutUserUseCase = new LogoutUseCase(blacklistRepo, jwtService)
 
 //resend OtpUsecase
-const resendOtpUseCase = new ResendOtpUseCase(otpRepository,tempUserStore,emailService)
+const resendOtpUseCase = new ResendOtpUseCase(otpRepository, tempUserStore, emailService)
 
 //forgot usecases
-const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository,sendEmailOtpUseCase)
-const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository,otpRepository)
-const resetPasswordUseCase =new ResetPasswordUseCase(userRepository,otpRepository,passwordService)
+const forgotPasswordUseCase = new ForgotPassworUseCase(userRepository, sendEmailOtpUseCase)
+const verifyResetOtpUseCase = new VerifyResetOtpUseCase(userRepository, otpRepository)
+const resetPasswordUseCase = new ResetPasswordUseCase(userRepository, otpRepository, passwordService)
 
 //google login usecase
-const googleLoginUseCase = new GoogleLoginUseCase(userRepository,jwtService,googleAuthService)
+const googleLoginUseCase = new GoogleLoginUseCase(userRepository, jwtService, googleAuthService)
+
+//refresh token usecase
+const refreshTokenUseCase = new RefreshTokenUseCase(jwtService, userRepository)
 
 const authController = new AuthController(
     registerUserUseCase,
@@ -75,22 +79,24 @@ const authController = new AuthController(
     verifyResetOtpUseCase,
     logoutUserUseCase,
     resendOtpUseCase,
-    googleLoginUseCase
+    googleLoginUseCase,
+    refreshTokenUseCase
 )
 
 //midleware
-const authMiddleware = new AuthMiddleware(jwtService,blacklistRepo)
+const authMiddleware = new AuthMiddleware(jwtService, blacklistRepo)
 
 
-router.post('/register',authController.register)
+router.post('/register', authController.register)
 router.post("/verify-email", authController.verifyEmail);
-router.post("/login",authController.login)
+router.post("/login", authController.login)
 
 router.post("/forgot-password", authController.forgotPassword);
 router.post("/verify-reset-otp", authController.verifyResetOtp);
 router.post("/reset-password", authController.resetPassword);
-router.post('/resend-otp',authController.resendOtp)
-router.post('/logout',authMiddleware.authenticate,authController.logout)
-router.post('/google-login',authController.googleLogin)
+router.post('/resend-otp', authController.resendOtp)
+router.post('/logout', authMiddleware.authenticate, authController.logout)
+router.post('/google-login', authController.googleLogin)
+router.post('/refresh-token', authController.refreshToken)
 
 export default router; 
