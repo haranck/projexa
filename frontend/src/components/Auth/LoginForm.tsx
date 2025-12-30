@@ -24,6 +24,7 @@ import { useLogin, useBackendGoogleLogin } from "@/hooks/Auth/AuthHooks";
 import { FRONTEND_ROUTES } from "@/constants/frontendRoutes";
 import { setAuthUser } from "@/store/slice/authSlice";
 import { setAccessToken } from "@/store/slice/tokenSlice";
+import { AxiosError } from "axios";
 
 export const LoginForm = () => {
   const navigate = useNavigate();
@@ -66,9 +67,12 @@ export const LoginForm = () => {
           navigate(FRONTEND_ROUTES.HOME);
         }
       },
-      onError: (error: any) => {
-        console.error("Login failed:", error);
-        toast.error(error?.response?.data?.error || "Login failed. Please try again.");
+      onError: (error) => {
+        if(error instanceof AxiosError){
+
+          console.error("Login failed:", error);
+          toast.error(error?.response?.data?.error || "Login failed. Please try again.");
+        }
       },
     });
   };
@@ -188,7 +192,7 @@ export const LoginForm = () => {
 
         <div className="text-center pt-2">
           <p className="text-sm text-zinc-500">
-            Don't have an account?{" "}
+            Dont have an account?{" "}
             <Link
               to={FRONTEND_ROUTES.SIGNUP}
               className="text-[#3b82f6] font-medium hover:text-blue-400 hover:underline ml-1"

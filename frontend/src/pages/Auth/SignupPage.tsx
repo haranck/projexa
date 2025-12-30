@@ -7,6 +7,14 @@ import { toast } from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
 
+const getErrorMessage = (error: unknown, fallback: string): string => {
+  if (error && typeof error === 'object' && 'response' in error) {
+    const response = (error as { response?: { data?: { message?: string } } }).response;
+    return response?.data?.message || fallback;
+  }
+  return fallback;
+};
+
 export const SignupPage = () => {
 
   const [isOtpModalOpen, setOtpModalOpen] = useState(false);
@@ -26,7 +34,7 @@ export const SignupPage = () => {
       },
       onError: (error) => {
         console.log(error);
-        toast.error((error as any).response?.data?.message || "Signup failed");
+        toast.error(getErrorMessage(error, "Signup failed"));
       },
     });
   };

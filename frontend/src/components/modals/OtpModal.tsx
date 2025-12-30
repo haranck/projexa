@@ -7,6 +7,15 @@ import { Button } from "@/components/ui/button";
 import { toast } from "react-hot-toast";
 // import { toast } from "react-toastify";
 
+// Helper function to extract error message
+const getErrorMessage = (error: unknown, fallback: string): string => {
+    if (error && typeof error === 'object' && 'response' in error) {
+        const response = (error as { response?: { data?: { message?: string } } }).response;
+        return response?.data?.message || fallback;
+    }
+    return fallback;
+};
+
 interface OTPModalProps {
     email: string;
     isOpen: boolean;
@@ -60,7 +69,7 @@ const OTPModal = ({ email, isOpen, onClose }: OTPModalProps) => {
                 },
                 onError: (error) => {
                     console.log('error form modale')
-                    toast.error((error as any).response?.data?.message || "Verification failed");
+                    toast.error(getErrorMessage(error, "Verification failed"));
 
                 },
             }
@@ -79,7 +88,7 @@ const OTPModal = ({ email, isOpen, onClose }: OTPModalProps) => {
             },
             onError: (error) => {
                 console.log('error signup failed')
-                toast.error((error as any).response?.data?.message || "Failed to resend OTP");
+                toast.error(getErrorMessage(error, "Failed to resend OTP"));
             },
         });
     };
