@@ -1,6 +1,6 @@
 import { TrendingUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import DashboardLayout from "@/components/Layout/DashboardLayout";
+import { Button } from "../../components/ui/button";
+import DashboardLayout from "../../components/Layout/DashboardLayout";
 
 export const HomePage = () => {
     return (

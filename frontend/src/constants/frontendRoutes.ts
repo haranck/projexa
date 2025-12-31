@@ -4,4 +4,5 @@ export const FRONTEND_ROUTES = {
   LOGIN: "/login",
   VERIFY_EMAIL: "/verify-email",
   HOME: "/home",
+  FORGOT_PASSWORD:'/forgot-password'
 };

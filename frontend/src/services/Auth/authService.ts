@@ -8,30 +8,52 @@ interface RegisterPayload {
   password: string;
   phone?: string;
 }
+interface ForgotPasswordPayload{
+  email:string
+}
+interface verifyOtpPayload{
+  email:string
+  otp:string
+}
+interface resendOtpPayload{
+  email:string
+}
+interface loginPayload{
+  email:string
+  password:string
+}
+interface googleLoginPayload{
+  idToken:string
+}
 
 export const registerUser = async (data: RegisterPayload) => {
   const response = await AxiosInstance.post(API_ROUTES.AUTH.REGISTER, data);
   return response.data;
 };
 
-export const verifyOtp = async (data: { email: string; otp: string }) => {
+export const verifyOtp = async (data: verifyOtpPayload) => {
   const response = await AxiosInstance.post(API_ROUTES.AUTH.VERIFY_EMAIL, data);
-  console.log('response', response)
   return response.data;
 };
 
-export const resendOtp = async (email: string) => {
-  const response = await AxiosInstance.post(API_ROUTES.AUTH.RESEND_OTP, { email });
+export const resendOtp = async (data: resendOtpPayload) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.RESEND_OTP, data);
   return response.data;
 };
 
-export const googleLogin = async (idToken: string) => {
-  const response = await AxiosInstance.post(API_ROUTES.AUTH.GOOGLE_LOGIN, { idToken });
-  console.log('response', response)
+export const googleLogin = async (data: googleLoginPayload) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.GOOGLE_LOGIN, data);
   return response.data;
 };
 
-export const loginUser = async (data: { email: string; password: string }) => {
+export const loginUser = async (data: loginPayload) => {
   const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGIN, data);
   return response.data;
 };
+
+export const forgotPassword = async(data:ForgotPasswordPayload) =>{
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.FORGOT_PASSWORD,data)
+  return response.data
+}
+
+

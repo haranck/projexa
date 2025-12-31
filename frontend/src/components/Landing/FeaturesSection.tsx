@@ -78,7 +78,7 @@ const FeaturesSection = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#0a0a0a] via-[#0f0f23] to-[#0a0a0a]">
+    <div className="min-h-screen bg-linear-to-br from-[#0a0a0a] via-[#0f0f23] to-[#0a0a0a]">
       {/* Hero Section */}
       <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
@@ -111,7 +111,7 @@ const FeaturesSection = () => {
 
             {/* Right Content - Dashboard Mockup */}
             <div className="relative">
-              <div className="relative bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 border border-white/10 shadow-2xl">
+              <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 border border-white/10 shadow-2xl">
                 {/* Browser Chrome */}
                 <div className="flex items-center gap-2 mb-4">
                   <div className="w-3 h-3 rounded-full bg-red-500"></div>
@@ -160,7 +160,7 @@ const FeaturesSection = () => {
                 key={index}
                 className="bg-[#1a1a2e] border-white/10 p-6 hover:bg-[#1f1f3a] transition-all duration-300 hover:scale-105 hover:border-blue-500/30 group"
               >
-                <div className={`w-12 h-12 rounded-lg bg-gradient-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
+                <div className={`w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
                   <feature.icon className={`h-6 w-6 ${feature.color}`} />
                 </div>
                 <h3 className="text-xl font-semibold text-white mb-2">
@@ -176,7 +176,7 @@ const FeaturesSection = () => {
       {/* Stats Section */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
-          <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-8 md:p-12 border border-white/10">
+          <div className="bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-8 md:p-12 border border-white/10">
             <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
               Built for Modern Teams
             </h2>
@@ -242,7 +242,7 @@ const FeaturesSection = () => {
       {/* Final CTA */}
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-gradient-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-12 text-center border border-white/10 relative overflow-hidden">
+          <div className="bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-12 text-center border border-white/10 relative overflow-hidden">
             {/* Background Glow */}
             <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-purple-500/10 blur-3xl"></div>
 

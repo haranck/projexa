@@ -70,6 +70,7 @@ const googleLoginUseCase = new GoogleLoginUseCase(userRepository, jwtService, go
 //refresh token usecase
 const refreshTokenUseCase = new RefreshTokenUseCase(jwtService, userRepository)
 
+
 const authController = new AuthController(
     registerUserUseCase,
     verifyEmailUseCase,
@@ -80,7 +81,7 @@ const authController = new AuthController(
     logoutUserUseCase,
     resendOtpUseCase,
     googleLoginUseCase,
-    refreshTokenUseCase
+    refreshTokenUseCase,
 )
 
 //midleware
@@ -98,5 +99,6 @@ router.post('/resend-otp', authController.resendOtp)
 router.post('/logout', authMiddleware.authenticate, authController.logout)
 router.post('/google-login', authController.googleLogin)
 router.post('/refresh-token', authController.refreshToken)
+
 
 export default router; 

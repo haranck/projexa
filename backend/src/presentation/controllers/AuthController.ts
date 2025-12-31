@@ -25,25 +25,27 @@ export class AuthController {
     private readonly logoutService: ILogoutService,
     private readonly resentOtpService: IResendOtpService,
     private readonly googleLoginService: IGoogleLoginService,
-    private readonly refreshTokenUseCase: RefreshTokenUseCase
+    private readonly refreshTokenUseCase: RefreshTokenUseCase,
   ) { }
 
+  register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const dto: RegisterUserDTO = {
+        firstName: req.body.firstName,
+        lastName: req.body.lastName,
+        email: req.body.email,
+        password: req.body.password,
+        phone: req.body.phone,
+      };
 
+      await this.registerUserUseCase.execute(dto);
 
-  register = async (req: Request, res: Response): Promise<void> => {
-    const dto: RegisterUserDTO = {
-      firstName: req.body.firstName,
-      lastName: req.body.lastName,
-      email: req.body.email,
-      password: req.body.password,
-      phone: req.body.phone,
-    };
-
-    await this.registerUserUseCase.execute(dto);
-
-    res.status(200).json({
-      message: "OTP sent to email. Please verify to complete registration",
-    });
+      res.status(200).json({
+        message: "OTP sent to email. Please verify to complete registration",
+      });
+    } catch (err: any) {
+      next(err);
+    }
   };
 
 
@@ -67,9 +69,9 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+        maxAge: 7 * 24 * 60 * 60 * 1000
       });
-
+      console.log('data',response)
       res.status(200).json({ message: "Login Successfull", data: response });
     } catch (err: any) {
       if (err.message === "Invalid Credentials") {
@@ -123,11 +125,23 @@ export class AuthController {
     res.json({ message: "OTP resent successfully" });
   }
 
-  googleLogin = async (req: Request, res: Response): Promise<void> => {
-    const { idToken } = req.body
-    await this.googleLoginService.execute(idToken)
-    res.json({ message: "Google Login Successfull" });
-  }
+  googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const { idToken } = req.body;
+      const response = await this.googleLoginService.execute(idToken);
+
+      res.cookie("refreshToken", response.refreshToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "strict",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      });
+
+      res.status(200).json({ message: "Google Login Successful", data: response });
+    } catch (err: any) {
+      return next(err);
+    }
+  };
 
   logout = async (req: Request, res: Response): Promise<void> => {
     const token = req.headers.authorization?.split(" ")[1];
