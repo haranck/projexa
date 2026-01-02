@@ -1,9 +1,4 @@
 import { Request, Response, NextFunction } from "express";
-import { RegisterUserUseCase } from "../../application/useCases/auth/RegisterUserUseCase";
-import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailUseCase";
-import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCase";
-import { RefreshTokenUseCase } from "../../application/useCases/auth/RefreshTokenUseCase";
-
 
 import { IForgotPasswordService } from "../../application/services/IForgotPasswordService";
 import { IGoogleLoginService } from "../../application/services/IGoogleLoginService"

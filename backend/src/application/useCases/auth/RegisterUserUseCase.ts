@@ -1,9 +1,7 @@
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/requestDTOs/RegisterUserDTO";
-import { IUserEntity } from "../../../domain/entities/IUserEntity";
 import { SendEmailOtpUsecase } from "./SendEmailOtpUseCase";
-import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { IRegisterUserService } from "../../services/IRegisterUserService";
 

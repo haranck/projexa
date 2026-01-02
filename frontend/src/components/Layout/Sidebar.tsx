@@ -14,6 +14,7 @@ import {
 import { cn } from "../../lib/utils";
 import { useSelector } from "react-redux";
 import type { RootState } from "../../store/store";
+import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
 interface SidebarProps {
     className?: string;
@@ -26,30 +27,30 @@ const Sidebar = ({ className }: SidebarProps) => {
         {
             label: "Main",
             items: [
-                { name: "Dashboard", icon: LayoutDashboard, path: "/home" },
-                { name: "Backlog", icon: ListTodo, path: "/backlog" },
-                { name: "Board", icon: Kanban, path: "/board" },
+                { name: "Dashboard", icon: LayoutDashboard, path: FRONTEND_ROUTES.HOME },
+                { name: "Backlog", icon: ListTodo, path: FRONTEND_ROUTES.BACKLOG },
+                { name: "Board", icon: Kanban, path: FRONTEND_ROUTES.BOARD },
             ],
         },
         {
             label: "Communication",
             items: [
-                { name: "Chat", icon: MessageSquare, path: "/chat" },
-                { name: "Meeting", icon: Video, path: "/meeting" },
+                { name: "Chat", icon: MessageSquare, path: FRONTEND_ROUTES.CHAT },
+                { name: "Meeting", icon: Video, path: FRONTEND_ROUTES.MEETINGS },
             ],
         },
         {
             label: "Organization",
             items: [
-                { name: "Teams & Members", icon: Users, path: "/teams" },
-                { name: "Projects", icon: FolderKanban, path: "/projects" },
+                { name: "Teams & Members", icon: Users, path: FRONTEND_ROUTES.TEAMS },
+                { name: "Projects", icon: FolderKanban, path: FRONTEND_ROUTES.PROJECTS },
             ],
         },
         {
             label: "System",
             items: [
-                { name: "Settings", icon: Settings, path: "/settings" },
-                { name: "Payment Details", icon: CreditCard, path: "/payment" },
+                { name: "Settings", icon: Settings, path: FRONTEND_ROUTES.SETTINGS },
+                { name: "Payment Details", icon: CreditCard, path: FRONTEND_ROUTES.PAYMENTS },
             ],
         },
     ];
@@ -65,12 +66,12 @@ const Sidebar = ({ className }: SidebarProps) => {
         >
             <div className="flex h-20 items-center px-6">
                 <Link to="/home" className="flex items-center gap-3">
-                    <img
+                    {/* <img
                         src="/logo.png"
                         alt=""
                         className="h-8 w-auto object-contain brightness-110"
-                    />
-                    <span className="text-xl font-bold text-white tracking-tight">ProJexa</span>
+                    /> */}
+                    <span className="text-3xl ml-5 font-bold text-blue-200 tracking-tight">projexa<span className="text-3xl mr-1 font-bold text-blue-500 ml-1 tracking-tight">.</span></span>
                 </Link>
             </div>
 

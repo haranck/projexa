@@ -3,12 +3,11 @@ import { IPasswordService } from "../../../domain/interfaces/services/IPasswordS
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { LoginUserDTO } from "../../dtos/auth/requestDTOs/LoginUserDTO";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
-import bcrypt from "bcrypt";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { ILoginUserService } from "../../services/ILoginUserService";
 
-export class LoginUserUseCase implements ILoginUserService{
+export class LoginUserUseCase implements ILoginUserService {
   constructor(
     private userRepo: IUserRepository,
     private passwordService: IPasswordService,
@@ -22,10 +21,7 @@ export class LoginUserUseCase implements ILoginUserService{
 
     if (!user.isEmailVerified) throw new Error(USER_ERRORS.USER_EMAIL_NOT_VERIFIED);
 
-    const storedHash = (user as any).password || (user as any).passwordHash;
-    if (!storedHash) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
-
-    const isMatch = await bcrypt.compare(dto.password, storedHash);
+    const isMatch = await this.passwordService.compare(dto.password, user.password);
 
     if (!isMatch) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 

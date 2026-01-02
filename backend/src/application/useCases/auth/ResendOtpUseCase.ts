@@ -2,7 +2,6 @@ import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepo
 import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserStore";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
 import { IResendOtpService } from "../../services/IResendOtpService";
-import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 
 export class ResendOtpUseCase implements IResendOtpService {
@@ -11,7 +10,7 @@ export class ResendOtpUseCase implements IResendOtpService {
         private tempUserStore: ITempUserStore,
         private emailService: IEmailService
     ) { }
-    
+
     async execute(email: string): Promise<void> {
         const tempUser = await this.tempUserStore.get(email)
         if (!tempUser) {
