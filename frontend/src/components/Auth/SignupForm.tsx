@@ -53,19 +53,19 @@ const SignupForm = ({ onSwitchToSignIn, onSubmit, isLoading }: SignupFormProps) 
           idToken: tokenResponse.access_token
         },
         {
-        onSuccess: (response) => {
-          if (response?.data) {
-            dispatch(setAccessToken(response.data.accessToken));
-            dispatch(setAuthUser(response.data.user));
-            toast.success("Google login successful!");
-            navigate(FRONTEND_ROUTES.HOME);
+          onSuccess: (response) => {
+            if (response?.data) {
+              dispatch(setAccessToken(response.data.accessToken));
+              dispatch(setAuthUser(response.data.user));
+              toast.success("Google login successful!");
+              navigate(FRONTEND_ROUTES.HOME);
+            }
+          },
+          onError: (error) => {
+            console.error("Backend Google Login Failed:", error);
+            toast.error("Google login failed. Please try again.");
           }
-        },
-        onError: (error) => {
-          console.error("Backend Google Login Failed:", error);
-          toast.error("Google login failed. Please try again.");
-        }
-      });
+        });
     },
     onError: (error) => console.error("Google Login Failed:", error),
   });

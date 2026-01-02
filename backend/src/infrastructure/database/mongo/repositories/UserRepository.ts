@@ -3,10 +3,12 @@ import { IUserEntity } from "../../../../domain/entities/IUserEntity";
 import { UserModel } from "../models/UserModel";
 import { UserMapper } from "../../../mappers/UserMapper";
 import { BaseRepo } from "./base/BaseRepo";
+import { ERROR_MESSAGES } from "../../../../domain/constants/errorMessages";
+import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
 
 export class UserRepository
   extends BaseRepo<IUserEntity>
-  implements IUserRepository {
+  implements IUserRepository {  
   constructor() {
     super(UserModel);
   }
@@ -36,7 +38,7 @@ export class UserRepository
     } as IUserEntity);
 
     const createdDoc = await super.findById(id);
-    if (!createdDoc) throw new Error("User creation failed");
+    if (!createdDoc) throw new Error(USER_ERRORS.USER_CREATION_FAILED);
 
     return createdDoc;
   }

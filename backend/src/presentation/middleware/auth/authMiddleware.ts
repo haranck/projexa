@@ -1,6 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
 
 export class AuthMiddleware {
   constructor(
@@ -16,7 +18,7 @@ export class AuthMiddleware {
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
-        res.status(401).json({ message: "Unauthorized" });
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.UNAUTHORIZED });
         return;
       }
 
@@ -24,20 +26,20 @@ export class AuthMiddleware {
 
       const isBlacklisted = await this.blacklistRepo.isBlacklisted(token);
       if (isBlacklisted) {
-        res.status(401).json({ message: "Token is revoked" });
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.TOKEN_REVOKED });
         return;
       }
 
       const payload = this.jwtService.verifyAccessToken(token);
       if (!payload) {
-        res.status(401).json({ message: "Invalid token" });
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.INVALID_TOKEN });
         return;
       }
 
       (req as any).user = payload;
       next();
     } catch (error) {
-      res.status(401).json({ message: "Authentication failed" });
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.AUTHENTICATION_FAILED });
     }
   };
 }

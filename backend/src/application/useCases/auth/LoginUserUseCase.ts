@@ -4,8 +4,11 @@ import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { LoginUserDTO } from "../../dtos/auth/requestDTOs/LoginUserDTO";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
 import bcrypt from "bcrypt";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { ILoginUserService } from "../../services/ILoginUserService";
 
-export class LoginUserUseCase {
+export class LoginUserUseCase implements ILoginUserService{
   constructor(
     private userRepo: IUserRepository,
     private passwordService: IPasswordService,
@@ -15,18 +18,18 @@ export class LoginUserUseCase {
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
     const user = await this.userRepo.findByEmail(dto.email);
 
-    if (!user) throw new Error("Invalid Credentials");
+    if (!user) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
-    if (!user.isEmailVerified) throw new Error("Email not Verified");
+    if (!user.isEmailVerified) throw new Error(USER_ERRORS.USER_EMAIL_NOT_VERIFIED);
 
     const storedHash = (user as any).password || (user as any).passwordHash;
-    if (!storedHash) throw new Error("Invalid Credentials");
+    if (!storedHash) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
     const isMatch = await bcrypt.compare(dto.password, storedHash);
 
-    if (!isMatch) throw new Error("Invalid Credentials");
+    if (!isMatch) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
-    if (!user.id) throw new Error("User id Missing");
+    if (!user.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
 
     const payload = {
       userId: user.id,

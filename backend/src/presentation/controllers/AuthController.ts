@@ -4,32 +4,38 @@ import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailU
 import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCase";
 import { RefreshTokenUseCase } from "../../application/useCases/auth/RefreshTokenUseCase";
 
+
 import { IForgotPasswordService } from "../../application/services/IForgotPasswordService";
-import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
-import { IResetPasswordService } from "../../application/services/IResetPasswordService";
+import { IGoogleLoginService } from "../../application/services/IGoogleLoginService"
+import { ILoginUserService } from "../../application/services/ILoginUserService";
 import { ILogoutService } from "../../application/services/ILogoutService";
+import { IRefreshTokenService } from "../../application/services/IRefreshTokenService";
+import { IRegisterUserService } from "../../application/services/IRegisterUserService";
 import { IResendOtpService } from "../../application/services/IResendOtpService";
-import { IGoogleLoginService } from "../../application/services/IGoogleLoginService";
+import { IResetPasswordService } from "../../application/services/IResetPasswordService";
+import { ISendEmailUserService } from "../../application/services/ISendEmailUserService";
+import { IVerifyEmailService } from "../../application/services/IVerifyEmailService";
+import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
 
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
 
-import { HTTP_STATUS } from "../../shared/constants/httpStatus";
-import { ERROR_MESSAGES } from "../../shared/constants/errorMessages";
-import { MESSAGES } from "../../shared/constants/messages";
+import { HTTP_STATUS } from "../../domain/constants/httpStatus";
+import { ERROR_MESSAGES } from "../../domain/constants/errorMessages";
+import { MESSAGES } from "../../domain/constants/messages";
 
 export class AuthController {
   constructor(
-    private readonly registerUserUseCase: RegisterUserUseCase,
-    private readonly verifyEmailUseCase: VerifyEmailUseCase,
-    private readonly loginUserUseCase: LoginUserUseCase,
+    private readonly registerUserService: IRegisterUserService,
+    private readonly verifyEmailService: IVerifyEmailService,
+    private readonly loginUserService: ILoginUserService,
     private readonly forgotPasswordService: IForgotPasswordService,
     private readonly resetPasswordService: IResetPasswordService,
     private readonly verifyResetOtpService: IVerifyResetOtpService,
     private readonly logoutService: ILogoutService,
     private readonly resentOtpService: IResendOtpService,
     private readonly googleLoginService: IGoogleLoginService,
-    private readonly refreshTokenUseCase: RefreshTokenUseCase,
+    private readonly refreshTokenService: IRefreshTokenService,
   ) { }
 
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -42,7 +48,7 @@ export class AuthController {
         phone: req.body.phone,
       };
 
-      await this.registerUserUseCase.execute(dto);
+      await this.registerUserService.execute(dto);
 
       res.status(HTTP_STATUS.OK).json({
         message: MESSAGES.OTP.OTP_SENT,
@@ -56,7 +62,7 @@ export class AuthController {
   verifyEmail = async (req: Request, res: Response): Promise<void> => {
     const { email, otp } = req.body;
     console.log(email, otp)
-    await this.verifyEmailUseCase.execute(email, otp);
+    await this.verifyEmailService.execute(email, otp);
 
     res.status(HTTP_STATUS.OK).json({ message: MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL });
   };
@@ -67,7 +73,7 @@ export class AuthController {
         email: req.body.email,
         password: req.body.password,
       };
-      const response = await this.loginUserUseCase.execute(dto);
+      const response = await this.loginUserService.execute(dto);
 
       res.cookie("refreshToken", response.refreshToken, {
         httpOnly: true,
@@ -79,7 +85,7 @@ export class AuthController {
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
     } catch (err: any) {
       if (err.message === "Invalid Credentials") {
-        res.status(HTTP_STATUS.UNAUTHORIZED).json({ error: "Invalid credentials" });
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ error: ERROR_MESSAGES.INVALID_CREDENTIALS });
         return;
       }
       return next(err);
@@ -94,7 +100,7 @@ export class AuthController {
     }
 
     try {
-      const response = await this.refreshTokenUseCase.execute(refreshToken);
+      const response = await this.refreshTokenService.execute(refreshToken);
       res.cookie("refreshToken", response.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",

@@ -2,7 +2,7 @@ import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepo
 import { OtpEntity } from "../../../domain/entities/IOtpEntity";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
 import { IOtpService } from "../../../domain/interfaces/services/IOtpService";
-import { ITempUserStore ,TempUserData } from "../../../domain/interfaces/services/ITempUserStore";
+import { ITempUserStore ,ITempUserData } from "../../../domain/interfaces/services/ITempUserStore";
 
 
 export class SendEmailOtpUsecase {
@@ -13,7 +13,7 @@ export class SendEmailOtpUsecase {
 
   ) {}
 
-  async execute(userData:TempUserData): Promise<void> {
+  async execute(userData:ITempUserData): Promise<void> {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const ttlSeconds = 10 * 60
 

@@ -32,6 +32,7 @@
     "redux-persist": "^6.0.0",
     "tailwind-merge": "^3.4.0",
     "tailwindcss": "^4.1.18",
+    "tsyringe": "^4.10.0",
     "zod": "^4.2.1"
   },
   "devDependencies": {

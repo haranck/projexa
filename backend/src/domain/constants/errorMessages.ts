@@ -34,14 +34,21 @@ export const ERROR_MESSAGES = {
     REFRESH_TOKEN_SECRETKEY_MISSING: "Refresh token secret key not found",
     UPLOAD_ERROR: "Error while uploading",
     NOT_AUTHORIZED: "Your are not authorized !",
+    INVALID_GOOGLE_TOKEN :"Invalid Google Token",
+    UNAUTHORIZED: "Unauthorized",
+    TOKEN_REVOKED: "Token is revoked",
+    AUTHENTICATION_FAILED: "Authentication failed",
 };
 
 export const USER_ERRORS = {
     USER_ALREADY_EXISTS: "User with this email already exists",
     USER_INACTIVE: "User is inactive",
+    USER_ID_MISSING: "User id is missing",
     USER_BLOCKED: "User is blocked",
     USER_NOT_FOUND: "User not found !",
     USER_INVALIDATION: "Error while validating user !",
     NO_USERS_FOUND: "No users found",
     NO_PROFILE_FOUND: "No profile img found",
+    USER_EMAIL_NOT_VERIFIED: "User email not verified",
+    USER_CREATION_FAILED: "User creation failed",
 };

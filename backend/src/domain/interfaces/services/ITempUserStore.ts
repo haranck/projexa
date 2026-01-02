@@ -1,4 +1,4 @@
-export interface TempUserData{
+export interface ITempUserData{
     firstName:string,
     lastName:string,
     email:string,
@@ -8,8 +8,7 @@ export interface TempUserData{
 }
 
 export interface ITempUserStore{
-    save(email:string,data:TempUserData,ttlSeconds:number):Promise<void>
-    get(email:string):Promise<TempUserData|null>
+    save(email:string,data:ITempUserData,ttlSeconds:number):Promise<void>
+    get(email:string):Promise<ITempUserData|null>
     delete(email:string):Promise<void>
 }
-

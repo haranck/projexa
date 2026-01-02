@@ -63,12 +63,17 @@ const Sidebar = ({ className }: SidebarProps) => {
                 className
             )}
         >
-            <div className="flex h-20 items-center px-7 ml-10">
-                <Link to="/home" className="flex items-center space-x-3">
-                    <span className="text-3xl font-bold text-[#56c9e3] tracking-tight">ProJexa</span>
+            <div className="flex h-20 items-center px-6">
+                <Link to="/home" className="flex items-center gap-3">
+                    <img
+                        src="/logo.png"
+                        alt=""
+                        className="h-8 w-auto object-contain brightness-110"
+                    />
+                    <span className="text-xl font-bold text-white tracking-tight">ProJexa</span>
                 </Link>
             </div>
- 
+
             <nav className="flex-1 px-3 py-4 space-y-7">
                 {menuSections.map((section, sectionIndex) => (
                     <div key={sectionIndex}>

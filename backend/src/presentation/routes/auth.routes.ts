@@ -25,7 +25,7 @@ import { OtpService } from '../../infrastructure/services/OtpService'
 import { JwtService } from '../../infrastructure/services/JwtService'
 import { GoogleAuthService } from '../../infrastructure/services/GoogleAuthService'
 import { RedisTempUserStore } from '../../infrastructure/services/RedisTempUserStore'
-import { ROUTES } from '../../shared/constants/routes'
+import { ROUTES } from '../../shared/constant/routes'
 
 const router = Router();
 
@@ -103,3 +103,4 @@ router.post(ROUTES.AUTH.REFRESH_TOKEN, authController.refreshToken)
 
 
 export default router; 
+

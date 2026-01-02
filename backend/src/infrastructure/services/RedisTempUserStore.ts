@@ -1,5 +1,5 @@
 import { redisClient } from "../cache/redisClient";
-import { ITempUserStore, TempUserData } from "../../domain/interfaces/services/ITempUserStore";
+import { ITempUserStore, ITempUserData } from "../../domain/interfaces/services/ITempUserStore";
 
 export class RedisTempUserStore implements ITempUserStore {
     
@@ -7,7 +7,7 @@ export class RedisTempUserStore implements ITempUserStore {
     return `temp-user:${email}`;
   }
 
-  async save(email: string, data: TempUserData, ttlSeconds: number): Promise<void> {
+  async save(email: string, data: ITempUserData, ttlSeconds: number): Promise<void> {
     await redisClient.set(
       this.key(email),
       JSON.stringify(data),
@@ -16,7 +16,7 @@ export class RedisTempUserStore implements ITempUserStore {
     );
   }
 
-  async get(email: string): Promise<TempUserData | null> {
+  async get(email: string): Promise<ITempUserData | null> {
     const raw = await redisClient.get(this.key(email));
     return raw ? JSON.parse(raw) : null;
   }

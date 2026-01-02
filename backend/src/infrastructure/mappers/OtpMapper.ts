@@ -1,9 +1,10 @@
 import { OtpEntity } from "../../domain/entities/IOtpEntity";
+import { ERROR_MESSAGES } from '../../domain/constants/errorMessages'
 
 export class OtpMapper {
   static toEntity(doc: any): OtpEntity {
     if (!doc) {
-      throw new Error("Cannot map null OTP document");
+      throw new Error(ERROR_MESSAGES.INVALID_OTP);
     }
 
     return {

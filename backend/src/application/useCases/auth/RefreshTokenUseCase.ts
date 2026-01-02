@@ -2,8 +2,11 @@
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { IRefreshTokenService } from "../../services/IRefreshTokenService";
 
-export class RefreshTokenUseCase {
+export class RefreshTokenUseCase implements IRefreshTokenService {
     constructor(
         private jwtService: IJwtService,
         private userRepo: IUserRepository
@@ -12,12 +15,12 @@ export class RefreshTokenUseCase {
     async execute(refreshToken: string): Promise<LoginResponseDTO> {
         const payload = this.jwtService.verifyRefreshToken(refreshToken);
         if (!payload || !payload.userId) {
-            throw new Error("Invalid Refresh Token");
+            throw new Error(ERROR_MESSAGES.INVALID_TOKEN);
         }
 
         const user = await this.userRepo.findById(payload.userId);
         if (!user) {
-            throw new Error("User not found");
+            throw new Error(USER_ERRORS.USER_NOT_FOUND);
         }
 
         const newPayload = { userId: user.id!, email: user.email };
