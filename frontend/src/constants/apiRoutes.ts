@@ -5,6 +5,7 @@ export const API_ROUTES = {
     RESEND_OTP: "/auth/resend-otp",
     LOGIN: "/auth/login",
     FORGOT_PASSWORD: "/auth/forgot-password",
+    VERIFY_RESET_OTP: "/auth/verify-reset-otp",    
     RESET_PASSWORD: "/auth/reset-password",
     GOOGLE_LOGIN: "/auth/google-login",
     REFRESH_TOKEN: "/auth/refresh-token",

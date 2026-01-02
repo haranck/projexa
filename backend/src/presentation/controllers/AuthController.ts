@@ -14,6 +14,10 @@ import { IGoogleLoginService } from "../../application/services/IGoogleLoginServ
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
 
+import { HTTP_STATUS } from "../../shared/constants/httpStatus";
+import { ERROR_MESSAGES } from "../../shared/constants/errorMessages";
+import { MESSAGES } from "../../shared/constants/messages";
+
 export class AuthController {
   constructor(
     private readonly registerUserUseCase: RegisterUserUseCase,
@@ -40,8 +44,8 @@ export class AuthController {
 
       await this.registerUserUseCase.execute(dto);
 
-      res.status(200).json({
-        message: "OTP sent to email. Please verify to complete registration",
+      res.status(HTTP_STATUS.OK).json({
+        message: MESSAGES.OTP.OTP_SENT,
       });
     } catch (err: any) {
       next(err);
@@ -54,7 +58,7 @@ export class AuthController {
     console.log(email, otp)
     await this.verifyEmailUseCase.execute(email, otp);
 
-    res.json({ message: "Email verified successfully. Account created." });
+    res.status(HTTP_STATUS.OK).json({ message: MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL });
   };
 
   login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -71,11 +75,11 @@ export class AuthController {
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
-      console.log('data',response)
-      res.status(200).json({ message: "Login Successfull", data: response });
+      console.log('data', response)
+      res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
     } catch (err: any) {
       if (err.message === "Invalid Credentials") {
-        res.status(401).json({ error: "Invalid credentials" });
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ error: "Invalid credentials" });
         return;
       }
       return next(err);
@@ -85,7 +89,7 @@ export class AuthController {
   refreshToken = async (req: Request, res: Response): Promise<void> => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
-      res.status(401).json({ message: "Refresh Token Missing" });
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.REFRESH_TOKEN_MISSING });
       return;
     }
 
@@ -98,31 +102,31 @@ export class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
 
-      res.status(200).json({ message: "Token Refreshed", data: response });
+      res.status(HTTP_STATUS.OK).json({ message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, data: response });
     } catch (err: any) {
-      res.status(403).json({ message: "Invalid Refresh Token" });
+      res.status(HTTP_STATUS.FORBIDDEN).json({ message: ERROR_MESSAGES.REFRESH_TOKEN_EXPIRED });
     }
   };
 
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
     await this.forgotPasswordService.execute(req.body);
-    res.json({ message: "If the email exists, OTP has been sent" });
+    res.json({ message: MESSAGES.OTP.OTP_SENT });
   };
 
   verifyResetOtp = async (req: Request, res: Response): Promise<void> => {
     await this.verifyResetOtpService.execute(req.body);
-    res.json({ message: "OTP verified successfully" });
+    res.json({ message: MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL });
   };
 
   resetPassword = async (req: Request, res: Response): Promise<void> => {
-
     await this.resetPasswordService.execute(req.body);
-    res.json({ message: "Password Reset Successfull" });
+    res.json({ message: MESSAGES.USERS.PASSWORD_RESET_SUCCESSFULLY });
   };
+
   resendOtp = async (req: Request, res: Response): Promise<void> => {
     const { email } = req.body
     await this.resentOtpService.execute(email)
-    res.json({ message: "OTP resent successfully" });
+    res.json({ message: MESSAGES.OTP.RESEND_OTP_SUCCESSFULL });
   }
 
   googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -137,7 +141,7 @@ export class AuthController {
         maxAge: 7 * 24 * 60 * 60 * 1000,
       });
 
-      res.status(200).json({ message: "Google Login Successful", data: response });
+      res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.GOOGLE_LOGIN_SUCCESS, data: response });
     } catch (err: any) {
       return next(err);
     }
@@ -149,6 +153,6 @@ export class AuthController {
       await this.logoutService.execute(token);
     }
     res.clearCookie("refreshToken");
-    res.json({ message: "Logged Out successfully" });
+    res.json({ message: MESSAGES.USERS.LOGOUT_SUCCESS });
   };
 }

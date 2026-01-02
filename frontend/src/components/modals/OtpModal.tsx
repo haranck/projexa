@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { useUserVerifyOtp, useUserResendOtp } from "../../hooks/Auth/AuthHooks";
+import { useUserVerifyOtp, useUserResendOtp, useVerifyResetOtp } from "../../hooks/Auth/AuthHooks";
 import { useNavigate } from "react-router-dom";
 import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 import { Mail, ShieldCheck, ArrowLeft, Loader2 } from "lucide-react";
@@ -19,17 +19,21 @@ interface OTPModalProps {
     email: string;
     isOpen: boolean;
     onClose: () => void;
+    purpose?: "signup" | "forgotPassword";
 }
 
-const OTPModal = ({ email, isOpen, onClose }: OTPModalProps) => {
+const OTPModal = ({ email, isOpen, onClose, purpose = "signup" }: OTPModalProps) => {
     const [otp, setOtp] = useState(["", "", "", "", "", ""]);
     const [timer, setTimer] = useState(15);
     const [canResend, setCanResend] = useState(false);
 
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-    const { mutate: verifyOtp, isPending: isVerifying } = useUserVerifyOtp();
+    const { mutate: verifySignupOtp, isPending: isVerifyingSignup } = useUserVerifyOtp();
+    const { mutate: verifyResetOtp, isPending: isVerifyingReset } = useVerifyResetOtp();
     const { mutate: resendOtp, isPending: isResending } = useUserResendOtp();
+
+    const isVerifying = purpose === "signup" ? isVerifyingSignup : isVerifyingReset;
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -60,11 +64,15 @@ const OTPModal = ({ email, isOpen, onClose }: OTPModalProps) => {
         const otpValue = otp.join("");
         if (otpValue.length !== 6) return;
 
-        verifyOtp(
+        const verifyFn = purpose === "signup" ? verifySignupOtp : verifyResetOtp;
+        const successRoute = purpose === "signup" ? FRONTEND_ROUTES.LOGIN : FRONTEND_ROUTES.RESET_PASSWORD;
+
+        verifyFn(
             { email, otp: otpValue },
             {
                 onSuccess: () => {
-                    navigate(FRONTEND_ROUTES.LOGIN);
+                    toast.success("Verification successful!");
+                    navigate(successRoute, { state: { email } });
                 },
                 onError: (error) => {
                     toast.error(getErrorMessage(error, "Verification failed"));
@@ -76,7 +84,7 @@ const OTPModal = ({ email, isOpen, onClose }: OTPModalProps) => {
     const handleResend = () => {
         if (!canResend) return;
 
-        resendOtp(email, {
+        resendOtp({ email }, {
             onSuccess: () => {
                 setTimer(30);
                 setCanResend(false);
@@ -125,7 +133,7 @@ const OTPModal = ({ email, isOpen, onClose }: OTPModalProps) => {
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black/80 backdrop-blur-md z-100 p-4 animate-in fade-in duration-300">
             <div className="bg-[#141414]/90 border border-white/5 rounded-[2rem] shadow-[0_0_80px_rgba(0,0,0,0.8)] w-full max-w-[480px] p-10 flex flex-col items-center text-center relative overflow-hidden animate-in zoom-in-95 duration-300">
-                
+
                 <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
                 <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
 

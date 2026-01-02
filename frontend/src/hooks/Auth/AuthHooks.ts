@@ -5,7 +5,9 @@ import {
     resendOtp,
     googleLogin,
     loginUser,
-    forgotPassword
+    forgotPassword,
+    resetPassword,
+    verifyResetOtp
 } from "../../services/Auth/authService";
 
 export const useUserSignUp = () => {
@@ -43,4 +45,16 @@ export const useForgotPassword = () => {
         mutationFn: forgotPassword
     })
 }
+
+export const useResetPassword = () => {
+    return useMutation({
+        mutationFn: resetPassword
+    })
+}
+
+export const useVerifyResetOtp = () => {
+    return useMutation({
+        mutationFn: verifyResetOtp,
+    });
+};
 

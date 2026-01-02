@@ -5,6 +5,8 @@ import { LoginPage } from '../../pages/Auth/LoginPage'
 import { HomePage } from '../../pages/Home/HomePage'
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes'
 import { ForgotPassword } from '../../pages/Auth/ForgotPassword'
+import { ResetPassword } from '../../pages/Auth/ResetPassword'
+
 
 const UserRoutes = () => {
     return (
@@ -14,6 +16,7 @@ const UserRoutes = () => {
             <Route path={FRONTEND_ROUTES.LOGIN} element={<LoginPage />} />
             <Route path={FRONTEND_ROUTES.HOME} element={<HomePage />} />
             <Route path={FRONTEND_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+            <Route path={FRONTEND_ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
         </Routes>
     )
 }

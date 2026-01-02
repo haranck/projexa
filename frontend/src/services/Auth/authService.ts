@@ -8,22 +8,27 @@ interface RegisterPayload {
   password: string;
   phone?: string;
 }
-interface ForgotPasswordPayload{
-  email:string
+interface ForgotPasswordPayload {
+  email: string
 }
-interface verifyOtpPayload{
-  email:string
-  otp:string
+interface verifyOtpPayload {
+  email: string
+  otp: string
 }
-interface resendOtpPayload{
-  email:string
+interface resendOtpPayload {
+  email: string
 }
-interface loginPayload{
-  email:string
-  password:string
+interface loginPayload {
+  email: string
+  password: string
 }
-interface googleLoginPayload{
-  idToken:string
+interface googleLoginPayload {
+  idToken: string
+}
+interface resetPasswordPayload {
+  email: string,
+  password: string,
+  confirmPassword: string
 }
 
 export const registerUser = async (data: RegisterPayload) => {
@@ -51,9 +56,18 @@ export const loginUser = async (data: loginPayload) => {
   return response.data;
 };
 
-export const forgotPassword = async(data:ForgotPasswordPayload) =>{
-  const response = await AxiosInstance.post(API_ROUTES.AUTH.FORGOT_PASSWORD,data)
+export const forgotPassword = async (data: ForgotPasswordPayload) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.FORGOT_PASSWORD, data)
   return response.data
 }
 
+export const resetPassword = async (data: resetPasswordPayload) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.RESET_PASSWORD, data)
+  return response.data
+}
+
+export const verifyResetOtp = async (data: verifyOtpPayload) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.VERIFY_RESET_OTP, data);
+  return response.data;
+};
 

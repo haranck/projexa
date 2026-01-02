@@ -2,91 +2,129 @@ export class OtpTemplate {
   static generate(otp: string): string {
     return `
       <div style="
-        background:#f5f5f5;
-        padding:20px;
-        font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI',
-        Roboto, 'Helvetica Neue', Arial, sans-serif;
+        padding: 40px 20px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background-color: transparent;
       ">
         <div style="
-          max-width:400px;
-          margin:0 auto;
-          background:#ffffff;
-          border-radius:8px;
-          overflow:hidden;
-          box-shadow:0 2px 8px rgba(0,0,0,0.08);
+          max-width: 440px;
+          margin: 0 auto;
+          background: #0f0f0f;
+          border: 1px solid rgba(255, 255, 255, 0.05);
+          border-radius: 20px;
+          overflow: hidden;
+          box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+          color: #ffffff;
         ">
-
           <!-- Header -->
           <div style="
-            background:#000000;
-            padding:20px 24px;
-            text-align:center;
+            background: linear-gradient(to bottom, rgba(255,255,255,0.02), transparent);
+            padding: 32px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
           ">
             <h1 style="
-              margin:0;
-              color:#ffffff;
-              font-size:22px;
-              font-weight:700;
-              letter-spacing:0.5px;
+              margin: 0;
+              color: #ffffff;
+              font-size: 24px;
+              font-weight: 800;
+              letter-spacing: -0.5px;
+              text-transform: uppercase;
             ">
-              PROJEXA
+              PRO<span style="color: #3b82f6;">JEXA</span>
             </h1>
           </div>
 
           <!-- Content -->
-          <div style="padding:28px 24px;">
-
-            <p style="
-              margin:0 0 20px;
-              color:#1a1a1a;
-              font-size:15px;
-              line-height:1.6;
-              text-align:center;
-            ">
-              Your verification code
-            </p>
+          <div style="padding: 40px 32px; text-align: center;">
+            <div style="margin-bottom: 32px;">
+              <h2 style="
+                margin: 0 0 12px;
+                color: #ffffff;
+                font-size: 20px;
+                font-weight: 700;
+              ">
+                Verification Code
+              </h2>
+              <p style="
+                margin: 0;
+                color: #a1a1aa;
+                font-size: 14px;
+                line-height: 1.5;
+              ">
+                Use the following code to complete your security verification.
+              </p>
+            </div>
 
             <!-- OTP Box -->
             <div style="
-              margin:0 auto 20px;
-              padding:16px;
-              max-width:180px;
-              background:#f8f9fa;
-              border:2px solid #e9ecef;
-              border-radius:8px;
-              text-align:center;
+              margin: 0 auto 32px;
+              padding: 24px;
+              background: #161616;
+              border: 1px solid rgba(59, 130, 246, 0.2);
+              border-radius: 16px;
+              box-shadow: 0 0 20px rgba(59, 130, 246, 0.05);
             ">
               <div style="
-                font-size:32px;
-                font-weight:700;
-                letter-spacing:8px;
-                color:#000000;
-                font-family:'Courier New', monospace;
+                font-size: 36px;
+                font-weight: 800;
+                letter-spacing: 12px;
+                color: #3b82f6;
+                font-family: 'Monaco', 'Consolas', monospace;
+                padding-left: 12px;
               ">
                 ${otp}
               </div>
             </div>
 
-            <p style="
-              margin:0 0 8px;
-              color:#666666;
-              font-size:13px;
-              text-align:center;
+            <div style="
+              padding: 12px;
+              background: rgba(255, 255, 255, 0.02);
+              border-radius: 8px;
+              display: inline-block;
+              margin-bottom: 32px;
             ">
-              Valid for <strong>1 minute</strong>
-            </p>
+              <p style="
+                margin: 0;
+                color: #71717a;
+                font-size: 12px;
+                font-weight: 500;
+              ">
+                Valid for <span style="color: #ffffff;">2 minutes</span>
+              </p>
+            </div>
 
-            <p style="
-              margin:0;
-              padding-top:16px;
-              border-top:1px solid #e9ecef;
-              color:#999999;
-              font-size:12px;
-              text-align:center;
+            <div style="
+              padding-top: 32px;
+              border-top: 1px solid rgba(255, 255, 255, 0.05);
             ">
-              If you didn't request this code, please ignore this email.
-            </p>
+              <p style="
+                margin: 0;
+                color: #52525b;
+                font-size: 12px;
+                line-height: 1.5;
+              ">
+                If you didn't request this code, you can safely ignore this email.
+              </p>
+            </div>
+          </div>
 
+          <!-- Footer -->
+          <div style="
+            padding: 24px;
+            text-align: center;
+            background: rgba(0, 0, 0, 0.2);
+          ">
+            <p style="
+              margin: 0;
+              color: #3f3f46;
+              font-size: 11px;
+              font-weight: 600;
+              letter-spacing: 1px;
+              text-transform: uppercase;
+            ">
+              Secured by ProJexa Auth
+            </p>
           </div>
         </div>
       </div>

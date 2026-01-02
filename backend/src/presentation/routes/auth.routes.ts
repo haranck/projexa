@@ -25,6 +25,7 @@ import { OtpService } from '../../infrastructure/services/OtpService'
 import { JwtService } from '../../infrastructure/services/JwtService'
 import { GoogleAuthService } from '../../infrastructure/services/GoogleAuthService'
 import { RedisTempUserStore } from '../../infrastructure/services/RedisTempUserStore'
+import { ROUTES } from '../../shared/constants/routes'
 
 const router = Router();
 
@@ -88,17 +89,17 @@ const authController = new AuthController(
 const authMiddleware = new AuthMiddleware(jwtService, blacklistRepo)
 
 
-router.post('/register', authController.register)
-router.post("/verify-email", authController.verifyEmail);
-router.post("/login", authController.login)
+router.post(ROUTES.AUTH.REGISTER, authController.register)
+router.post(ROUTES.AUTH.VERIFY_EMAIL, authController.verifyEmail);
+router.post(ROUTES.AUTH.LOGIN, authController.login)
 
-router.post("/forgot-password", authController.forgotPassword);
-router.post("/verify-reset-otp", authController.verifyResetOtp);
-router.post("/reset-password", authController.resetPassword);
-router.post('/resend-otp', authController.resendOtp)
-router.post('/logout', authMiddleware.authenticate, authController.logout)
-router.post('/google-login', authController.googleLogin)
-router.post('/refresh-token', authController.refreshToken)
+router.post(ROUTES.AUTH.FORGOT_PASSWORD, authController.forgotPassword);
+router.post(ROUTES.AUTH.VERIFY_RESET_OTP, authController.verifyResetOtp);
+router.post(ROUTES.AUTH.RESET_PASSWORD, authController.resetPassword);
+router.post(ROUTES.AUTH.RESEND_OTP, authController.resendOtp)
+router.post(ROUTES.AUTH.LOGOUT, authMiddleware.authenticate, authController.logout)
+router.post(ROUTES.AUTH.GOOGLE_LOGIN, authController.googleLogin)
+router.post(ROUTES.AUTH.REFRESH_TOKEN, authController.refreshToken)
 
 
 export default router; 

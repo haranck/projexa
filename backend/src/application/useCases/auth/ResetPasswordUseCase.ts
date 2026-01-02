@@ -9,18 +9,20 @@ export class ResetPasswordUseCase implements IResetPasswordService {
   constructor(
     private userRepo: IUserRepository,
     private otpRepo: IOtpRepository,
-    private passwordService: IPasswordService
-  ) {}
+    private passwordService: IPasswordService,
+  ) { }
 
   async execute(dto: ResetPasswordDTO): Promise<void> {
-    const user = await this.userRepo.findByEmail(dto.email);
-    if (!user || !user.id) {
-      throw new Error("Invalid request");
+    if (dto.password !== dto.confirmPassword) {
+      throw new Error("Passwords do not match");
     }
 
-    const hashedPassword = await this.passwordService.hash(dto.newPassword);
+    const user = await this.userRepo.findByEmail(dto.email);
+    if (!user || !user.id) {
+      throw new Error("User not found");
+    }
 
+    const hashedPassword = await this.passwordService.hash(dto.password);
     await this.userRepo.updatePassword(user.id, hashedPassword);
-    
   }
 }

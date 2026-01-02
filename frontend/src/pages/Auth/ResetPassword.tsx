@@ -1,26 +1,36 @@
-import { ForgotPasswordForm } from "../../components/Auth/ForgotPasswordForm"
-import { useForgotPassword } from "../../hooks/Auth/AuthHooks"
-import type { ForgotSchemaType } from "../../lib/validations/forgot.schema"
-import { toast } from "react-hot-toast"
+import { ResetPasswordForm } from '../../components/Auth/ResetPasswordForm'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { useResetPassword } from '../../hooks/Auth/AuthHooks'
+import type { ResetPasswordSchemaType } from '../../lib/validations/reset.schema'
+import { toast } from 'react-hot-toast'
+import { FRONTEND_ROUTES } from '../../constants/frontendRoutes'
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card"
-import OTPModal from "../../components/modals/OtpModal"
-import { useState } from "react"
+import { useEffect } from 'react'
 
-export const ForgotPassword = () => {
-    const { mutate: forgotPassword, isPending } = useForgotPassword()
-    const [isOtpModalOpen, setIsOtpModalOpen] = useState(false)
-    const [userEmail, setUserEmail] = useState("")
+export const ResetPassword = () => {
+    const navigate = useNavigate()
+    const location = useLocation()
+    const { mutate: resetPassword, isPending } = useResetPassword()
+    const email = location.state?.email
 
-    const handleForgotPassword = (data: ForgotSchemaType) => {
-        setUserEmail(data.email)
-        forgotPassword(data, {
+    useEffect(() => {
+        if (!email) {
+            toast.error("Invalid session. Please try again.")
+            navigate(FRONTEND_ROUTES.FORGOT_PASSWORD)
+        }
+    }, [email, navigate])
+
+    const handleResetPassword = (data: ResetPasswordSchemaType) => {
+        if (!email) return;
+
+        resetPassword({ ...data, email }, {
             onSuccess: () => {
-                toast.success("Reset OTP sent to your email")
-                setIsOtpModalOpen(true)
+                toast.success("Password changed successfully!")
+                navigate(FRONTEND_ROUTES.LOGIN)
             },
             onError: (error) => {
-                console.error("Forgot Password failed:", error)
-                toast.error("Forgot Password failed. Please try again.")
+                console.error("Reset Password failed:", error)
+                toast.error("Reset Password failed. Please try again.")
             }
         })
     }
@@ -41,25 +51,18 @@ export const ForgotPassword = () => {
                             ProJexa
                         </CardTitle>
                         <h2 className="text-xl font-bold text-zinc-100 tracking-tight leading-tight">
-                            Forgot Password
+                            Reset Password
                         </h2>
                         <p className="text-zinc-500 text-xs font-medium">
-                            Enter your email to reset your password
+                            Enter your new password below
                         </p>
                     </CardHeader>
 
                     <CardContent className="space-y-4 px-8 pb-8 pt-4">
-                        <ForgotPasswordForm onSubmit={handleForgotPassword} loading={isPending} />
+                        <ResetPasswordForm onSubmit={handleResetPassword} loading={isPending} />
                     </CardContent>
                 </Card>
             </div>
-
-            <OTPModal
-                email={userEmail}
-                isOpen={isOtpModalOpen}
-                onClose={() => setIsOtpModalOpen(false)}
-                purpose="forgotPassword"
-            />
         </div>
     )
 }
