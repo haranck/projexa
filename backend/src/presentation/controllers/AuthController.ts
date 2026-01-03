@@ -143,6 +143,7 @@ export class AuthController {
       });
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.GOOGLE_LOGIN_SUCCESS, data: response });
+      
     } catch (err: any) {
       return next(err);
     }

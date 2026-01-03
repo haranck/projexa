@@ -20,7 +20,7 @@ export const ForgotPasswordForm = ({ onSubmit, loading }: ForgotPasswordFormProp
     defaultValues: {
       email: ''
     }
-  })
+  }) 
 
   return (
     <Form {...form}>

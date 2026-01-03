@@ -4,6 +4,7 @@ import { IGoogleAuthService } from "../../domain/interfaces/services/IGoogleAuth
 export class GoogleAuthService implements IGoogleAuthService {
 
     private client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+    
     async verifyIdToken(token: string): Promise<{ email: string; firstName: string; lastName: string; avatarUrl?: string; } | null> {
         try {
             const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo`, {
