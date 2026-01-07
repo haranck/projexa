@@ -3,11 +3,13 @@ import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
+import { injectable, inject } from "tsyringe";
 
+@injectable()
 export class AuthMiddleware {
   constructor(
-    private readonly jwtService: IJwtService,
-    private readonly blacklistRepo: ITokenBlacklistRepository
+    @inject('IJwtService') private readonly jwtService: IJwtService,
+    @inject('ITokenBlacklistRepository') private readonly blacklistRepo: ITokenBlacklistRepository
   ) {}
   authenticate = async (
     req: Request,

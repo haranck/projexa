@@ -73,7 +73,6 @@ const Sidebar = ({ className }: SidebarProps) => {
                     />
                 </Link>
             </div>
-``
             <nav className="flex-1 px-3 py-4 space-y-7">
                 {menuSections.map((section, sectionIndex) => (
                     <div key={sectionIndex}>
