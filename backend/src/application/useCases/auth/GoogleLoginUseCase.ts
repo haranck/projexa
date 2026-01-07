@@ -1,3 +1,4 @@
+import { injectable ,inject } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { IGoogleAuthService } from "../../../domain/interfaces/services/IGoogleAuthService";
@@ -8,11 +9,12 @@ import {
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 
+@injectable()
 export class GoogleLoginUseCase implements IGoogleLoginService {
   constructor(
-    private userRepo: IUserRepository,
-    private jwtService: IJwtService,
-    private googleAuthService: IGoogleAuthService
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('IJwtService') private jwtService: IJwtService,
+    @inject('IGoogleAuthService') private googleAuthService: IGoogleAuthService
   ) { }
   async execute(idToken: string): Promise<IGoogleLoginResult> {
     

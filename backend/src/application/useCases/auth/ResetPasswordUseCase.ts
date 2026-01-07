@@ -5,12 +5,14 @@ import { ResetPasswordDTO } from "../../dtos/auth/requestDTOs/ResetPasswordDTO";
 import { IResetPasswordService } from "../../services/IResetPasswordService";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { injectable ,inject } from "tsyringe";
 
+@injectable()
 export class ResetPasswordUseCase implements IResetPasswordService {
   constructor(
-    private userRepo: IUserRepository,
-    private otpRepo: IOtpRepository,
-    private passwordService: IPasswordService,
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('IOtpRepository') private otpRepo: IOtpRepository,
+    @inject('IPasswordService') private passwordService: IPasswordService,
   ) { }
 
   async execute(dto: ResetPasswordDTO): Promise<void> {

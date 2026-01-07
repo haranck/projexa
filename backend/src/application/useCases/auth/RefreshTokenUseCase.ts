@@ -1,4 +1,4 @@
-
+import { injectable,inject } from "tsyringe";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
@@ -6,10 +6,11 @@ import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { IRefreshTokenService } from "../../services/IRefreshTokenService";
 
+@injectable()
 export class RefreshTokenUseCase implements IRefreshTokenService {
     constructor(
-        private jwtService: IJwtService,
-        private userRepo: IUserRepository
+        @inject('IJwtService') private jwtService: IJwtService,
+        @inject('IUserRepository') private userRepo: IUserRepository
     ) { }
 
     async execute(refreshToken: string): Promise<LoginResponseDTO> {

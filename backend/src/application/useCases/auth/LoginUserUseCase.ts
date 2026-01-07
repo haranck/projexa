@@ -6,12 +6,14 @@ import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO"
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { ILoginUserService } from "../../services/ILoginUserService";
+import { injectable ,inject } from "tsyringe";
 
+@injectable()
 export class LoginUserUseCase implements ILoginUserService {
   constructor(
-    private userRepo: IUserRepository,
-    private passwordService: IPasswordService,
-    private jwtService: IJwtService
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('IPasswordService') private passwordService: IPasswordService,
+    @inject('IJwtService') private jwtService: IJwtService
   ) { }
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {

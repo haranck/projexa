@@ -6,13 +6,15 @@ import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserSto
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { IVerifyEmailService } from "../../services/IVerifyEmailService";
+import { injectable ,inject } from "tsyringe";
 
+@injectable()
 export class VerifyEmailUseCase implements IVerifyEmailService{
 
   constructor(
-    private otpRepo: IOtpRepository,
-    private userRepo: IUserRepository,
-    private tempUserStore: ITempUserStore
+    @inject('IOtpRepository') private otpRepo: IOtpRepository,
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('ITempUserStore') private tempUserStore: ITempUserStore
   ) { }
 
   async execute(email: string, otpCode: string): Promise<void> {

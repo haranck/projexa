@@ -65,16 +65,15 @@ const Sidebar = ({ className }: SidebarProps) => {
             )}
         >
             <div className="flex h-20 items-center px-6">
-                <Link to="/home" className="flex items-center gap-3">
-                    {/* <img
+                <Link to={FRONTEND_ROUTES.LANDING} className="flex items-center">
+                    <img
                         src="/logo.png"
-                        alt=""
-                        className="h-8 w-auto object-contain brightness-110"
-                    /> */}
-                    <span className="text-3xl ml-5 font-bold text-blue-200 tracking-tight">projexa<span className="text-3xl mr-1 font-bold text-blue-500 ml-1 tracking-tight">.</span></span>
+                        alt="ProJexa Logo"
+                        className="h-30 w-31 ml-6 mt-5 mb-2 object-contain"
+                    />
                 </Link>
             </div>
-
+``
             <nav className="flex-1 px-3 py-4 space-y-7">
                 {menuSections.map((section, sectionIndex) => (
                     <div key={sectionIndex}>

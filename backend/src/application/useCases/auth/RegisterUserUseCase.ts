@@ -1,3 +1,4 @@
+import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/requestDTOs/RegisterUserDTO";
@@ -5,11 +6,12 @@ import { SendEmailOtpUsecase } from "./SendEmailOtpUseCase";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { IRegisterUserService } from "../../services/IRegisterUserService";
 
+@injectable()
 export class RegisterUserUseCase implements IRegisterUserService{
     constructor(
-        private userRepository: IUserRepository,
-        private passwordService: IPasswordService,
-        private sendEmailOtpUseCase: SendEmailOtpUsecase
+        @inject('IUserRepository') private userRepository: IUserRepository,
+        @inject('IPasswordService') private passwordService: IPasswordService,
+        @inject('SendEmailOtpUsecase') private sendEmailOtpUseCase: SendEmailOtpUsecase
     ) { }
 
     async execute(dto: RegisterUserDTO): Promise<void> {

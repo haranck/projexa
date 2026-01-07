@@ -1,11 +1,14 @@
+import { inject, injectable } from "tsyringe";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { ILogoutService } from "../../services/ILogoutService";
 
+
+@injectable()
 export class LogoutUseCase implements ILogoutService{
     constructor(
-        private blacklistRepo:ITokenBlacklistRepository,
-        private jwtService:IJwtService
+        @inject('ITokenBlacklistRepository') private blacklistRepo:ITokenBlacklistRepository,
+        @inject('IJwtService') private jwtService:IJwtService
     ){}
     async execute(accessToken: string): Promise<void> {
         const payload = this.jwtService.verifyAccessToken(accessToken)

@@ -4,11 +4,15 @@ import { IVerifyResetOtpService } from "../../services/IVerifyResetOtpService";
 import { VerifyResetOtpDTO } from "../../dtos/auth/requestDTOs/VerifyResetOtpDTO";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { injectable ,inject } from "tsyringe";
 
+
+
+@injectable()
 export class VerifyResetOtpUseCase implements IVerifyResetOtpService {
   constructor(
-    private userRepo: IUserRepository,
-    private otpRepo: IOtpRepository
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('IOtpRepository') private otpRepo: IOtpRepository
   ) { }
   async execute(dto: VerifyResetOtpDTO): Promise<void> {
 

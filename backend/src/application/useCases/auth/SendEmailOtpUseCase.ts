@@ -3,13 +3,14 @@ import { OtpEntity } from "../../../domain/entities/IOtpEntity";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
 import { IOtpService } from "../../../domain/interfaces/services/IOtpService";
 import { ITempUserStore ,ITempUserData } from "../../../domain/interfaces/services/ITempUserStore";
+import { injectable ,inject } from "tsyringe";
 
-
+@injectable()
 export class SendEmailOtpUsecase {
   constructor(
-    private otpRepo: IOtpRepository,
-    private emailService: IEmailService,
-    private tempUserStore:ITempUserStore,
+    @inject('IOtpRepository') private otpRepo: IOtpRepository,
+    @inject('IEmailService') private emailService: IEmailService,
+    @inject('ITempUserStore') private tempUserStore:ITempUserStore,
 
   ) {}
 

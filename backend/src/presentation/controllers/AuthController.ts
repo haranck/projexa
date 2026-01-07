@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { injectable, inject } from "tsyringe";
 
 import { IForgotPasswordService } from "../../application/services/IForgotPasswordService";
 import { IGoogleLoginService } from "../../application/services/IGoogleLoginService"
@@ -19,20 +20,34 @@ import { HTTP_STATUS } from "../../domain/constants/httpStatus";
 import { ERROR_MESSAGES } from "../../domain/constants/errorMessages";
 import { MESSAGES } from "../../domain/constants/messages";
 
+@injectable()
 export class AuthController {
   constructor(
-    private readonly registerUserService: IRegisterUserService,
-    private readonly verifyEmailService: IVerifyEmailService,
-    private readonly loginUserService: ILoginUserService,
-    private readonly forgotPasswordService: IForgotPasswordService,
-    private readonly resetPasswordService: IResetPasswordService,
-    private readonly verifyResetOtpService: IVerifyResetOtpService,
-    private readonly logoutService: ILogoutService,
-    private readonly resentOtpService: IResendOtpService,
-    private readonly googleLoginService: IGoogleLoginService,
-    private readonly refreshTokenService: IRefreshTokenService,
+    @inject('IRegisterUserService') private readonly registerUserService: IRegisterUserService,
+    @inject('IVerifyEmailService') private readonly verifyEmailService: IVerifyEmailService,
+    @inject('ILoginUserService') private readonly loginUserService: ILoginUserService,
+    @inject('IForgotPasswordService') private readonly forgotPasswordService: IForgotPasswordService,
+    @inject('IResetPasswordService') private readonly resetPasswordService: IResetPasswordService,
+    @inject('IVerifyResetOtpService') private readonly verifyResetOtpService: IVerifyResetOtpService,
+    @inject('ILogoutService') private readonly logoutService: ILogoutService,
+    @inject('IResendOtpService') private readonly resentOtpService: IResendOtpService,
+    @inject('IGoogleLoginService') private readonly googleLoginService: IGoogleLoginService,
+    @inject('IRefreshTokenService') private readonly refreshTokenService: IRefreshTokenService,
+
   ) { }
 
+  /*
+    private readonly registerUserService: IRegisterUserService,
+    private readonly verifyEmailService: IVerifyEmailService,
+    private readonly loginUserService: ILoginUserService,//
+    private readonly forgotPasswordService: IForgotPasswordService, //
+    private readonly resetPasswordService: IResetPasswordService,//
+    private readonly verifyResetOtpService: IVerifyResetOtpService,//
+    private readonly logoutService: ILogoutService,//
+    private readonly resentOtpService: IResendOtpService,//
+    private readonly googleLoginService: IGoogleLoginService,//
+    private readonly refreshTokenService: IRefreshTokenService,
+  */
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const dto: RegisterUserDTO = {
@@ -78,12 +93,9 @@ export class AuthController {
       });
       console.log('data', response)
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
-    } catch (err: any) {
-      if (err.message === "Invalid Credentials") {
-        res.status(HTTP_STATUS.UNAUTHORIZED).json({ error: ERROR_MESSAGES.INVALID_CREDENTIALS });
-        return;
-      }
-      return next(err);
+    } catch (err) {
+      // NEED  to write the invalid credentials error
+      res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS });
     }
   };
 
@@ -143,7 +155,7 @@ export class AuthController {
       });
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.GOOGLE_LOGIN_SUCCESS, data: response });
-      
+
     } catch (err: any) {
       return next(err);
     }

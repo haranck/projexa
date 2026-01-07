@@ -47,8 +47,12 @@ export const ResetPassword = () => {
             <div className="relative z-10 w-full flex justify-center">
                 <Card className="w-full max-w-[460px] border-white/5 bg-[#141414]/80 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-500">
                     <CardHeader className="text-center pb-2 pt-8 space-y-0.5">
-                        <CardTitle className="text-3xl font-extrabold tracking-tight text-white mb-1 font-display leading-tight">
-                            ProJexa
+                        <CardTitle className="flex justify-center ml-4 -mt-12 -mb-12">
+                            <img
+                                src="/logo.png"
+                                alt="ProJexa Logo"
+                                className="h-28 w-auto object-contain"
+                            />
                         </CardTitle>
                         <h2 className="text-xl font-bold text-zinc-100 tracking-tight leading-tight">
                             Reset Password

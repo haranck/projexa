@@ -137,7 +137,13 @@ const OTPModal = ({ email, isOpen, onClose, purpose = "signup" }: OTPModalProps)
                 <div className="absolute top-[-20%] left-[-20%] w-[60%] h-[60%] bg-blue-500/5 rounded-full blur-[100px] pointer-events-none" />
                 <div className="absolute bottom-[-20%] right-[-20%] w-[60%] h-[60%] bg-purple-500/5 rounded-full blur-[100px] pointer-events-none" />
 
-                <h2 className="text-3xl font-extrabold tracking-tight text-white mb-8 font-display">ProJexa</h2>
+                <div className="flex justify-center -mt-8 -mb-8">
+                    <img
+                        src="/logo.png"
+                        alt="ProJexa Logo"
+                        className="h-22 w-auto object-contain"
+                    />
+                </div>
 
                 <h3 className="text-2xl font-bold text-zinc-100 tracking-tight mb-2">Verify OTP</h3>
                 <p className="text-zinc-500 text-sm font-medium mb-1">We sent a 6-digit code to your email</p>
