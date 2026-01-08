@@ -1,0 +1,35 @@
+
+2026-01-08T10:31:48.862Z [error]: Login failed {
+  "email": "abhishek@gmail.com",
+  "error": "Invalid email or password"
+}
+2026-01-08T10:31:49.135Z [error]: Login failed {
+  "email": "abhishek@gmail.com",
+  "error": "Invalid email or password"
+}
+2026-01-08T10:32:12.230Z [error]: Login failed {
+  "email": "abhishek@gmail.com",
+  "error": "Invalid email or password"
+}
+2026-01-08T10:32:12.377Z [error]: Login failed {
+  "email": "abhishek@gmail.com",
+  "error": "Invalid email or password"
+}
+2026-01-08T10:32:17.427Z [info]: Login successful {
+  "email": "abhishek@gmail.com",
+  "userId": "695ddd4d335184b97ab5e49b"
+}
+2026-01-08T10:45:05.667Z [info]: TEST LOG WORKING 
+2026-01-08T10:45:13.794Z [info]: Login successful {
+  "email": "abhishek@gmail.com",
+  "userId": "695ddd4d335184b97ab5e49b"
+}
+2026-01-08T10:45:24.741Z [info]: TEST LOG WORKING 
+2026-01-08T10:45:29.767Z [info]: Login successful {
+  "email": "abhishek@gmail.com",
+  "userId": "695ddd4d335184b97ab5e49b"
+}
+2026-01-08T10:54:46.358Z [info]: TEST LOG WORKING 
+2026-01-08T10:54:50.248Z [info]: TEST LOG WORKING 
+2026-01-08T10:55:08.444Z [info]: TEST LOG WORKING 
+2026-01-08T11:09:40.990Z [info]: TEST LOG WORKING 

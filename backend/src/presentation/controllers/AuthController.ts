@@ -9,7 +9,6 @@ import { IRefreshTokenService } from "../../application/services/IRefreshTokenSe
 import { IRegisterUserService } from "../../application/services/IRegisterUserService";
 import { IResendOtpService } from "../../application/services/IResendOtpService";
 import { IResetPasswordService } from "../../application/services/IResetPasswordService";
-import { ISendEmailUserService } from "../../application/services/ISendEmailUserService";
 import { IVerifyEmailService } from "../../application/services/IVerifyEmailService";
 import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
 
@@ -19,6 +18,7 @@ import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserD
 import { HTTP_STATUS } from "../../domain/constants/httpStatus";
 import { ERROR_MESSAGES } from "../../domain/constants/errorMessages";
 import { MESSAGES } from "../../domain/constants/messages";
+import logger from "../../config/logger";
 
 @injectable()
 export class AuthController {
@@ -36,18 +36,6 @@ export class AuthController {
 
   ) { }
 
-  /*
-    private readonly registerUserService: IRegisterUserService,
-    private readonly verifyEmailService: IVerifyEmailService,
-    private readonly loginUserService: ILoginUserService,//
-    private readonly forgotPasswordService: IForgotPasswordService, //
-    private readonly resetPasswordService: IResetPasswordService,//
-    private readonly verifyResetOtpService: IVerifyResetOtpService,//
-    private readonly logoutService: ILogoutService,//
-    private readonly resentOtpService: IResendOtpService,//
-    private readonly googleLoginService: IGoogleLoginService,//
-    private readonly refreshTokenService: IRefreshTokenService,
-  */
   register = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const dto: RegisterUserDTO = {
@@ -91,10 +79,18 @@ export class AuthController {
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
-      console.log('data', response)
+      logger.info("Login successful", {
+        email: dto.email,
+        userId: response.user.id,
+      });
+      require("fs").writeFileSync("manual.log", "HELLO");
+
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
     } catch (err) {
-      // NEED  to write the invalid credentials error
+      logger.error("Login failed", {
+        email: req.body.email,
+        error: err instanceof Error ? err.message : err,
+      });
       res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS });
     }
   };
