@@ -71,3 +71,7 @@ export const verifyResetOtp = async (data: verifyOtpPayload) => {
   return response.data;
 };
 
+export const logoutUser = async () => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGOUT);
+  return response.data;
+}

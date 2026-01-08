@@ -3,7 +3,6 @@ import { IUserEntity } from "../../../../domain/entities/IUserEntity";
 import { UserModel } from "../models/UserModel";
 import { UserMapper } from "../../../mappers/UserMapper";
 import { BaseRepo } from "./base/BaseRepo";
-import { ERROR_MESSAGES } from "../../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
 
 export class UserRepository

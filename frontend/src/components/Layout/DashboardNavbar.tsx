@@ -7,17 +7,22 @@ import { clearAuth } from "../../store/slice/authSlice";
 import { clearAccessToken } from "../../store/slice/tokenSlice";
 import type { RootState } from "../../store/store";
 import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
+import { useUserLogout } from "@/hooks/Auth/AuthHooks";
 
 const DashboardNavbar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.auth.user);
-
+    const {mutate: logoutUser} = useUserLogout()
     const handleLogout = () => {
-        dispatch(clearAuth());
-        dispatch(clearAccessToken());
-        navigate(FRONTEND_ROUTES.LOGIN);
+        logoutUser(undefined, {
+            onSettled: () => {
+                dispatch(clearAuth());
+                dispatch(clearAccessToken());
+                navigate(FRONTEND_ROUTES.LOGIN);
+            }
+        })
     };
 
     return (

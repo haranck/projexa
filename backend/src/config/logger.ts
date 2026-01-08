@@ -18,16 +18,16 @@ const logger = winston.createLogger({
         isProduction ? logFormat : combine(colorize(), logFormat)
     ),
     transports: [
-        new winston.transports.Console(),
-        new winston.transports.File({
+        new winston.transports.Console(), 
+        new winston.transports.File({ 
             filename: "logs/error.log",
             level: "error",
         }),
         new winston.transports.File({
             filename: "logs/combined.log",
         }),
-    ],
+    ], 
 });
 
-logger.info("TEST LOG WORKING");
+
 export default logger;

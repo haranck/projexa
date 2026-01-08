@@ -56,7 +56,6 @@ export class AuthController {
     }
   };
 
-
   verifyEmail = async (req: Request, res: Response): Promise<void> => {
     const { email, otp } = req.body;
     console.log(email, otp)
@@ -83,7 +82,6 @@ export class AuthController {
         email: dto.email,
         userId: response.user.id,
       });
-      require("fs").writeFileSync("manual.log", "HELLO");
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
     } catch (err) {

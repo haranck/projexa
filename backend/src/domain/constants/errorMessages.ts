@@ -38,6 +38,7 @@ export const ERROR_MESSAGES = {
     UNAUTHORIZED: "Unauthorized",
     TOKEN_REVOKED: "Token is revoked",
     AUTHENTICATION_FAILED: "Authentication failed",
+    GOOGLE_LOGIN_FAILED: "Google login failed",
 };
 
 export const USER_ERRORS = {

@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { ILogoutService } from "../../services/ILogoutService";
+import { JwtPayload } from "jsonwebtoken";
 
 
 @injectable()
@@ -14,9 +15,10 @@ export class LogoutUseCase implements ILogoutService{
         const payload = this.jwtService.verifyAccessToken(accessToken)
         if(!payload)return
 
-        const decoded:any= payload
-        const exp = decoded.exp //unix timestamp
-
+        const decoded = payload as JwtPayload
+        if(!decoded.exp) return
+        const exp = decoded.exp 
+        
         const ttl = exp - Math.floor(Date.now() / 1000)
         if(ttl > 0){
             await this.blacklistRepo.blacklist(accessToken,ttl)

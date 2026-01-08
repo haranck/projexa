@@ -1,7 +1,6 @@
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { OtpEntity } from "../../../domain/entities/IOtpEntity";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
-import { IOtpService } from "../../../domain/interfaces/services/IOtpService";
 import { ITempUserStore ,ITempUserData } from "../../../domain/interfaces/services/ITempUserStore";
 import { injectable ,inject } from "tsyringe";
 
