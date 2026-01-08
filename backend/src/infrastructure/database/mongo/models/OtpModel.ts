@@ -9,7 +9,7 @@ export interface OtpDocument extends Document {
 }
 
 const otpSchema = new mongoose.Schema({
-  userId: Types.ObjectId,
+  userId: String,
   code: String,
   expiresAt: {
     type:Date,
