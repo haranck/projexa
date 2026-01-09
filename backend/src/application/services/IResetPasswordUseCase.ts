@@ -1,5 +1,5 @@
 import { ResetPasswordDTO } from "../dtos/auth/requestDTOs/ResetPasswordDTO";
 
-export interface IResetPasswordService {
+export interface IResetPasswordUseCase {
   execute(dto: ResetPasswordDTO): Promise<void>;
 }

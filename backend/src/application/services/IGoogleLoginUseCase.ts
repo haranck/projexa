@@ -6,6 +6,6 @@ export interface IGoogleLoginResult {
     user: IUserEntity;
 }
 
-export interface IGoogleLoginService {
+export interface IGoogleLoginUseCase {
     execute(idToken: string): Promise<IGoogleLoginResult>;
 }

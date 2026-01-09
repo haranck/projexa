@@ -1,5 +1,5 @@
 import { VerifyResetOtpDTO } from "../dtos/auth/requestDTOs/VerifyResetOtpDTO";
 
-export interface IVerifyResetOtpService {
+export interface IVerifyResetOtpUseCase {
   execute(dto: VerifyResetOtpDTO): Promise<void>;
 }

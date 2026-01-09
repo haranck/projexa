@@ -2,13 +2,13 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { ResetPasswordDTO } from "../../dtos/auth/requestDTOs/ResetPasswordDTO";
-import { IResetPasswordService } from "../../services/IResetPasswordService";
+import { IResetPasswordUseCase } from "../../services/IResetPasswordUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { injectable ,inject } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 
 @injectable()
-export class ResetPasswordUseCase implements IResetPasswordService {
+export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
     @inject('IUserRepository') private userRepo: IUserRepository,
     @inject('IOtpRepository') private otpRepo: IOtpRepository,

@@ -1,12 +1,12 @@
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserStore";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
-import { IResendOtpService } from "../../services/IResendOtpService";
+import { IResendOtpUseCase } from "../../services/IResendOtpUseCase";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { injectable ,inject } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 
 @injectable()
-export class ResendOtpUseCase implements IResendOtpService {
+export class ResendOtpUseCase implements IResendOtpUseCase {
     constructor(
         @inject('IOtpRepository') private otpRepository: IOtpRepository,
         @inject('ITempUserStore') private tempUserStore: ITempUserStore,

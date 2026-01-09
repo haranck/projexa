@@ -1,16 +1,18 @@
 import { Request, Response, NextFunction } from "express";
 import { injectable, inject } from "tsyringe";
 
-import { IForgotPasswordService } from "../../application/services/IForgotPasswordService";
-import { IGoogleLoginService } from "../../application/services/IGoogleLoginService"
-import { ILoginUserService } from "../../application/services/ILoginUserService";
-import { ILogoutService } from "../../application/services/ILogoutService";
-import { IRefreshTokenService } from "../../application/services/IRefreshTokenService";
-import { IRegisterUserService } from "../../application/services/IRegisterUserService";
-import { IResendOtpService } from "../../application/services/IResendOtpService";
-import { IResetPasswordService } from "../../application/services/IResetPasswordService";
-import { IVerifyEmailService } from "../../application/services/IVerifyEmailService";
-import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
+import { IForgotPasswordUseCase } from "../../application/services/IForgotPasswordUseCase";
+import { IGoogleLoginUseCase } from "../../application/services/IGoogleLoginUseCase"
+import { ILoginUserUseCase } from "../../application/services/ILoginUserUseCase";
+import { ILogoutUseCase } from "../../application/services/ILogoutUseCase";
+import { IRefreshTokenUseCase } from "../../application/services/IRefreshTokenUseCase";
+
+import { IRegisterUserUseCase } from "../../application/services/IRegisterUserUseCase";
+
+import { IResendOtpUseCase } from "../../application/services/IResendOtpUseCase";
+import { IResetPasswordUseCase } from "../../application/services/IResetPasswordUseCase";
+import { IVerifyEmailUseCase } from "../../application/services/IVerifyEmailUseCase";
+import { IVerifyResetOtpUseCase } from "../../application/services/IVerifyResetOtpUseCase";
 
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
@@ -23,16 +25,16 @@ import logger from "../../config/logger";
 @injectable()
 export class AuthController {
   constructor(
-    @inject('IRegisterUserService') private readonly registerUserService: IRegisterUserService,
-    @inject('IVerifyEmailService') private readonly verifyEmailService: IVerifyEmailService,
-    @inject('ILoginUserService') private readonly loginUserService: ILoginUserService,
-    @inject('IForgotPasswordService') private readonly forgotPasswordService: IForgotPasswordService,
-    @inject('IResetPasswordService') private readonly resetPasswordService: IResetPasswordService,
-    @inject('IVerifyResetOtpService') private readonly verifyResetOtpService: IVerifyResetOtpService,
-    @inject('ILogoutService') private readonly logoutService: ILogoutService,
-    @inject('IResendOtpService') private readonly resentOtpService: IResendOtpService,
-    @inject('IGoogleLoginService') private readonly googleLoginService: IGoogleLoginService,
-    @inject('IRefreshTokenService') private readonly refreshTokenService: IRefreshTokenService,
+    @inject('IRegisterUserUseCase') private readonly registerUserUseCase: IRegisterUserUseCase,
+    @inject('IVerifyEmailUseCase') private readonly verifyEmailUseCase: IVerifyEmailUseCase,
+    @inject('ILoginUserUseCase') private readonly loginUserUseCase: ILoginUserUseCase,
+    @inject('IForgotPasswordUseCase') private readonly forgotPasswordUseCase: IForgotPasswordUseCase,
+    @inject('IResetPasswordUseCase') private readonly resetPasswordUseCase: IResetPasswordUseCase,
+    @inject('IVerifyResetOtpUseCase') private readonly verifyResetOtpUseCase: IVerifyResetOtpUseCase,
+    @inject('ILogoutUseCase') private readonly logoutUseCase: ILogoutUseCase,
+    @inject('IResendOtpUseCase') private readonly resentOtpUseCase: IResendOtpUseCase,
+    @inject('IGoogleLoginUseCase') private readonly googleLoginUseCase: IGoogleLoginUseCase,
+    @inject('IRefreshTokenUseCase') private readonly refreshTokenUseCase: IRefreshTokenUseCase,
 
   ) { }
 
@@ -46,13 +48,13 @@ export class AuthController {
         phone: req.body.phone,
       };
 
-      await this.registerUserService.execute(dto);
+      await this.registerUserUseCase.execute(dto);
 
       res.status(HTTP_STATUS.OK).json({
         message: MESSAGES.OTP.OTP_SENT,
       });
     } catch (err: unknown) {
-      if(err instanceof  Error){
+      if (err instanceof Error) {
         next(err);
       }
     }
@@ -61,7 +63,7 @@ export class AuthController {
   verifyEmail = async (req: Request, res: Response): Promise<void> => {
     const { email, otp } = req.body;
     console.log(email, otp)
-    await this.verifyEmailService.execute(email, otp);
+    await this.verifyEmailUseCase.execute(email, otp);
 
     res.status(HTTP_STATUS.OK).json({ message: MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL });
   };
@@ -72,7 +74,7 @@ export class AuthController {
         email: req.body.email,
         password: req.body.password,
       };
-      const response = await this.loginUserService.execute(dto);
+      const response = await this.loginUserUseCase.execute(dto);
 
       res.cookie("refreshToken", response.refreshToken, {
         httpOnly: true,
@@ -103,7 +105,7 @@ export class AuthController {
     }
 
     try {
-      const response = await this.refreshTokenService.execute(refreshToken);
+      const response = await this.refreshTokenUseCase.execute(refreshToken);
       res.cookie("refreshToken", response.refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
@@ -113,8 +115,8 @@ export class AuthController {
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, data: response });
     } catch (err: unknown) {
-      if(err instanceof Error){
-        console.log('Error: ',err)
+      if (err instanceof Error) {
+        console.log('Error: ', err)
         return
       }
       res.status(HTTP_STATUS.FORBIDDEN).json({ message: ERROR_MESSAGES.REFRESH_TOKEN_EXPIRED });
@@ -122,30 +124,30 @@ export class AuthController {
   };
 
   forgotPassword = async (req: Request, res: Response): Promise<void> => {
-    await this.forgotPasswordService.execute(req.body);
+    await this.forgotPasswordUseCase.execute(req.body);
     res.json({ message: MESSAGES.OTP.OTP_SENT });
   };
 
   verifyResetOtp = async (req: Request, res: Response): Promise<void> => {
-    await this.verifyResetOtpService.execute(req.body);
+    await this.verifyResetOtpUseCase.execute(req.body);
     res.json({ message: MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL });
   };
 
   resetPassword = async (req: Request, res: Response): Promise<void> => {
-    await this.resetPasswordService.execute(req.body);
+    await this.resetPasswordUseCase.execute(req.body);
     res.json({ message: MESSAGES.USERS.PASSWORD_RESET_SUCCESSFULLY });
   };
 
   resendOtp = async (req: Request, res: Response): Promise<void> => {
     const { email } = req.body
-    await this.resentOtpService.execute(email)
+    await this.resentOtpUseCase.execute(email)
     res.json({ message: MESSAGES.OTP.RESEND_OTP_SUCCESSFULL });
   }
 
   googleLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const { idToken } = req.body;
-      const response = await this.googleLoginService.execute(idToken);
+      const response = await this.googleLoginUseCase.execute(idToken);
 
       res.cookie("refreshToken", response.refreshToken, {
         httpOnly: true,
@@ -157,7 +159,7 @@ export class AuthController {
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.GOOGLE_LOGIN_SUCCESS, data: response });
 
     } catch (err: unknown) {
-      if(err instanceof Error){
+      if (err instanceof Error) {
         return next(err);
       }
     }
@@ -166,7 +168,7 @@ export class AuthController {
   logout = async (req: Request, res: Response): Promise<void> => {
     const token = req.headers.authorization?.split(" ")[1];
     if (token) {
-      await this.logoutService.execute(token);
+      await this.logoutUseCase.execute(token);
     }
     res.clearCookie("refreshToken");
     res.json({ message: MESSAGES.USERS.LOGOUT_SUCCESS });

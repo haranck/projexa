@@ -38,7 +38,6 @@ export class UserRepository
 
     const createdDoc = await super.findById(id);
     if (!createdDoc) throw new Error(USER_ERRORS.USER_CREATION_FAILED);
-
     return createdDoc;
   }
 

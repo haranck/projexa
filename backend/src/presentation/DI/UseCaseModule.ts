@@ -1,31 +1,31 @@
 import { container } from "tsyringe";
-import { IRegisterUserService } from "../../application/services/IRegisterUserService";
+import { IRegisterUserUseCase } from "../../application/services/IRegisterUserUseCase";
 import { RegisterUserUseCase } from "../../application/useCases/auth/RegisterUserUseCase";
-import { ISendEmailUserService } from "../../application/services/ISendEmailUserService";
+import { ISendEmailOtpUseCase } from "../../application/services/ISendEmailOtpUseCase";
 import { SendEmailOtpUsecase } from "../../application/useCases/auth/SendEmailOtpUseCase";
-import { IVerifyEmailService } from "../../application/services/IVerifyEmailService";
+import { IVerifyEmailUseCase } from "../../application/services/IVerifyEmailUseCase";
 import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailUseCase";
-import { ILoginUserService } from "../../application/services/ILoginUserService";
+import { ILoginUserUseCase } from "../../application/services/ILoginUserUseCase";
 import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCase";
-import { ILogoutService } from "../../application/services/ILogoutService";
+import { ILogoutUseCase } from "../../application/services/ILogoutUseCase";
 import { LogoutUseCase } from "../../application/useCases/auth/LogoutUseCase";
-import { IResendOtpService } from "../../application/services/IResendOtpService";
+import { IResendOtpUseCase } from "../../application/services/IResendOtpUseCase";
 import { ResendOtpUseCase } from "../../application/useCases/auth/ResendOtpUseCase";
-import { IForgotPasswordService } from "../../application/services/IForgotPasswordService";
+import { IForgotPasswordUseCase } from "../../application/services/IForgotPasswordUseCase";
 import { ForgotPassworUseCase } from "../../application/useCases/auth/ForgotPasswordUseCase";
-import { IVerifyResetOtpService } from "../../application/services/IVerifyResetOtpService";
+import { IVerifyResetOtpUseCase } from "../../application/services/IVerifyResetOtpUseCase";
 import { VerifyResetOtpUseCase } from "../../application/useCases/auth/VerifyResetOtpUseCase";
-import { IResetPasswordService } from "../../application/services/IResetPasswordService";
+import { IResetPasswordUseCase } from "../../application/services/IResetPasswordUseCase";
 import { ResetPasswordUseCase } from "../../application/useCases/auth/ResetPasswordUseCase";
 import { GoogleLoginUseCase } from "../../application/useCases/auth/GoogleLoginUseCase";
-import { IGoogleLoginService } from "../../application/services/IGoogleLoginService";
-import { IRefreshTokenService } from "../../application/services/IRefreshTokenService";
+import { IGoogleLoginUseCase } from "../../application/services/IGoogleLoginUseCase";
+import { IRefreshTokenUseCase } from "../../application/services/IRefreshTokenUseCase";
 import { RefreshTokenUseCase } from "../../application/useCases/auth/RefreshTokenUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
 
-        container.register<IRegisterUserService>('IRegisterUserService', {
+        container.register<IRegisterUserUseCase>('IRegisterUserUseCase', {
             useClass: RegisterUserUseCase
         })
 
@@ -33,43 +33,43 @@ export class UseCaseModule {
             useClass: SendEmailOtpUsecase
         })
 
-        container.register<ISendEmailUserService>('ISendEmailUserService', {
+        container.register<ISendEmailOtpUseCase>('ISendEmailOtpUseCase', {
             useClass: SendEmailOtpUsecase
         })
 
-        container.register<IVerifyEmailService>("IVerifyEmailService", {
+        container.register<IVerifyEmailUseCase>("IVerifyEmailUseCase", {
             useClass: VerifyEmailUseCase
         })
 
-        container.register<ILoginUserService>("ILoginUserService", {
+        container.register<ILoginUserUseCase>("ILoginUserUseCase", {
             useClass: LoginUserUseCase
         })
 
-        container.register<ILogoutService>("ILogoutService", {
+        container.register<ILogoutUseCase>("ILogoutUseCase", {
             useClass: LogoutUseCase
         })
 
-        container.register<IResendOtpService>('IResendOtpService', {
+        container.register<IResendOtpUseCase>('IResendOtpUseCase', {
             useClass: ResendOtpUseCase
         })
 
-        container.register<IForgotPasswordService>("IForgotPasswordService", {
+        container.register<IForgotPasswordUseCase>("IForgotPasswordUseCase", {
             useClass: ForgotPassworUseCase
         })
 
-        container.register<IVerifyResetOtpService>("IVerifyResetOtpService", {
+        container.register<IVerifyResetOtpUseCase>("IVerifyResetOtpUseCase", {
             useClass: VerifyResetOtpUseCase
         })
 
-        container.register<IResetPasswordService>("IResetPasswordService", {
+        container.register<IResetPasswordUseCase>("IResetPasswordUseCase", {
             useClass: ResetPasswordUseCase
         })
 
-        container.register<IGoogleLoginService>("IGoogleLoginService", {
+        container.register<IGoogleLoginUseCase>("IGoogleLoginUseCase", {
             useClass: GoogleLoginUseCase
         })
 
-        container.register<IRefreshTokenService>("IRefreshTokenService", {
+        container.register<IRefreshTokenUseCase>("IRefreshTokenUseCase", {
             useClass: RefreshTokenUseCase
         })
 

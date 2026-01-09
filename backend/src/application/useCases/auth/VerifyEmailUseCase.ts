@@ -3,11 +3,11 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserStore";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { IVerifyEmailService } from "../../services/IVerifyEmailService";
-import { injectable ,inject } from "tsyringe";
+import { IVerifyEmailUseCase } from "../../services/IVerifyEmailUseCase";
+import { injectable, inject } from "tsyringe";
 
 @injectable()
-export class VerifyEmailUseCase implements IVerifyEmailService{
+export class VerifyEmailUseCase implements IVerifyEmailUseCase {
 
   constructor(
     @inject('IOtpRepository') private otpRepo: IOtpRepository,

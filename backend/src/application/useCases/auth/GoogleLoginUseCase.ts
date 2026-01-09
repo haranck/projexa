@@ -1,23 +1,23 @@
-import { injectable ,inject } from "tsyringe";
+import { injectable, inject } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { IGoogleAuthService } from "../../../domain/interfaces/services/IGoogleAuthService";
 import {
-  IGoogleLoginService,
+  IGoogleLoginUseCase,
   IGoogleLoginResult,
-} from "../../services/IGoogleLoginService";
+} from "../../services/IGoogleLoginUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 
 @injectable()
-export class GoogleLoginUseCase implements IGoogleLoginService {
+export class GoogleLoginUseCase implements IGoogleLoginUseCase {
   constructor(
     @inject('IUserRepository') private userRepo: IUserRepository,
     @inject('IJwtService') private jwtService: IJwtService,
     @inject('IGoogleAuthService') private googleAuthService: IGoogleAuthService
   ) { }
   async execute(idToken: string): Promise<IGoogleLoginResult> {
-    
+
     const googleUser = await this.googleAuthService.verifyIdToken(idToken);
     if (!googleUser) throw new Error(ERROR_MESSAGES.INVALID_GOOGLE_TOKEN);
     let user = await this.userRepo.findByEmail(googleUser.email);
