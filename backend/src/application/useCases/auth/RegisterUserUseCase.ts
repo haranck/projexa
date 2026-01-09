@@ -2,7 +2,6 @@ import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/requestDTOs/RegisterUserDTO";
-// import { SendEmailOtpUsecase } from "./SendEmailOtpUseCase";
 import { ISendEmailOtpUseCase } from "../../services/ISendEmailOtpUseCase";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { IRegisterUserUseCase } from "../../services/IRegisterUserUseCase";

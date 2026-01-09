@@ -5,10 +5,10 @@ import { IForgotPasswordUseCase } from "../../services/IForgotPasswordUseCase";
 import { ISendEmailOtpUseCase } from "../../services/ISendEmailOtpUseCase";
 
 @injectable()
-export class ForgotPassworUseCase implements IForgotPasswordUseCase {
+export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
   constructor(
     @inject('IUserRepository') private userRepo: IUserRepository,
-    @inject('SendEmailOtpUsecase') private sendEmailOtpUseCase: ISendEmailOtpUseCase
+    @inject('ISendEmailOtpUseCase') private sendEmailOtpUseCase: ISendEmailOtpUseCase
   ) { }
   async execute(dto: ForgotPasswordDTO): Promise<void> {
     const user = await this.userRepo.findByEmail(dto.email);

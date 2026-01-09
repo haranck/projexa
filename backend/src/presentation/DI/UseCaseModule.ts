@@ -12,7 +12,7 @@ import { LogoutUseCase } from "../../application/useCases/auth/LogoutUseCase";
 import { IResendOtpUseCase } from "../../application/services/IResendOtpUseCase";
 import { ResendOtpUseCase } from "../../application/useCases/auth/ResendOtpUseCase";
 import { IForgotPasswordUseCase } from "../../application/services/IForgotPasswordUseCase";
-import { ForgotPassworUseCase } from "../../application/useCases/auth/ForgotPasswordUseCase";
+import { ForgotPasswordUseCase } from "../../application/useCases/auth/ForgotPasswordUseCase";
 import { IVerifyResetOtpUseCase } from "../../application/services/IVerifyResetOtpUseCase";
 import { VerifyResetOtpUseCase } from "../../application/useCases/auth/VerifyResetOtpUseCase";
 import { IResetPasswordUseCase } from "../../application/services/IResetPasswordUseCase";
@@ -27,10 +27,6 @@ export class UseCaseModule {
 
         container.register<IRegisterUserUseCase>('IRegisterUserUseCase', {
             useClass: RegisterUserUseCase
-        })
-
-        container.register<SendEmailOtpUsecase>('SendEmailOtpUsecase', {
-            useClass: SendEmailOtpUsecase
         })
 
         container.register<ISendEmailOtpUseCase>('ISendEmailOtpUseCase', {
@@ -54,7 +50,7 @@ export class UseCaseModule {
         })
 
         container.register<IForgotPasswordUseCase>("IForgotPasswordUseCase", {
-            useClass: ForgotPassworUseCase
+            useClass: ForgotPasswordUseCase
         })
 
         container.register<IVerifyResetOtpUseCase>("IVerifyResetOtpUseCase", {
