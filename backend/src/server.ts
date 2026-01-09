@@ -15,16 +15,16 @@ app.use(cookieParser());
 
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
 
 app.use(express.json());
 
-app.use("/api/auth", authRoutes);
+app.use(process.env.AUTH_API_PREFIX as string, authRoutes);
 
-const startServer = async () => {
+const startServer = async    () => {
   await connectMongoDB();
 
   app.listen(env.PORT, () => {
@@ -33,3 +33,4 @@ const startServer = async () => {
 };
 
 startServer();
+ 

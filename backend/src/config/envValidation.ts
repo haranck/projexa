@@ -27,6 +27,8 @@ const envSchema = z.object({
   ADMIN_EMAIL: z.string().email(),
   ADMIN_PASSWORD: z.string().min(6),
   NODE_ENV: z.enum(["development", "production"]),
+  FRONTEND_URL: z.string().url(),
+  AUTH_API_PREFIX: z.string().min(1),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -36,5 +38,6 @@ if (!parsedEnv.success) {
   console.error(parsedEnv.error.format());
   process.exit(1);
 }
+
 
 export const env = parsedEnv.data;

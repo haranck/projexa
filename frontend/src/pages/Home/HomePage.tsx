@@ -1,8 +1,12 @@
 import { TrendingUp } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import DashboardLayout from "../../components/Layout/DashboardLayout";
+import {toast} from "react-hot-toast";
 
 export const HomePage = () => {
+    const handleClick = () =>{
+        toast.success("Project created successfully");
+    }
     return (
         <DashboardLayout>
             <div className="flex items-center justify-center min-h-[calc(100vh-4rem)] px-4">
@@ -22,10 +26,10 @@ export const HomePage = () => {
                         <p className="text-zinc-400 text-sm">
                             Select a project from the top navigation to view analytics and board details.
                         </p>
-                    </div>
+                    </div>  
 
                     {/* CTA Button */}
-                    <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white h-11 px-8">
+                    <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white h-11 px-8" onClick={handleClick}>
                         Create Project
                     </Button>
                 </div>

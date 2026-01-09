@@ -51,8 +51,10 @@ export class AuthController {
       res.status(HTTP_STATUS.OK).json({
         message: MESSAGES.OTP.OTP_SENT,
       });
-    } catch (err: any) {
-      next(err);
+    } catch (err: unknown) {
+      if(err instanceof  Error){
+        next(err);
+      }
     }
   };
 
@@ -64,7 +66,7 @@ export class AuthController {
     res.status(HTTP_STATUS.OK).json({ message: MESSAGES.OTP.OTP_VERIFIED_SUCCESSFULL });
   };
 
-  login = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  login = async (req: Request, res: Response): Promise<void> => {
     try {
       const dto: LoginUserDTO = {
         email: req.body.email,
@@ -110,7 +112,11 @@ export class AuthController {
       });
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, data: response });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      if(err instanceof Error){
+        console.log('Error: ',err)
+        return
+      }
       res.status(HTTP_STATUS.FORBIDDEN).json({ message: ERROR_MESSAGES.REFRESH_TOKEN_EXPIRED });
     }
   };
@@ -150,8 +156,10 @@ export class AuthController {
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.GOOGLE_LOGIN_SUCCESS, data: response });
 
-    } catch (err: any) {
-      return next(err);
+    } catch (err: unknown) {
+      if(err instanceof Error){
+        return next(err);
+      }
     }
   };
 

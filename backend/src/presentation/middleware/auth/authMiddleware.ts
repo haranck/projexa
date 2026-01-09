@@ -39,8 +39,14 @@ export class AuthMiddleware {
       }
 
       (req as any).user = payload;
+      
       next();
     } catch (error) {
+      if(error instanceof Error){
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: error.message });
+        return;
+      }
+      
       res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.AUTHENTICATION_FAILED });
     }
   };
