@@ -21,7 +21,7 @@ export class VerifyResetOtpUseCase implements IVerifyResetOtpUseCase {
       throw new Error(USER_ERRORS.USER_NOT_FOUND);
     }
     const otp = await this.otpRepo.findValidOtp(user.email, dto.otp);
-    if (!otp || !otp.id) throw new Error(ERROR_MESSAGES.INVALID_OTP);
-    await this.otpRepo.markAsUsed(otp.id);
+    if (!otp || !otp._id) throw new Error(ERROR_MESSAGES.INVALID_OTP);
+    await this.otpRepo.markAsUsed(otp._id.toString());
   }
 }
