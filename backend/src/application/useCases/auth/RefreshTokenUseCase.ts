@@ -4,10 +4,10 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { IRefreshTokenService } from "../../services/IRefreshTokenUseCase";
+import { IRefreshTokenUseCase } from "../../services/IRefreshTokenUseCase";
 
 @injectable()
-export class RefreshTokenUseCase implements IRefreshTokenService {
+export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     constructor(
         @inject('IJwtService') private jwtService: IJwtService,
         @inject('IUserRepository') private userRepo: IUserRepository

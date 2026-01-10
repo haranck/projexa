@@ -1,12 +1,16 @@
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { IBaseRepository } from "../../../../../domain/interfaces/repositories/base/IBaseRepository";
 
-export abstract class BaseRepo<T> implements IBaseRepository<T> {
-  constructor(protected readonly model: Model<T>) {}
+type WithId = {
+  _id?: Types.ObjectId;
+};
+
+export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
+  constructor(protected readonly model: Model<T>) { }
 
   async create(data: T): Promise<string> {
-    const doc = await this.model.create(data as any);
-    return (doc as any)._id.toString();
+    const doc = await new this.model(data).save();
+    return doc._id.toString();
   }
 
   async findById(id: string): Promise<T | null> {

@@ -1,4 +1,7 @@
+import type { Types } from "mongoose";
+
 export interface IUserEntity {
+  _id?: Types.ObjectId;
   id?: string;
   firstName: string;
   lastName: string;
