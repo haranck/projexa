@@ -1,8 +1,8 @@
 import { injectable, inject } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { ForgotPasswordDTO } from "../../dtos/auth/requestDTOs/ForgotPasswordDTO";
-import { IForgotPasswordUseCase } from "../../services/IForgotPasswordUseCase";
-import { ISendEmailOtpUseCase } from "../../services/ISendEmailOtpUseCase";
+import { IForgotPasswordUseCase } from "../../interface/auth/IForgotPasswordUseCase";
+import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase";
 
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase {

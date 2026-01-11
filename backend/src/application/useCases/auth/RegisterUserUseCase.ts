@@ -2,9 +2,9 @@ import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/requestDTOs/RegisterUserDTO";
-import { ISendEmailOtpUseCase } from "../../services/ISendEmailOtpUseCase";
+import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { IRegisterUserUseCase } from "../../services/IRegisterUserUseCase";
+import { IRegisterUserUseCase } from "../../interface/auth/IRegisterUserUseCase";
 
 @injectable()
 export class RegisterUserUseCase implements IRegisterUserUseCase {

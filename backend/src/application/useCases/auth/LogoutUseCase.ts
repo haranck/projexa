@@ -1,7 +1,7 @@
 import { inject, injectable } from "tsyringe";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
-import { ILogoutUseCase } from "../../services/ILogoutUseCase";
+import { ILogoutUseCase } from "../../interface/auth/ILogoutUseCase";
 import { JwtPayload } from "jsonwebtoken";
 
 

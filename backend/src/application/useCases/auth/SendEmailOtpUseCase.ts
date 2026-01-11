@@ -3,7 +3,7 @@ import { IOtpEntity } from "../../../domain/entities/IOtpEntity";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
 import { ITempUserStore, ITempUserData } from "../../../domain/interfaces/services/ITempUserStore";
 import { injectable, inject } from "tsyringe";
-import { ISendEmailOtpUseCase } from "../../services/ISendEmailOtpUseCase"
+import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase"
 
 @injectable()
 export class SendEmailOtpUsecase implements ISendEmailOtpUseCase {

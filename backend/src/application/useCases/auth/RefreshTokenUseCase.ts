@@ -4,7 +4,7 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { IRefreshTokenUseCase } from "../../services/IRefreshTokenUseCase";
+import { IRefreshTokenUseCase } from "../../interface/auth/IRefreshTokenUseCase";
 
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {

@@ -3,7 +3,7 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserStore";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { IVerifyEmailUseCase } from "../../services/IVerifyEmailUseCase";
+import { IVerifyEmailUseCase } from "../../interface/auth/IVerifyEmailUseCase";
 import { injectable, inject } from "tsyringe";
 
 @injectable()
@@ -39,7 +39,7 @@ export class VerifyEmailUseCase implements IVerifyEmailUseCase {
     })
 
 
-    await this.otpRepo.markAsUsed(otp.id!);
+    await this.otpRepo.markAsUsed(otp._id!.toString());
     await this.tempUserStore.delete(email);
   }
 }

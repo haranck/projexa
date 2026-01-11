@@ -5,7 +5,7 @@ import { IGoogleAuthService } from "../../../domain/interfaces/services/IGoogleA
 import {
   IGoogleLoginUseCase,
   IGoogleLoginResult,
-} from "../../services/IGoogleLoginUseCase";
+} from "../../interface/auth/IGoogleLoginUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 
@@ -23,7 +23,7 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     let user = await this.userRepo.findByEmail(googleUser.email);
 
     if (!user) {
-      user = await this.userRepo.createUser({
+      await this.userRepo.createUser({
         firstName: googleUser.firstName,
         lastName: googleUser.lastName,
         email: googleUser.email,
@@ -33,8 +33,9 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
         createdAt: new Date(),
         updatedAt: new Date(),
       });
+      user = await this.userRepo.findByEmail(googleUser.email);
     }
-    if (!user.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
+    if (!user?.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
 
     const payload = {
       userId: user.id,

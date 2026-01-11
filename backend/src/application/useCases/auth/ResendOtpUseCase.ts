@@ -1,7 +1,7 @@
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserStore";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
-import { IResendOtpUseCase } from "../../services/IResendOtpUseCase";
+import { IResendOtpUseCase } from "../../interface/auth/IResendOtpUseCase";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { injectable, inject } from "tsyringe";
 
@@ -24,7 +24,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
 
         const ttlSeconds = 2 * 60
 
-        await this.otpRepository.create({
+        await this.otpRepository.createOtp({
             userId: email,
             code: otpCode,
             expiresAt: new Date(Date.now() + ttlSeconds * 1000),

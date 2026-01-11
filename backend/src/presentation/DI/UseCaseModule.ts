@@ -1,26 +1,28 @@
 import { container } from "tsyringe";
-import { IRegisterUserUseCase } from "../../application/services/IRegisterUserUseCase";
+import { IRegisterUserUseCase } from "../../application/interface/auth/IRegisterUserUseCase";
 import { RegisterUserUseCase } from "../../application/useCases/auth/RegisterUserUseCase";
-import { ISendEmailOtpUseCase } from "../../application/services/ISendEmailOtpUseCase";
+import { ISendEmailOtpUseCase } from "../../application/interface/auth/ISendEmailOtpUseCase";
 import { SendEmailOtpUsecase } from "../../application/useCases/auth/SendEmailOtpUseCase";
-import { IVerifyEmailUseCase } from "../../application/services/IVerifyEmailUseCase";
+import { IVerifyEmailUseCase } from "../../application/interface/auth/IVerifyEmailUseCase";
 import { VerifyEmailUseCase } from "../../application/useCases/auth/VerifyEmailUseCase";
-import { ILoginUserUseCase } from "../../application/services/ILoginUserUseCase";
+import { ILoginUserUseCase } from "../../application/interface/auth/ILoginUserUseCase";
 import { LoginUserUseCase } from "../../application/useCases/auth/LoginUserUseCase";
-import { ILogoutUseCase } from "../../application/services/ILogoutUseCase";
+import { ILogoutUseCase } from "../../application/interface/auth/ILogoutUseCase";
 import { LogoutUseCase } from "../../application/useCases/auth/LogoutUseCase";
-import { IResendOtpUseCase } from "../../application/services/IResendOtpUseCase";
+import { IResendOtpUseCase } from "../../application/interface/auth/IResendOtpUseCase";
 import { ResendOtpUseCase } from "../../application/useCases/auth/ResendOtpUseCase";
-import { IForgotPasswordUseCase } from "../../application/services/IForgotPasswordUseCase";
+import { IForgotPasswordUseCase } from "../../application/interface/auth/IForgotPasswordUseCase";
 import { ForgotPasswordUseCase } from "../../application/useCases/auth/ForgotPasswordUseCase";
-import { IVerifyResetOtpUseCase } from "../../application/services/IVerifyResetOtpUseCase";
+import { IVerifyResetOtpUseCase } from "../../application/interface/auth/IVerifyResetOtpUseCase";
 import { VerifyResetOtpUseCase } from "../../application/useCases/auth/VerifyResetOtpUseCase";
-import { IResetPasswordUseCase } from "../../application/services/IResetPasswordUseCase";
+import { IResetPasswordUseCase } from "../../application/interface/auth/IResetPasswordUseCase";
 import { ResetPasswordUseCase } from "../../application/useCases/auth/ResetPasswordUseCase";
 import { GoogleLoginUseCase } from "../../application/useCases/auth/GoogleLoginUseCase";
-import { IGoogleLoginUseCase } from "../../application/services/IGoogleLoginUseCase";
-import { IRefreshTokenUseCase } from "../../application/services/IRefreshTokenUseCase";
+import { IGoogleLoginUseCase } from "../../application/interface/auth/IGoogleLoginUseCase";
+import { IRefreshTokenUseCase } from "../../application/interface/auth/IRefreshTokenUseCase";
 import { RefreshTokenUseCase } from "../../application/useCases/auth/RefreshTokenUseCase";
+import { IAdminLoginUseCase } from "../../application/interface/admin/IAdminLoginUseCase";
+import { AdminLoginUseCase } from "../../application/useCases/admin/AdminLoginUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -69,6 +71,8 @@ export class UseCaseModule {
             useClass: RefreshTokenUseCase
         })
 
-
+        container.register<IAdminLoginUseCase>('IAdminLoginUseCase',{
+            useClass:AdminLoginUseCase
+        })
     }
 }

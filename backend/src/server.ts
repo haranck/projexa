@@ -7,6 +7,7 @@ import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import authRoutes from "./presentation/routes/auth.routes";
+import adminRoutes from "./presentation/routes/admin.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
 
 const app = express();
@@ -23,6 +24,7 @@ app.use(
 app.use(express.json());
 
 app.use(process.env.AUTH_API_PREFIX as string, authRoutes);
+app.use(process.env.ADMIN_API_PREFIX as string, adminRoutes);
 
 const startServer = async    () => {
   await connectMongoDB();

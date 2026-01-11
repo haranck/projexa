@@ -1,6 +1,6 @@
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
-import { IVerifyResetOtpUseCase } from "../../services/IVerifyResetOtpUseCase";
+import { IVerifyResetOtpUseCase } from "../../interface/auth/IVerifyResetOtpUseCase";
 import { VerifyResetOtpDTO } from "../../dtos/auth/requestDTOs/VerifyResetOtpDTO";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";

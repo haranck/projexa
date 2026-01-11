@@ -1,15 +1,15 @@
 import { Request, Response, NextFunction } from "express";
 import { injectable, inject } from "tsyringe";
-import { IForgotPasswordUseCase } from "../../application/services/IForgotPasswordUseCase";
-import { IGoogleLoginUseCase } from "../../application/services/IGoogleLoginUseCase"
-import { ILoginUserUseCase } from "../../application/services/ILoginUserUseCase";
-import { ILogoutUseCase } from "../../application/services/ILogoutUseCase";
-import { IRefreshTokenUseCase } from "../../application/services/IRefreshTokenUseCase";
-import { IRegisterUserUseCase } from "../../application/services/IRegisterUserUseCase";
-import { IResendOtpUseCase } from "../../application/services/IResendOtpUseCase";
-import { IResetPasswordUseCase } from "../../application/services/IResetPasswordUseCase";
-import { IVerifyEmailUseCase } from "../../application/services/IVerifyEmailUseCase";
-import { IVerifyResetOtpUseCase } from "../../application/services/IVerifyResetOtpUseCase";
+import { IForgotPasswordUseCase } from "../../application/interface/auth/IForgotPasswordUseCase";
+import { IGoogleLoginUseCase } from "../../application/interface/auth/IGoogleLoginUseCase"
+import { ILoginUserUseCase } from "../../application/interface/auth/ILoginUserUseCase";
+import { ILogoutUseCase } from "../../application/interface/auth/ILogoutUseCase";
+import { IRefreshTokenUseCase } from "../../application/interface/auth/IRefreshTokenUseCase";
+import { IRegisterUserUseCase } from "../../application/interface/auth/IRegisterUserUseCase";
+import { IResendOtpUseCase } from "../../application/interface/auth/IResendOtpUseCase";
+import { IResetPasswordUseCase } from "../../application/interface/auth/IResetPasswordUseCase";
+import { IVerifyEmailUseCase } from "../../application/interface/auth/IVerifyEmailUseCase";
+import { IVerifyResetOtpUseCase } from "../../application/interface/auth/IVerifyResetOtpUseCase";
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
 import { HTTP_STATUS } from "../../domain/constants/httpStatus";

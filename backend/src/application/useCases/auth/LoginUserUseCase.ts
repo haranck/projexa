@@ -5,7 +5,7 @@ import { LoginUserDTO } from "../../dtos/auth/requestDTOs/LoginUserDTO";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { ILoginUserUseCase } from "../../services/ILoginUserUseCase";
+import { ILoginUserUseCase } from "../../interface/auth/ILoginUserUseCase";
 import { injectable, inject } from "tsyringe";
 
 @injectable()

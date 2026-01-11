@@ -2,7 +2,7 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { ResetPasswordDTO } from "../../dtos/auth/requestDTOs/ResetPasswordDTO";
-import { IResetPasswordUseCase } from "../../services/IResetPasswordUseCase";
+import { IResetPasswordUseCase } from "../../interface/auth/IResetPasswordUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { injectable, inject } from "tsyringe";

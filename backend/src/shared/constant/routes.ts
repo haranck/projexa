@@ -12,5 +12,7 @@ export const ROUTES = {
         REFRESH_TOKEN: "/refresh-token",
     },
     USERS: {},
-    ADMIN: {}
+    ADMIN: {
+        LOGIN: "/login"
+    }
 };
