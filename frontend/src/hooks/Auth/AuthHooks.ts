@@ -8,7 +8,8 @@ import {
     forgotPassword,
     resetPassword,
     verifyResetOtp,
-    logoutUser
+    logoutUser,
+    adminLogin
 } from "../../services/Auth/authService";
 
 export const useUserSignUp = () => {
@@ -65,3 +66,8 @@ export const useUserLogout = () => {
     });
 }
 
+export const useAdminLogin = () => {
+    return useMutation({
+        mutationFn:adminLogin
+    })
+} 

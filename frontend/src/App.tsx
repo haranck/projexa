@@ -1,4 +1,5 @@
 import UserRoutes from './routes/user/UserRoutes'
+import AdminRoutes from './routes/admin/AdminRoutes'
 import { Toaster } from 'react-hot-toast'
 import { CheckCircle2, XCircle } from 'lucide-react'
 
@@ -38,6 +39,7 @@ export const App = () => {
         }}
       />
       <UserRoutes />
+      <AdminRoutes />
     </>
   )
 }

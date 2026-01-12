@@ -87,7 +87,7 @@ const FeaturesSection = () => {
             <div className="space-y-8">
               <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
                 Transform the Way Your{" "}
-                <span className="text-[#3b82f6] bg-gradient-to-r from-blue-500 to-purple-600 bg-clip-text text-transparent">
+                <span className="text-[#3b82f6] bg-linear-to-br from-blue-500 to-purple-600 bg-clip-text text-transparent">
                   Team
                 </span>{" "}
                 Works

@@ -1,6 +1,6 @@
-import DashboardLayout from "@/components/Layout/DashboardLayout";
+import DashboardLayout from "../../../components/Layout/DashboardLayout";
 
-export const ProjectsPage = () => {
+export const ProjectsPage = () => { 
     return (
         <DashboardLayout>
             <div className="p-8">

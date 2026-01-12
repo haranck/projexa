@@ -49,7 +49,6 @@ export const ForgotPasswordForm = ({ onSubmit, loading }: ForgotPasswordFormProp
             type="submit"
             disabled={loading}
             className="w-full h-12 bg-transparent hover:bg-blue-500/10 text-blue-400 font-bold rounded-xl transition-all border border-blue-500/50 shadow-[0_0_12px_rgba(59,130,246,0.6)] hover:shadow-[0_0_24px_rgba(59,130,246,1)]"
-
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin" />

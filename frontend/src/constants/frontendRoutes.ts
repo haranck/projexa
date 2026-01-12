@@ -16,4 +16,8 @@ export const FRONTEND_ROUTES = {
   PAYMENTS: '/payments',
   BACKLOG: '/backlog',
   BOARD: '/board',
+
+  //Admin Routes
+  ADMIN_LOGIN: '/admin/login',
+  ADMIN_DASHBOARD: '/admin/dashboard',
 };

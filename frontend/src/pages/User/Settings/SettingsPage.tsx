@@ -1,7 +1,7 @@
-import DashboardLayout from "@/components/Layout/DashboardLayout";
+import DashboardLayout from "../../../components/Layout/DashboardLayout";
 
 export const SettingsPage = () => {
-    return (
+    return (    
         <DashboardLayout>
             <div className="p-8">
                 <h1 className="text-3xl font-bold text-white mb-4">Settings</h1>

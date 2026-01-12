@@ -11,4 +11,8 @@ export const API_ROUTES = {
     REFRESH_TOKEN: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
   },
+  ADMIN:{
+    LOGIN:"/admin/login",
+    LOGOUT:"/admin/logout"
+  }
 };
