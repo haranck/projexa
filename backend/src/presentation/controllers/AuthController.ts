@@ -160,12 +160,16 @@ export class AuthController {
     }
   };
 
-  logout = async (req: Request, res: Response): Promise<void> => {
-    const token = req.headers.authorization?.split(" ")[1];
-    if (token) {
-      await this.logoutUseCase.execute(token);
+  logout = async (req: Request, res: Response , next:NextFunction): Promise<void> => {
+    try {
+      const token = req.headers.authorization?.split(" ")[1];
+      if (token) {
+        await this.logoutUseCase.execute(token);
+      }
+      res.clearCookie("refreshToken");
+      res.json({ message: MESSAGES.USERS.LOGOUT_SUCCESS });
+    } catch (error) {
+      next(error)
     }
-    res.clearCookie("refreshToken");
-    res.json({ message: MESSAGES.USERS.LOGOUT_SUCCESS });
   };
 }

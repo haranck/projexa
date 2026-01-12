@@ -16,6 +16,7 @@ export class AuthMiddleware {
     @inject('IJwtService') private readonly jwtService: IJwtService,
     @inject('ITokenBlacklistRepository') private readonly blacklistRepo: ITokenBlacklistRepository
   ) { }
+
   authenticate = async (
     req: AuthRequest,
     res: Response,
@@ -32,6 +33,7 @@ export class AuthMiddleware {
       const token = authHeader.split(" ")[1];
 
       const isBlacklisted = await this.blacklistRepo.isBlacklisted(token);
+
       if (isBlacklisted) {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.TOKEN_REVOKED });
         return;
@@ -44,7 +46,6 @@ export class AuthMiddleware {
       }
 
       req.user = payload;
-      
       next();
 
     } catch (error) {

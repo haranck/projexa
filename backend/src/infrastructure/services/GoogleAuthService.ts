@@ -1,5 +1,6 @@
 import { OAuth2Client } from "google-auth-library";
 import { IGoogleAuthService } from "../../domain/interfaces/services/IGoogleAuthService";
+import logger from "../../config/logger";
 
 export class GoogleAuthService implements IGoogleAuthService {
 
@@ -14,7 +15,7 @@ export class GoogleAuthService implements IGoogleAuthService {
             });
             if (!response.ok) {
                 const text = await response.text();
-                console.error('Failed to fetch user info from Google:', response.status, response.statusText, text);
+                logger.error('Failed to fetch user info from Google:', response.status, response.statusText, text);
                 return null;
             }
             const payload = await response.json();
@@ -28,7 +29,7 @@ export class GoogleAuthService implements IGoogleAuthService {
                 avatarUrl: payload.picture
             };
         } catch (error) {
-            console.error('Error verifying Google token:', error);
+            logger.error('Error verifying Google token:', error);
             return null;
         }
     }

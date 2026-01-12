@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import { IJwtService } from '../../domain/interfaces/services/IJwtService'
 import { JwtPayload } from '../../domain/entities/IJwtPayload'
+import { ERROR_MESSAGES } from '../../domain/constants/errorMessages'
 
 export class JwtService implements IJwtService {
     private ACCESS_SECRET: string
@@ -11,7 +12,7 @@ export class JwtService implements IJwtService {
         const refresh = process.env.JWT_REFRESH_SECRET
 
         if (!access || !refresh) {
-            throw new Error('Missing JWT secrets: set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET')
+            throw new Error(ERROR_MESSAGES.JWT_SECRET_MISSING)
         }
 
         this.ACCESS_SECRET = access
@@ -30,7 +31,7 @@ export class JwtService implements IJwtService {
         try {
             return jwt.verify(token, this.ACCESS_SECRET) as JwtPayload
         } catch {
-            return null
+            throw new Error(ERROR_MESSAGES.INVALID_TOKEN)
         }
     }
 
@@ -38,7 +39,7 @@ export class JwtService implements IJwtService {
         try {
             return jwt.verify(token, this.REFRESH_SECRET) as JwtPayload
         } catch {
-            return null
+            throw new Error(ERROR_MESSAGES.INVALID_TOKEN)
         }
     }
 }

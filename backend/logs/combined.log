@@ -114,3 +114,19 @@
   "email": "melvin@gmail.com",
   "userId": "6962350b7cc8a6690fb1ee8b"
 }
+2026-01-12T07:59:54.280Z [info]: Login successful {
+  "email": "melvin@gmail.com",
+  "userId": "6962350b7cc8a6690fb1ee8b"
+}
+2026-01-12T08:07:56.020Z [error]: Login failed {
+  "email": "harankrishna03@gmail.com",
+  "error": "Invalid email or password"
+}
+2026-01-12T08:09:24.840Z [info]: Login successful {
+  "email": "melvin@gmail.com",
+  "userId": "6962350b7cc8a6690fb1ee8b"
+}
+2026-01-12T08:09:31.250Z [info]: Login successful {
+  "email": "melvin@gmail.com",
+  "userId": "6962350b7cc8a6690fb1ee8b"
+}

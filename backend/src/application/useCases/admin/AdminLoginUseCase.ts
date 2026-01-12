@@ -24,9 +24,11 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
         }
 
         const accessToken = this.jwtService.signAccessToken(payload);
+        const refreshToken = this.jwtService.signRefreshToken(payload)
 
         return {
             accessToken,
+            refreshToken,
             admin: {
                 id: 'ADMIN',
                 email: process.env.ADMIN_EMAIL,

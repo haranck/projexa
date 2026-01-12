@@ -2,3 +2,7 @@
   "email": "melvin@gmail.com",
   "error": "Invalid email or password"
 }
+2026-01-12T08:07:56.020Z [error]: Login failed {
+  "email": "harankrishna03@gmail.com",
+  "error": "Invalid email or password"
+}

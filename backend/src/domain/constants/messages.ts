@@ -16,6 +16,8 @@ export const MESSAGES = {
     ADMIN: {
         VERIFIED_USER: "User verified successfully by admin.",
         UPDATE_STATUS: "User status updated",
+        LOGIN_SUCCESS: 'Admin Logged in Successfully',
+        LOGOUT_SUCCESS: 'Admin Logged out Successfully',
     },
 
     OTP: {

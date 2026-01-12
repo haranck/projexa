@@ -13,6 +13,7 @@ export const ROUTES = {
     },
     USERS: {},
     ADMIN: {
-        LOGIN: "/login"
+        LOGIN: "/login",
+        LOGOUT:"/logout"
     }
 };

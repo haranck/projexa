@@ -23,6 +23,8 @@ import { IRefreshTokenUseCase } from "../../application/interface/auth/IRefreshT
 import { RefreshTokenUseCase } from "../../application/useCases/auth/RefreshTokenUseCase";
 import { IAdminLoginUseCase } from "../../application/interface/admin/IAdminLoginUseCase";
 import { AdminLoginUseCase } from "../../application/useCases/admin/AdminLoginUseCase";
+import { IAdminLogoutUseCase } from "../../application/interface/admin/IAdminLogoutUseCase";
+import { AdminLogoutUseCase } from "../../application/useCases/admin/AdminLogoutUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -73,6 +75,10 @@ export class UseCaseModule {
 
         container.register<IAdminLoginUseCase>('IAdminLoginUseCase',{
             useClass:AdminLoginUseCase
+        })
+
+        container.register<IAdminLogoutUseCase>('IAdminLogoutUseCase',{
+            useClass: AdminLogoutUseCase
         })
     }
 }
