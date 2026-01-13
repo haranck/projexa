@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form'
+import axios from 'axios'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { toast } from 'react-hot-toast';
 import { adminLoginSchema, type AdminLoginSchemaType } from "../../lib/validations/adminLogin.schema";
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
-import { useAdminLogin } from '../../hooks/Auth/AuthHooks';
+import { useAdminLogin } from '../../hooks/Admin/AdminHooks';
 import { useNavigate } from 'react-router-dom';
 import { setAccessToken } from '../../store/slice/tokenSlice';
 import { useDispatch } from 'react-redux';
@@ -38,9 +39,15 @@ export const AdminLoginForm = () => {
                     navigate(FRONTEND_ROUTES.ADMIN_DASHBOARD)
                 }
             },
-            onError: (error) => {
+            onError: (error: unknown) => {
                 console.error("Admin Login Failed:", error)
-                toast.error(ERROR_MESSAGES.INVALID_CREDENTIALS)
+                let errorMessage = ERROR_MESSAGES.INVALID_CREDENTIALS;
+
+                if (axios.isAxiosError(error)) {
+                    errorMessage = error.response?.data?.message || errorMessage;
+                }
+
+                toast.error(errorMessage)
             }
         })
     }

@@ -20,4 +20,6 @@ export const FRONTEND_ROUTES = {
   //Admin Routes
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
+  ADMIN_LOGOUT:'/admin/logout',
+  ADMIN_USERS:'/admin/users'
 };

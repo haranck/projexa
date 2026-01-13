@@ -7,6 +7,7 @@ import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { ILoginUserUseCase } from "../../interface/auth/ILoginUserUseCase";
 import { injectable, inject } from "tsyringe";
+import { env } from "node:process";
 
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
@@ -17,6 +18,9 @@ export class LoginUserUseCase implements ILoginUserUseCase {
   ) { }
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
+
+    if (dto.email === env.ADMIN_EMAIL) throw new Error(ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED);
+
     const user = await this.userRepo.findByEmail(dto.email);
 
     if (!user) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
@@ -36,7 +40,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     const accessToken = this.jwtService.signAccessToken(payload);
     const refreshToken = this.jwtService.signRefreshToken(payload);
-
+    
     return {
       accessToken,
       refreshToken,
@@ -47,6 +51,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
         email: user.email,
         isEmailVerified: user.isEmailVerified,
       },
-    };
+    };  
   }
 }

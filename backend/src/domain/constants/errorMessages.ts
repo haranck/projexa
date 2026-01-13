@@ -34,12 +34,13 @@ export const ERROR_MESSAGES = {
     REFRESH_TOKEN_SECRETKEY_MISSING: "Refresh token secret key not found",
     UPLOAD_ERROR: "Error while uploading",
     NOT_AUTHORIZED: "Your are not authorized !",
-    INVALID_GOOGLE_TOKEN :"Invalid Google Token",
+    INVALID_GOOGLE_TOKEN: "Invalid Google Token",
     UNAUTHORIZED: "Unauthorized",
     TOKEN_REVOKED: "Token is revoked",
     AUTHENTICATION_FAILED: "Authentication failed",
     GOOGLE_LOGIN_FAILED: "Google login failed",
-    JWT_SECRET_MISSING: 'Missing JWT secrets: set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET'
+    JWT_SECRET_MISSING: 'Missing JWT secrets: set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET',
+    ADMIN_LOGIN_NOT_ALLOWED : 'Admin login not allowed'
 };
 
 export const USER_ERRORS = {

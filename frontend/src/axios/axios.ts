@@ -37,6 +37,7 @@ AxiosInstance.interceptors.response.use(
           store.dispatch(setAccessToken(accessToken));
 
           originalRequest.headers.Authorization = `Bearer ${accessToken}`;
+
           return AxiosInstance(originalRequest);
         }
       } catch (refreshError) {

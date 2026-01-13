@@ -23,10 +23,10 @@ app.use(
 
 app.use(express.json());
 
-app.use(process.env.AUTH_API_PREFIX as string, authRoutes);
-app.use(process.env.ADMIN_API_PREFIX as string, adminRoutes);
+app.use(env.AUTH_API_PREFIX, authRoutes);
+app.use(env.ADMIN_API_PREFIX, adminRoutes);
 
-const startServer = async    () => {
+const startServer = async () => {
   await connectMongoDB();
 
   app.listen(env.PORT, () => {
@@ -35,4 +35,3 @@ const startServer = async    () => {
 };
 
 startServer();
- 

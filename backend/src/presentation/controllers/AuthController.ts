@@ -77,18 +77,17 @@ export class AuthController {
         sameSite: "strict",
         maxAge: 7 * 24 * 60 * 60 * 1000
       });
-      logger.info("Login successful", {
-        email: dto.email,
-        userId: response.user.id,
-      });
+      logger.info("Login successful", response);
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
-    } catch (err) {
-      logger.error("Login failed", {
-        email: req.body.email,
-        error: err instanceof Error ? err.message : err,
-      });
-      res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.INVALID_CREDENTIALS });
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : ERROR_MESSAGES.INVALID_CREDENTIALS;
+      logger.error("Login failed", message);
+      let status = HTTP_STATUS.UNPROCESSABLE_ENTITY
+      if(message === ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED){
+        status =HTTP_STATUS.UNPROCESSABLE_ENTITY
+      }
+      res.status(status).json({ message });
     }
   };
 
@@ -160,7 +159,7 @@ export class AuthController {
     }
   };
 
-  logout = async (req: Request, res: Response , next:NextFunction): Promise<void> => {
+  logout = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
       const token = req.headers.authorization?.split(" ")[1];
       if (token) {

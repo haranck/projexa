@@ -16,4 +16,4 @@ router.post(ROUTES.AUTH.GOOGLE_LOGIN, authController.googleLogin)
 router.post(ROUTES.AUTH.REFRESH_TOKEN, authController.refreshToken)
 
 
-export default router; 
+export default router;

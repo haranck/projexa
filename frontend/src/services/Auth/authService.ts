@@ -22,10 +22,6 @@ interface loginPayload {
   email: string
   password: string
 }
-interface adminLoginPayload {
-  email: string
-  password: string
-}
 interface googleLoginPayload {
   idToken: string
 }
@@ -77,10 +73,5 @@ export const verifyResetOtp = async (data: verifyOtpPayload) => {
 
 export const logoutUser = async () => {
   const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGOUT);
-  return response.data;
-}
-
-export const adminLogin = async (data: adminLoginPayload) => {
-  const response = await AxiosInstance.post(API_ROUTES.ADMIN.LOGIN, data);
   return response.data;
 }
