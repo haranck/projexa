@@ -1,4 +1,4 @@
-import { IUserEntity } from "../../domain/entities/IUserEntity";
+import { IUserEntity } from "../../../domain/entities/IUserEntity";
 
 export interface IGoogleLoginResult {
     accessToken: string;
