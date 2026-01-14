@@ -5,4 +5,6 @@ export interface IUserRepository {
   findById(id: string): Promise<IUserEntity | null>;
   createUser(user: IUserEntity): Promise<IUserEntity>;
   updatePassword(userId: string, hashedPassword: string): Promise<void>;
+  blockUser(userId: string): Promise<void>;
+  unblockUser(userId: string): Promise<void>;
 }

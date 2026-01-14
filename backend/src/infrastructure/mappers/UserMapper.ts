@@ -11,6 +11,7 @@ export class UserMapper {
       phone: doc.phone,
       password: doc.password,
       avatarUrl: doc.avatarUrl,
+      isBlocked: doc.isBlocked,
       isEmailVerified: doc.isEmailVerified,
       lastSeenAt: doc.lastSeenAt,
       createdAt: doc.createdAt,

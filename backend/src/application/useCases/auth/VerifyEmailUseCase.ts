@@ -33,6 +33,7 @@ export class VerifyEmailUseCase implements IVerifyEmailUseCase {
       password: tempUser.password,
       phone: tempUser.phone,
       avatarUrl: tempUser.avatarUrl,
+      isBlocked: false,
       isEmailVerified: true,
       createdAt: new Date(),
       updatedAt: new Date()

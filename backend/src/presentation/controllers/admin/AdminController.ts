@@ -5,12 +5,16 @@ import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
 import { IAdminLogoutUseCase } from "../../../application/interface/admin/IAdminLogoutUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { MESSAGES } from "../../../domain/constants/messages";
+import { IBlockUserUseCase } from "../../../application/interface/admin/IBlockUserUseCase";
+import { IUnblockUserUseCase } from "../../../application/interface/admin/IUnblockUserUseCase";
 
 @injectable()
 export class AdminController {
     constructor(
         @inject('IAdminLoginUseCase') private adminLoginUseCase:IAdminLoginUseCase,
-        @inject("IAdminLogoutUseCase") private adminLogoutUseCase:IAdminLogoutUseCase
+        @inject("IAdminLogoutUseCase") private adminLogoutUseCase:IAdminLogoutUseCase,
+        @inject('IBlockUserUseCase') private blockUserUseCase : IBlockUserUseCase,
+        @inject('IUnblockUserUseCase') private unblockUserUseCase : IUnblockUserUseCase
     ){}
 
     adminLogin = async(req:Request,res:Response,next:NextFunction):Promise<void> =>{
@@ -30,6 +34,24 @@ export class AdminController {
             res.clearCookie("refreshToken")
             res.json({message:MESSAGES.USERS.LOGOUT_SUCCESS})
 
+        } catch (error) {
+            next(error)
+        }
+    }
+    blockUser = async(req:Request,res:Response,next:NextFunction):Promise<void> =>{
+        try {
+            const {userId} = req.params;
+            await this.blockUserUseCase.execute(userId) 
+            res.json({message:MESSAGES.ADMIN.BLOCK_USER_SUCCESS})
+        } catch (error) {
+            next(error)
+        }
+    }
+    unblockUser = async(req:Request,res:Response,next:NextFunction):Promise<void> =>{
+        try {
+            const {userId} = req.params;
+            await this.unblockUserUseCase.execute(userId) 
+            res.json({message:MESSAGES.ADMIN.UNBLOCK_USER_SUCCESS})
         } catch (error) {
             next(error)
         }

@@ -14,6 +14,8 @@ export const ROUTES = {
     USERS: {},
     ADMIN: {
         LOGIN: "/login",
-        LOGOUT:"/logout"
+        LOGOUT:"/logout",
+        BLOCK_USER:"/block-user/:userId",
+        UNBLOCK_USER:"/unblock-user/:userId"
     }
 };

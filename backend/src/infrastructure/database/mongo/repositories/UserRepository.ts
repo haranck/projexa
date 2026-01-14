@@ -7,7 +7,7 @@ import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
 
 export class UserRepository
   extends BaseRepo<IUserEntity>
-  implements IUserRepository {  
+  implements IUserRepository {
   constructor() {
     super(UserModel);
   }
@@ -31,6 +31,7 @@ export class UserRepository
       phone: user.phone,
       avatarUrl: user.avatarUrl,
       isEmailVerified: user.isEmailVerified,
+      isBlocked: user.isBlocked,
       lastSeenAt: user.lastSeenAt,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
@@ -44,6 +45,18 @@ export class UserRepository
   async updatePassword(userId: string, hashedPassword: string): Promise<void> {
     await UserModel.findByIdAndUpdate(userId, {
       password: hashedPassword,
+      updatedAt: new Date(),
+    });
+  }
+  async blockUser(userId: string): Promise<void> {
+    await UserModel.findByIdAndUpdate(userId, {
+      isBlocked: true,
+      updatedAt: new Date(),
+    });
+  }
+  async unblockUser(userId: string): Promise<void> {
+    await UserModel.findByIdAndUpdate(userId, {
+      isBlocked: false,
       updatedAt: new Date(),
     });
   }

@@ -9,6 +9,7 @@ export interface IUserEntity {
   phone?: string;
   password: string;
   avatarUrl?: string;
+  isBlocked:boolean;
   isEmailVerified: boolean;
   lastSeenAt?: Date;
   createdAt: Date;

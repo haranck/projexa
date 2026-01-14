@@ -25,6 +25,10 @@ import { IAdminLoginUseCase } from "../../application/interface/admin/IAdminLogi
 import { AdminLoginUseCase } from "../../application/useCases/admin/AdminLoginUseCase";
 import { IAdminLogoutUseCase } from "../../application/interface/admin/IAdminLogoutUseCase";
 import { AdminLogoutUseCase } from "../../application/useCases/admin/AdminLogoutUseCase";
+import { IBlockUserUseCase } from "../../application/interface/admin/IBlockUserUseCase";
+import { IUnblockUserUseCase } from "../../application/interface/admin/IUnblockUserUseCase";
+import { UnblockUserUseCase } from "../../application/useCases/admin/UnblockUserUseCase";
+import { BlockUserUseCase } from "../../application/useCases/admin/BlockUserUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -73,12 +77,22 @@ export class UseCaseModule {
             useClass: RefreshTokenUseCase
         })
 
+        /*--------------------- Admin UseCases ---------------------*/
+
         container.register<IAdminLoginUseCase>('IAdminLoginUseCase',{
             useClass:AdminLoginUseCase
         })
 
         container.register<IAdminLogoutUseCase>('IAdminLogoutUseCase',{
             useClass: AdminLogoutUseCase
+        })
+
+        container.register<IBlockUserUseCase>('IBlockUserUseCase',{
+            useClass:BlockUserUseCase
+        })
+
+        container.register<IUnblockUserUseCase>('IUnblockUserUseCase',{
+            useClass:UnblockUserUseCase
         })
     }
 }

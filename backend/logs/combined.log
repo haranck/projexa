@@ -109,3 +109,26 @@
 2026-01-13T16:27:16.604Z [error]: Login failed 
 2026-01-13T16:28:18.250Z [error]: Login failed 
 2026-01-13T16:30:00.475Z [error]: Login failed 
+2026-01-13T19:40:28.048Z [error]: Login failed 
+2026-01-13T19:41:30.859Z [info]: Login successful {
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTY2OWZlNmIzNTVhMzExYjM3ZWVlYTkiLCJlbWFpbCI6InBhdml0aHJhQGdtYWlsLmNvbSIsImlhdCI6MTc2ODMzMzI5MCwiZXhwIjoxNzY4MzM1MDkwfQ.WMeVt33P7CCar-3lPWf4V1fzsi4tC5JLWgKZSF-8Kwk",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTY2OWZlNmIzNTVhMzExYjM3ZWVlYTkiLCJlbWFpbCI6InBhdml0aHJhQGdtYWlsLmNvbSIsImlhdCI6MTc2ODMzMzI5MCwiZXhwIjoxNzY4OTM4MDkwfQ.D8ztJGkO0B0QKugsUEZxbnnWpYK_X28RrmScOLza2I0",
+  "user": {
+    "id": "69669fe6b355a311b37eeea9",
+    "firstName": "Pavithra",
+    "lastName": "AP",
+    "email": "pavithra@gmail.com",
+    "isEmailVerified": true
+  }
+}
+2026-01-13T19:46:48.868Z [info]: Login successful {
+  "accessToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTY2YTEyNDJhZWJiNzEyZTY0MGU4MjkiLCJlbWFpbCI6InBhdml0aHJhQGdtYWlsLmNvbSIsImlhdCI6MTc2ODMzMzYwOCwiZXhwIjoxNzY4MzM1NDA4fQ.WHqgU-6sEj0TQvnkAaHcInbiX6AxtMdTIsSFd6nruhI",
+  "refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2OTY2YTEyNDJhZWJiNzEyZTY0MGU4MjkiLCJlbWFpbCI6InBhdml0aHJhQGdtYWlsLmNvbSIsImlhdCI6MTc2ODMzMzYwOCwiZXhwIjoxNzY4OTM4NDA4fQ.8QJslKKQuoavLbRHCgqu2o0HHyGDF83rGaCUJUF0aL4",
+  "user": {
+    "id": "6966a1242aebb712e640e829",
+    "firstName": "Pavithra",
+    "lastName": "AP",
+    "email": "pavithra@gmail.com",
+    "isEmailVerified": true
+  }
+}

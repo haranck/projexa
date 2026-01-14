@@ -29,6 +29,7 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
         email: googleUser.email,
         password: "",
         avatarUrl: googleUser.avatarUrl,
+        isBlocked: false,
         isEmailVerified: true,
         createdAt: new Date(),
         updatedAt: new Date(),

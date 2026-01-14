@@ -18,6 +18,8 @@ export const MESSAGES = {
         UPDATE_STATUS: "User status updated",
         LOGIN_SUCCESS: 'Admin Logged in Successfully',
         LOGOUT_SUCCESS: 'Admin Logged out Successfully',
+        BLOCK_USER_SUCCESS: "User blocked successfully",
+        UNBLOCK_USER_SUCCESS: "User unblocked successfully",
     },
 
     OTP: {
