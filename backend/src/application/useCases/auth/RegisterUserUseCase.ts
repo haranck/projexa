@@ -1,36 +1,32 @@
+import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { RegisterUserDTO } from "../../dtos/auth/requestDTOs/RegisterUserDTO";
-import { IUserEntity } from "../../../domain/entities/IUserEntity";
-import { SendEmailOtpUsecase } from "./SendEmailOtpUseCase";
+import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase";
+import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { IRegisterUserUseCase } from "../../interface/auth/IRegisterUserUseCase";
 
-export class RegisterUserUseCase {
+@injectable()
+export class RegisterUserUseCase implements IRegisterUserUseCase {
     constructor(
-        private userRepository:IUserRepository,
-        private passwordService:IPasswordService,
-        private sendEmailOtpUseCase:SendEmailOtpUsecase
-    ){}
+        @inject('IUserRepository') private userRepository: IUserRepository,
+        @inject('IPasswordService') private passwordService: IPasswordService,
+        @inject('ISendEmailOtpUseCase') private sendEmailOtpUseCase: ISendEmailOtpUseCase
+    ) { }
 
-    async execute (dto:RegisterUserDTO):Promise<IUserEntity>{
-        const existingUser =  await this.userRepository.findByEmail(dto.email)
-        if(existingUser){
-            throw new Error("User already exists")
+    async execute(dto: RegisterUserDTO): Promise<void> {
+        const existingUser = await this.userRepository.findByEmail(dto.email)
+        if (existingUser) {
+            throw new Error(USER_ERRORS.USER_ALREADY_EXISTS)
         }
         const hashedPassword = await this.passwordService.hash(dto.password)
 
-        const user:IUserEntity = {
-            firstName:dto.firstName,
-            lastName:dto.lastName,
-            email:dto.email,
-            password:hashedPassword,
-            phone:dto.phone,
-            isEmailVerified:false,
-            createdAt:new Date(),
-            updatedAt:new Date(),
-        }
-
-        const createdUser = await this.userRepository.create(user)
-        await this.sendEmailOtpUseCase.execute(createdUser.id!,createdUser.email)
-        return createdUser
+        await this.sendEmailOtpUseCase.execute({
+            firstName: dto.firstName,
+            lastName: dto.lastName,
+            email: dto.email,
+            phone: dto.phone,
+            password: hashedPassword,
+        })
     }
 }

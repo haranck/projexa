@@ -1,32 +1,46 @@
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
-import { VerifyEmailDTO } from "../../dtos/auth/requestDTOs/VerifyEmailDTO";
-import { IOtpService } from "../../../domain/interfaces/services/IOtpService";
+import { ITempUserStore } from "../../../domain/interfaces/services/ITempUserStore";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { IVerifyEmailUseCase } from "../../interface/auth/IVerifyEmailUseCase";
+import { injectable, inject } from "tsyringe";
 
-export class VerifyEmailUseCase {
+@injectable()
+export class VerifyEmailUseCase implements IVerifyEmailUseCase {
+
   constructor(
-    private otpRepo: IOtpRepository,
-    private userRepo: IUserRepository,
-    private otpService: IOtpService
-  ) {}
-  async execute(dto: VerifyEmailDTO): Promise<void> {
-    const user = await this.userRepo.findByEmail(dto.email);
+    @inject('IOtpRepository') private otpRepo: IOtpRepository,
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('ITempUserStore') private tempUserStore: ITempUserStore
+  ) { }
 
-    if (!user) throw new Error("User Not Found");
+  async execute(email: string, otpCode: string): Promise<void> {
+    const otp = await this.otpRepo.findValidOtp(email, otpCode)
 
-    if (!user.id) throw new Error("User id is missing");
+    if (!otp) {
+      throw new Error(ERROR_MESSAGES.INVALID_OTP)
+    }
+    const tempUser = await this.tempUserStore.get(email)
+    if (!tempUser) {
+      throw new Error(USER_ERRORS.USER_NOT_FOUND)
+    }
 
-    const otp = await this.otpRepo.findValidOtp(user.id);
+    await this.userRepo.createUser({
+      firstName: tempUser.firstName,
+      lastName: tempUser.lastName,
+      email: email,
+      password: tempUser.password,
+      phone: tempUser.phone,
+      avatarUrl: tempUser.avatarUrl,
+      isBlocked: false,
+      isEmailVerified: true,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    })
 
-    if (!otp) throw new Error("Invalid or expired OTP");
 
-    const isMatch = await this.otpService.compare(dto.otp, otp.code);
-    
-    if (!isMatch) throw new Error("Invalid or expired OTP");
-
-    if (!otp.id) throw new Error("OTP id is missing");
-
-    await this.otpRepo.markAsUsed(otp.id);
-    await this.userRepo.markEmailVerified(user.id);
+    await this.otpRepo.markAsUsed(otp._id!.toString());
+    await this.tempUserStore.delete(email);
   }
 }

@@ -1,28 +1,33 @@
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
-import { OtpEntity } from "../../../domain/entities/IOtpEntity";
+import { IOtpEntity } from "../../../domain/entities/IOtpEntity";
 import { IEmailService } from "../../../domain/interfaces/services/IEmailService";
-import { IOtpService } from "../../../domain/interfaces/services/IOtpService";
+import { ITempUserStore, ITempUserData } from "../../../domain/interfaces/services/ITempUserStore";
+import { injectable, inject } from "tsyringe";
+import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase"
 
-export class SendEmailOtpUsecase {
+@injectable()
+export class SendEmailOtpUsecase implements ISendEmailOtpUseCase {
   constructor(
-    private otpRepo: IOtpRepository,
-    private emailService: IEmailService,
-    private otpService: IOtpService
-  ) {}
+    @inject('IOtpRepository') private otpRepo: IOtpRepository,
+    @inject('IEmailService') private emailService: IEmailService,
+    @inject('ITempUserStore') private tempUserStore: ITempUserStore,
+  ) { }
 
-  async execute(userId: string, email: string): Promise<void> {
+  async execute(userData: ITempUserData): Promise<void> {
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+    const ttlSeconds = 10 * 60
 
-    const hashedOtp =await this.otpService.hash(otpCode)
 
-    const otp: OtpEntity = {
-      userId,
-      code: hashedOtp,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    await this.tempUserStore.save(userData.email, userData, ttlSeconds)
+
+    const otp: IOtpEntity = {
+      userId: userData.email,
+      code: otpCode,
+      expiresAt: new Date(Date.now() + 2 * 60 * 1000),
       isUsed: false,
       createdAt: new Date(),
     };
-    await this.otpRepo.create(otp); 
-    await this.emailService.sendOtp(email, otpCode);
+    await this.otpRepo.createOtp(otp);
+    await this.emailService.sendOtp(userData.email, otpCode);
   }
 }

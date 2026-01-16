@@ -9,6 +9,7 @@ export interface UserDocument extends Document {
   phone?: string;
   avatarUrl?: string;
   isEmailVerified: boolean;
+  isBlocked: boolean;
   lastSeenAt?: Date;
   createdAt: Date;
   updatedAt: Date;
@@ -21,6 +22,7 @@ const userSchema = new mongoose.Schema(
     email: { type: String, unique: true },
     password: String,
     phone: String,
+    isBlocked: Boolean,
     avatarUrl: String,
     isEmailVerified: Boolean,
     lastSeenAt: Date,

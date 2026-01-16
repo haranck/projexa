@@ -3,30 +3,35 @@ import { IPasswordService } from "../../../domain/interfaces/services/IPasswordS
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { LoginUserDTO } from "../../dtos/auth/requestDTOs/LoginUserDTO";
 import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO";
-import bcrypt from "bcrypt";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { ILoginUserUseCase } from "../../interface/auth/ILoginUserUseCase";
+import { injectable, inject } from "tsyringe";
+import { env } from "node:process";
 
-export class LoginUserUseCase {
+@injectable()
+export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
-    private userRepo: IUserRepository,
-    private passwordService: IPasswordService,
-    private jwtService: IJwtService
-  ) {}
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('IPasswordService') private passwordService: IPasswordService,
+    @inject('IJwtService') private jwtService: IJwtService
+  ) { }
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
+
+    if (dto.email === env.ADMIN_EMAIL) throw new Error(ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED);
+
     const user = await this.userRepo.findByEmail(dto.email);
 
-    if (!user) throw new Error("Invalid Credentials");
+    if (!user) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
-    if (!user.isEmailVerified) throw new Error("Email not Verified");
+    if (!user.isEmailVerified) throw new Error(USER_ERRORS.USER_EMAIL_NOT_VERIFIED);
 
-    const storedHash = (user as any).password || (user as any).passwordHash;
-    if (!storedHash) throw new Error("Invalid Credentials");
+    const isMatch = await this.passwordService.compare(dto.password, user.password);
 
-    const isMatch = await bcrypt.compare(dto.password, storedHash);
+    if (!isMatch) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
-    if (!isMatch) throw new Error("Invalid Credentials");
-
-    if (!user.id) throw new Error("User id Missing");
+    if (!user.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
 
     const payload = {
       userId: user.id,
@@ -35,7 +40,7 @@ export class LoginUserUseCase {
 
     const accessToken = this.jwtService.signAccessToken(payload);
     const refreshToken = this.jwtService.signRefreshToken(payload);
-
+    
     return {
       accessToken,
       refreshToken,
@@ -46,6 +51,6 @@ export class LoginUserUseCase {
         email: user.email,
         isEmailVerified: user.isEmailVerified,
       },
-    };
+    };  
   }
 }

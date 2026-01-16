@@ -1,35 +1,45 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import UserRoutes from './routes/user/UserRoutes'
+import AdminRoutes from './routes/admin/AdminRoutes'
+import { Toaster } from 'react-hot-toast'
+import { CheckCircle2, XCircle } from 'lucide-react'
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export const App = () => {
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <Toaster
+        position="top-right"
+        gutter={12}
+        toastOptions={{
+          duration: 2500,
+          style: {
+            background: "rgba(20, 20, 20, 0.8)", 
+            backdropFilter: "blur(12px)", 
+            border: "1px solid rgba(255, 255, 255, 0.08)", 
+            color: "#FFFFFF",
+            borderRadius: "14px",
+            padding: "14px 18px",
+            fontSize: "13px",
+            fontWeight: 500,
+            boxShadow: "0 20px 40px -15px rgba(0,0,0,0.5)",
+            maxWidth: "380px",
+            letterSpacing: "0.01em",
+          },
+          success: {
+            icon: <CheckCircle2 className="w-5 h-5 text-green-400" strokeWidth={2.5} />,
+            style: {
+              borderLeft: "2px solid #4ade80",
+            },
+          },
+          error: {
+            icon: <XCircle className="w-5 h-5 text-red-400" strokeWidth={2.5} />,
+            style: {
+              borderLeft: "2px solid #f87171",
+            },
+          },
+        }}
+      />
+      <UserRoutes />
+      <AdminRoutes />
     </>
   )
 }
-
-export default App

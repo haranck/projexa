@@ -1,4 +1,5 @@
 export interface ResetPasswordDTO{
-    email:string;
-    newPassword:string
-}
+    email:string,
+    password:string,
+    confirmPassword:string
+} 

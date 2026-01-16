@@ -1,23 +1,27 @@
+import { inject, injectable } from "tsyringe";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
-import { ILogoutService } from "../../services/ILogoutService";
+import { ILogoutUseCase } from "../../interface/auth/ILogoutUseCase";
+import { JwtPayload } from "jsonwebtoken";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 
-export class LogoutUseCase implements ILogoutService{
+@injectable()
+export class LogoutUseCase implements ILogoutUseCase {
     constructor(
-        private blacklistRepo:ITokenBlacklistRepository,
-        private jwtService:IJwtService
-    ){}
+        @inject('ITokenBlacklistRepository') private blacklistRepo: ITokenBlacklistRepository,
+        @inject('IJwtService') private jwtService: IJwtService
+    ) { }
     async execute(accessToken: string): Promise<void> {
         const payload = this.jwtService.verifyAccessToken(accessToken)
-        if(!payload)return
+        if (!payload) throw new Error(ERROR_MESSAGES.INVALID_TOKEN)
 
-        const decoded:any= payload
-        const exp = decoded.exp //unix timestamp
+        const decoded = payload as JwtPayload
+        if (!decoded.exp) throw new Error(ERROR_MESSAGES.INVALID_TOKEN)
+        const exp = decoded.exp
 
         const ttl = exp - Math.floor(Date.now() / 1000)
-        if(ttl > 0){
-            await this.blacklistRepo.blacklist(accessToken,ttl)
+        if (ttl > 0) {
+            await this.blacklistRepo.blacklist(accessToken, ttl)
         }
     }
 }
-

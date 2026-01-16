@@ -2,30 +2,30 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { ResetPasswordDTO } from "../../dtos/auth/requestDTOs/ResetPasswordDTO";
-import { IResetPasswordService } from "../../services/IResetPasswordService";
+import { IResetPasswordUseCase } from "../../interface/auth/IResetPasswordUseCase";
+import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { injectable, inject } from "tsyringe";
 
-
-export class ResetPasswordUseCase implements IResetPasswordService {
+@injectable()
+export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
-    private userRepo: IUserRepository,
-    private otpRepo: IOtpRepository,
-    private passwordService: IPasswordService
-  ) {}
+    @inject('IUserRepository') private userRepo: IUserRepository,
+    @inject('IOtpRepository') private otpRepo: IOtpRepository,
+    @inject('IPasswordService') private passwordService: IPasswordService,
+  ) { }
 
   async execute(dto: ResetPasswordDTO): Promise<void> {
+    if (dto.password !== dto.confirmPassword) {
+      throw new Error(ERROR_MESSAGES.PASSWORD_NOT_MATCHING);
+    }
+
     const user = await this.userRepo.findByEmail(dto.email);
     if (!user || !user.id) {
-      throw new Error("Invalid request");
+      throw new Error(USER_ERRORS.USER_NOT_FOUND);
     }
 
-    const otp = await this.otpRepo.findValidOtp(user.id);
-    if (!otp || !otp.id) {
-      throw new Error("Invalid or expired OTP");
-    }
-
-    const hashedPassword = await this.passwordService.hash(dto.newPassword);
-
+    const hashedPassword = await this.passwordService.hash(dto.password);
     await this.userRepo.updatePassword(user.id, hashedPassword);
-    await this.otpRepo.markAsUsed(otp.id);
   }
 }
