@@ -18,6 +18,24 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
         if (!payload || !payload.userId) {
             throw new Error(ERROR_MESSAGES.INVALID_TOKEN);
         }
+        
+        if (payload.userId === 'ADMIN') {
+            const newPayload = { userId: 'ADMIN', email: payload.email };
+            const newAccessToken = this.jwtService.signAccessToken(newPayload);
+            const newRefreshToken = this.jwtService.signRefreshToken(newPayload);
+
+            return {
+                accessToken: newAccessToken,
+                refreshToken: newRefreshToken,
+                user: {
+                    id: 'ADMIN',
+                    firstName: 'Admin',
+                    lastName: 'User',
+                    email: payload.email,
+                    isEmailVerified: true
+                }
+            };
+        }
 
         const user = await this.userRepo.findById(payload.userId);
         if (!user) {

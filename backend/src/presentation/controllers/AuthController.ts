@@ -80,6 +80,7 @@ export class AuthController {
       logger.info("Login successful", response);
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
+      
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : ERROR_MESSAGES.INVALID_CREDENTIALS;
       logger.error("Login failed", message);

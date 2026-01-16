@@ -16,10 +16,16 @@ export const FRONTEND_ROUTES = {
   PAYMENTS: '/payments',
   BACKLOG: '/backlog',
   BOARD: '/board',
+  PROFILE: '/profile',
 
   //Admin Routes
+  
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_LOGOUT:'/admin/logout',
-  ADMIN_USERS:'/admin/users'
+  ADMIN_USERS:'/admin/users',
+  ADMIN_SALES_REPORT:'/admin/sales-report',
+  ADMIN_SUBSCRIPTIONS:'/admin/subscriptions',
+  ADMIN_PAYMENTS_DETAILS:'/admin/payments-details',
+  ADMIN_WORKSPACES: '/admin/workspaces',
 };

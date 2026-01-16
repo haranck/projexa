@@ -2,8 +2,9 @@ import { Request, Response, NextFunction } from "express";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { ITokenBlacklistRepository } from "../../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { JwtPayload } from "../../../domain/entities/IJwtPayload";
-import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { ERROR_MESSAGES, USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
+import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository"
 import { injectable, inject } from "tsyringe";
 
 interface AuthRequest extends Request {
@@ -14,7 +15,8 @@ interface AuthRequest extends Request {
 export class AuthMiddleware {
   constructor(
     @inject('IJwtService') private readonly jwtService: IJwtService,
-    @inject('ITokenBlacklistRepository') private readonly blacklistRepo: ITokenBlacklistRepository
+    @inject('ITokenBlacklistRepository') private readonly blacklistRepo: ITokenBlacklistRepository,
+    @inject('IUserRepository') private readonly userRepository: IUserRepository
   ) { }
 
   authenticate = async (
@@ -23,6 +25,7 @@ export class AuthMiddleware {
     next: NextFunction
   ): Promise<void> => {
     try {
+
       const authHeader = req.headers.authorization;
 
       if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -45,7 +48,23 @@ export class AuthMiddleware {
         return;
       }
 
+      if (payload.userId === 'ADMIN') {
+        req.user = payload;
+        next();
+        return;
+      }
+
+      const user = await this.userRepository.findById(payload.userId);
+      if (!user) {
+        res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: USER_ERRORS.USER_NOT_FOUND });
+        return;
+      }
+      if (user.isBlocked) {
+        res.status(HTTP_STATUS.FORBIDDEN).json({ message: USER_ERRORS.USER_BLOCKED });
+        return;
+      }
       req.user = payload;
+
       next();
 
     } catch (error) {

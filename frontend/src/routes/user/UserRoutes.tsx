@@ -14,6 +14,8 @@ import { TeamsPage } from '../../pages/User/Teams/TeamsPage'
 import { PaymentsPage } from '../../pages/User/Payments/PaymentsPage'
 import { BacklogPage } from '../../pages/User/Backlog/BacklogPage'
 import { BoardPage } from '../../pages/User/Board/BoardPage'
+import { UserProfile } from '../../pages/User/Profile/UserProfile'
+import ProtectedRoute from '../ProtectedRoute'
 
 const UserRoutes = () => {
     return (
@@ -21,17 +23,21 @@ const UserRoutes = () => {
             <Route path={FRONTEND_ROUTES.LANDING} element={<LandingPage />} />
             <Route path={FRONTEND_ROUTES.SIGNUP} element={<SignupPage />} />
             <Route path={FRONTEND_ROUTES.LOGIN} element={<LoginPage />} />
-            <Route path={FRONTEND_ROUTES.HOME} element={<HomePage />} />
             <Route path={FRONTEND_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
             <Route path={FRONTEND_ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
-            <Route path={FRONTEND_ROUTES.SETTINGS} element={<SettingsPage />} />
-            <Route path={FRONTEND_ROUTES.PROJECTS} element={<ProjectsPage />} />
-            <Route path={FRONTEND_ROUTES.CHAT} element={<ChatPage />} />
-            <Route path={FRONTEND_ROUTES.MEETINGS} element={<MeetingsPage />} />
-            <Route path={FRONTEND_ROUTES.TEAMS} element={<TeamsPage />} />
-            <Route path={FRONTEND_ROUTES.PAYMENTS} element={<PaymentsPage />} />
-            <Route path={FRONTEND_ROUTES.BACKLOG} element={<BacklogPage />} />
-            <Route path={FRONTEND_ROUTES.BOARD} element={<BoardPage />} />
+
+            <Route element={<ProtectedRoute />}>
+                <Route path={FRONTEND_ROUTES.HOME} element={<HomePage />} />
+                <Route path={FRONTEND_ROUTES.SETTINGS} element={<SettingsPage />} />
+                <Route path={FRONTEND_ROUTES.PROJECTS} element={<ProjectsPage />} />
+                <Route path={FRONTEND_ROUTES.CHAT} element={<ChatPage />} />
+                <Route path={FRONTEND_ROUTES.MEETINGS} element={<MeetingsPage />} />
+                <Route path={FRONTEND_ROUTES.TEAMS} element={<TeamsPage />} />
+                <Route path={FRONTEND_ROUTES.PAYMENTS} element={<PaymentsPage />} />
+                <Route path={FRONTEND_ROUTES.BACKLOG} element={<BacklogPage />} />
+                <Route path={FRONTEND_ROUTES.BOARD} element={<BoardPage />} />
+                <Route path={FRONTEND_ROUTES.PROFILE} element={<UserProfile />} />
+            </Route>
         </Routes>
     )
 }

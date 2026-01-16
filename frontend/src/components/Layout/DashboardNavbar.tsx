@@ -14,7 +14,7 @@ const DashboardNavbar = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.auth.user);
-    const {mutate: logoutUser} = useUserLogout()
+    const { mutate: logoutUser } = useUserLogout()
     const handleLogout = () => {
         logoutUser(undefined, {
             onSettled: () => {
@@ -87,8 +87,12 @@ const DashboardNavbar = () => {
                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                             className="flex items-center gap-3 p-1 rounded-xl hover:bg-white/5 transition-all group"
                         >
-                            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)] group-hover:scale-105 transition-transform">
-                                {user?.firstName?.[0] || 'A'}{user?.lastName?.[0] || 'M'}
+                            <div className="w-9 h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)] group-hover:scale-105 transition-transform overflow-hidden">
+                                {user?.avatarUrl ? (
+                                    <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    <>{user?.firstName?.[0] || 'A'}{user?.lastName?.[0] || 'M'}</>
+                                )}
                             </div>
                             <button
                                 onClick={(e) => {
@@ -112,7 +116,8 @@ const DashboardNavbar = () => {
                                 </div>
 
                                 <div className="p-2">
-                                    <button className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
+                                    <button className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
+                                        onClick={() => navigate(FRONTEND_ROUTES.PROFILE)}>
                                         <User className="h-4 w-4" />
                                         <span className="font-medium">Account Settings</span>
                                     </button>

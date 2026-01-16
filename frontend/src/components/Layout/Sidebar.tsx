@@ -1,4 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
     LayoutDashboard,
     ListTodo,
@@ -21,6 +22,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ className }: SidebarProps) => {
+    const navigate = useNavigate()
     const location = useLocation();
     const user = useSelector((state: RootState) => state.auth.user);
     const menuSections = [
@@ -110,18 +112,23 @@ const Sidebar = ({ className }: SidebarProps) => {
 
             {/* User Profile Footer */}
             <div className="p-3 mt-auto border-t border-white/5">
-                <button className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 group">
+                <button className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 group"
+                    onClick={() => navigate(FRONTEND_ROUTES.PROFILE)}>
                     <div className="relative">
                         <div className="w-9 h-9 rounded-full border border-zinc-800 overflow-hidden bg-linear-to-br from-zinc-700 to-zinc-800 flex items-center justify-center">
-                            <span className="text-white text-xs font-bold leading-none">
-                                {user?.firstName?.charAt(0) || "A"}
-                            </span>
+                            {user?.avatarUrl ? (
+                                <img src={user.avatarUrl} alt="User" className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-white text-xs font-bold leading-none">
+                                    {user?.firstName?.[0] || 'A'}{user?.lastName?.[0] || 'M'}
+                                </span>
+                            )}
                         </div>
                         <div className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-emerald-500 border-2 border-[#0b0e14] rounded-full" />
                     </div>
                     <div className="flex-1 text-left min-w-0">
                         <p className="text-sm font-bold text-white truncate leading-tight">
-                            {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.firstName || "Alex Morgan")}
+                            {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.firstName || "Unknown User")}
                         </p>
                         <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest truncate mt-0.5">
                             Team Member

@@ -23,6 +23,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     const user = await this.userRepo.findByEmail(dto.email);
 
+    if(user?.isBlocked) throw new Error(USER_ERRORS.USER_BLOCKED);
+
     if (!user) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
     if (!user.isEmailVerified) throw new Error(USER_ERRORS.USER_EMAIL_NOT_VERIFIED);

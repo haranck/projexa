@@ -13,6 +13,9 @@ export const API_ROUTES = {
   },
   ADMIN: {
     LOGIN: "/admin/login",
-    LOGOUT: "/admin/logout" 
+    LOGOUT: "/admin/logout",
+    GET_USERS: "/admin/users",
+    BLOCK_USER: "/admin/block-user/:userId",
+    UNBLOCK_USER: "/admin/unblock-user/:userId"
   }
 };

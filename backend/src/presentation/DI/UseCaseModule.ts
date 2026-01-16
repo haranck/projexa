@@ -29,6 +29,8 @@ import { IBlockUserUseCase } from "../../application/interface/admin/IBlockUserU
 import { IUnblockUserUseCase } from "../../application/interface/admin/IUnblockUserUseCase";
 import { UnblockUserUseCase } from "../../application/useCases/admin/UnblockUserUseCase";
 import { BlockUserUseCase } from "../../application/useCases/admin/BlockUserUseCase";
+import { IGetUsersUseCase } from "../../application/interface/admin/IGetUsersUseCase";
+import { GetUsersUseCase } from "../../application/useCases/admin/GetUsersUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -91,8 +93,12 @@ export class UseCaseModule {
             useClass:BlockUserUseCase
         })
 
-        container.register<IUnblockUserUseCase>('IUnblockUserUseCase',{
-            useClass:UnblockUserUseCase
+        container.register<IUnblockUserUseCase>('IUnblockUserUseCase', {
+            useClass: UnblockUserUseCase
+        })
+
+        container.register<IGetUsersUseCase>('IGetUsersUseCase', {
+            useClass: GetUsersUseCase
         })
     }
 }

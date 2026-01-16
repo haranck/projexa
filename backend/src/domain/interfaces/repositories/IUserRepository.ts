@@ -1,4 +1,6 @@
 import { IUserEntity } from "../../entities/IUserEntity";
+import { GetUsersRequestDTO } from "../../../application/dtos/admin/requestDTOs/GetUsersRequestDTO";
+import { GetUsersResponseDTO } from "../../../application/dtos/admin/responseDTOs/GetUsersResponseDTO";
 
 export interface IUserRepository {
   findByEmail(email: string): Promise<IUserEntity | null>;
@@ -7,4 +9,5 @@ export interface IUserRepository {
   updatePassword(userId: string, hashedPassword: string): Promise<void>;
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
+  findAllUsers(dto:GetUsersRequestDTO): Promise<GetUsersResponseDTO>;
 }
