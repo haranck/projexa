@@ -5,15 +5,7 @@ import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 import { Mail, ShieldCheck, ArrowLeft, Loader2 } from "lucide-react";
 import { Button } from "../../components/ui/button";
 import { toast } from "react-hot-toast";
-
-// Helper function to extract error message
-const getErrorMessage = (error: unknown, fallback: string): string => {
-    if (error && typeof error === 'object' && 'response' in error) {
-        const response = (error as { response?: { data?: { message?: string } } }).response;
-        return response?.data?.message || fallback;
-    }
-    return fallback;
-};
+import { getErrorMessage } from "../../utils/errorHandler";
 
 interface OTPModalProps {
     email: string;

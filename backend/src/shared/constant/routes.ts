@@ -10,6 +10,7 @@ export const ROUTES = {
         LOGOUT: "/logout",
         GOOGLE_LOGIN: "/google-login",
         REFRESH_TOKEN: "/refresh-token",
+        VERIFY_PASSWORD: "/verify-password"
     },
     USERS: {},
     ADMIN: {

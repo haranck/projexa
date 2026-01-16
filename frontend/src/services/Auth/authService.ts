@@ -30,6 +30,9 @@ interface resetPasswordPayload {
   password: string,
   confirmPassword: string
 }
+interface verifyPasswordPayload {
+  password: string,
+}
 
 export const registerUser = async (data: RegisterPayload) => {
   const response = await AxiosInstance.post(API_ROUTES.AUTH.REGISTER, data);
@@ -73,5 +76,10 @@ export const verifyResetOtp = async (data: verifyOtpPayload) => {
 
 export const logoutUser = async () => {
   const response = await AxiosInstance.post(API_ROUTES.AUTH.LOGOUT);
+  return response.data;
+}
+
+export const verifyPassword = async (data: verifyPasswordPayload) => {
+  const response = await AxiosInstance.post(API_ROUTES.AUTH.VERIFY_PASSWORD, data);
   return response.data;
 }

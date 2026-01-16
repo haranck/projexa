@@ -11,6 +11,7 @@ export const MESSAGES = {
         GET_ALL_USERS: "Fetched all users successfully",
         PROFILE_DATA_SUCCESS: "Profile data fetched successfully",
         GOOGLE_LOGIN_SUCCESS: "Google Login Successful",
+        PASSWORD_VERIFIED_SUCCESSFULLY: "Password verified successfully",
     },
 
     ADMIN: {

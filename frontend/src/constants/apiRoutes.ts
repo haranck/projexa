@@ -10,6 +10,7 @@ export const API_ROUTES = {
     GOOGLE_LOGIN: "/auth/google-login",
     REFRESH_TOKEN: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
+    VERIFY_PASSWORD: "/auth/verify-password"
   },
   ADMIN: {
     LOGIN: "/admin/login",

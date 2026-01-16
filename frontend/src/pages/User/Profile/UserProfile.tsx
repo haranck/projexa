@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { clearAccessToken } from "@/store/slice/tokenSlice";
 import { clearAuth } from "@/store/slice/authSlice";
 import { FRONTEND_ROUTES } from "@/constants/frontendRoutes";
+import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
 import {
     LogOut,
     Shield,
@@ -17,12 +18,14 @@ import {
     Calendar,
     Edit3
 } from "lucide-react";
+import { useState } from "react";
 
 export const UserProfile = () => {
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.auth.user)
     const dispatch = useDispatch()
     const { mutate: logoutUser } = useUserLogout()
+    const [open, setOpen] = useState(false)
 
     const handleLogout = () => {
         logoutUser(undefined, {
@@ -48,7 +51,7 @@ export const UserProfile = () => {
 
                 {/* Profile Banner */}
                 <div className="relative overflow-hidden bg-linear-to-br from-blue-600/20 to-indigo-600/20 border border-white/10 rounded-3xl p-8 backdrop-blur-sm group">
-                
+
 
                     <div className="relative flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
                         <div className="w-24 h-24 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold overflow-hidden border border-white/20 shadow-2xl ring-4 ring-white/5">
@@ -170,7 +173,16 @@ export const UserProfile = () => {
                                 { title: 'Personal Information', desc: 'Avatar, name, and contact details', icon: Edit3 },
                                 // { title: 'Workspace Roles', desc: 'Permissions and team access', icon: Users },
                             ].map((item, i) => (
-                                <button key={i} className="w-full flex items-center justify-between p-4 px-5 hover:bg-white/5 transition-all text-left group">
+                                <button key={i} className="w-full flex items-center justify-between p-4 px-5 hover:bg-white/5 transition-all text-left group"
+                                    onClick={() => {
+                                        if (item.title === 'Security & Access') {
+                                            setOpen(true)
+                                        }
+                                        else if (item.title === 'Personal Information') {
+                                            navigate('/profile/personal-info')
+                                        }
+                                    }}
+                                >
                                     <div className="flex items-center gap-4">
                                         <div className="p-2.5 rounded-xl bg-zinc-800/50 text-zinc-400 group-hover:text-blue-500 transition-colors border border-white/5">
                                             <item.icon className="w-5 h-5" />
@@ -186,6 +198,7 @@ export const UserProfile = () => {
                         </div>
                     </div>
                 </div>
+                <ChangePasswordModal open={open} onClose={() => setOpen(false)} />
             </div>
         </DashboardLayout>
     );

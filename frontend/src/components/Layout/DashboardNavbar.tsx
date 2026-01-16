@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { Search, Bell, Settings as SettingsIcon, ChevronDown, LogOut, User } from "lucide-react";
-import { Input } from "../ui/input";
+import { Bell, Settings as SettingsIcon, ChevronDown, LogOut, User } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { clearAuth } from "../../store/slice/authSlice";
@@ -61,14 +60,7 @@ const DashboardNavbar = () => {
 
                 {/* Right Side: Tools & User */}
                 <div className="flex items-center gap-6">
-                    <div className="relative group">
-                        <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-500 group-focus-within:text-blue-500 transition-colors" />
-                        <Input
-                            type="text"
-                            placeholder="Search...."
-                            className="pl-11 w-72 h-11 bg-white/5 border-white/5 text-sm text-white placeholder:text-zinc-600 focus:bg-white/10 focus:border-blue-500/30 transition-all rounded-xl"
-                        />
-                    </div>
+                    
 
                     <div className="flex items-center gap-2">
                         <button className="relative p-2.5 rounded-xl hover:bg-white/5 text-zinc-400 hover:text-white transition-all">

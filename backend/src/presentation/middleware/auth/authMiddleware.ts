@@ -7,7 +7,7 @@ import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository"
 import { injectable, inject } from "tsyringe";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: JwtPayload;
 }
 

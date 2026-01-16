@@ -17,7 +17,8 @@ export const FRONTEND_ROUTES = {
   BACKLOG: '/backlog',
   BOARD: '/board',
   PROFILE: '/profile',
-
+  CHANGE_PASSWORD: '/change-password',
+  
   //Admin Routes
   
   ADMIN_LOGIN: '/admin/login',
