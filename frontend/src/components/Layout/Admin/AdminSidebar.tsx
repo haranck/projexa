@@ -20,17 +20,17 @@ const sidebarLinks = [
     {
         icon: LineChart,
         label: "Sales & Reports",
-        href: "/admin/sales-reports",
+        href: FRONTEND_ROUTES.ADMIN_SALES_REPORT,
     },
     {
         icon: CreditCard,
         label: "Subscription Plans",
-        href: "/admin/subscription-plans",
+        href: FRONTEND_ROUTES.ADMIN_SUBSCRIPTIONS,
     },
     {
         icon: Briefcase,
         label: "Manage Workspace",
-        href: "/admin/workspaces",
+        href: FRONTEND_ROUTES.ADMIN_WORKSPACES,
     },
     {
         icon: Users,
@@ -40,7 +40,7 @@ const sidebarLinks = [
     {
         icon: DollarSign,
         label: "Payment Details",
-        href: "/admin/payments",
+        href: FRONTEND_ROUTES.ADMIN_PAYMENTS_DETAILS,
     },
 ];
 

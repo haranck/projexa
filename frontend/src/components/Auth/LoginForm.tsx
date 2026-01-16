@@ -85,7 +85,7 @@ export const LoginForm = () => {
         toast.error(errorMessage);
       },
     });
-  }; 
+  };
 
   return (
     <Card className="w-full max-w-[460px] border-white/5 bg-[#141414]/80 backdrop-blur-xl shadow-[0_0_50px_rgba(0,0,0,0.5)] rounded-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-500">

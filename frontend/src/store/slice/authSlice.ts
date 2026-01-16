@@ -1,4 +1,4 @@
-import { createSlice,type PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, type PayloadAction } from "@reduxjs/toolkit";
 
 export interface AuthUser {
   id: string;
@@ -6,6 +6,7 @@ export interface AuthUser {
   lastName: string;
   email: string;
   isEmailVerified: boolean;
+  avatarUrl?: string;
 }
 
 interface AuthState {

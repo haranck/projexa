@@ -1,14 +1,14 @@
-import { combineReducers,configureStore } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slice/authSlice";
 import tokenReducer from "./slice/tokenSlice";
 
-import {persistStore,persistReducer} from "redux-persist"
+import { persistStore, persistReducer } from "redux-persist"
 import storage from "redux-persist/lib/storage"
 
 const persistConfig = {
     key: "root",
     storage,
-    whitelist: ["auth"],
+    whitelist: ["auth", "token"], // without token accesstoken remove from localStorage every refreshing
 }
 
 const rootReducer = combineReducers({
@@ -16,13 +16,13 @@ const rootReducer = combineReducers({
     token: tokenReducer,
 })
 
-const persistedReducer = persistReducer(persistConfig,rootReducer) //before store or return state first check localStorage
+const persistedReducer = persistReducer(persistConfig, rootReducer) //before store or return state first check localStorage
 
-export const store =  configureStore({
-    reducer:persistedReducer,
+export const store = configureStore({
+    reducer: persistedReducer,
 })
 
 export const persistor = persistStore(store)
 
 export type RootState = ReturnType<typeof store.getState>
-export type AppDispatch = typeof store.dispatch
+export type AppDispatch = typeof store.dispatch 

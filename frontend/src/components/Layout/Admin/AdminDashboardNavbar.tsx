@@ -16,7 +16,7 @@ export const AdminDashboardNavbar = () => {
 
     const handleLogout = () => {
         logoutAdmin(undefined, {
-            onSettled:() =>{
+            onSettled: () => {
                 dispatch(clearAccessToken());
                 dispatch(clearAuth())
                 toast.success("Logged out successfully");

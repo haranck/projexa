@@ -4,6 +4,8 @@ import { UserModel } from "../models/UserModel";
 import { UserMapper } from "../../../mappers/UserMapper";
 import { BaseRepo } from "./base/BaseRepo";
 import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
+import { GetUsersRequestDTO } from "../../../../application/dtos/admin/requestDTOs/GetUsersRequestDTO";
+import { GetUsersResponseDTO } from "../../../../application/dtos/admin/responseDTOs/GetUsersResponseDTO";
 
 export class UserRepository
   extends BaseRepo<IUserEntity>
@@ -54,10 +56,36 @@ export class UserRepository
       updatedAt: new Date(),
     });
   }
+
   async unblockUser(userId: string): Promise<void> {
     await UserModel.findByIdAndUpdate(userId, {
       isBlocked: false,
       updatedAt: new Date(),
     });
+  }
+
+  async findAllUsers(dto:GetUsersRequestDTO): Promise<GetUsersResponseDTO> {
+    const skip = (dto.page - 1) * dto.limit;
+    const filter =dto.search ? {
+      $or: [
+        { firstName: { $regex: dto.search, $options: "i" } },
+        { lastName: { $regex: dto.search, $options: "i" } },
+        { email: { $regex: dto.search, $options: "i" } },
+        { phone: { $regex: dto.search, $options: "i" } },
+      ],
+    } : {};
+    const docs = await UserModel.find(filter).skip(skip).limit(dto.limit).sort({ createdAt: -1 });
+    const totalDocs = await UserModel.countDocuments(filter);
+    const data = docs.map((doc) => UserMapper.toEntity(doc));
+    const totalPages = Math.ceil(totalDocs / dto.limit);
+    return { 
+      data,
+      meta: {
+        totalDocs,
+        totalPages,
+        page:dto.page,
+        limit:dto.limit,
+      },
+    };
   }
 }

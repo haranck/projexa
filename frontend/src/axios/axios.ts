@@ -1,6 +1,7 @@
 import axios from "axios";
 import { store } from "../store/store";
 import { setAccessToken, clearAccessToken } from "../store/slice/tokenSlice";
+import { USER_ERRORS } from "@/constants/errorMessages";
 
 
 export const AxiosInstance = axios.create({
@@ -21,8 +22,16 @@ AxiosInstance.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    const status = error.response?.status;
+    const message = error.response?.data?.message;
 
-    if (error.response && error.response.status === 401 && !originalRequest._retry) {
+    if (status === 403 && message === USER_ERRORS.USER_BLOCKED) {
+      store.dispatch(clearAccessToken());
+      window.location.href = "/login";
+      return Promise.reject(error);
+    }
+
+    if (status === 401 && !originalRequest._retry) {
       originalRequest._retry = true;
 
       try {
