@@ -9,5 +9,6 @@ export interface IUserRepository {
   updatePassword(userId: string, hashedPassword: string): Promise<void>;
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
-  findAllUsers(dto:GetUsersRequestDTO): Promise<GetUsersResponseDTO>;
+  findAllUsers(dto: GetUsersRequestDTO): Promise<GetUsersResponseDTO>;
+  update(user: Partial<IUserEntity>, id: string): Promise<void>;
 }

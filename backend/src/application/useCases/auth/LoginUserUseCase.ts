@@ -7,7 +7,7 @@ import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { ILoginUserUseCase } from "../../interface/auth/ILoginUserUseCase";
 import { injectable, inject } from "tsyringe";
-import { env } from "node:process";
+import { env } from "../../../config/envValidation";
 
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
@@ -23,7 +23,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     const user = await this.userRepo.findByEmail(dto.email);
 
-    if(user?.isBlocked) throw new Error(USER_ERRORS.USER_BLOCKED);
+    if (user?.isBlocked) throw new Error(USER_ERRORS.USER_BLOCKED);
 
     if (!user) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
@@ -42,7 +42,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     const accessToken = this.jwtService.signAccessToken(payload);
     const refreshToken = this.jwtService.signRefreshToken(payload);
-    
+
     return {
       accessToken,
       refreshToken,
@@ -52,7 +52,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
         lastName: user.lastName,
         email: user.email,
         isEmailVerified: user.isEmailVerified,
+        avatarUrl: user.avatarUrl,
       },
-    };  
+    };
   }
 }

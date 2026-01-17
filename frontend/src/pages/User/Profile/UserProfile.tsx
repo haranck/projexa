@@ -2,10 +2,13 @@ import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 import type { RootState } from "@/store/store";
 import { useUserLogout } from "@/hooks/Auth/AuthHooks";
+import { useProfileImageUploadUrl } from "@/hooks/User/UserHooks";
+import { useUpdateProfileImage } from "@/hooks/User/UserHooks";
 import { useDispatch, useSelector } from "react-redux";
 import { clearAccessToken } from "@/store/slice/tokenSlice";
-import { clearAuth } from "@/store/slice/authSlice";
+import { clearAuth, updateAvatar } from "@/store/slice/authSlice";
 import { FRONTEND_ROUTES } from "@/constants/frontendRoutes";
+import { toast } from "react-hot-toast";
 import { ChangePasswordModal } from "@/components/modals/ChangePasswordModal"
 import {
     LogOut,
@@ -19,6 +22,7 @@ import {
     Edit3
 } from "lucide-react";
 import { useState } from "react";
+import axios from "axios";
 
 export const UserProfile = () => {
     const navigate = useNavigate();
@@ -26,6 +30,8 @@ export const UserProfile = () => {
     const dispatch = useDispatch()
     const { mutate: logoutUser } = useUserLogout()
     const [open, setOpen] = useState(false)
+    const { mutate: profileImageUploadUrl } = useProfileImageUploadUrl()
+    const { mutate: updateProfileImage } = useUpdateProfileImage()
 
     const handleLogout = () => {
         logoutUser(undefined, {
@@ -37,11 +43,59 @@ export const UserProfile = () => {
         })
     }
 
+    const handleProfileImageChange = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        try {
+            profileImageUploadUrl(file.type, {
+                onSuccess: async (res) => {
+                    const { uploadUrl, imageUrl } = res.data;
+
+                    try {
+                        const uploadResponse = await axios.put(uploadUrl, file, {
+                            headers: {
+                                "Content-Type": file.type,
+                            },
+                        });
+
+                        if (uploadResponse.status !== 200) throw new Error("Failed to upload to S3");
+
+                        // 3️⃣ Save URL in DB
+                        updateProfileImage({
+                            userId: user!.id,
+                            profileImage: imageUrl,
+                        }, {
+                            onSuccess: (updateRes) => {
+                                dispatch(updateAvatar(updateRes.data.avatarUrl));
+                                toast.success("Profile image updated successfully");
+                            },
+                            onError: () => {
+                                toast.error("Failed to update profile image in database");
+                            }
+                        });
+                    } catch (uploadError) {
+                        console.error("S3 Upload failed", uploadError);
+                        toast.error("Failed to upload image to storage");
+                    }
+                },
+                onError: () => {
+                    toast.error("Failed to get upload authorization");
+                }
+            });
+        } catch (error) {
+            console.error("Profile image upload failed", error);
+            toast.error("An unexpected error occurred during upload");
+        }
+    };
+
+
     return (
         <DashboardLayout>
             <div className="max-w-6xl mx-auto p-8 space-y-10 text-white pb-20">
 
-                {/* Header Section */}
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-1">
                         <h1 className="text-3xl font-bold tracking-tight">Account Settings</h1>
@@ -49,20 +103,43 @@ export const UserProfile = () => {
                     </div>
                 </div>
 
-                {/* Profile Banner */}
                 <div className="relative overflow-hidden bg-linear-to-br from-blue-600/20 to-indigo-600/20 border border-white/10 rounded-3xl p-8 backdrop-blur-sm group">
 
 
                     <div className="relative flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
-                        <div className="w-24 h-24 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold overflow-hidden border border-white/20 shadow-2xl ring-4 ring-white/5">
-                            {user?.avatarUrl ? (
-                                <img src={user.avatarUrl} alt="Profile" className="w-full h-full object-cover" />
-                            ) : (
-                                <span className="text-blue-400">
-                                    {(user?.firstName?.[0] || 'A')}{(user?.lastName?.[0] || 'M')}
-                                </span>
-                            )}
+                        <div className="relative group w-24 h-24">
+                            <div className="w-24 h-24 rounded-2xl bg-white/10 flex items-center justify-center text-3xl font-bold overflow-hidden border border-white/20 shadow-2xl ring-4 ring-white/5">
+                                {user?.avatarUrl ? (
+                                    <img
+                                        src={user.avatarUrl}
+                                        alt="Profile"
+                                        className="w-full h-full object-cover"
+                                    />
+                                ) : (
+                                    <span className="text-blue-400">
+                                        {(user?.firstName?.[0] || 'A')}
+                                        {(user?.lastName?.[0] || 'M')}
+                                    </span>
+                                )}
+                            </div>
+
+                            <label
+                                htmlFor="profile-upload"
+                                className="absolute inset-0 flex items-center justify-center rounded-2xl
+                                 bg-black/60 opacity-0 group-hover:opacity-100 transition-all cursor-pointer"
+                            >
+                                <Edit3 className="w-5 h-5 text-white" />
+                            </label>
+
+                            <input
+                                id="profile-upload"
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleProfileImageChange}
+                            />
                         </div>
+
 
                         <div className="flex-1 space-y-2">
                             <h2 className="text-2xl font-bold text-white flex items-center gap-3">

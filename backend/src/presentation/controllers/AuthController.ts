@@ -10,14 +10,12 @@ import { IResendOtpUseCase } from "../../application/interface/auth/IResendOtpUs
 import { IResetPasswordUseCase } from "../../application/interface/auth/IResetPasswordUseCase";
 import { IVerifyEmailUseCase } from "../../application/interface/auth/IVerifyEmailUseCase";
 import { IVerifyResetOtpUseCase } from "../../application/interface/auth/IVerifyResetOtpUseCase";
-import { IVerifyPasswordUseCase } from "../../application/interface/user/IVerifyPasswordUseCase";
 import { RegisterUserDTO } from "../../application/dtos/auth/requestDTOs/RegisterUserDTO";
 import { LoginUserDTO } from "../../application/dtos/auth/requestDTOs/LoginUserDTO";
 import { HTTP_STATUS } from "../../domain/constants/httpStatus";
 import { ERROR_MESSAGES } from "../../domain/constants/errorMessages";
 import { MESSAGES } from "../../domain/constants/messages";
 import logger from "../../config/logger";
-import { AuthRequest } from "../middleware/auth/authMiddleware";
 
 @injectable()
 export class AuthController {
@@ -32,7 +30,6 @@ export class AuthController {
     @inject('IResendOtpUseCase') private readonly resentOtpUseCase: IResendOtpUseCase,
     @inject('IGoogleLoginUseCase') private readonly googleLoginUseCase: IGoogleLoginUseCase,
     @inject('IRefreshTokenUseCase') private readonly refreshTokenUseCase: IRefreshTokenUseCase,
-    @inject('IVerifyPasswordUseCase') private readonly verifyPasswordUseCase: IVerifyPasswordUseCase,
 
   ) { }
 
@@ -176,15 +173,5 @@ export class AuthController {
     }
   };
 
-  verifyPassword = async (req: AuthRequest, res: Response): Promise<void> => {
-    const { password } = req.body;
-    const userId = req.user?.userId;
-
-    if (!userId) {
-      throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
-    }
-
-    await this.verifyPasswordUseCase.execute({ userId, password });
-    res.json({ message: MESSAGES.USERS.PASSWORD_VERIFIED_SUCCESSFULLY });
-  }
+  
 }

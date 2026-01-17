@@ -10,14 +10,18 @@ export const ROUTES = {
         LOGOUT: "/logout",
         GOOGLE_LOGIN: "/google-login",
         REFRESH_TOKEN: "/refresh-token",
-        VERIFY_PASSWORD: "/verify-password"
+
     },
-    USERS: {},
+    USERS: {
+        VERIFY_PASSWORD: "/verify-password",
+        PROFILE_IMAGE_UPLOAD_URL: "/profile/image-upload-url",
+        UPDATE_PROFILE_IMAGE : "/profile/image",
+    },
     ADMIN: {
         LOGIN: "/login",
-        LOGOUT:"/logout",
-        GET_USERS:"/users",
-        BLOCK_USER:"/block-user/:userId",
-        UNBLOCK_USER:"/unblock-user/:userId"
+        LOGOUT: "/logout",
+        GET_USERS: "/users",
+        BLOCK_USER: "/block-user/:userId",
+        UNBLOCK_USER: "/unblock-user/:userId"
     }
 };

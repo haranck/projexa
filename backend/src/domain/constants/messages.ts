@@ -12,6 +12,8 @@ export const MESSAGES = {
         PROFILE_DATA_SUCCESS: "Profile data fetched successfully",
         GOOGLE_LOGIN_SUCCESS: "Google Login Successful",
         PASSWORD_VERIFIED_SUCCESSFULLY: "Password verified successfully",
+        PROFILE_IMAGE_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Profile image upload URL generated successfully",
+        PROFILE_IMAGE_UPDATED_SUCCESSFULLY: "Profile image updated successfully",
     },
 
     ADMIN: {

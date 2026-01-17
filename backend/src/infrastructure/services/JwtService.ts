@@ -2,21 +2,15 @@ import jwt from 'jsonwebtoken'
 import { IJwtService } from '../../domain/interfaces/services/IJwtService'
 import { JwtPayload } from '../../domain/entities/IJwtPayload'
 import { ERROR_MESSAGES } from '../../domain/constants/errorMessages'
+import { env } from '../../config/envValidation'
 
 export class JwtService implements IJwtService {
     private ACCESS_SECRET: string
     private REFRESH_SECRET: string
 
     constructor() {
-        const access = process.env.JWT_ACCESS_SECRET
-        const refresh = process.env.JWT_REFRESH_SECRET
-
-        if (!access || !refresh) {
-            throw new Error(ERROR_MESSAGES.JWT_SECRET_MISSING)
-        }
-
-        this.ACCESS_SECRET = access
-        this.REFRESH_SECRET = refresh
+        this.ACCESS_SECRET = env.JWT_ACCESS_SECRET
+        this.REFRESH_SECRET = env.JWT_REFRESH_SECRET
     }
 
     signAccessToken(payload: JwtPayload): string {

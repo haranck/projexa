@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { useVerifyPassword, useResetPassword } from "../../hooks/Auth/AuthHooks";
+import { useResetPassword } from "../../hooks/Auth/AuthHooks";
+import { useVerifyPassword } from "../../hooks/User/UserHooks";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { ShieldCheck, Lock, Eye, EyeOff, Loader2, X, AlertCircle, CheckCircle2 } from "lucide-react";

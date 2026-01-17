@@ -40,7 +40,8 @@ export const ERROR_MESSAGES = {
     AUTHENTICATION_FAILED: "Authentication failed",
     GOOGLE_LOGIN_FAILED: "Google login failed",
     JWT_SECRET_MISSING: 'Missing JWT secrets: set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET',
-    ADMIN_LOGIN_NOT_ALLOWED : 'Admin login not allowed'
+    ADMIN_LOGIN_NOT_ALLOWED : 'Admin login not allowed',
+    BAD_REQUEST : "Bad Request"
 };
 
 export const USER_ERRORS = {

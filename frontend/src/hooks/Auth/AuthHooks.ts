@@ -9,7 +9,6 @@ import {
     resetPassword,
     verifyResetOtp,
     logoutUser,
-    verifyPassword
 } from "../../services/Auth/authService";
 
 export const useUserSignUp = () => {
@@ -66,8 +65,3 @@ export const useUserLogout = () => {
     });
 }
 
-export const useVerifyPassword = () => {
-    return useMutation({
-        mutationFn: verifyPassword
-    })
-}

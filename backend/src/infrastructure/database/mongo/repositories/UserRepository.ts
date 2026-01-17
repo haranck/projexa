@@ -21,7 +21,9 @@ export class UserRepository
   }
 
   async findById(id: string): Promise<IUserEntity | null> {
-    return super.findById(id);
+    const doc = await UserModel.findById(id);
+    if (!doc) return null;
+    return UserMapper.toEntity(doc);
   }
 
   async createUser(user: IUserEntity): Promise<IUserEntity> {
@@ -64,9 +66,9 @@ export class UserRepository
     });
   }
 
-  async findAllUsers(dto:GetUsersRequestDTO): Promise<GetUsersResponseDTO> {
+  async findAllUsers(dto: GetUsersRequestDTO): Promise<GetUsersResponseDTO> {
     const skip = (dto.page - 1) * dto.limit;
-    const filter =dto.search ? {
+    const filter = dto.search ? {
       $or: [
         { firstName: { $regex: dto.search, $options: "i" } },
         { lastName: { $regex: dto.search, $options: "i" } },
@@ -78,13 +80,13 @@ export class UserRepository
     const totalDocs = await UserModel.countDocuments(filter);
     const data = docs.map((doc) => UserMapper.toEntity(doc));
     const totalPages = Math.ceil(totalDocs / dto.limit);
-    return { 
+    return {
       data,
       meta: {
         totalDocs,
         totalPages,
-        page:dto.page,
-        limit:dto.limit,
+        page: dto.page,
+        limit: dto.limit,
       },
     };
   }

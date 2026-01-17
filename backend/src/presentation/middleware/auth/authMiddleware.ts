@@ -36,7 +36,6 @@ export class AuthMiddleware {
       const token = authHeader.split(" ")[1];
 
       const isBlacklisted = await this.blacklistRepo.isBlacklisted(token);
-
       if (isBlacklisted) {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.TOKEN_REVOKED });
         return;
@@ -59,12 +58,13 @@ export class AuthMiddleware {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: USER_ERRORS.USER_NOT_FOUND });
         return;
       }
+
       if (user.isBlocked) {
         res.status(HTTP_STATUS.FORBIDDEN).json({ message: USER_ERRORS.USER_BLOCKED });
         return;
       }
-      req.user = payload;
 
+      req.user = payload;
       next();
 
     } catch (error) {

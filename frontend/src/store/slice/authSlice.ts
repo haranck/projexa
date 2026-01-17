@@ -32,8 +32,13 @@ const authSlice = createSlice({
       state.user = null;
       state.isAuthenticated = false;
     },
+    updateAvatar(state, action: PayloadAction<string>) {
+      if (state.user) {
+        state.user.avatarUrl = action.payload;
+      }
+    },
   },
 });
 
-export const { setAuthUser, clearAuth } = authSlice.actions;
+export const { setAuthUser, clearAuth, updateAvatar } = authSlice.actions;
 export default authSlice.reducer;
