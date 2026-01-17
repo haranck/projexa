@@ -14,10 +14,10 @@ import {
     LogOut,
     Shield,
     Settings as SettingsIcon,
-    // LayoutDashboard,
-    // Users,
+    LayoutDashboard,
+    Users,
     ChevronRight,
-    // Briefcase,
+    Briefcase,
     Calendar,
     Edit3
 } from "lucide-react";
@@ -63,7 +63,6 @@ export const UserProfile = () => {
 
                         if (uploadResponse.status !== 200) throw new Error("Failed to upload to S3");
 
-                        // 3️⃣ Save URL in DB
                         updateProfileImage({
                             userId: user!.id,
                             profileImage: imageUrl,
@@ -172,7 +171,7 @@ export const UserProfile = () => {
                 </div>
 
                 {/* Quick Stats */}
-                {/* <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
                         { label: 'Workspaces', value: '3', icon: LayoutDashboard, color: 'text-blue-400', bg: 'bg-blue-400/5' },
                         { label: 'Owned', value: '1', icon: Briefcase, color: 'text-emerald-400', bg: 'bg-emerald-400/5' },
@@ -188,11 +187,11 @@ export const UserProfile = () => {
                             </div>
                         </div>
                     ))}
-                </div> */}
+                </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Workspaces Section */}
-                    {/* <div className="space-y-4">
+                    <div className="space-y-4">
                         <div className="flex items-center justify-between px-1">
                             <h3 className="text-lg font-bold flex items-center gap-2">
                                 <LayoutDashboard className="w-4 h-4 text-blue-500" />
@@ -233,7 +232,7 @@ export const UserProfile = () => {
                                 <button className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-red-500/5 hover:bg-red-500/10 text-red-500/70 border border-red-500/10 transition-all">Cancel</button>
                             </div>
                         </div>
-                    </div> */}
+                    </div>
 
                     {/* Settings List */}
                     <div className="space-y-4">
@@ -248,7 +247,7 @@ export const UserProfile = () => {
                             {[
                                 { title: 'Security & Access', desc: 'Password and settings', icon: Shield },
                                 { title: 'Personal Information', desc: 'Avatar, name, and contact details', icon: Edit3 },
-                                // { title: 'Workspace Roles', desc: 'Permissions and team access', icon: Users },
+                                { title: 'Workspace Roles', desc: 'Permissions and team access', icon: Users },
                             ].map((item, i) => (
                                 <button key={i} className="w-full flex items-center justify-between p-4 px-5 hover:bg-white/5 transition-all text-left group"
                                     onClick={() => {

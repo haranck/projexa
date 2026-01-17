@@ -2,12 +2,10 @@ import { injectable, inject } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { IGoogleAuthService } from "../../../domain/interfaces/services/IGoogleAuthService";
-import {
-  IGoogleLoginUseCase,
-  IGoogleLoginResult,
-} from "../../interface/auth/IGoogleLoginUseCase";
+import { IGoogleLoginUseCase } from "../../interface/auth/IGoogleLoginUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
+import { GoogleLoginResponseDTO } from "../../dtos/auth/responseDTOs/GoogleLoginResponseDTO"; 
 
 @injectable()
 export class GoogleLoginUseCase implements IGoogleLoginUseCase {
@@ -16,7 +14,8 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     @inject('IJwtService') private jwtService: IJwtService,
     @inject('IGoogleAuthService') private googleAuthService: IGoogleAuthService
   ) { }
-  async execute(idToken: string): Promise<IGoogleLoginResult> {
+
+  async execute(idToken: string): Promise<GoogleLoginResponseDTO> {
 
     const googleUser = await this.googleAuthService.verifyIdToken(idToken);
     if (!googleUser) throw new Error(ERROR_MESSAGES.INVALID_GOOGLE_TOKEN);
@@ -46,7 +45,14 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     return {
       accessToken: this.jwtService.signAccessToken(payload),
       refreshToken: this.jwtService.signRefreshToken(payload),
-      user,
+      user: {
+        id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        isEmailVerified: user.isEmailVerified,
+        avatarUrl: user.avatarUrl,
+      },
     };
   }
 }
