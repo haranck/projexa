@@ -38,7 +38,7 @@ export const UserProfile = () => {
             onSettled: () => {
                 dispatch(clearAuth());
                 dispatch(clearAccessToken())
-                navigate(FRONTEND_ROUTES.LOGIN)
+                navigate(FRONTEND_ROUTES.LANDING, { replace: true })
             }
         })
     }
@@ -246,7 +246,7 @@ export const UserProfile = () => {
                         <div className="bg-zinc-900/50 border border-white/5 rounded-2xl overflow-hidden divide-y divide-white/5">
                             {[
                                 { title: 'Security & Access', desc: 'Password and settings', icon: Shield },
-                                { title: 'Personal Information', desc: 'Avatar, name, and contact details', icon: Edit3 },
+                                { title: 'Personal Information', desc: 'FirstName,LastName,Phone Number Details', icon: Edit3 },
                                 { title: 'Workspace Roles', desc: 'Permissions and team access', icon: Users },
                             ].map((item, i) => (
                                 <button key={i} className="w-full flex items-center justify-between p-4 px-5 hover:bg-white/5 transition-all text-left group"
@@ -255,7 +255,7 @@ export const UserProfile = () => {
                                             setOpen(true)
                                         }
                                         else if (item.title === 'Personal Information') {
-                                            navigate('/profile/personal-info')
+                                            // navigate('/profile/personal-info')
                                         }
                                     }}
                                 >

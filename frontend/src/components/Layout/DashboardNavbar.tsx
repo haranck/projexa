@@ -19,7 +19,7 @@ const DashboardNavbar = () => {
             onSettled: () => {
                 dispatch(clearAuth());
                 dispatch(clearAccessToken());
-                navigate(FRONTEND_ROUTES.LOGIN);
+                navigate(FRONTEND_ROUTES.LANDING, { replace: true });
             }
         })
     };
