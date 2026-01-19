@@ -11,17 +11,17 @@ import { injectable, inject } from "tsyringe";
 @injectable()
 export class VerifyResetOtpUseCase implements IVerifyResetOtpUseCase {
   constructor(
-    @inject('IUserRepository') private userRepo: IUserRepository,
-    @inject('IOtpRepository') private otpRepo: IOtpRepository
+    @inject('IUserRepository') private _userRepo: IUserRepository,
+    @inject('IOtpRepository') private _otpRepo: IOtpRepository
   ) { }
   async execute(dto: VerifyResetOtpDTO): Promise<void> {
 
-    const user = await this.userRepo.findByEmail(dto.email);
+    const user = await this._userRepo.findByEmail(dto.email);
     if (!user || !user.id) {
       throw new Error(USER_ERRORS.USER_NOT_FOUND);
     }
-    const otp = await this.otpRepo.findValidOtp(user.email, dto.otp);
+    const otp = await this._otpRepo.findValidOtp(user.email, dto.otp);
     if (!otp || !otp._id) throw new Error(ERROR_MESSAGES.INVALID_OTP);
-    await this.otpRepo.markAsUsed(otp._id.toString());
+    await this._otpRepo.markAsUsed(otp._id.toString());
   }
 }

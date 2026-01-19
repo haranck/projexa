@@ -12,16 +12,16 @@ import { env } from "node:process";
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
-    @inject('IUserRepository') private userRepo: IUserRepository,
-    @inject('IPasswordService') private passwordService: IPasswordService,
-    @inject('IJwtService') private jwtService: IJwtService
+    @inject('IUserRepository') private _userRepo: IUserRepository,
+    @inject('IPasswordService') private _passwordService: IPasswordService,
+    @inject('IJwtService') private _jwtService: IJwtService
   ) { }
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
 
     if (dto.email === env.ADMIN_EMAIL) throw new Error(ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED);
 
-    const user = await this.userRepo.findByEmail(dto.email);
+    const user = await this._userRepo.findByEmail(dto.email);
 
     if(user?.isBlocked) throw new Error(USER_ERRORS.USER_BLOCKED);
 
@@ -29,7 +29,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     if (!user.isEmailVerified) throw new Error(USER_ERRORS.USER_EMAIL_NOT_VERIFIED);
 
-    const isMatch = await this.passwordService.compare(dto.password, user.password);
+    const isMatch = await this._passwordService.compare(dto.password, user.password);
 
     if (!isMatch) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
@@ -40,9 +40,9 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       email: user.email,
     };
 
-    const accessToken = this.jwtService.signAccessToken(payload);
-    const refreshToken = this.jwtService.signRefreshToken(payload);
-    
+    const accessToken = this._jwtService.signAccessToken(payload);
+    const refreshToken = this._jwtService.signRefreshToken(payload);
+
     return {
       accessToken,
       refreshToken,

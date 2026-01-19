@@ -4,7 +4,7 @@ import logger from "../../config/logger";
 
 export class GoogleAuthService implements IGoogleAuthService {
 
-    private client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
+    private _client: OAuth2Client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
     
     async verifyIdToken(token: string): Promise<{ email: string; firstName: string; lastName: string; avatarUrl?: string; } | null> {
         try {

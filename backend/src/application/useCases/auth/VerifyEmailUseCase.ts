@@ -10,23 +10,23 @@ import { injectable, inject } from "tsyringe";
 export class VerifyEmailUseCase implements IVerifyEmailUseCase {
 
   constructor(
-    @inject('IOtpRepository') private otpRepo: IOtpRepository,
-    @inject('IUserRepository') private userRepo: IUserRepository,
-    @inject('ITempUserStore') private tempUserStore: ITempUserStore
+    @inject('IOtpRepository') private _otpRepo: IOtpRepository,
+    @inject('IUserRepository') private _userRepo: IUserRepository,
+    @inject('ITempUserStore') private _tempUserStore: ITempUserStore
   ) { }
 
   async execute(email: string, otpCode: string): Promise<void> {
-    const otp = await this.otpRepo.findValidOtp(email, otpCode)
+    const otp = await this._otpRepo.findValidOtp(email, otpCode)
 
     if (!otp) {
       throw new Error(ERROR_MESSAGES.INVALID_OTP)
     }
-    const tempUser = await this.tempUserStore.get(email)
+    const tempUser = await this._tempUserStore.get(email)
     if (!tempUser) {
       throw new Error(USER_ERRORS.USER_NOT_FOUND)
     }
 
-    await this.userRepo.createUser({
+    await this._userRepo.createUser({
       firstName: tempUser.firstName,
       lastName: tempUser.lastName,
       email: email,
@@ -40,7 +40,7 @@ export class VerifyEmailUseCase implements IVerifyEmailUseCase {
     })
 
 
-    await this.otpRepo.markAsUsed(otp._id!.toString());
-    await this.tempUserStore.delete(email);
+    await this._otpRepo.markAsUsed(otp._id!.toString());
+    await this._tempUserStore.delete(email);
   }
 }

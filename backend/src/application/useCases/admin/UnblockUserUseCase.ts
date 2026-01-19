@@ -5,9 +5,9 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 @injectable()
 export class UnblockUserUseCase implements IUnblockUserUseCase{
     constructor(
-        @inject('IUserRepository') private userRepository:IUserRepository
+        @inject('IUserRepository') private _userRepository:IUserRepository
     ){}
     async execute(userId: string): Promise<void> {
-        await this.userRepository.unblockUser(userId)
+        await this._userRepository.unblockUser(userId)
     }
 }

@@ -7,12 +7,12 @@ import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase"
 @injectable()
 export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
   constructor(
-    @inject('IUserRepository') private userRepo: IUserRepository,
-    @inject('ISendEmailOtpUseCase') private sendEmailOtpUseCase: ISendEmailOtpUseCase
+    @inject('IUserRepository') private _userRepo: IUserRepository,
+    @inject('ISendEmailOtpUseCase') private _sendEmailOtpUseCase: ISendEmailOtpUseCase
   ) { }
   async execute(dto: ForgotPasswordDTO): Promise<void> {
-    const user = await this.userRepo.findByEmail(dto.email);
+    const user = await this._userRepo.findByEmail(dto.email);
     if (!user || !user.id) return;
-    await this.sendEmailOtpUseCase.execute(user);
+    await this._sendEmailOtpUseCase.execute(user);
   }
 }

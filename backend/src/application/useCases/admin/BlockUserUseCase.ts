@@ -5,9 +5,9 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 @injectable()
 export class BlockUserUseCase implements IBlockUserUseCase {
     constructor(
-        @inject('IUserRepository') private userRepository: IUserRepository
+        @inject('IUserRepository') private _userRepository: IUserRepository
     ){}
     async execute(userId: string): Promise<void> {
-        await this.userRepository.blockUser(userId)
+        await this._userRepository.blockUser(userId)
     }
 }

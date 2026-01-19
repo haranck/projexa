@@ -10,7 +10,7 @@ import { env } from "../../../config/envValidation";
 @injectable()
 export class AdminLoginUseCase implements IAdminLoginUseCase {
     constructor(
-        @inject('IJwtService') private jwtService: IJwtService
+        @inject('IJwtService') private _jwtService: IJwtService
     ) { }
     
     async execute(dto: AdminLoginDTO): Promise<AdminLoginResponseDTO> {
@@ -24,8 +24,8 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
             email: env.ADMIN_EMAIL
         }
 
-        const accessToken = this.jwtService.signAccessToken(payload);
-        const refreshToken = this.jwtService.signRefreshToken(payload)
+        const accessToken = this._jwtService.signAccessToken(payload);
+        const refreshToken = this._jwtService.signRefreshToken(payload)
         return {
             accessToken,
             refreshToken,

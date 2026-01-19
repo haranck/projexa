@@ -9,20 +9,20 @@ import { IRefreshTokenUseCase } from "../../interface/auth/IRefreshTokenUseCase"
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
     constructor(
-        @inject('IJwtService') private jwtService: IJwtService,
-        @inject('IUserRepository') private userRepo: IUserRepository
+        @inject('IJwtService') private _jwtService: IJwtService,
+        @inject('IUserRepository') private _userRepo: IUserRepository
     ) { }
 
     async execute(refreshToken: string): Promise<LoginResponseDTO> {
-        const payload = this.jwtService.verifyRefreshToken(refreshToken);
+        const payload = this._jwtService.verifyRefreshToken(refreshToken);
         if (!payload || !payload.userId) {
             throw new Error(ERROR_MESSAGES.INVALID_TOKEN);
         }
         
         if (payload.userId === 'ADMIN') {
             const newPayload = { userId: 'ADMIN', email: payload.email };
-            const newAccessToken = this.jwtService.signAccessToken(newPayload);
-            const newRefreshToken = this.jwtService.signRefreshToken(newPayload);
+            const newAccessToken = this._jwtService.signAccessToken(newPayload);
+            const newRefreshToken = this._jwtService.signRefreshToken(newPayload);
 
             return {
                 accessToken: newAccessToken,
@@ -37,13 +37,13 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
             };
         }
 
-        const user = await this.userRepo.findById(payload.userId);
+        const user = await this._userRepo.findById(payload.userId);
         if (!user) {
             throw new Error(USER_ERRORS.USER_NOT_FOUND);
         }
 
         const newPayload = { userId: user.id!, email: user.email };
-        const newAccessToken = this.jwtService.signAccessToken(newPayload);
+        const newAccessToken = this._jwtService.signAccessToken(newPayload);
 
         return {
             accessToken: newAccessToken,

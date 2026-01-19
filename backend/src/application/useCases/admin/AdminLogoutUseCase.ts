@@ -8,12 +8,12 @@ import { JwtPayload } from "jsonwebtoken";
 @injectable()
 export class AdminLogoutUseCase implements IAdminLogoutUseCase {
     constructor(
-        @inject('IJwtService') private jwtService: IJwtService,
-        @inject('ITokenBlacklistRepository') private blacklistRepo: ITokenBlacklistRepository
+        @inject('IJwtService') private _jwtService: IJwtService,
+        @inject('ITokenBlacklistRepository') private _blacklistRepo: ITokenBlacklistRepository
     ) { }
 
     async execute(accessToken: string): Promise<void> {
-        const payload = this.jwtService.verifyAccessToken(accessToken)
+        const payload = this._jwtService.verifyAccessToken(accessToken)
 
         if (!payload) throw new Error(ERROR_MESSAGES.INVALID_TOKEN)
 
@@ -23,7 +23,7 @@ export class AdminLogoutUseCase implements IAdminLogoutUseCase {
         const ttl = decoded.exp - Math.floor(Date.now() / 1000)
 
         if (ttl > 0) {
-            await this.blacklistRepo.blacklist(accessToken, ttl)
+            await this._blacklistRepo.blacklist(accessToken, ttl)
         }
     }
 }

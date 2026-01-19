@@ -1,5 +1,4 @@
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
-import { IOtpRepository } from "../../../domain/interfaces/repositories/IOtpRepository";
 import { IPasswordService } from "../../../domain/interfaces/services/IPasswordService";
 import { ResetPasswordDTO } from "../../dtos/auth/requestDTOs/ResetPasswordDTO";
 import { IResetPasswordUseCase } from "../../interface/auth/IResetPasswordUseCase";
@@ -10,9 +9,8 @@ import { injectable, inject } from "tsyringe";
 @injectable()
 export class ResetPasswordUseCase implements IResetPasswordUseCase {
   constructor(
-    @inject('IUserRepository') private userRepo: IUserRepository,
-    @inject('IOtpRepository') private otpRepo: IOtpRepository,
-    @inject('IPasswordService') private passwordService: IPasswordService,
+    @inject('IUserRepository') private _userRepo: IUserRepository,
+    @inject('IPasswordService') private _passwordService: IPasswordService,
   ) { }
 
   async execute(dto: ResetPasswordDTO): Promise<void> {
@@ -20,12 +18,12 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
       throw new Error(ERROR_MESSAGES.PASSWORD_NOT_MATCHING);
     }
 
-    const user = await this.userRepo.findByEmail(dto.email);
+    const user = await this._userRepo.findByEmail(dto.email);
     if (!user || !user.id) {
       throw new Error(USER_ERRORS.USER_NOT_FOUND);
     }
 
-    const hashedPassword = await this.passwordService.hash(dto.password);
-    await this.userRepo.updatePassword(user.id, hashedPassword);
+    const hashedPassword = await this._passwordService.hash(dto.password);
+    await this._userRepo.updatePassword(user.id, hashedPassword);
   }
 }

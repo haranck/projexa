@@ -7,11 +7,11 @@ import { GetUsersRequestDTO } from "../../dtos/admin/requestDTOs/GetUsersRequest
 @injectable()
 export class GetUsersUseCase implements IGetUsersUseCase {
     constructor(
-        @inject('IUserRepository') private userRepository: IUserRepository
+        @inject('IUserRepository') private _userRepository: IUserRepository
     ) { }
 
     async execute(dto: GetUsersRequestDTO): Promise<GetUsersResponseDTO> {
-        const users = await this.userRepository.findAllUsers(dto);
+        const users = await this._userRepository.findAllUsers(dto);
         return users;
     }
 }

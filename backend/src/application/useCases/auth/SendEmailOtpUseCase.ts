@@ -8,9 +8,9 @@ import { ISendEmailOtpUseCase } from "../../interface/auth/ISendEmailOtpUseCase"
 @injectable()
 export class SendEmailOtpUsecase implements ISendEmailOtpUseCase {
   constructor(
-    @inject('IOtpRepository') private otpRepo: IOtpRepository,
-    @inject('IEmailService') private emailService: IEmailService,
-    @inject('ITempUserStore') private tempUserStore: ITempUserStore,
+    @inject('IOtpRepository') private _otpRepo: IOtpRepository,
+    @inject('IEmailService') private _emailService: IEmailService,
+    @inject('ITempUserStore') private _tempUserStore: ITempUserStore,
   ) { }
 
   async execute(userData: ITempUserData): Promise<void> {
@@ -18,7 +18,7 @@ export class SendEmailOtpUsecase implements ISendEmailOtpUseCase {
     const ttlSeconds = 10 * 60
 
 
-    await this.tempUserStore.save(userData.email, userData, ttlSeconds)
+    await this._tempUserStore.save(userData.email, userData, ttlSeconds)
 
     const otp: IOtpEntity = {
       userId: userData.email,
@@ -27,7 +27,7 @@ export class SendEmailOtpUsecase implements ISendEmailOtpUseCase {
       isUsed: false,
       createdAt: new Date(),
     };
-    await this.otpRepo.createOtp(otp);
-    await this.emailService.sendOtp(userData.email, otpCode);
+    await this._otpRepo.createOtp(otp);
+    await this._emailService.sendOtp(userData.email, otpCode);
   }
 }

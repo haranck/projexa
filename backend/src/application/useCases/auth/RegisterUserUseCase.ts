@@ -9,19 +9,19 @@ import { IRegisterUserUseCase } from "../../interface/auth/IRegisterUserUseCase"
 @injectable()
 export class RegisterUserUseCase implements IRegisterUserUseCase {
     constructor(
-        @inject('IUserRepository') private userRepository: IUserRepository,
-        @inject('IPasswordService') private passwordService: IPasswordService,
-        @inject('ISendEmailOtpUseCase') private sendEmailOtpUseCase: ISendEmailOtpUseCase
+        @inject('IUserRepository') private _userRepository: IUserRepository,
+        @inject('IPasswordService') private _passwordService: IPasswordService,
+        @inject('ISendEmailOtpUseCase') private _sendEmailOtpUseCase: ISendEmailOtpUseCase
     ) { }
 
     async execute(dto: RegisterUserDTO): Promise<void> {
-        const existingUser = await this.userRepository.findByEmail(dto.email)
+        const existingUser = await this._userRepository.findByEmail(dto.email)
         if (existingUser) {
             throw new Error(USER_ERRORS.USER_ALREADY_EXISTS)
         }
-        const hashedPassword = await this.passwordService.hash(dto.password)
+        const hashedPassword = await this._passwordService.hash(dto.password)
 
-        await this.sendEmailOtpUseCase.execute({
+        await this._sendEmailOtpUseCase.execute({
             firstName: dto.firstName,
             lastName: dto.lastName,
             email: dto.email,

@@ -14,9 +14,9 @@ interface AuthRequest extends Request {
 @injectable()
 export class AuthMiddleware {
   constructor(
-    @inject('IJwtService') private readonly jwtService: IJwtService,
-    @inject('ITokenBlacklistRepository') private readonly blacklistRepo: ITokenBlacklistRepository,
-    @inject('IUserRepository') private readonly userRepository: IUserRepository
+    @inject('IJwtService') private readonly _jwtService: IJwtService,
+    @inject('ITokenBlacklistRepository') private readonly _blacklistRepo: ITokenBlacklistRepository,
+    @inject('IUserRepository') private readonly _userRepository: IUserRepository
   ) { }
 
   authenticate = async (
@@ -35,14 +35,13 @@ export class AuthMiddleware {
 
       const token = authHeader.split(" ")[1];
 
-      const isBlacklisted = await this.blacklistRepo.isBlacklisted(token);
-
+      const isBlacklisted = await this._blacklistRepo.isBlacklisted(token);
       if (isBlacklisted) {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.TOKEN_REVOKED });
         return;
       }
 
-      const payload = this.jwtService.verifyAccessToken(token);
+      const payload = this._jwtService.verifyAccessToken(token);
       if (!payload) {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: ERROR_MESSAGES.INVALID_TOKEN });
         return;
@@ -54,7 +53,7 @@ export class AuthMiddleware {
         return;
       }
 
-      const user = await this.userRepository.findById(payload.userId);
+      const user = await this._userRepository.findById(payload.userId);
       if (!user) {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: USER_ERRORS.USER_NOT_FOUND });
         return;
