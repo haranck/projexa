@@ -6,7 +6,9 @@ import { FRONTEND_ROUTES } from "../constants/frontendRoutes";
 const ProtectedRoute = () => {
   const accessToken = useSelector((state: RootState) => state.token.accessToken);
 
-  if (!accessToken) return <Navigate to={FRONTEND_ROUTES.LOGIN} replace />;
+  if (!accessToken) {
+    return <Navigate to={FRONTEND_ROUTES.LANDING} replace />;
+  }
 
   return <Outlet />;
 };

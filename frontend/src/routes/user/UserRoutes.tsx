@@ -16,15 +16,18 @@ import { BacklogPage } from '../../pages/User/Backlog/BacklogPage'
 import { BoardPage } from '../../pages/User/Board/BoardPage'
 import { UserProfile } from '../../pages/User/Profile/UserProfile'
 import ProtectedRoute from '../ProtectedRoute'
+import PublicRoute from '../PublicRoute'
 
 const UserRoutes = () => {
     return (
         <Routes>
-            <Route path={FRONTEND_ROUTES.LANDING} element={<LandingPage />} />
-            <Route path={FRONTEND_ROUTES.SIGNUP} element={<SignupPage />} />
-            <Route path={FRONTEND_ROUTES.LOGIN} element={<LoginPage />} />
-            <Route path={FRONTEND_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
-            <Route path={FRONTEND_ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
+            <Route element={<PublicRoute />}>
+                <Route path={FRONTEND_ROUTES.LANDING} element={<LandingPage />} />
+                <Route path={FRONTEND_ROUTES.SIGNUP} element={<SignupPage />} />
+                <Route path={FRONTEND_ROUTES.LOGIN} element={<LoginPage />} />
+                <Route path={FRONTEND_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
+                <Route path={FRONTEND_ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
+            </Route>
 
             <Route element={<ProtectedRoute />}>
                 <Route path={FRONTEND_ROUTES.HOME} element={<HomePage />} />

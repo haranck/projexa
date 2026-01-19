@@ -3,6 +3,7 @@ import { IJwtService } from '../../domain/interfaces/services/IJwtService'
 import { JwtPayload } from '../../domain/entities/IJwtPayload'
 import { ERROR_MESSAGES } from '../../domain/constants/errorMessages'
 import { env } from '../../config/envValidation'
+import { env } from '../../config/envValidation'
 
 export class JwtService implements IJwtService {
     private _ACCESS_SECRET: string

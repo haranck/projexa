@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { authController,authMiddleware } from '../DI/resolver';
+import { authController, authMiddleware } from '../DI/resolver';
 import { ROUTES } from '../../shared/constant/routes'
 
 const router = Router();
@@ -14,6 +14,5 @@ router.post(ROUTES.AUTH.RESET_PASSWORD, authController.resetPassword);
 router.post(ROUTES.AUTH.RESEND_OTP, authController.resendOtp)
 router.post(ROUTES.AUTH.REFRESH_TOKEN, authController.refreshToken)
 router.post(ROUTES.AUTH.LOGOUT, authMiddleware.authenticate, authController.logout)
-
 
 export default router;

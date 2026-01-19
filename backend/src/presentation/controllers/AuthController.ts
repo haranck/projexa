@@ -80,13 +80,13 @@ export class AuthController {
       logger.info("Login successful", response);
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.LOGIN_SUCCESS, data: response });
-      
+
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : ERROR_MESSAGES.INVALID_CREDENTIALS;
       logger.error("Login failed", message);
       let status = HTTP_STATUS.UNPROCESSABLE_ENTITY
-      if(message === ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED){
-        status =HTTP_STATUS.UNPROCESSABLE_ENTITY
+      if (message === ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED) {
+        status = HTTP_STATUS.UNPROCESSABLE_ENTITY
       }
       res.status(status).json({ message });
     }
@@ -172,4 +172,6 @@ export class AuthController {
       next(error)
     }
   };
+
+  
 }

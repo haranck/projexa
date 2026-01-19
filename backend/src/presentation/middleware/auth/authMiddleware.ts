@@ -7,7 +7,7 @@ import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository"
 import { injectable, inject } from "tsyringe";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
   user?: JwtPayload;
 }
 
@@ -58,12 +58,13 @@ export class AuthMiddleware {
         res.status(HTTP_STATUS.UNAUTHORIZED).json({ message: USER_ERRORS.USER_NOT_FOUND });
         return;
       }
+
       if (user.isBlocked) {
         res.status(HTTP_STATUS.FORBIDDEN).json({ message: USER_ERRORS.USER_BLOCKED });
         return;
       }
-      req.user = payload;
 
+      req.user = payload;
       next();
 
     } catch (error) {

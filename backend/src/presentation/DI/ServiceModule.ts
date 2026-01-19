@@ -9,6 +9,8 @@ import { IGoogleAuthService } from "../../domain/interfaces/services/IGoogleAuth
 import { GoogleAuthService } from "../../infrastructure/services/GoogleAuthService";
 import { RedisTempUserStore } from "../../infrastructure/services/RedisTempUserStore";
 import { ITempUserStore } from "../../domain/interfaces/services/ITempUserStore";
+import { IS3Service } from "../../domain/interfaces/services/IS3Service";
+import { S3Service } from "../../infrastructure/services/S3service";
 
 export class ServiceModule {
     static registerModules():void{
@@ -31,6 +33,10 @@ export class ServiceModule {
 
         container.register<ITempUserStore>('ITempUserStore',{
             useClass: RedisTempUserStore
+        })
+
+        container.register<IS3Service>('IS3Service',{
+            useClass: S3Service
         })
 
     }

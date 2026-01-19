@@ -31,6 +31,12 @@ import { UnblockUserUseCase } from "../../application/useCases/admin/UnblockUser
 import { BlockUserUseCase } from "../../application/useCases/admin/BlockUserUseCase";
 import { IGetUsersUseCase } from "../../application/interface/admin/IGetUsersUseCase";
 import { GetUsersUseCase } from "../../application/useCases/admin/GetUsersUseCase";
+import { IVerifyPasswordUseCase } from "../../application/interface/user/IVerifyPasswordUseCase";
+import { VerifyPasswordUseCase } from "../../application/useCases/user/VerifyPasswordUseCase";
+import { IProfileImageUploadUrlUseCase } from "../../application/interface/user/IProfileImageUploadUrlUseCase";
+import { ProfileImageUploadUrlUseCase } from "../../application/useCases/user/ProfileImageUploadUrlUseCase";
+import { IUpdateProfileImageUseCase } from "../../application/interface/user/IUpdateProfileImageUseCase";
+import { UpdateProfileImageUseCase } from "../../application/useCases/user/UpdateProfileImageUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -81,16 +87,16 @@ export class UseCaseModule {
 
         /*--------------------- Admin UseCases ---------------------*/
 
-        container.register<IAdminLoginUseCase>('IAdminLoginUseCase',{
-            useClass:AdminLoginUseCase
+        container.register<IAdminLoginUseCase>('IAdminLoginUseCase', {
+            useClass: AdminLoginUseCase
         })
 
-        container.register<IAdminLogoutUseCase>('IAdminLogoutUseCase',{
+        container.register<IAdminLogoutUseCase>('IAdminLogoutUseCase', {
             useClass: AdminLogoutUseCase
         })
 
-        container.register<IBlockUserUseCase>('IBlockUserUseCase',{
-            useClass:BlockUserUseCase
+        container.register<IBlockUserUseCase>('IBlockUserUseCase', {
+            useClass: BlockUserUseCase
         })
 
         container.register<IUnblockUserUseCase>('IUnblockUserUseCase', {
@@ -100,5 +106,19 @@ export class UseCaseModule {
         container.register<IGetUsersUseCase>('IGetUsersUseCase', {
             useClass: GetUsersUseCase
         })
+
+        /*--------------------- User UseCases ---------------------*/
+        container.register<IVerifyPasswordUseCase>('IVerifyPasswordUseCase', {
+            useClass: VerifyPasswordUseCase
+        })
+
+        container.register<IProfileImageUploadUrlUseCase>('IProfileImageUploadUrlUseCase', {
+            useClass: ProfileImageUploadUrlUseCase
+        })
+
+        container.register<IUpdateProfileImageUseCase>('IUpdateProfileImageUseCase', {
+            useClass: UpdateProfileImageUseCase
+        })
+
     }
 }

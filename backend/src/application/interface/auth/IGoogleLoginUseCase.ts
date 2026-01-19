@@ -1,11 +1,6 @@
-import { IUserEntity } from "../../../domain/entities/IUserEntity";
-
-export interface IGoogleLoginResult {
-    accessToken: string;
-    refreshToken: string;
-    user: IUserEntity;
-}
+// import { GoogleLoginResponseDTO } from "../dtos/auth/responseDTOs/GoogleLoginResponseDTO";
+import { GoogleLoginResponseDTO } from "../../dtos/auth/responseDTOs/GoogleLoginResponseDTO";
 
 export interface IGoogleLoginUseCase {
-    execute(idToken: string): Promise<IGoogleLoginResult>;
+    execute(idToken: string): Promise<GoogleLoginResponseDTO>;
 }

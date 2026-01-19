@@ -1,4 +1,4 @@
-export interface LoginResponseDTO {
+export interface GoogleLoginResponseDTO {
     accessToken: string;
     refreshToken: string;
     user: {
