@@ -6,6 +6,7 @@ export interface LoginResponseDTO {
         firstName: string;
         lastName: string;
         email: string;
+        phone:string;
         isEmailVerified: boolean;
         avatarUrl?: string;
     }

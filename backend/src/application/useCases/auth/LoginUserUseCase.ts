@@ -51,6 +51,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
         firstName: user.firstName,
         lastName: user.lastName,
         email: user.email,
+        phone: user.phone || "",
         isEmailVerified: user.isEmailVerified,
         avatarUrl: user.avatarUrl,
       },

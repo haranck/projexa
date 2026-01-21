@@ -5,7 +5,7 @@ import { IGoogleAuthService } from "../../../domain/interfaces/services/IGoogleA
 import { IGoogleLoginUseCase } from "../../interface/auth/IGoogleLoginUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
-import { GoogleLoginResponseDTO } from "../../dtos/auth/responseDTOs/GoogleLoginResponseDTO"; 
+import { GoogleLoginResponseDTO } from "../../dtos/auth/responseDTOs/GoogleLoginResponseDTO";
 
 @injectable()
 export class GoogleLoginUseCase implements IGoogleLoginUseCase {
@@ -26,6 +26,7 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
         firstName: googleUser.firstName,
         lastName: googleUser.lastName,
         email: googleUser.email,
+        phone: "",
         password: "",
         avatarUrl: googleUser.avatarUrl,
         isBlocked: false,
@@ -49,6 +50,7 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
         id: user.id,
         firstName: user.firstName,
         lastName: user.lastName,
+        phone: user.phone || "",
         email: user.email,
         isEmailVerified: user.isEmailVerified,
         avatarUrl: user.avatarUrl,

@@ -18,7 +18,7 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
         if (!payload || !payload.userId) {
             throw new Error(ERROR_MESSAGES.INVALID_TOKEN);
         }
-        
+
         if (payload.userId === 'ADMIN') {
             const newPayload = { userId: 'ADMIN', email: payload.email };
             const newAccessToken = this._jwtService.signAccessToken(newPayload);

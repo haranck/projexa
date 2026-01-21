@@ -39,7 +39,6 @@ export class VerifyEmailUseCase implements IVerifyEmailUseCase {
       updatedAt: new Date()
     })
 
-
     await this._otpRepo.markAsUsed(otp._id!.toString());
     await this._tempUserStore.delete(email);
   }

@@ -51,4 +51,5 @@ export const USER_ERRORS = {
     NO_PROFILE_FOUND: "No profile img found",
     USER_EMAIL_NOT_VERIFIED: "User email not verified",
     USER_CREATION_FAILED: "User creation failed",
+    UPDATE_PROFILE_FAILED: "Update profile failed",
 };

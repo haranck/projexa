@@ -14,6 +14,7 @@ export const MESSAGES = {
         PASSWORD_VERIFIED_SUCCESSFULLY: "Password verified successfully",
         PROFILE_IMAGE_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Profile image upload URL generated successfully",
         PROFILE_IMAGE_UPDATED_SUCCESSFULLY: "Profile image updated successfully",
+        PROFILE_UPDATED_SUCCESSFULLY: "Profile updated successfully",
     },
 
     ADMIN: {

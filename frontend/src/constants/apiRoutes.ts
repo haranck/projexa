@@ -22,6 +22,7 @@ export const API_ROUTES = {
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",
     PROFILE_IMAGE_UPLOAD_URL: "/user/profile/image-upload-url",
-    UPDATE_PROFILE_IMAGE: "/user/profile/image"
+    UPDATE_PROFILE_IMAGE: "/user/profile/image",
+    UPDATE_PROFILE: "/user/update-profile"
   }
 };

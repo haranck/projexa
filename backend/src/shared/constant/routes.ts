@@ -16,6 +16,7 @@ export const ROUTES = {
         VERIFY_PASSWORD: "/verify-password",
         PROFILE_IMAGE_UPLOAD_URL: "/profile/image-upload-url",
         UPDATE_PROFILE_IMAGE : "/profile/image",
+        UPDATE_PROFILE : "/update-profile"
     },
     ADMIN: {
         LOGIN: "/login",

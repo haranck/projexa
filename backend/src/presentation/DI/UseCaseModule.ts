@@ -37,6 +37,8 @@ import { IProfileImageUploadUrlUseCase } from "../../application/interface/user/
 import { ProfileImageUploadUrlUseCase } from "../../application/useCases/user/ProfileImageUploadUrlUseCase";
 import { IUpdateProfileImageUseCase } from "../../application/interface/user/IUpdateProfileImageUseCase";
 import { UpdateProfileImageUseCase } from "../../application/useCases/user/UpdateProfileImageUseCase";
+import { IUpdateProfileUseCase } from "../../application/interface/user/IUpdateProfileUseCase";
+import { UpdateProfileUseCase } from "../../application/useCases/user/UpdateProfileUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -108,6 +110,7 @@ export class UseCaseModule {
         })
 
         /*--------------------- User UseCases ---------------------*/
+        
         container.register<IVerifyPasswordUseCase>('IVerifyPasswordUseCase', {
             useClass: VerifyPasswordUseCase
         })
@@ -120,5 +123,8 @@ export class UseCaseModule {
             useClass: UpdateProfileImageUseCase
         })
 
+        container.register<IUpdateProfileUseCase>('IUpdateProfileUseCase', {
+            useClass: UpdateProfileUseCase
+        })
     }
 }

@@ -23,15 +23,19 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import axios from "axios";
+import EditProfileModal from "@/components/modals/EditProfileModal";
+
 
 export const UserProfile = () => {
     const navigate = useNavigate();
     const user = useSelector((state: RootState) => state.auth.user)
     const dispatch = useDispatch()
     const { mutate: logoutUser } = useUserLogout()
-    const [open, setOpen] = useState(false)
+    const [isChangePasswordOpen, setChangePasswordOpen] = useState(false)
+    const [isEditProfileOpen, setEditProfileOpen] = useState(false);
     const { mutate: profileImageUploadUrl } = useProfileImageUploadUrl()
     const { mutate: updateProfileImage } = useUpdateProfileImage()
+
 
     const handleLogout = () => {
         logoutUser(undefined, {
@@ -90,7 +94,7 @@ export const UserProfile = () => {
         }
     };
 
-
+    console.log("userDetails", user)
     return (
         <DashboardLayout>
             <div className="max-w-6xl mx-auto p-8 space-y-10 text-white pb-20">
@@ -102,7 +106,7 @@ export const UserProfile = () => {
                     </div>
                 </div>
 
-                <div className="relative overflow-hidden bg-linear-to-br from-blue-600/20 to-indigo-600/20 border border-white/10 rounded-3xl p-8 backdrop-blur-sm group">
+                <div className="relative overflow-hidden bg-linear-to-br from-blue-1000/20 to-indigo-600/20 border border-white/10 rounded-3xl p-8 backdrop-blur-sm group">
 
 
                     <div className="relative flex flex-col md:flex-row items-center gap-8 text-center md:text-left">
@@ -148,6 +152,7 @@ export const UserProfile = () => {
                                 </span>
                             </h2>
                             <p className="text-zinc-400 font-medium">{user?.email}</p>
+                            <p className="text-zinc-400 font-medium">{user?.phone}</p>
                             <div className="flex flex-wrap items-center gap-4 pt-2">
                                 <div className="flex items-center gap-1.5 text-xs text-zinc-500">
                                     <Shield className="w-3.5 h-3.5" />
@@ -252,10 +257,10 @@ export const UserProfile = () => {
                                 <button key={i} className="w-full flex items-center justify-between p-4 px-5 hover:bg-white/5 transition-all text-left group"
                                     onClick={() => {
                                         if (item.title === 'Security & Access') {
-                                            setOpen(true)
+                                            setChangePasswordOpen(true)
                                         }
                                         else if (item.title === 'Personal Information') {
-                                            // navigate('/profile/personal-info')
+                                            setEditProfileOpen(true)
                                         }
                                     }}
                                 >
@@ -274,7 +279,8 @@ export const UserProfile = () => {
                         </div>
                     </div>
                 </div>
-                <ChangePasswordModal open={open} onClose={() => setOpen(false)} />
+                <ChangePasswordModal open={isChangePasswordOpen} onClose={() => setChangePasswordOpen(false)} />
+                <EditProfileModal open={isEditProfileOpen} onClose={() => setEditProfileOpen(false)} />
             </div>
         </DashboardLayout>
     );

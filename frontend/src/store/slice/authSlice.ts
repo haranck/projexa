@@ -5,6 +5,7 @@ export interface AuthUser {
   firstName: string;
   lastName: string;
   email: string;
+  phone: string;
   isEmailVerified: boolean;
   avatarUrl?: string;
 }
@@ -27,7 +28,7 @@ const authSlice = createSlice({
       state.user = action.payload;
       state.isAuthenticated = true;
     },
- 
+
     clearAuth(state) {
       state.user = null;
       state.isAuthenticated = false;

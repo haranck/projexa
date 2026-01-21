@@ -18,6 +18,7 @@ export const FRONTEND_ROUTES = {
   BOARD: '/board',
   PROFILE: '/profile',
   CHANGE_PASSWORD: '/change-password',
+  UPDATE_PROFILE: '/update-profile',
   
   //Admin Routes
   

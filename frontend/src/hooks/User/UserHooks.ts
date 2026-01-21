@@ -1,5 +1,10 @@
 import { useMutation } from "@tanstack/react-query";
-import { verifyPassword , updateProfileImage, profileImageUploadUrl } from "../../services/User/userService";
+import {
+    verifyPassword,
+    updateProfileImage,
+    profileImageUploadUrl,
+    updateProfile
+} from "../../services/User/userService";
 
 export const useVerifyPassword = () => {
     return useMutation({
@@ -16,5 +21,11 @@ export const useProfileImageUploadUrl = () => {
 export const useUpdateProfileImage = () => {
     return useMutation({
         mutationFn: updateProfileImage
+    })
+}
+
+export const useUpdateProfile = () => {
+    return useMutation({
+        mutationFn: updateProfile
     })
 }
