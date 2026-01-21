@@ -12,6 +12,7 @@ router.post(ROUTES.AUTH.FORGOT_PASSWORD, authController.forgotPassword);
 router.post(ROUTES.AUTH.VERIFY_RESET_OTP, authController.verifyResetOtp);
 router.post(ROUTES.AUTH.RESET_PASSWORD, authController.resetPassword);
 router.post(ROUTES.AUTH.RESEND_OTP, authController.resendOtp)
+
 router.post(ROUTES.AUTH.REFRESH_TOKEN, authController.refreshToken)
 router.post(ROUTES.AUTH.LOGOUT, authMiddleware.authenticate, authController.logout)
 

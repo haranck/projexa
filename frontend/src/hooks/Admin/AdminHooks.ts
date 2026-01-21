@@ -38,8 +38,21 @@ export const useBlockUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: blockUser,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+        onSuccess: (_, variables) => {
+            queryClient.setQueriesData<UserResponse>({ queryKey: ['users'] }, (oldData) => {
+                if (!oldData) return oldData;
+                return {
+                    ...oldData,
+                    data: {
+                        ...oldData.data,
+                        data: oldData.data.data.map(user =>
+                            (user.id === variables.userId || user._id === variables.userId)
+                                ? { ...user, isBlocked: true }
+                                : user
+                        )
+                    }
+                };
+            });
         }
     })
 }
@@ -48,8 +61,21 @@ export const useUnblockUser = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: unblockUser,
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['users'] });
+        onSuccess: (_, variables) => {
+            queryClient.setQueriesData<UserResponse>({ queryKey: ['users'] }, (oldData) => {
+                if (!oldData) return oldData;
+                return {
+                    ...oldData,
+                    data: {
+                        ...oldData.data,
+                        data: oldData.data.data.map(user =>
+                            (user.id === variables.userId || user._id === variables.userId)
+                                ? { ...user, isBlocked: false }
+                                : user
+                        )
+                    }
+                };
+            });
         }
     })
 }

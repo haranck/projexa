@@ -27,4 +27,3 @@ export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
     return !!result;
   }
 }
-

@@ -7,13 +7,17 @@ import type { User } from "@/types/user"
 import type { AxiosError } from "axios"
 import Pagination from "@/components/common/AppPagination"
 import { DialogModal } from "@/components/common/DialogModal"
+import { Table } from "@/components/common/Table"
+import { useDebounce } from "@/hooks/common/useDebounce"
 
 export const UsersPage = () => {
   const [page, setPage] = useState(1)
   const limit = 5
   const [search, setSearch] = useState('')
 
-  const { data, isLoading, isError, error } = useGetUsers({ page, limit, search })
+  const debouncedSearch = useDebounce(search, 500)
+
+  const { data, isLoading, isError, error } = useGetUsers({ page, limit, search: debouncedSearch })
 
   const blockMutation = useBlockUser()
   const unblockMutation = useUnblockUser()
@@ -74,6 +78,109 @@ export const UsersPage = () => {
     }
   }
 
+  const columns = [
+    {
+      key: "identity",
+      header: "User Identity",
+      render: (user: User) => (
+        <div className="flex items-center gap-4">
+          <div className="h-11 w-11 rounded-2xl bg-zinc-900 border border-white/5 flex items-center justify-center overflow-hidden">
+            {user.avatarUrl ? (
+              <img src={user.avatarUrl} className="h-full w-full object-cover" />
+            ) : (
+              <span className="text-sm font-black text-blue-500/80">
+                {user.firstName?.[0]}
+                {user.lastName?.[0]}
+              </span>
+            )}
+          </div>
+
+          <div>
+            <div className="text-sm font-bold text-zinc-100">
+              {user.firstName} {user.lastName}
+            </div>
+            <div className="text-[11px] text-zinc-500 flex items-center gap-1.5 mt-1 italic">
+              <Mail className="h-3 w-3" /> {user.email}
+            </div>
+          </div>
+        </div>
+      ),
+    },
+    {
+      key: "phone",
+      header: "Details",
+      render: (user: User) => (
+        <div className="text-[11px] text-zinc-400 flex items-center gap-2">
+          <Phone className="h-3.5 w-3.5" />
+          {user.phone || "N/A"}
+        </div>
+      ),
+    },
+    {
+      key: "status",
+      header: "Status",
+      className: "text-center",
+      render: (user: User) => (
+        <div className="flex justify-center">
+          {user.isBlocked ? (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-red-500/10 text-red-500 border border-red-500/20 shadow-sm shadow-red-500/10">
+              <ShieldOff className="h-3 w-3" /> Blocked
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-sm shadow-emerald-500/10">
+              <Shield className="h-3 w-3" /> Active
+            </span>
+          )}
+        </div>
+      ),
+    },
+    {
+      key: "createdAt",
+      header: "Joined Date",
+      render: (user: User) => (
+        <div className="text-[11px] text-zinc-400 flex items-center gap-2">
+          <Clock className="h-3.5 w-3.5" />
+          {new Date(user.createdAt).toLocaleDateString(undefined, {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric'
+          })}
+        </div>
+      ),
+    },
+    {
+      key: "actions",
+      header: "Management",
+      className: "text-right",
+      render: (user: User) => (
+        <button
+          onClick={() => handleActionClick(user)}
+          className={`
+            relative overflow-hidden group/btn px-4 py-1.5 rounded-lg text-xs font-medium transition-all duration-300
+            ${user.isBlocked
+              ? 'bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500/20 border border-emerald-500/20 shadow-emerald-500/10'
+              : 'bg-red-500/10 text-red-500 hover:bg-red-500/20 border border-red-500/20 shadow-red-500/10'
+            }
+            border shadow-lg backdrop-blur-sm
+          `}
+        >
+          <span className="relative z-10 flex items-center gap-1.5">
+            {user.isBlocked ? (
+              <>
+                Unlock Access
+              </>
+            ) : (
+              <>
+                Block User
+              </>
+            )}
+          </span>
+        </button>
+      ),
+    },
+  ]
+
+
   return (
     <div className="p-6 space-y-6 animate-in fade-in duration-700">
       <div className="flex flex-col space-y-2">
@@ -106,91 +213,7 @@ export const UsersPage = () => {
         </CardHeader>
         <CardContent className="p-0">
           <div className="overflow-x-auto">
-            <table className="w-full text-left border-collapse">
-              <thead>
-                <tr className="bg-white/2 text-zinc-500 text-[10px] font-bold uppercase tracking-[0.2em]">
-                  <th className="px-6 py-4 border-b border-white/5">User Identity</th>
-                  <th className="px-6 py-4 border-b border-white/5">Details</th>
-                  <th className="px-6 py-4 border-b border-white/5 text-center">Status</th>
-                  <th className="px-6 py-4 border-b border-white/5">Joined Date</th>
-                  <th className="px-6 py-4 border-b border-white/5 text-right">Management</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/5">
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan={5} className="px-6 py-20 text-center text-zinc-600 font-medium italic">
-                      No user records found in the database.
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user: User) => (
-                    <tr key={user.id || user._id} className="group hover:bg-white/1 transition-all duration-300">
-                      <td className="px-6 py-5">
-                        <div className="flex items-center gap-4">
-                          <div className="h-11 w-11 rounded-2xl bg-zinc-900 border border-white/5 group-hover:border-blue-500/30 transition-all flex items-center justify-center overflow-hidden shadow-inner">
-                            {user.avatarUrl ? (
-                              <img src={user.avatarUrl} alt="" className="h-full w-full object-cover" />
-                            ) : (
-                              <div className="h-full w-full bg-linear-to-br from-blue-600/10 to-indigo-600/10 flex items-center justify-center">
-                                <span className="text-sm font-black text-blue-500/80">
-                                  {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
-                                </span>
-                              </div>
-                            )}
-                          </div>
-                          <div>
-                            <div className="text-sm font-bold text-zinc-100 group-hover:text-blue-400 transition-colors">
-                              {user.firstName} {user.lastName}
-                            </div>
-                            <div className="text-[11px] text-zinc-500 flex items-center gap-1.5 mt-1 font-medium italic">
-                              <Mail className="h-3 w-3 opacity-50" /> {user.email}
-                            </div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="text-[11px] text-zinc-400 flex items-center gap-2 font-medium">
-                          <Phone className="h-3.5 w-3.5 text-zinc-700" />
-                          <span className="font-mono">{user.phone || 'N/A'}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="flex justify-center">
-                          {user.isBlocked ? (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-500/10 text-red-500 border border-red-500/20 text-[9px] font-black uppercase tracking-widest leading-none">
-                              <ShieldOff className="h-3 w-3" /> Blocked
-                            </div>
-                          ) : (
-                            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-[9px] font-black uppercase tracking-widest leading-none">
-                              <Shield className="h-3 w-3" /> Active
-                            </div>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5">
-                        <div className="text-[11px] text-zinc-400 flex items-center gap-2 font-medium">
-                          <Clock className="h-3.5 w-3.5 text-zinc-700" />
-                          {new Date(user.createdAt).toLocaleDateString()}
-                        </div>
-                      </td>
-                      <td className="px-6 py-5 text-right">
-                        <button
-                          onClick={() => handleActionClick(user)}
-                          disabled={blockMutation.isPending || unblockMutation.isPending}
-                          className={`text-[9px] font-black uppercase tracking-[0.15em] px-5 py-2.5 rounded-xl transition-all duration-500 active:scale-95 disabled:opacity-50 ${user.isBlocked
-                            ? "bg-emerald-500/10 text-emerald-500 hover:bg-emerald-500 hover:text-white border border-emerald-500/20 shadow-[0_0_20px_rgba(16,185,129,0.1)]"
-                            : "bg-red-500/5 text-red-500 hover:bg-red-500 hover:text-white border border-red-500/10 hover:shadow-[0_0_25px_rgba(239,68,68,0.3)]"
-                            }`}
-                        >
-                          {user.isBlocked ? "Unblock Access" : "Block User"}
-                        </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
+            <Table columns={columns} data={users} emptyText="No user records found in the database." />
           </div>
         </CardContent>
       </Card>

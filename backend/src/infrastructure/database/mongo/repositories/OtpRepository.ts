@@ -10,7 +10,7 @@ export class OtpRepository extends BaseRepo<IOtpEntity> implements IOtpRepositor
     super(OtpModel as unknown as Model<IOtpEntity>)
   }
   async createOtp(otp: IOtpEntity): Promise<void> {
-    await this.model.create({
+    await super.create({
       _id: otp._id,
       userId: otp.userId,
       code: otp.code,
@@ -24,7 +24,7 @@ export class OtpRepository extends BaseRepo<IOtpEntity> implements IOtpRepositor
     const doc = await OtpModel.findOne({
       userId: email,
       code,
-      isUsed: false,
+      isUsed: false, 
       expiresAt: { $gt: new Date() },
     }).sort({ createdAt: -1 });
 
@@ -34,7 +34,7 @@ export class OtpRepository extends BaseRepo<IOtpEntity> implements IOtpRepositor
   }
 
   async markAsUsed(otpId: string): Promise<void> {
-    await OtpModel.findByIdAndUpdate(otpId, { isUsed: true });
+    await super.update({ isUsed: true }, otpId);
   }
 
   async invalidateAll(email: string): Promise<void> {

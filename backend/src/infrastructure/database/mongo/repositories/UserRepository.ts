@@ -1,15 +1,14 @@
 import { IUserRepository } from "../../../../domain/interfaces/repositories/IUserRepository";
 import { IUserEntity } from "../../../../domain/entities/IUserEntity";
 import { UserModel } from "../models/UserModel";
+import { UserDocument } from "../models/UserModel";
 import { UserMapper } from "../../../mappers/UserMapper";
 import { BaseRepo } from "./base/BaseRepo";
 import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
 import { GetUsersRequestDTO } from "../../../../application/dtos/admin/requestDTOs/GetUsersRequestDTO";
 import { GetUsersResponseDTO } from "../../../../application/dtos/admin/responseDTOs/GetUsersResponseDTO";
 
-export class UserRepository
-  extends BaseRepo<IUserEntity>
-  implements IUserRepository {
+export class UserRepository extends BaseRepo<IUserEntity> implements IUserRepository {
   constructor() {
     super(UserModel);
   }
@@ -17,13 +16,13 @@ export class UserRepository
   async findByEmail(email: string): Promise<IUserEntity | null> {
     const doc = await UserModel.findOne({ email });
     if (!doc) return null;
-    return UserMapper.toEntity(doc);
+    return UserMapper.toEntity(doc as UserDocument);
   }
 
   async findById(id: string): Promise<IUserEntity | null> {
-    const doc = await UserModel.findById(id);
+    const doc = await super.findById(id);
     if (!doc) return null;
-    return UserMapper.toEntity(doc);
+    return UserMapper.toEntity(doc as UserDocument);
   }
 
   async createUser(user: IUserEntity): Promise<IUserEntity> {
@@ -44,26 +43,27 @@ export class UserRepository
     const createdDoc = await super.findById(id);
     if (!createdDoc) throw new Error(USER_ERRORS.USER_CREATION_FAILED);
     return createdDoc;
-  }
+  } 
 
   async updatePassword(userId: string, hashedPassword: string): Promise<void> {
-    await UserModel.findByIdAndUpdate(userId, {
+    await super.update({
       password: hashedPassword,
       updatedAt: new Date(),
-    });
+    }, userId); 
   }
+  
   async blockUser(userId: string): Promise<void> {
-    await UserModel.findByIdAndUpdate(userId, {
+    await super.update({
       isBlocked: true,
       updatedAt: new Date(),
-    });
+    },userId);
   }
 
   async unblockUser(userId: string): Promise<void> {
-    await UserModel.findByIdAndUpdate(userId, {
+    await super.update({
       isBlocked: false,
       updatedAt: new Date(),
-    });
+    }, userId);
   }
 
   async findAllUsers(dto: GetUsersRequestDTO): Promise<GetUsersResponseDTO> {
