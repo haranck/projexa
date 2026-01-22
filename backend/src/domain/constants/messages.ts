@@ -25,6 +25,9 @@ export const MESSAGES = {
         BLOCK_USER_SUCCESS: "User blocked successfully",
         UNBLOCK_USER_SUCCESS: "User unblocked successfully",
         GET_USERS_SUCCESS: "Fetched users successfully",
+        CREATE_PLAN_SUCCESS: "Plan created successfully",
+        ADD_SUBSCRIPTION_PLAN_SUCCESS: "Subscription plan added successfully",
+        GET_PLANS_SUCCESS : "Fetched plans successfully"
     },
 
     OTP: {

@@ -10,14 +10,15 @@ export const API_ROUTES = {
     GOOGLE_LOGIN: "/auth/google-login",
     REFRESH_TOKEN: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
-    // VERIFY_PASSWORD: "/auth/verify-password"
   },
   ADMIN: {
     LOGIN: "/admin/login",
     LOGOUT: "/admin/logout",
     GET_USERS: "/admin/users",
     BLOCK_USER: "/admin/block-user/:userId",
-    UNBLOCK_USER: "/admin/unblock-user/:userId"
+    UNBLOCK_USER: "/admin/unblock-user/:userId",
+    CREATE_PLAN: "/admin/create-plan",
+    GET_ALL_PLANS: "/admin/get-plans"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",

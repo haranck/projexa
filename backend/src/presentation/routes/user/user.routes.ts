@@ -1,6 +1,6 @@
 import { Router } from 'express'
-import { userController, authMiddleware } from '../DI/resolver';
-import { ROUTES } from '../../shared/constant/routes'
+import { userController, authMiddleware } from '../../DI/resolver';
+import { ROUTES } from '../../../shared/constant/routes'
 
 const router = Router();
 

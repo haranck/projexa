@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { adminController } from "../DI/resolver";
-import { ROUTES } from "../../shared/constant/routes";
-import { authMiddleware } from "../DI/resolver";
+import { adminController } from "../../DI/resolver";
+import { ROUTES } from '../../../shared/constant/routes'
+import { authMiddleware } from "../../DI/resolver";
 
 const router = Router()
 
@@ -11,4 +11,8 @@ router.get(ROUTES.ADMIN.GET_USERS, authMiddleware.authenticate, adminController.
 router.post(ROUTES.ADMIN.BLOCK_USER, authMiddleware.authenticate, adminController.blockUser)
 router.post(ROUTES.ADMIN.UNBLOCK_USER, authMiddleware.authenticate, adminController.unblockUser)
 
-export default router
+//plans
+router.post(ROUTES.ADMIN.CREATE_PLAN, authMiddleware.authenticate, adminController.createPlan)
+router.get(ROUTES.ADMIN.GET_ALL_PLAN, authMiddleware.authenticate, adminController.getAllPlans)
+
+export default router       

@@ -5,6 +5,8 @@ import { IOtpRepository } from "../../domain/interfaces/repositories/IOtpReposit
 import { OtpRepository } from "../../infrastructure/database/mongo/repositories/OtpRepository";
 import { ITokenBlacklistRepository } from "../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { RedisTokenBlacklistRepository } from "../../infrastructure/database/mongo/repositories/RedisTokenBlacklistRepository";
+import { IPlanRepository } from "../../domain/interfaces/repositories/IPlanRepository";
+import { PlanRepository } from "../../infrastructure/database/mongo/repositories/PlanRepository";
 
 
 export class RepositoryModule {
@@ -14,12 +16,16 @@ export class RepositoryModule {
             useClass: UserRepository
         });
 
-        container.register<IOtpRepository>('IOtpRepository',{
+        container.register<IOtpRepository>('IOtpRepository', {
             useClass: OtpRepository
         })
 
         container.register<ITokenBlacklistRepository>('ITokenBlacklistRepository', {
             useClass: RedisTokenBlacklistRepository
+        })
+
+        container.register<IPlanRepository>('IPlanRepository', {
+            useClass: PlanRepository
         })
 
     }

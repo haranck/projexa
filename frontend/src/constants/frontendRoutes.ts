@@ -19,15 +19,17 @@ export const FRONTEND_ROUTES = {
   PROFILE: '/profile',
   CHANGE_PASSWORD: '/change-password',
   UPDATE_PROFILE: '/update-profile',
-  
+
   //Admin Routes
-  
+
   ADMIN_LOGIN: '/admin/login',
   ADMIN_DASHBOARD: '/admin/dashboard',
-  ADMIN_LOGOUT:'/admin/logout',
-  ADMIN_USERS:'/admin/users',
-  ADMIN_SALES_REPORT:'/admin/sales-report',
-  ADMIN_SUBSCRIPTIONS:'/admin/subscriptions',
-  ADMIN_PAYMENTS_DETAILS:'/admin/payments-details',
+  ADMIN_LOGOUT: '/admin/logout',
+  ADMIN_USERS: '/admin/users',
+  ADMIN_SALES_REPORT: '/admin/sales-report',
+  ADMIN_SUBSCRIPTIONS: '/admin/subscriptions',
+  ADMIN_PAYMENTS_DETAILS: '/admin/payments-details',
   ADMIN_WORKSPACES: '/admin/workspaces',
+  ADMIN_CREATE_PLAN: "/admin/create-plan",
+  ADMIN_PLANS: "/admin/get-plans"
 };

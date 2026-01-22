@@ -57,3 +57,14 @@ export const USER_ERRORS = {
     USER_CREATION_FAILED: "User creation failed",
     INVALID_PASSWORD:"Invalid password"
 };
+
+export const SUBSCRIPTION_ERRORS = {
+    SUBSCRIPTION_CREATION_FAILED: "Subscription creation failed",
+    SUBSCRIPTION_NOT_FOUND: "Subscription not found !",
+    SUBSCRIPTION_INVALIDATION: "Error while validating subscription !",
+    NO_SUBSCRIPTIONS_FOUND: "No subscriptions found",
+    SUBSCRIPTION_EMAIL_NOT_VERIFIED: "Subscription email not verified",
+    INVALID_PASSWORD:"Invalid password",
+    PLAN_CREATION_FAILED: "Plan creation failed",
+    PLAN_ALREADY_EXISTS : "Plan Already Exists"
+};

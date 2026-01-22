@@ -39,6 +39,10 @@ import { IUpdateProfileImageUseCase } from "../../application/interface/user/IUp
 import { UpdateProfileImageUseCase } from "../../application/useCases/user/UpdateProfileImageUseCase";
 import { IUpdateProfileUseCase } from "../../application/interface/user/IUpdateProfileUseCase";
 import { UpdateProfileUseCase } from "../../application/useCases/user/UpdateProfileUseCase";
+import { ICreatePlanUseCase } from "../../application/interface/admin/ICreatePlanUseCase";
+import { CreatePlanUseCase } from "../../application/useCases/admin/CreatePlanUseCase";
+import { IGetPlanUseCase } from "../../application/interface/admin/IGetPlanUseCase";
+import { GetPlanUseCase } from "../../application/useCases/admin/GetPlanUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -109,8 +113,16 @@ export class UseCaseModule {
             useClass: GetUsersUseCase
         })
 
+        container.register<ICreatePlanUseCase>('ICreatePlanUseCase', {
+            useClass: CreatePlanUseCase
+        })
+
+        container.register<IGetPlanUseCase>("IGetPlanUseCase", {
+            useClass: GetPlanUseCase
+        })
+
         /*--------------------- User UseCases ---------------------*/
-        
+
         container.register<IVerifyPasswordUseCase>('IVerifyPasswordUseCase', {
             useClass: VerifyPasswordUseCase
         })

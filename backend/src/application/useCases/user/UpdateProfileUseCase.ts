@@ -23,6 +23,6 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
                 lastName: dto.lastName,
                 phone: dto.phoneNumber,
             }
-        }
+        }  
     }
 }

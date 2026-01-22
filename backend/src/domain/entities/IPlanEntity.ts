@@ -1,0 +1,16 @@
+import type { Types } from "mongoose";
+import { PlanInterval } from "../enums/PlanInterval";
+
+export interface IPlanEntity {
+    _id?: Types.ObjectId;
+    id?: string;
+    name: string;
+    price: number;
+    interval: PlanInterval;
+    maxMembers: number;
+    maxProjects: number;
+    features: string[];
+    isActive: boolean;
+    createdAt?: Date;
+    updatedAt?: Date;
+}
