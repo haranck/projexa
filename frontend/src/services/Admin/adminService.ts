@@ -16,12 +16,17 @@ interface GetUsersParams {
 }
 
 interface CreatePlan {
-  name:string,
-  price:string,
-  interval:string,
-  features:string[],
-  maxMembers:number,
-  maxProjects:number
+  name: string,
+  price: string,
+  interval: string,
+  features: string[],
+  maxMembers: number,
+  maxProjects: number
+}
+
+interface UpdatePlan extends Partial<CreatePlan> {
+  planId: string;
+  isActive?: boolean;
 }
 
 export const adminLogin = async (data: adminLoginPayload) => {
@@ -51,12 +56,18 @@ export const unblockUser = async (data: blockUserPayload) => {
   return response.data
 }
 
-export const createPlan = async (data:CreatePlan) => {
-  const response = await AxiosInstance.post(API_ROUTES.ADMIN.CREATE_PLAN,data)
+export const createPlan = async (data: CreatePlan) => {
+  const response = await AxiosInstance.post(API_ROUTES.ADMIN.CREATE_PLAN, data)
   return response.data
 }
 
 export const getPlans = async () => {
   const response = await AxiosInstance.get(API_ROUTES.ADMIN.GET_ALL_PLANS)
+  return response.data
+}
+
+export const updatePlan = async ({ planId, ...data }: UpdatePlan) => {
+  const url = API_ROUTES.ADMIN.UPDATE_PLAN.replace(':planId', planId)
+  const response = await AxiosInstance.patch(url, data)
   return response.data
 }

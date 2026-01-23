@@ -18,7 +18,8 @@ export const API_ROUTES = {
     BLOCK_USER: "/admin/block-user/:userId",
     UNBLOCK_USER: "/admin/unblock-user/:userId",
     CREATE_PLAN: "/admin/create-plan",
-    GET_ALL_PLANS: "/admin/get-plans"
+    GET_ALL_PLANS: "/admin/get-plans",
+    UPDATE_PLAN: "/admin/update-plan/:planId"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",

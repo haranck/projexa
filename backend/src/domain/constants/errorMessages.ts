@@ -66,5 +66,6 @@ export const SUBSCRIPTION_ERRORS = {
     SUBSCRIPTION_EMAIL_NOT_VERIFIED: "Subscription email not verified",
     INVALID_PASSWORD:"Invalid password",
     PLAN_CREATION_FAILED: "Plan creation failed",
-    PLAN_ALREADY_EXISTS : "Plan Already Exists"
+    PLAN_ALREADY_EXISTS : "Plan Already Exists",
+    PLAN_NOT_FOUND : "Plan not found !"
 };

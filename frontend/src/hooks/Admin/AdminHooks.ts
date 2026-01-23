@@ -7,7 +7,8 @@ import {
     blockUser,
     unblockUser,
     createPlan,
-    getPlans
+    getPlans,
+    updatePlan
 } from "../../services/Admin/adminService";
 import type { UserResponse } from "../../types/user";
 
@@ -97,5 +98,15 @@ export const useGetPlans = () => {
         queryKey: ['plans'],
         queryFn: getPlans,
         placeholderData: keepPreviousData,
+    })
+}
+
+export const useUpdatePlan = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: updatePlan,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['plans'] })
+        }
     })
 }

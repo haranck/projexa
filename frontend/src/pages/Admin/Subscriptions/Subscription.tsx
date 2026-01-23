@@ -18,6 +18,8 @@ interface Plan {
 export const Subscription = () => {
     const { data, isLoading } = useGetPlans()
     const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+    const [selectedPlan, setSelectedPlan] = useState<Plan | null>(null)
 
     if (isLoading) {
         return (
@@ -84,10 +86,10 @@ export const Subscription = () => {
                             `}
                         >
                             {plan.isActive && (
-                                <div className="absolute top-6 right-8 px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full">
-                                    <span className="text-[9px] font-black uppercase tracking-widest text-blue-500 flex items-center gap-1.5">
+                                <div className="absolute top-6 right-8 px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full pl-2">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-blue-500 flex items-center gap-1.5 ">
                                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                                        Verified Tier
+                                        Active Tier
                                     </span>
                                 </div>
                             )}
@@ -128,8 +130,12 @@ export const Subscription = () => {
                                     </div>
                                 </div>
 
-                                <button className="w-full bg-[#111] hover:bg-zinc-800 text-zinc-400 hover:text-white py-4 rounded-2xl font-bold border border-white/5 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 group/btn">
-                                    Configure Tier
+                                <button className="w-full bg-[#111] hover:bg-zinc-800 text-zinc-400 hover:text-white py-4 rounded-2xl font-bold border border-white/5 transition-all duration-300 active:scale-95 flex items-center justify-center gap-2 group/btn"
+                                    onClick={() => {
+                                        setSelectedPlan(plan)
+                                        setIsEditModalOpen(true)
+                                    }}>
+                                    Edit Tier
                                     <Sparkles className="h-3.5 w-3.5 opacity-0 group-hover/btn:opacity-100 transition-all duration-300 text-blue-400" />
                                 </button>
                             </div>
@@ -139,9 +145,15 @@ export const Subscription = () => {
             )}
 
             <AddPlanModal
-                isOpen={isAddModalOpen}
-                onClose={() => setIsAddModalOpen(false)}
+                isOpen={isAddModalOpen || isEditModalOpen}
+                onClose={() => {
+                    setIsAddModalOpen(false)
+                    setIsEditModalOpen(false)
+                    setSelectedPlan(null)
+                }}
+                plan={selectedPlan || undefined}
             />
+
         </div>
     )
 }

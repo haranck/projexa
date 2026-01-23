@@ -43,6 +43,8 @@ import { ICreatePlanUseCase } from "../../application/interface/admin/ICreatePla
 import { CreatePlanUseCase } from "../../application/useCases/admin/CreatePlanUseCase";
 import { IGetPlanUseCase } from "../../application/interface/admin/IGetPlanUseCase";
 import { GetPlanUseCase } from "../../application/useCases/admin/GetPlanUseCase";
+import { IUpdatePlanUseCase } from "../../application/interface/admin/IUpdatePlanUseCase";
+import { UpdatePlanUseCase } from "../../application/useCases/admin/UpdatePlanUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -119,6 +121,10 @@ export class UseCaseModule {
 
         container.register<IGetPlanUseCase>("IGetPlanUseCase", {
             useClass: GetPlanUseCase
+        })
+
+        container.register<IUpdatePlanUseCase>('IUpdatePlanUseCase', {
+            useClass: UpdatePlanUseCase
         })
 
         /*--------------------- User UseCases ---------------------*/

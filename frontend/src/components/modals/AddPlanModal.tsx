@@ -1,16 +1,30 @@
 import { X, Plus, Trash2, Loader2, Sparkles, Users, Layers, ShieldCheck, DollarSign, Calendar } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import toast from "react-hot-toast"
-import { useCreatePlan } from "@/hooks/Admin/AdminHooks"
+import { useCreatePlan, useUpdatePlan } from "@/hooks/Admin/AdminHooks"
 import { getErrorMessage } from "@/utils/errorHandler";
+
+interface Plan {
+    id: string;
+    _id?: string;
+    name: string;
+    price: number;
+    interval: string;
+    maxMembers: number;
+    maxProjects: number;
+    features: string[];
+    isActive: boolean;
+}
 
 interface AddPlanModalProps {
     isOpen: boolean;
     onClose: () => void;
+    plan?: Plan;
 }
 
-export const AddPlanModal = ({ isOpen, onClose }: AddPlanModalProps) => {
+export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
     const { mutateAsync: createPlan } = useCreatePlan()
+    const { mutateAsync: updatePlan } = useUpdatePlan()
     const [isLoading, setIsLoading] = useState(false)
     const [features, setFeatures] = useState<string[]>([""])
     const [formData, setFormData] = useState({
@@ -20,6 +34,28 @@ export const AddPlanModal = ({ isOpen, onClose }: AddPlanModalProps) => {
         maxMembers: "",
         maxProjects: "",
     })
+
+    useEffect(() => {
+        if (plan && isOpen) {
+            setFormData({
+                name: plan.name,
+                price: plan.price.toString(),
+                interval: plan.interval.toUpperCase(),
+                maxMembers: plan.maxMembers.toString(),
+                maxProjects: plan.maxProjects.toString(),
+            })
+            setFeatures(plan.features.length > 0 ? plan.features : [""])
+        } else if (!plan && isOpen) {
+            setFormData({
+                name: "",
+                price: "",
+                interval: "MONTHLY",
+                maxMembers: "",
+                maxProjects: "",
+            })
+            setFeatures([""])
+        }
+    }, [plan, isOpen])
 
     if (!isOpen) return null
 
@@ -33,24 +69,33 @@ export const AddPlanModal = ({ isOpen, onClose }: AddPlanModalProps) => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setIsLoading(true)
-        await createPlan({
-            name: formData.name,
-            price: formData.price,
-            interval: formData.interval,
-            features: features.filter(f => f.trim() !== ""),
-            maxMembers: Number(formData.maxMembers),
-            maxProjects: Number(formData.maxProjects),
-        }, {
-            onSuccess: () => {
-                toast.success("Plan created successfully")
-                onClose()
-            },
-            onError: (error) => {
-                toast.error(getErrorMessage(error, "Failed to create plan"));
+        try {
+            const payload = {
+                name: formData.name,
+                price: formData.price,
+                interval: formData.interval,
+                features: features.filter(f => f.trim() !== ""),
+                maxMembers: Number(formData.maxMembers),
+                maxProjects: Number(formData.maxProjects),
             }
-        })
-        setIsLoading(false)
 
+            if (plan) {
+                await updatePlan({
+                    planId: plan.id || plan._id!,
+                    ...payload,
+                    isActive: plan.isActive
+                })
+                toast.success("Plan updated successfully")
+            } else {
+                await createPlan(payload)
+                toast.success("Plan created successfully")
+            }
+            onClose()
+        } catch (error) {
+            toast.error(getErrorMessage(error, `Failed to ${plan ? 'update' : 'create'} plan`));
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     return (
@@ -63,7 +108,7 @@ export const AddPlanModal = ({ isOpen, onClose }: AddPlanModalProps) => {
                 <div className="relative p-7">
                     <div className="flex items-center justify-between mb-8">
                         <div>
-                            <h2 className="text-xl font-black text-white tracking-tight">Create <span className="text-blue-500">Tier</span></h2>
+                            <h2 className="text-xl font-black text-white tracking-tight">{plan ? 'Update' : 'Create'} <span className="text-blue-500">Tier</span></h2>
                             <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-1">Configure plan parameters</p>
                         </div>
                         <button onClick={onClose} className="h-9 w-9 rounded-full hover:bg-white/5 flex items-center justify-center text-zinc-500 hover:text-white transition-colors">
@@ -215,7 +260,7 @@ export const AddPlanModal = ({ isOpen, onClose }: AddPlanModalProps) => {
                                 ) : (
                                     <Sparkles className="h-4 w-4" />
                                 )}
-                                Confirm Tier
+                                {plan ? 'Confirm Update' : 'Confirm Tier'}
                             </button>
                         </div>
                     </form>

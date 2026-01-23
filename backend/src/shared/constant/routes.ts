@@ -25,6 +25,7 @@ export const ROUTES = {
         BLOCK_USER: "/block-user/:userId",
         UNBLOCK_USER: "/unblock-user/:userId",
         CREATE_PLAN: "/create-plan",
-        GET_ALL_PLAN: "/get-plans"
+        GET_ALL_PLAN: "/get-plans",
+        UPDATE_PLAN: "/update-plan/:planId"
     }
 };

@@ -10,6 +10,7 @@ import { IUnblockUserUseCase } from "../../../application/interface/admin/IUnblo
 import { IGetUsersUseCase } from "../../../application/interface/admin/IGetUsersUseCase";
 import { ICreatePlanUseCase } from "../../../application/interface/admin/ICreatePlanUseCase";
 import { IGetPlanUseCase } from "../../../application/interface/admin/IGetPlanUseCase";
+import { IUpdatePlanUseCase } from "../../../application/interface/admin/IUpdatePlanUseCase";
 
 @injectable()
 export class AdminController {
@@ -21,6 +22,8 @@ export class AdminController {
         @inject('IGetUsersUseCase') private _getUsersUseCase: IGetUsersUseCase,
         @inject('ICreatePlanUseCase') private _createPlanUseCase: ICreatePlanUseCase,
         @inject('IGetPlanUseCase') private _getPlanUseCase: IGetPlanUseCase,
+        @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase
+
     ) { }
 
     adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -100,6 +103,17 @@ export class AdminController {
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.GET_PLANS_SUCCESS, data: response });
         } catch (error) {
             next(error)
+        }
+    }
+
+    updatePlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { planId } = req.params;
+            const dto = req.body;
+            const response = await this._updatePlanUseCase.execute(planId, dto);
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UPDATE_PLAN_SUCCESS, data: response });
+        } catch (error) {
+            next(error);
         }
     }
 }
