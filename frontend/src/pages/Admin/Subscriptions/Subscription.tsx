@@ -81,15 +81,22 @@ export const Subscription = () => {
                             className={`
                                 relative group bg-[#0d0d0d] rounded-[2.5rem] p-8 
                                 transition-all duration-500 hover:-translate-y-2 
-                                border ${plan.isActive ? 'border-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.1)]' : 'border-white/5'}
+                                border ${plan.isActive ? 'border-blue-500/40 shadow-[0_0_25px_rgba(59,130,246,0.1)]' : 'border-red-500/20 opacity-75'}
                                 hover:border-blue-500/30
                             `}
                         >
-                            {plan.isActive && (
+                            {plan.isActive ? (
                                 <div className="absolute top-6 right-8 px-3 py-1 bg-blue-500/10 border border-blue-500/30 rounded-full pl-2">
                                     <span className="text-[9px] font-black uppercase tracking-widest text-blue-500 flex items-center gap-1.5 ">
                                         <div className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
                                         Active Tier
+                                    </span>
+                                </div>
+                            ) : (
+                                <div className="absolute top-6 right-8 px-3 py-1 bg-red-500/10 border border-red-500/30 rounded-full pl-2">
+                                    <span className="text-[9px] font-black uppercase tracking-widest text-red-500 flex items-center gap-1.5 ">
+                                        <div className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                                        Inactive Tier
                                     </span>
                                 </div>
                             )}
@@ -100,7 +107,7 @@ export const Subscription = () => {
                                         {plan.name}
                                     </h3>
                                     <div className="flex items-baseline gap-1.5">
-                                        <span className="text-4xl font-black text-white">$ {plan.price}</span>
+                                        <span className="text-4xl font-black text-white">₹ {plan.price}</span>
                                         <span className="text-zinc-500 text-xs font-bold tracking-widest uppercase opacity-60">/{plan.interval}</span>
                                     </div>
                                 </div>
@@ -157,5 +164,3 @@ export const Subscription = () => {
         </div>
     )
 }
-
-

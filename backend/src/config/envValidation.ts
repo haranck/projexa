@@ -32,6 +32,7 @@ const envSchema = z.object({
   AUTH_API_PREFIX: z.string().trim().min(1),
   ADMIN_API_PREFIX: z.string().trim().min(1),
   USER_API_PREFIX: z.string().trim().min(1),
+  WORKSPACE_API_PREFIX: z.string().trim().min(1),
   AWS_REGION: z.string().trim(),
   AWS_ACCESS_KEY: z.string().trim(),
   AWS_SECRET_KEY: z.string().trim(),

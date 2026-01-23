@@ -69,3 +69,11 @@ export const SUBSCRIPTION_ERRORS = {
     PLAN_ALREADY_EXISTS : "Plan Already Exists",
     PLAN_NOT_FOUND : "Plan not found !"
 };
+
+export const WORKSPACE_ERRORS = {
+    WORKSPACE_CREATION_FAILED: "Workspace creation failed",
+    WORKSPACE_NOT_FOUND: "Workspace not found !",
+    WORKSPACE_INVALIDATION: "Error while validating workspace !",
+    NO_WORKSPACES_FOUND: "No workspaces found",
+    WORKSPACE_ALREADY_EXISTS : "Workspace Already Exists",
+};

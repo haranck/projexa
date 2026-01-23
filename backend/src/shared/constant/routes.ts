@@ -18,6 +18,9 @@ export const ROUTES = {
         UPDATE_PROFILE_IMAGE : "/profile/image",
         UPDATE_PROFILE : "/update-profile"
     },
+    WORKSPACE: {
+        CREATE_WORKSPACE: "/create-workspace",
+    },
     ADMIN: {
         LOGIN: "/login",
         LOGOUT: "/logout",

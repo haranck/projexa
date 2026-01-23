@@ -52,5 +52,8 @@ export const MESSAGES = {
         PROJECT_UPDATED_SUCCESSFULLY: "Project updated successfully",
         STATUS_UPDATED_SUCCESSFULLY: "Project status updated successfully",
         GET_ALL_PROJECTS: "Fetched projects successfully",
+    },
+    WORKSPACE:{
+        WORKSPACE_CREATED_SUCCESSFULLY: "Workspace created successfully",
     }
 };

@@ -1,4 +1,4 @@
-import { X, Plus, Trash2, Loader2, Sparkles, Users, Layers, ShieldCheck, DollarSign, Calendar } from "lucide-react"
+import { X, Plus, Trash2, Loader2, Sparkles, Users, Layers, ShieldCheck, Calendar, IndianRupee } from "lucide-react"
 import { useState, useEffect } from "react"
 import toast from "react-hot-toast"
 import { useCreatePlan, useUpdatePlan } from "@/hooks/Admin/AdminHooks"
@@ -33,6 +33,7 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
         interval: "MONTHLY",
         maxMembers: "",
         maxProjects: "",
+        isActive: true,
     })
 
     useEffect(() => {
@@ -43,6 +44,7 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                 interval: plan.interval.toUpperCase(),
                 maxMembers: plan.maxMembers.toString(),
                 maxProjects: plan.maxProjects.toString(),
+                isActive: plan.isActive,
             })
             setFeatures(plan.features.length > 0 ? plan.features : [""])
         } else if (!plan && isOpen) {
@@ -52,6 +54,7 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                 interval: "MONTHLY",
                 maxMembers: "",
                 maxProjects: "",
+                isActive: true,
             })
             setFeatures([""])
         }
@@ -77,13 +80,13 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                 features: features.filter(f => f.trim() !== ""),
                 maxMembers: Number(formData.maxMembers),
                 maxProjects: Number(formData.maxProjects),
+                isActive: formData.isActive
             }
 
             if (plan) {
                 await updatePlan({
                     planId: plan.id || plan._id!,
                     ...payload,
-                    isActive: plan.isActive
                 })
                 toast.success("Plan updated successfully")
             } else {
@@ -118,7 +121,6 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="space-y-4">
-                            {/* Plan Name */}
                             <div className="space-y-1.5">
                                 <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Plan Name</label>
                                 <div className="relative group">
@@ -134,12 +136,11 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                                 </div>
                             </div>
 
-                            {/* Pricing & Interval */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
-                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Price ($)</label>
+                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Price (₹)</label>
                                     <div className="relative group">
-                                        <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 group-focus-within:text-blue-500 transition-colors" />
+                                        <IndianRupee className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-600 group-focus-within:text-blue-500 transition-colors" />
                                         <input
                                             required
                                             type="number"
@@ -166,7 +167,6 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                                 </div>
                             </div>
 
-                            {/* Limits */}
                             <div className="grid grid-cols-2 gap-4">
                                 <div className="space-y-1.5">
                                     <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Max Members</label>
@@ -198,7 +198,6 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                                 </div>
                             </div>
 
-                            {/* Features */}
                             <div className="space-y-3">
                                 <div className="flex items-center justify-between ml-1">
                                     <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest flex items-center gap-2">
@@ -239,6 +238,22 @@ export const AddPlanModal = ({ isOpen, onClose, plan }: AddPlanModalProps) => {
                                         </div>
                                     ))}
                                 </div>
+                            </div>
+
+                            <div className="flex items-center justify-between p-4 bg-zinc-900/30 border border-white/5 rounded-2xl">
+                                <div className="space-y-0.5">
+                                    <label className="text-xs font-bold text-white">Active Status</label>
+                                    <p className="text-[10px] text-zinc-500">Enable or disable this plan for users</p>
+                                </div>
+                                <button
+                                    type="button"
+                                    onClick={() => setFormData({ ...formData, isActive: !formData.isActive })}
+                                    className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none ${formData.isActive ? 'bg-blue-600' : 'bg-zinc-700'}`}
+                                >
+                                    <span
+                                        className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${formData.isActive ? 'translate-x-6' : 'translate-x-1'}`}
+                                    />
+                                </button>
                             </div>
                         </div>
 
