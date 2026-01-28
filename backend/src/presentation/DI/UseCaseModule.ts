@@ -45,6 +45,18 @@ import { IGetPlanUseCase } from "../../application/interface/admin/IGetPlanUseCa
 import { GetPlanUseCase } from "../../application/useCases/admin/GetPlanUseCase";
 import { IUpdatePlanUseCase } from "../../application/interface/admin/IUpdatePlanUseCase";
 import { UpdatePlanUseCase } from "../../application/useCases/admin/UpdatePlanUseCase";
+import { ICreateWorkspaceUseCase } from "../../application/interface/user/ICreateWorkspaceUseCase";
+import { CreateWorkspaceUseCase } from "../../application/useCases/user/CreateWorkspaceUseCase";
+import { IGetAllPlansForUserUseCase } from "../../application/interface/user/IGetAllPlansForUserUseCase";
+import { GetAllPlansForUserUseCase } from "../../application/useCases/user/GetAllPlansForUserUseCase";
+import { ISelectPlanUseCase } from "../../application/interface/user/ISelectPlanUseCase";
+import { SelectPlanUseCase } from "../../application/useCases/user/SelectPlanUseCase";
+import { ICreateCheckoutSessionUseCase } from "../../application/interface/user/ICreateCheckoutSessionUseCase";
+import { CreateCheckoutSessionUseCase } from "../../application/useCases/user/CreateCheckoutSessionUseCase";
+import { IWorkspaceRepository } from "../../domain/interfaces/repositories/IWorkspaceRepository";
+import { WorkspaceRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceRepository";
+import { ISubscriptionRepository } from "../../domain/interfaces/repositories/ISubscriptionRepository";
+import { SubscriptionRepository } from "../../infrastructure/database/mongo/repositories/SubscriptionRepository";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -143,6 +155,30 @@ export class UseCaseModule {
 
         container.register<IUpdateProfileUseCase>('IUpdateProfileUseCase', {
             useClass: UpdateProfileUseCase
+        })
+
+        container.register<ICreateWorkspaceUseCase>('ICreateWorkspaceUseCase', {
+            useClass: CreateWorkspaceUseCase
+        })
+
+        container.register<IGetAllPlansForUserUseCase>('IGetAllPlansForUserUseCase', {
+            useClass: GetAllPlansForUserUseCase
+        })
+
+        container.register<ISelectPlanUseCase>('ISelectPlanUseCase', {
+            useClass: SelectPlanUseCase
+        })
+
+        container.register<ICreateCheckoutSessionUseCase>('ICreateCheckoutSessionUseCase', {
+            useClass: CreateCheckoutSessionUseCase
+        })
+
+        container.register<IWorkspaceRepository>('IWorkspaceRepository', {
+            useClass: WorkspaceRepository
+        })
+
+        container.register<ISubscriptionRepository>('ISubscriptionRepository', {
+            useClass: SubscriptionRepository
         })
     }
 }

@@ -5,8 +5,11 @@ export interface ISubscriptionEntity {
     _id?: Types.ObjectId;
     id?: string;
     userId: string;
+    workspaceId: string;
     planId: string;
     status: SubscriptionStatus;
+    stripeSubscriptionId: string;
+    stripeCustomerId: string;
     startDate: Date;
     endDate: Date;
     createdAt?: Date;

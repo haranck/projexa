@@ -67,7 +67,8 @@ export const SUBSCRIPTION_ERRORS = {
     INVALID_PASSWORD:"Invalid password",
     PLAN_CREATION_FAILED: "Plan creation failed",
     PLAN_ALREADY_EXISTS : "Plan Already Exists",
-    PLAN_NOT_FOUND : "Plan not found !"
+    PLAN_NOT_FOUND : "Plan not found !",
+    STRIPE_PRICE_ID_MISSING : "Stripe price not configured for this plan"
 };
 
 export const WORKSPACE_ERRORS = {
@@ -76,4 +77,5 @@ export const WORKSPACE_ERRORS = {
     WORKSPACE_INVALIDATION: "Error while validating workspace !",
     NO_WORKSPACES_FOUND: "No workspaces found",
     WORKSPACE_ALREADY_EXISTS : "Workspace Already Exists",
+    UNAUTHORIZED_TO_SELECT_PLAN_FOR_WORKSPACE : "Unauthorized to select plan for this workspace"
 };

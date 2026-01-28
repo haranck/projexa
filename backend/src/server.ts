@@ -10,6 +10,7 @@ import authRoutes from "./presentation/routes/auth.routes";
 import adminRoutes from "./presentation/routes/admin/admin.routes";
 import userRoutes from "./presentation/routes/user/user.routes";
 import workspaceRoutes from "./presentation/routes/workspace/workspace.routes";
+import stripeRoutes from "./presentation/routes/stripe.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
 
 const app = express();
@@ -22,6 +23,8 @@ app.use(
     credentials: true,
   })
 );
+
+app.use(env.STRIPE_API_PREFIX, stripeRoutes);
 
 app.use(express.json());
 

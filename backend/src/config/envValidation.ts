@@ -33,11 +33,16 @@ const envSchema = z.object({
   ADMIN_API_PREFIX: z.string().trim().min(1),
   USER_API_PREFIX: z.string().trim().min(1),
   WORKSPACE_API_PREFIX: z.string().trim().min(1),
+  STRIPE_API_PREFIX: z.string().trim().min(1),
   AWS_REGION: z.string().trim(),
   AWS_ACCESS_KEY: z.string().trim(),
   AWS_SECRET_KEY: z.string().trim(),
   AWS_BUCKET_NAME: z.string().trim(),
   CLOUDFRONT_URL: z.string().trim(),
+  STRIPE_SECRET_KEY: z.string().trim(),
+  STRIPE_WEBHOOK_SECRET: z.string().trim(),
+  STRIPE_PUBLIC_KEY: z.string().trim(),
+  STRIPE_DEFAULT_PRICE_ID: z.string().trim().optional(),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

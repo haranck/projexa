@@ -21,7 +21,9 @@ export class PlanRepository extends BaseRepo<IPlanEntity> implements IPlanReposi
             maxProjects: plan.maxProjects,
             interval: plan.interval,
             features: plan.features,
-            isActive: plan.isActive
+            isActive: plan.isActive,
+            stripeProductId: plan.stripeProductId,
+            stripePriceId: plan.stripePriceId
         } as IPlanEntity);
 
         const createdDoc = await super.findById(id);

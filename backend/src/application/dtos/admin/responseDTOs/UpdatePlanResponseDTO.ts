@@ -9,6 +9,8 @@ export interface UpdatePlanResponseDTO {
     maxMembers: number;
     maxProjects: number;
     isActive: boolean;
+    stripeProductId?: string;
+    stripePriceId?: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

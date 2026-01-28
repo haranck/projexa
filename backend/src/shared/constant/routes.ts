@@ -15,11 +15,17 @@ export const ROUTES = {
     USERS: {
         VERIFY_PASSWORD: "/verify-password",
         PROFILE_IMAGE_UPLOAD_URL: "/profile/image-upload-url",
-        UPDATE_PROFILE_IMAGE : "/profile/image",
-        UPDATE_PROFILE : "/update-profile"
+        UPDATE_PROFILE_IMAGE: "/profile/image",
+        UPDATE_PROFILE: "/update-profile"
     },
     WORKSPACE: {
         CREATE_WORKSPACE: "/create-workspace",
+        GET_PLANS: "/get-plans",
+        SELECT_PLAN: "/select-plan",
+        CREATE_CHECKOUT_SESSION: "/checkout"
+    },
+    STRIPE: {
+        WEBHOOK: "/webhook"
     },
     ADMIN: {
         LOGIN: "/login",

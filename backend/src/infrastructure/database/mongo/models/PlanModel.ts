@@ -8,6 +8,8 @@ export interface PlanDocument extends Document {
     interval: PlanInterval;
     maxMembers: number;
     maxProjects: number;
+    stripeProductId?: string;
+    stripePriceId?: string;
     features: string[];
     isActive: boolean;
     createdAt: Date;
@@ -36,6 +38,14 @@ const planSchema = new mongoose.Schema<PlanDocument>(
         maxProjects: {
             type: Number,
             required: true
+        },
+        stripeProductId: {
+            type: String,
+            default: null
+        },
+        stripePriceId: {
+            type: String,
+            default: null
         },
         features: {
             type: [String],

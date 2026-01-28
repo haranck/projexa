@@ -9,6 +9,8 @@ export interface IPlanEntity {
     interval: PlanInterval;
     maxMembers: number;
     maxProjects: number;
+    stripeProductId?: string;
+    stripePriceId?: string;
     features: string[];
     isActive: boolean;
     createdAt?: Date;
