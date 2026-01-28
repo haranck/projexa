@@ -27,12 +27,12 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
 
         const planId = dto.planId || workspace.planId;
 
-        if (!planId && !process.env.STRIPE_DEFAULT_PRICE_ID) {
-            throw new Error("Plan not selected and no default price available");
+        if (!planId) {
+            throw new Error("Plan not selected and no price available");
         }
 
         const plan = planId ? await this._planRepository.getPlanById(planId) : null;
-        const priceId = plan?.stripePriceId || process.env.STRIPE_DEFAULT_PRICE_ID;
+        const priceId = plan?.stripePriceId;
 
         if (!priceId) {
             throw new Error(SUBSCRIPTION_ERRORS.STRIPE_PRICE_ID_MISSING);

@@ -21,8 +21,8 @@ export class SelectPlanUseCase implements ISelectPlanUseCase {
         const plan = await this._planRepository.getPlanById(planId);
         if (!plan) throw new Error(SUBSCRIPTION_ERRORS.PLAN_NOT_FOUND)
 
-        if (!plan.stripePriceId && !process.env.STRIPE_DEFAULT_PRICE_ID) {
-            console.error(`Plan ${planId} is missing stripePriceId and no default found`);
+        if (!plan.stripePriceId) {
+            console.error(`Plan ${planId} is missing stripePriceId`);
             throw new Error(SUBSCRIPTION_ERRORS.STRIPE_PRICE_ID_MISSING);
         }
         let workspace = await this._workspaceRedisRepository.findByName(workspaceName);

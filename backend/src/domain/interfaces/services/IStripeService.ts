@@ -7,4 +7,5 @@ export interface IStripeService {
     createCheckoutSession(params: CreateCheckoutSessionInputDTO): Promise<string>;
     constructWebhookEvent(params: WebhookEventInputDTO): Promise<Stripe.Event>;
     getSubscription(params: GetSubscriptionInputDTO): Promise<Stripe.Subscription>;
+    createProductAndPrice(params: { name: string; amount: number; interval: 'month' | 'year' }): Promise<{ productId: string; priceId: string }>;
 }

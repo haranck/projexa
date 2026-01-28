@@ -38,4 +38,24 @@ export class StripeService implements IStripeService {
         const subscription = await this.stripe.subscriptions.retrieve(params.subscriptionId);
         return subscription;
     }
+
+    async createProductAndPrice(params: { name: string; amount: number; interval: 'month' | 'year' }): Promise<{ productId: string; priceId: string }> {
+        const product = await this.stripe.products.create({
+            name: params.name,
+        });
+
+        const price = await this.stripe.prices.create({
+            product: product.id,
+            unit_amount: params.amount * 100, 
+            currency: 'usd',
+            recurring: {
+                interval: params.interval,
+            },
+        });
+
+        return {
+            productId: product.id,
+            priceId: price.id,
+        };
+    }
 }
