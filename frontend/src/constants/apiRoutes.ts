@@ -26,5 +26,11 @@ export const API_ROUTES = {
     PROFILE_IMAGE_UPLOAD_URL: "/user/profile/image-upload-url",
     UPDATE_PROFILE_IMAGE: "/user/profile/image",
     UPDATE_PROFILE: "/user/update-profile"
+  },
+  WORKSPACE: {
+    CREATE_WORKSPACE : "/v1/workspace/create-workspace",
+    GET_PLANS : "/v1/workspace/get-plans",
+    SELECT_PLAN : "/v1/workspace/select-plan",
+    CREATE_CHECKOUT_SESSION : "/v1/workspace/checkout"
   }
 };

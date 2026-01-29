@@ -15,8 +15,10 @@ import { PaymentsPage } from '../../pages/User/Payments/PaymentsPage'
 import { BacklogPage } from '../../pages/User/Backlog/BacklogPage'
 import { BoardPage } from '../../pages/User/Board/BoardPage'
 import { UserProfile } from '../../pages/User/Profile/UserProfile'
+import { Subscription } from '../../pages/Admin/Subscriptions/Subscription'
 import ProtectedRoute from '../ProtectedRoute'
 import PublicRoute from '../PublicRoute'
+import { CreateWorkspacePage } from '../../pages/Workspace/CreateWorkspacePage'
 
 const UserRoutes = () => {
     return (
@@ -27,6 +29,7 @@ const UserRoutes = () => {
                 <Route path={FRONTEND_ROUTES.LOGIN} element={<LoginPage />} />
                 <Route path={FRONTEND_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
                 <Route path={FRONTEND_ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
+                
             </Route>
 
             <Route element={<ProtectedRoute />}>
@@ -40,6 +43,9 @@ const UserRoutes = () => {
                 <Route path={FRONTEND_ROUTES.BACKLOG} element={<BacklogPage />} />
                 <Route path={FRONTEND_ROUTES.BOARD} element={<BoardPage />} />
                 <Route path={FRONTEND_ROUTES.PROFILE} element={<UserProfile />} />
+                <Route path={FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE} element={<CreateWorkspacePage />} />
+                <Route path={FRONTEND_ROUTES.WORKSPACE.SELECT_PLAN} element={<Subscription />} />
+                
             </Route>
         </Routes>
     )

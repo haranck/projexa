@@ -52,7 +52,7 @@ export const LoginForm = () => {
             dispatch(setAccessToken(response.data.accessToken));
             dispatch(setAuthUser(response.data.user));
             toast.success("Google login successful!");
-            navigate(FRONTEND_ROUTES.HOME);
+            navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE);
           }
         },
         onError: (error) => {
@@ -71,7 +71,7 @@ export const LoginForm = () => {
           dispatch(setAccessToken(response.data.accessToken));
           dispatch(setAuthUser(response.data.user));
           toast.success("Login successful!");
-          navigate(FRONTEND_ROUTES.HOME);
+          navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE);
         }
       },
       onError: (error: unknown) => {

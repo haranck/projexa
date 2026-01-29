@@ -20,6 +20,15 @@ export const FRONTEND_ROUTES = {
   CHANGE_PASSWORD: '/change-password',
   UPDATE_PROFILE: '/update-profile',
 
+  //Workspce Routes
+
+  WORKSPACE : {
+    CREATE_WORKSPACE : "/workspace/create-workspace",
+    GET_PLANS : "/workspace/get-plans",
+    SELECT_PLAN : "/workspace/select-plan",
+    CREATE_CHECKOUT_SESSION : "/workspace/checkout"
+  },
+
   //Admin Routes
 
   ADMIN_LOGIN: '/admin/login',
