@@ -26,7 +26,9 @@ export const FRONTEND_ROUTES = {
     CREATE_WORKSPACE : "/workspace/create-workspace",
     GET_PLANS : "/workspace/get-plans",
     SELECT_PLAN : "/workspace/select-plan",
-    CREATE_CHECKOUT_SESSION : "/workspace/checkout"
+    CREATE_CHECKOUT_SESSION : "/workspace/checkout",
+    PAYMENT_SUCCESS : "/payment-success",
+    PAYMENT_CANCEL : "/payment-cancel"
   },
 
   //Admin Routes

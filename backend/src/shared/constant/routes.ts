@@ -22,7 +22,8 @@ export const ROUTES = {
         CREATE_WORKSPACE: "/create-workspace",
         GET_PLANS: "/get-plans",
         SELECT_PLAN: "/select-plan",
-        CREATE_CHECKOUT_SESSION: "/checkout"
+        CREATE_CHECKOUT_SESSION: "/checkout",
+        USER_WORKSPACES_LIST: "/user-workspaces-list"
     },
     STRIPE: {
         WEBHOOK: "/webhook"

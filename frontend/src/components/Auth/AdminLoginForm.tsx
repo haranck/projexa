@@ -34,7 +34,7 @@ export const AdminLoginForm = () => {
             onSuccess: (response) => {
                 if (response?.data) {
                     dispatch(setAccessToken(response.data.accessToken))
-                    dispatch(setAuthUser(response.data.user))
+                    dispatch(setAuthUser({ ...response.data.user, hasWorkspace: true }))
                     toast.success("Admin login successful!")
                     navigate(FRONTEND_ROUTES.ADMIN_DASHBOARD)
                 }

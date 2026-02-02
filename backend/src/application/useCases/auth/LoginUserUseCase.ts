@@ -6,6 +6,7 @@ import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO"
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { ILoginUserUseCase } from "../../interface/auth/ILoginUserUseCase";
+import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { injectable, inject } from "tsyringe";
 import { env } from "../../../config/envValidation";
 
@@ -14,7 +15,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
   constructor(
     @inject('IUserRepository') private _userRepo: IUserRepository,
     @inject('IPasswordService') private _passwordService: IPasswordService,
-    @inject('IJwtService') private _jwtService: IJwtService
+    @inject('IJwtService') private _jwtService: IJwtService,
+    @inject("IWorkspaceRepository") private _workspaceRepository: IWorkspaceRepository,
   ) { }
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
@@ -35,6 +37,16 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     if (!user.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
 
+    const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user.id.toString());
+
+    const workspaceMap = workspaces.map(workspace => ({
+      id: workspace._id!.toString(),
+      name: workspace.name,
+      ownerId: workspace.ownerId!
+    }))
+
+    const defaultWorkspace = workspaceMap.length > 0 ? workspaceMap[0] : null;
+
     const payload = {
       userId: user.id,
       email: user.email,
@@ -43,9 +55,13 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     const accessToken = this._jwtService.signAccessToken(payload);
     const refreshToken = this._jwtService.signRefreshToken(payload);
 
+
     return {
       accessToken,
       refreshToken,
+      hasWorkspace: workspaces.length > 0,
+      workspaces: workspaceMap,
+      defaultWorkspace,
       user: {
         id: user.id,
         firstName: user.firstName,

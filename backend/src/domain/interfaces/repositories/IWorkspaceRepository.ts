@@ -6,4 +6,5 @@ export interface IWorkspaceRepository {
     getWorkspaceByOwnerId(ownerId: string): Promise<IWorkspaceEntity | null>;
     getWorkspaceByName(name: string): Promise<IWorkspaceEntity | null>;
     updateWorkspace(id: string, workspace: IWorkspaceEntity): Promise<IWorkspaceEntity>;
+    getWorkspacesByUserId(userId: string): Promise<IWorkspaceEntity[]>;
 }

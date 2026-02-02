@@ -4,7 +4,8 @@ import {
     createWorkspace,
     getPlans,
     selectPlan,
-    createCheckoutSession
+    createCheckoutSession,
+    getUserWorkspaces
 } from "../../services/Workspace/workspaceService";
 
 export const useCreateWorkspace = () => {
@@ -29,5 +30,12 @@ export const useSelectPlan = () => {
 export const useCreateCheckoutSession = () => {
     return useMutation({
         mutationFn: createCheckoutSession
+    })
+}
+
+export const useGetUserWorkspaces = () => {
+    return useQuery({
+        queryKey: ['user-workspaces'],
+        queryFn: getUserWorkspaces
     })
 }

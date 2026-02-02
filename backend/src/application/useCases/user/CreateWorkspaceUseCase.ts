@@ -7,9 +7,9 @@ import { injectable, inject } from "tsyringe";
 @injectable()
 export class CreateWorkspaceUseCase implements ICreateWorkspaceUseCase {
     constructor(
-        @inject('IWorkspaceRedisRepository') private _workspaceRedisRepository:IWorkspaceRedisRepository,
-    ){}
-    async execute(workspace:CreateWorkspaceDTO):Promise<IWorkspaceEntity>{
+        @inject('IWorkspaceRedisRepository') private _workspaceRedisRepository: IWorkspaceRedisRepository,
+    ) { }
+    async execute(workspace: CreateWorkspaceDTO): Promise<IWorkspaceEntity> {
         return await this._workspaceRedisRepository.save(workspace);
     }
 }

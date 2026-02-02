@@ -8,6 +8,7 @@ import { ISelectPlanUseCase } from "../../../application/interface/user/ISelectP
 import { IGetAllPlansForUserUseCase } from "../../../application/interface/user/IGetAllPlansForUserUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { ICreateCheckoutSessionUseCase } from "../../../application/interface/user/ICreateCheckoutSessionUseCase";
+import { IGetUserWorkspaceUseCase } from "../../../application/interface/user/IGetUserWorkspaceUseCase";
 
 @injectable()
 export class WorkspaceController {
@@ -16,7 +17,8 @@ export class WorkspaceController {
         @inject("ICreateWorkspaceUseCase") private _createWorkspaceUseCase: ICreateWorkspaceUseCase,
         @inject("IGetAllPlansForUserUseCase") private _getAllPlansForUserUseCase: IGetAllPlansForUserUseCase,
         @inject("ISelectPlanUseCase") private _selectPlanUseCase: ISelectPlanUseCase,
-        @inject("ICreateCheckoutSessionUseCase") private _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase
+        @inject("ICreateCheckoutSessionUseCase") private _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
+        @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase:IGetUserWorkspaceUseCase
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -64,6 +66,15 @@ export class WorkspaceController {
         res.status(HTTP_STATUS.OK).json({
             message: MESSAGES.WORKSPACE.CHECKOUT_SESSION_CREATED_SUCCESSFULLY,
             data: result
+        })
+    }
+    getUserWorkspaces = async (req:AuthRequest,res:Response):Promise<void> => {
+        const userId= req.user?.userId
+
+        const workspaces = await this._getUserWorkspaceUseCase.execute(userId!)
+        res.status(HTTP_STATUS.OK).json({
+            message: MESSAGES.WORKSPACE.GET_USER_WORKSPACES_SUCCESSFULLY,
+            data: workspaces
         })
     }
 }

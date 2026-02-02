@@ -28,6 +28,8 @@ export class StripeWebhookController {
                 const session = event.data.object as Stripe.Checkout.Session;
                 const metadata = session.metadata;
 
+                console.log("metadata:", metadata);
+
                 if (!metadata) {
                     res.status(HTTP_STATUS.BAD_REQUEST).json({ error: "Missing metadata" });
                     return;
@@ -79,7 +81,7 @@ export class StripeWebhookController {
 
                 await this._workspaceRedisRepository.delete(workspaceName);
             }
-            console.log('webhook completed')
+            console.log("Redis key deleted. Flow complete.");
             res.status(HTTP_STATUS.OK).json({ received: true });
         } catch (err: unknown) {
             if (err instanceof Error) {

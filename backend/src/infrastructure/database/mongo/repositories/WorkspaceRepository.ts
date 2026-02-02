@@ -51,4 +51,20 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
         return doc;
     }
 
+    async getWorkspacesByUserId(userId: string): Promise<IWorkspaceEntity[]> {
+        const docs = await this.model.find({
+            $or: [
+                { ownerId: userId },
+                { members: userId }
+            ]
+        }).populate({
+            path: 'subscriptionId',
+            populate: {
+                path: 'planId'
+            }
+        });
+
+        return docs;
+    }
+
 }

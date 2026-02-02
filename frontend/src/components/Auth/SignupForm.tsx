@@ -56,7 +56,7 @@ const SignupForm = ({ onSwitchToSignIn, onSubmit, isLoading }: SignupFormProps) 
           onSuccess: (response) => {
             if (response?.data) {
               dispatch(setAccessToken(response.data.accessToken));
-              dispatch(setAuthUser(response.data.user));
+              dispatch(setAuthUser({ ...response.data.user, hasWorkspace: false }));
               toast.success("Google login successful!");
               navigate(FRONTEND_ROUTES.HOME);
             }

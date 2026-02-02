@@ -5,8 +5,14 @@ import { FRONTEND_ROUTES } from "@/constants/frontendRoutes"
 
 const PublicRoute = () => {
     const accessToken = useSelector((state: RootState) => state.token.accessToken)
+    const user = useSelector((state: RootState) => state.auth.user)
+
     if (accessToken) {
-        return <Navigate to={FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE} replace />
+        if (user?.hasWorkspace) {
+            return <Navigate to={FRONTEND_ROUTES.HOME} replace />
+        } else {
+            return <Navigate to={FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE} replace />
+        }
     }
     return <Outlet />
 }

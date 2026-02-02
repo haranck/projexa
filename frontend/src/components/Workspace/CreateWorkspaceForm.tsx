@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom"
 import { toast } from 'react-hot-toast'
 import { FRONTEND_ROUTES } from "@/constants/frontendRoutes"
 import { WORKSPACE_ERRORS } from "@/constants/errorMessages"
-import { Loader2,ArrowRight ,ArrowLeft } from "lucide-react"
+import { Loader2, ArrowRight, ArrowLeft } from "lucide-react"
 import { cn } from "@/lib/utils"
 
 export const CreateWorkspaceForm = () => {
@@ -24,7 +24,7 @@ export const CreateWorkspaceForm = () => {
     createWorkspace(data, {
       onSuccess: () => {
         toast.success("Workspace created successfully!")
-        navigate(FRONTEND_ROUTES.WORKSPACE.SELECT_PLAN)
+        navigate(FRONTEND_ROUTES.WORKSPACE.SELECT_PLAN, { state: { workspaceName: data.workspaceName } })
       },
       onError: (error) => {
         console.log("Create Workspace Failed:", error)
@@ -34,9 +34,9 @@ export const CreateWorkspaceForm = () => {
   }
 
   return (
-    
+
     <div className="w-full max-w-md mx-auto" >
-      
+
       <div className="flex flex-col items-center mb-8">
         <ArrowLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform absolute top-[-50px] left-[-350px]" onClick={() => navigate(FRONTEND_ROUTES.HOME)} />
         <div className="w-16 h-16 bg-[#00ff88] rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(0,255,136,0.3)]">

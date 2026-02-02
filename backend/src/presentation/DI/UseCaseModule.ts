@@ -57,6 +57,8 @@ import { IWorkspaceRepository } from "../../domain/interfaces/repositories/IWork
 import { WorkspaceRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceRepository";
 import { ISubscriptionRepository } from "../../domain/interfaces/repositories/ISubscriptionRepository";
 import { SubscriptionRepository } from "../../infrastructure/database/mongo/repositories/SubscriptionRepository";
+import { IGetUserWorkspaceUseCase } from "../../application/interface/user/IGetUserWorkspaceUseCase";
+import { GetUserWorkspaceUseCase } from "../../application/useCases/user/GetUserWorkspaceUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -179,6 +181,10 @@ export class UseCaseModule {
 
         container.register<ISubscriptionRepository>('ISubscriptionRepository', {
             useClass: SubscriptionRepository
+        })
+
+        container.register<IGetUserWorkspaceUseCase>('IGetUserWorkspaceUseCase', {
+            useClass: GetUserWorkspaceUseCase
         })
     }
 }

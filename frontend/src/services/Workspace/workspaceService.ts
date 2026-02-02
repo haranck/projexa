@@ -40,3 +40,8 @@ export const createCheckoutSession = async (data: createCheckoutSessionPayload) 
     const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.CREATE_CHECKOUT_SESSION, data)
     return response.data;
 }
+
+export const getUserWorkspaces = async () => {
+    const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.GET_USER_WORKSPACES)
+    return response.data;
+}

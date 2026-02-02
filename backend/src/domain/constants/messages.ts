@@ -57,6 +57,7 @@ export const MESSAGES = {
         WORKSPACE_CREATED_SUCCESSFULLY: "Workspace created successfully",
         GET_ALL_PLANS_SUCCESSFULLY: "Fetched plans successfully",
         PLAN_SELECTED_SUCCESSFULLY: "Plan selected successfully",
-        CHECKOUT_SESSION_CREATED_SUCCESSFULLY: "Checkout session created successfully"
+        CHECKOUT_SESSION_CREATED_SUCCESSFULLY: "Checkout session created successfully",
+        GET_USER_WORKSPACES_SUCCESSFULLY: "Fetched user workspaces successfully"
     }
 };

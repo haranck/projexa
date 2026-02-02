@@ -24,6 +24,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import EditProfileModal from "@/components/modals/EditProfileModal";
+import { useGetUserWorkspaces } from "@/hooks/Workspace/WorkspaceHooks";
 
 
 export const UserProfile = () => {
@@ -35,6 +36,22 @@ export const UserProfile = () => {
     const [isEditProfileOpen, setEditProfileOpen] = useState(false);
     const { mutate: profileImageUploadUrl } = useProfileImageUploadUrl()
     const { mutate: updateProfileImage } = useUpdateProfileImage()
+    const { data: workspacesData, isLoading } = useGetUserWorkspaces();
+
+    // Memoize stats calculation
+    const workspaceStats = (() => {
+        const workspaces = workspacesData?.data || [];
+        const owned = workspaces.filter((w: { ownerId?: string }) => w.ownerId === user?.id).length;
+        const total = workspaces.length;
+        const member = total - owned;
+
+        return [
+            { label: 'Workspaces', value: total.toString(), icon: LayoutDashboard, color: 'text-blue-400', bg: 'bg-blue-400/5' },
+            { label: 'Owned', value: owned.toString(), icon: Briefcase, color: 'text-emerald-400', bg: 'bg-emerald-400/5' },
+            { label: 'Member Of', value: member.toString(), icon: Users, color: 'text-purple-400', bg: 'bg-purple-400/5' },
+        ];
+    })();
+    console.log('workspacesData', workspacesData)
 
 
     const handleLogout = () => {
@@ -94,7 +111,6 @@ export const UserProfile = () => {
         }
     };
 
-    console.log("userDetails", user)
     return (
         <DashboardLayout>
             <div className="max-w-6xl mx-auto p-8 space-y-10 text-white pb-20">
@@ -177,17 +193,19 @@ export const UserProfile = () => {
 
                 {/* Quick Stats */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    {[
-                        { label: 'Workspaces', value: '3', icon: LayoutDashboard, color: 'text-blue-400', bg: 'bg-blue-400/5' },
-                        { label: 'Owned', value: '1', icon: Briefcase, color: 'text-emerald-400', bg: 'bg-emerald-400/5' },
-                        { label: 'Member Of', value: '2', icon: Users, color: 'text-purple-400', bg: 'bg-purple-400/5' },
-                    ].map((stat, i) => (
+                    {workspaceStats.map((stat, i) => (
                         <div key={i} className="flex items-center gap-4 p-5 rounded-2xl bg-zinc-900/50 border border-white/5 hover:border-white/10 transition-colors">
                             <div className={`p-3 rounded-xl ${stat.bg} ${stat.color}`}>
                                 <stat.icon className="w-5 h-5" />
                             </div>
                             <div>
-                                <p className="text-2xl font-bold">{stat.value}</p>
+                                <p className="text-2xl font-bold">
+                                    {isLoading ? (
+                                        <span className="animate-pulse bg-zinc-700 h-6 w-8 block rounded-md"></span>
+                                    ) : (
+                                        stat.value
+                                    )}
+                                </p>
                                 <p className="text-xs text-zinc-500 font-medium uppercase tracking-wider">{stat.label}</p>
                             </div>
                         </div>
@@ -196,47 +214,93 @@ export const UserProfile = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Workspaces Section */}
+                    {/* Workspaces Section */}
                     <div className="space-y-4">
                         <div className="flex items-center justify-between px-1">
                             <h3 className="text-lg font-bold flex items-center gap-2">
                                 <LayoutDashboard className="w-4 h-4 text-blue-500" />
                                 My Workspaces
                             </h3>
-                            <button className="text-xs font-bold text-blue-500 hover:text-blue-400 transition-colors">View All</button>
+                            {/* <button className="text-xs font-bold text-blue-500 hover:text-blue-400 transition-colors">View All</button> */}
                         </div>
 
-                        <div className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 space-y-6">
-                            <div className="flex items-center justify-between">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center font-bold text-lg text-white">M</div>
-                                    <div>
-                                        <h4 className="font-bold">MySpace</h4>
-                                        <p className="text-[11px] text-zinc-500 font-medium">Professional Plan • Created Jan 2024</p>
+                        {workspacesData?.data?.map((workspace: {
+                            _id: string;
+                            id?: string;
+                            name: string;
+                            createdAt: string;
+                            subscriptionId?: {
+                                status: string;
+                                endDate: string;
+                                planId?: {
+                                    name: string;
+                                    interval: string;
+                                }
+                            }
+                        }) => {
+                            const plan = workspace.subscriptionId?.planId;
+                            const subscription = workspace.subscriptionId;
+                            const renewalDate = subscription?.endDate ? new Date(subscription.endDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'N/A';
+                            const planName = plan?.name || 'Free Plan';
+                            const interval = plan?.interval || 'Lifetime';
+
+                            return (
+                                <div key={workspace._id || workspace.id} className="bg-zinc-900/50 border border-white/5 rounded-2xl p-6 space-y-6 mb-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-4">
+                                            <div className="w-12 h-12 rounded-xl bg-zinc-800 flex items-center justify-center font-bold text-lg text-white">
+                                                {workspace.name?.[0]?.toUpperCase() || 'W'}
+                                            </div>
+                                            <div>
+                                                <h4 className="font-bold">{workspace.name}</h4>
+                                                <p className="text-[11px] text-zinc-500 font-medium">
+                                                    {planName} • Created {new Date(workspace.createdAt).toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <span className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                            {subscription?.status || 'Active'}
+                                        </span>
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-2 py-4 border-y border-white/5">
+                                        <div>
+                                            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Plan</p>
+                                            <p className="text-sm font-semibold">{planName}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Renewal</p>
+                                            <p className="text-sm font-semibold capitalize">{interval}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Next Bill</p>
+                                            <p className="text-sm font-semibold">{renewalDate}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={() => navigate(FRONTEND_ROUTES.PAYMENTS)}
+                                            className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all"
+                                        >
+                                            Manage Plan
+                                        </button>
+                                        <button
+                                            onClick={() => toast.error("Cancel Subscription feature coming soon")}
+                                            className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-red-500/5 hover:bg-red-500/10 text-red-500/70 border border-red-500/10 transition-all"
+                                        >
+                                            Cancel
+                                        </button>
                                     </div>
                                 </div>
-                                <span className="px-2.5 py-1 text-[10px] font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Active</span>
-                            </div>
+                            );
+                        })}
 
-                            <div className="grid grid-cols-3 gap-2 py-4 border-y border-white/5">
-                                <div>
-                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Plan</p>
-                                    <p className="text-sm font-semibold">Pro</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Renewal</p>
-                                    <p className="text-sm font-semibold">Monthly</p>
-                                </div>
-                                <div>
-                                    <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mb-1">Renewal Path</p>
-                                    <p className="text-sm font-semibold">Feb &apos;25</p>
-                                </div>
+                        {(!workspacesData?.data || workspacesData.data.length === 0) && (
+                            <div className="text-center p-8 bg-zinc-900/30 rounded-2xl border border-white/5 border-dashed">
+                                <p className="text-zinc-500 text-sm">No workspaces found.</p>
                             </div>
-
-                            <div className="flex gap-3">
-                                <button className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all">Manage Plan</button>
-                                <button className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-red-500/5 hover:bg-red-500/10 text-red-500/70 border border-red-500/10 transition-all">Cancel</button>
-                            </div>
-                        </div>
+                        )}
                     </div>
 
                     {/* Settings List */}
