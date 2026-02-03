@@ -5,6 +5,8 @@ import { env } from "../../config/envValidation";
 import { CreateCheckoutSessionInputDTO } from "../../application/dtos/user/requestDTOs/CreateCheckoutSessionInputDTO";
 import { WebhookEventInputDTO } from "../../application/dtos/user/requestDTOs/WebhookEventInputDTO";
 import { GetSubscriptionInputDTO } from "../../application/dtos/user/requestDTOs/GetSubscriptionInputDTO";
+import { UpdateSubscriptionInputDTO } from "../../application/dtos/user/requestDTOs/UpdateSubscriptonInputDTO";
+import { SUBSCRIPTION_ERRORS } from "../../domain/constants/errorMessages";
 
 @injectable()
 export class StripeService implements IStripeService {
@@ -46,8 +48,8 @@ export class StripeService implements IStripeService {
 
         const price = await this.stripe.prices.create({
             product: product.id,
-            unit_amount: params.amount * 100, 
-            currency: 'usd',
+            unit_amount: params.amount * 100,
+            currency: 'inr',
             recurring: {
                 interval: params.interval,
             },
@@ -57,5 +59,22 @@ export class StripeService implements IStripeService {
             productId: product.id,
             priceId: price.id,
         };
+    }
+    async updateSubscriptionPlan(params: UpdateSubscriptionInputDTO): Promise<Stripe.Subscription> {
+        const { stripeSubscriptionId, newPriceId } = params
+        const subscription = await this.stripe.subscriptions.retrieve(stripeSubscriptionId)
+        if (!subscription) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND)
+
+        const updatedSub = await this.stripe.subscriptions.update(stripeSubscriptionId, {
+            items: [
+                {
+                    id: subscription.items.data[0].id,
+                    price: newPriceId
+                }
+            ],
+            proration_behavior: 'always_invoice',
+        })
+
+        return updatedSub;
     }
 }

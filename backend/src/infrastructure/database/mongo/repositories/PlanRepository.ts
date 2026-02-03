@@ -65,6 +65,10 @@ export class PlanRepository extends BaseRepo<IPlanEntity> implements IPlanReposi
             createdAt: updatedDoc.createdAt!,
             updatedAt: updatedDoc.updatedAt!
         };
+    }
 
+    async getPlanByStripePriceId(stripePriceId: string): Promise<IPlanEntity | null> {
+        const plan = await this.model.findOne({ stripePriceId });
+        return plan;
     }
 }

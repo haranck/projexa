@@ -32,6 +32,7 @@ export const API_ROUTES = {
     GET_PLANS : "/v1/workspace/get-plans",
     SELECT_PLAN : "/v1/workspace/select-plan",
     CREATE_CHECKOUT_SESSION : "/v1/workspace/checkout",
-    GET_USER_WORKSPACES : "/v1/workspace/user-workspaces-list"
+    GET_USER_WORKSPACES : "/v1/workspace/user-workspaces-list",
+    UPGRADE_PLAN : "/v1/workspace/upgrade-plan"
   }
 };

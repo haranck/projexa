@@ -1,4 +1,4 @@
 export interface WebhookEventInputDTO {
-    payload: string;
+    payload: Buffer;
     signature: string;
 }

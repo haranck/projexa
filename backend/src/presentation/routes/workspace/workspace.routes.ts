@@ -9,5 +9,6 @@ router.get(ROUTES.WORKSPACE.GET_PLANS, authMiddleware.authenticate, workspaceCon
 router.post(ROUTES.WORKSPACE.SELECT_PLAN, authMiddleware.authenticate, workspaceController.selectPlan)
 router.post(ROUTES.WORKSPACE.CREATE_CHECKOUT_SESSION, authMiddleware.authenticate, workspaceController.createCheckoutSession)
 router.get(ROUTES.WORKSPACE.USER_WORKSPACES_LIST, authMiddleware.authenticate, workspaceController.getUserWorkspaces)
+router.post(ROUTES.WORKSPACE.UPGRADE_PLAN, authMiddleware.authenticate, workspaceController.upgradeSubscription)
 
 export default router

@@ -28,4 +28,19 @@ export class SubscriptionRepository extends BaseRepo<ISubscriptionEntity> implem
         if (!createdDoc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_CREATION_FAILED);
         return createdDoc;
     }
+    async findByStripeSubscriptionId(stripeSubscriptionId: string): Promise<ISubscriptionEntity | null> {
+        const doc = await this.model.findOne({ stripeSubscriptionId });
+        if (!doc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
+        return doc;
+    }
+    async findByStripePriceId(stripePriceId: string): Promise<ISubscriptionEntity | null> {
+        const doc = await this.model.findOne({ stripePriceId });
+        if (!doc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
+        return doc;
+    }
+    async updateSubscription(subscriptionId: string, subscription: Partial<ISubscriptionEntity>): Promise<ISubscriptionEntity> {
+        const updatedDoc = await this.model.findByIdAndUpdate(subscriptionId, subscription, { new: true }).lean<ISubscriptionEntity>();
+        if (!updatedDoc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
+        return updatedDoc;
+    }
 }

@@ -280,10 +280,11 @@ export const UserProfile = () => {
 
                                     <div className="flex gap-3">
                                         <button
-                                            onClick={() => navigate(FRONTEND_ROUTES.PAYMENTS)}
+                                            onClick={() => navigate(FRONTEND_ROUTES.WORKSPACE.SELECT_PLAN, { state: { workspaceName: workspace.name, workspaceId: workspace._id, isUpgrade: true } })}
                                             className="flex-1 py-2.5 text-xs font-bold rounded-xl bg-white/5 hover:bg-white/10 border border-white/5 transition-all"
                                         >
-                                            Manage Plan
+                                            {/* Manage Plan */}
+                                            Upgrade Plan
                                         </button>
                                         <button
                                             onClick={() => toast.error("Cancel Subscription feature coming soon")}

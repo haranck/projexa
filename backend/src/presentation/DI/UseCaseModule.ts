@@ -59,6 +59,13 @@ import { ISubscriptionRepository } from "../../domain/interfaces/repositories/IS
 import { SubscriptionRepository } from "../../infrastructure/database/mongo/repositories/SubscriptionRepository";
 import { IGetUserWorkspaceUseCase } from "../../application/interface/user/IGetUserWorkspaceUseCase";
 import { GetUserWorkspaceUseCase } from "../../application/useCases/user/GetUserWorkspaceUseCase";
+import { IStripeWebhookUseCase } from "../../application/interface/stripe/IStripeWebhookUseCase";
+import { StripeWebhookUseCase } from "../../application/useCases/stripe/StripeWebhookUseCase";
+import { IStripeWebhookHandler } from "../../application/interface/stripe/IStripeWebhookHandler";
+import { CheckoutCompleteHandler } from "../../application/useCases/stripe/CheckoutCompleteHandler";
+import { SubscriptionUpdateHandler } from "../../application/useCases/stripe/SubscriptionUpdateHandler";
+import { IUpgradeSubscriptionUseCase } from "../../application/interface/user/IUpgradeSubscriptionUseCase";
+import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/UpgradeSubscriptionUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -185,6 +192,22 @@ export class UseCaseModule {
 
         container.register<IGetUserWorkspaceUseCase>('IGetUserWorkspaceUseCase', {
             useClass: GetUserWorkspaceUseCase
+        })
+
+        container.register<IStripeWebhookUseCase>('IStripeWebhookUseCase', {
+            useClass: StripeWebhookUseCase
+        })
+
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: CheckoutCompleteHandler
+        })
+
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: SubscriptionUpdateHandler
+        })
+
+        container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase',{
+            useClass: UpgradeSubscriptionUseCase
         })
     }
 }

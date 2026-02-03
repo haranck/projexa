@@ -18,6 +18,11 @@ interface createCheckoutSessionPayload {
     planId: string
 }
 
+interface upgradePlanPayload {
+    workspaceId: string,
+    newPriceId: string
+}
+
 export const createWorkspace = async (data: createWorkspacePayload) => {
     const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.CREATE_WORKSPACE, {
         name: data.workspaceName,
@@ -43,5 +48,10 @@ export const createCheckoutSession = async (data: createCheckoutSessionPayload) 
 
 export const getUserWorkspaces = async () => {
     const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.GET_USER_WORKSPACES)
+    return response.data;
+}
+
+export const upgradePlan = async (data: upgradePlanPayload) => {
+    const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.UPGRADE_PLAN, data)
     return response.data;
 }

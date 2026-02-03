@@ -27,6 +27,7 @@ export const FRONTEND_ROUTES = {
     GET_PLANS : "/workspace/get-plans",
     SELECT_PLAN : "/workspace/select-plan",
     CREATE_CHECKOUT_SESSION : "/workspace/checkout",
+    UPGRADE_PLAN : "/workspace/upgrade-plan",
     PAYMENT_SUCCESS : "/payment-success",
     PAYMENT_CANCEL : "/payment-cancel"
   },

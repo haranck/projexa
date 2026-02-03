@@ -5,7 +5,8 @@ import { UpdatePlanResponseDTO } from "../../../application/dtos/admin/responseD
 export interface IPlanRepository {
     createPlan(plan: IPlanEntity): Promise<IPlanEntity>;
     getPlanById(id: string): Promise<IPlanEntity | null>;
-    getPlanByNameAndInterval(name: string,interval: string): Promise<IPlanEntity | null>;
-    getAllPlans():Promise<IPlanEntity[]>;
-    updatePlan(planId:string,dto:UpdatePlanDTO):Promise<UpdatePlanResponseDTO>
+    getPlanByNameAndInterval(name: string, interval: string): Promise<IPlanEntity | null>;
+    getAllPlans(): Promise<IPlanEntity[]>;
+    updatePlan(planId: string, dto: UpdatePlanDTO): Promise<UpdatePlanResponseDTO>
+    getPlanByStripePriceId(stripePriceId: string): Promise<IPlanEntity | null>
 }

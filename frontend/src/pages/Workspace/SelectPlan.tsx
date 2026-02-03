@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom"
 import { useState } from "react"
-import { useGetPlans, useCreateCheckoutSession } from "@/hooks/Workspace/WorkspaceHooks"
+import { useGetPlans, useCreateCheckoutSession, useUpgradePlan } from "@/hooks/Workspace/WorkspaceHooks"
 import { Package, Check, Loader2, ArrowRight } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { FRONTEND_ROUTES } from "@/constants/frontendRoutes"
@@ -22,9 +22,12 @@ export const SelectPlan = () => {
     const navigate = useNavigate()
 
     const workspaceName = state?.workspaceName
+    const workspaceId = state?.workspaceId
+    const isUpgrade = state?.isUpgrade || false
 
     const { data, isLoading } = useGetPlans()
-    const { mutate: createCheckout, isPending } = useCreateCheckoutSession()
+    const { mutate: createCheckout, isPending: isCheckoutPending } = useCreateCheckoutSession()
+    const { mutate: upgradePlan } = useUpgradePlan()
 
     const [selectedPlanId, setSelectedPlanId] = useState<string>("")
 
@@ -47,6 +50,21 @@ export const SelectPlan = () => {
     const handleSelectPlan = (plan: Plan) => {
         const planId = plan.id || plan._id || ""
         setSelectedPlanId(planId)
+
+        if (isUpgrade && workspaceId) {
+            upgradePlan({ workspaceId, newPriceId: planId }, {
+                onSuccess: () => {
+                    toast.success("Plan upgraded successfully")
+                    navigate(FRONTEND_ROUTES.PROFILE)
+                },
+                onError: (error: unknown) => {
+                    console.error("Upgrade Plan Failed:", error)
+                    toast.error("Failed to upgrade plan. Please try again.")
+                    setSelectedPlanId("")
+                }
+            })
+            return;
+        }
 
         createCheckout(
             {
@@ -159,16 +177,16 @@ export const SelectPlan = () => {
                                 </div>
 
                                 <button
-                                    disabled={isPending}
+                                    disabled={isCheckoutPending}
                                     onClick={() => handleSelectPlan(plan)}
                                     className="w-full mt-8 bg-zinc-900 hover:bg-[#00ff88] text-white hover:text-black py-4 rounded-2xl font-bold border border-white/5 transition-all duration-500 active:scale-95 flex items-center justify-center gap-2 group/btn disabled:opacity-50"
                                 >
-                                    {isPending && selectedPlanId === (plan.id || plan._id) ? (
+                                    {isCheckoutPending && selectedPlanId === (plan.id || plan._id) ? (
                                         <Loader2 className="h-5 w-5 animate-spin" />
                                     ) : (
                                         <>
-                                            {isPending ? "Processing..." : "Choose Plan"}
-                                            {!isPending && <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />}
+                                            {isCheckoutPending ? "Processing..." : "Choose Plan"}
+                                            {!isCheckoutPending && <ArrowRight className="h-4 w-4 transition-transform group-hover/btn:translate-x-1" />}
                                         </>
                                     )}
                                 </button>

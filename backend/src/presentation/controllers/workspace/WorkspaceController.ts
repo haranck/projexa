@@ -9,6 +9,8 @@ import { IGetAllPlansForUserUseCase } from "../../../application/interface/user/
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { ICreateCheckoutSessionUseCase } from "../../../application/interface/user/ICreateCheckoutSessionUseCase";
 import { IGetUserWorkspaceUseCase } from "../../../application/interface/user/IGetUserWorkspaceUseCase";
+import { IUpgradeSubscriptionUseCase } from "../../../application/interface/user/IUpgradeSubscriptionUseCase";
+
 
 @injectable()
 export class WorkspaceController {
@@ -18,7 +20,8 @@ export class WorkspaceController {
         @inject("IGetAllPlansForUserUseCase") private _getAllPlansForUserUseCase: IGetAllPlansForUserUseCase,
         @inject("ISelectPlanUseCase") private _selectPlanUseCase: ISelectPlanUseCase,
         @inject("ICreateCheckoutSessionUseCase") private _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
-        @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase:IGetUserWorkspaceUseCase
+        @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase:IGetUserWorkspaceUseCase,
+        @inject('IUpgradeSubscriptionUseCase') private _upgradeSubscriptionUseCase:IUpgradeSubscriptionUseCase
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -75,6 +78,17 @@ export class WorkspaceController {
         res.status(HTTP_STATUS.OK).json({
             message: MESSAGES.WORKSPACE.GET_USER_WORKSPACES_SUCCESSFULLY,
             data: workspaces
+        })
+    }
+
+    upgradeSubscription = async(req:AuthRequest,res:Response):Promise<void> => {
+        const userId = req.user?.userId
+        const {workspaceId,newPriceId} = req.body
+        if(!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
+        await this._upgradeSubscriptionUseCase.execute({workspaceId,userId,newPriceId})
+        
+        res.status(HTTP_STATUS.OK).json({
+            message: MESSAGES.WORKSPACE.SUBSCRIPTION_UPGRADED_SUCCESSFULLY,
         })
     }
 }
