@@ -20,8 +20,8 @@ export class WorkspaceController {
         @inject("IGetAllPlansForUserUseCase") private _getAllPlansForUserUseCase: IGetAllPlansForUserUseCase,
         @inject("ISelectPlanUseCase") private _selectPlanUseCase: ISelectPlanUseCase,
         @inject("ICreateCheckoutSessionUseCase") private _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
-        @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase:IGetUserWorkspaceUseCase,
-        @inject('IUpgradeSubscriptionUseCase') private _upgradeSubscriptionUseCase:IUpgradeSubscriptionUseCase
+        @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase: IGetUserWorkspaceUseCase,
+        @inject('IUpgradeSubscriptionUseCase') private _upgradeSubscriptionUseCase: IUpgradeSubscriptionUseCase
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -71,8 +71,8 @@ export class WorkspaceController {
             data: result
         })
     }
-    getUserWorkspaces = async (req:AuthRequest,res:Response):Promise<void> => {
-        const userId= req.user?.userId
+    getUserWorkspaces = async (req: AuthRequest, res: Response): Promise<void> => {
+        const userId = req.user?.userId
 
         const workspaces = await this._getUserWorkspaceUseCase.execute(userId!)
         res.status(HTTP_STATUS.OK).json({
@@ -81,14 +81,15 @@ export class WorkspaceController {
         })
     }
 
-    upgradeSubscription = async(req:AuthRequest,res:Response):Promise<void> => {
+    upgradeSubscription = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.user?.userId
-        const {workspaceId,newPriceId} = req.body
-        if(!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
-        await this._upgradeSubscriptionUseCase.execute({workspaceId,userId,newPriceId})
-        
+        const { workspaceId, newPriceId } = req.body
+        if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
+        const checkoutUrl = await this._upgradeSubscriptionUseCase.execute({ workspaceId, userId, newPriceId })
+
         res.status(HTTP_STATUS.OK).json({
             message: MESSAGES.WORKSPACE.SUBSCRIPTION_UPGRADED_SUCCESSFULLY,
+            data: checkoutUrl
         })
     }
 }

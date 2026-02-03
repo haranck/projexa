@@ -53,9 +53,14 @@ export const SelectPlan = () => {
 
         if (isUpgrade && workspaceId) {
             upgradePlan({ workspaceId, newPriceId: planId }, {
-                onSuccess: () => {
-                    toast.success("Plan upgraded successfully")
-                    navigate(FRONTEND_ROUTES.PROFILE)
+                onSuccess: (res: unknown) => {
+                    toast.success("Redirecting to payment...")
+                    const response = res as { data: string };
+                    if (response?.data) {
+                        window.location.href = response.data
+                    } else {
+                        toast.error("Failed to initiate upgrade")
+                    }
                 },
                 onError: (error: unknown) => {
                     console.error("Upgrade Plan Failed:", error)

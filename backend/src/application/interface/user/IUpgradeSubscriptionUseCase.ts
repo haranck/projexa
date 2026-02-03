@@ -1,5 +1,5 @@
-import {UpgradeSubscriptionInputDTO} from "../../dtos/user/requestDTOs/UpgradeSubscriptionDTO";
+import { UpgradeSubscriptionInputDTO } from "../../dtos/user/requestDTOs/UpgradeSubscriptionDTO";
 
 export interface IUpgradeSubscriptionUseCase {
-    execute(dto:UpgradeSubscriptionInputDTO): Promise<void>;
+    execute(dto: UpgradeSubscriptionInputDTO): Promise<string>;
 }

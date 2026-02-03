@@ -21,7 +21,8 @@ export class StripeService implements IStripeService {
         const session = await this.stripe.checkout.sessions.create({
             mode: 'subscription',
             payment_method_types: ['card'],
-            customer_email: params.customerEmail,
+            customer: params.customerId,
+            customer_email: params.customerId ? undefined : params.customerEmail,
             line_items: [{
                 price: params.priceId,
                 quantity: 1

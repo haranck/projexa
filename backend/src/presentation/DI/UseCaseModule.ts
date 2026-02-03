@@ -63,7 +63,6 @@ import { IStripeWebhookUseCase } from "../../application/interface/stripe/IStrip
 import { StripeWebhookUseCase } from "../../application/useCases/stripe/StripeWebhookUseCase";
 import { IStripeWebhookHandler } from "../../application/interface/stripe/IStripeWebhookHandler";
 import { CheckoutCompleteHandler } from "../../application/useCases/stripe/CheckoutCompleteHandler";
-import { SubscriptionUpdateHandler } from "../../application/useCases/stripe/SubscriptionUpdateHandler";
 import { IUpgradeSubscriptionUseCase } from "../../application/interface/user/IUpgradeSubscriptionUseCase";
 import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/UpgradeSubscriptionUseCase";
 
@@ -202,11 +201,7 @@ export class UseCaseModule {
             useClass: CheckoutCompleteHandler
         })
 
-        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
-            useClass: SubscriptionUpdateHandler
-        })
-
-        container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase',{
+        container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase', {
             useClass: UpgradeSubscriptionUseCase
         })
     }

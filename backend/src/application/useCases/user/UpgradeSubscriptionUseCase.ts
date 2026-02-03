@@ -3,11 +3,9 @@ import { IUpgradeSubscriptionUseCase } from '../../interface/user/IUpgradeSubscr
 import { UpgradeSubscriptionInputDTO } from '../../dtos/user/requestDTOs/UpgradeSubscriptionDTO'
 import { ISubscriptionRepository } from '../../../domain/interfaces/repositories/ISubscriptionRepository'
 import { IStripeService } from '../../../domain/interfaces/services/IStripeService'
-import { Stripe } from 'stripe'
 import { IWorkspaceRepository } from '../../../domain/interfaces/repositories/IWorkspaceRepository'
 import { SUBSCRIPTION_ERRORS, WORKSPACE_ERRORS } from '../../../domain/constants/errorMessages'
 import { IPlanRepository } from '../../../domain/interfaces/repositories/IPlanRepository'
-import { SubscriptionStatus } from '../../../domain/enums/SubscriptionStatus'
 
 @injectable()
 export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
@@ -18,7 +16,7 @@ export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
         @inject('IPlanRepository') private _planRepository: IPlanRepository,
     ) { }
 
-    async execute(dto: UpgradeSubscriptionInputDTO): Promise<void> {
+    async execute(dto: UpgradeSubscriptionInputDTO): Promise<string> {
         const { workspaceId, userId, newPriceId } = dto
 
         const plan = await this._planRepository.getPlanById(newPriceId)
@@ -32,32 +30,21 @@ export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
         const subscription = await this._subscriptionRepository.findById(workspace.subscriptionId!.toString())
         if (!subscription) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND)
 
-        const updatedStripeSub = await this._stripeService.updateSubscriptionPlan({
-            stripeSubscriptionId: subscription.stripeSubscriptionId,
-            newPriceId: plan.stripePriceId
-        }) as Stripe.Subscription & { current_period_start: number; current_period_end: number };
-
-        // 1. Update local subscription record immediately
-        const startDate = updatedStripeSub.current_period_start
-            ? new Date(updatedStripeSub.current_period_start * 1000)
-            : subscription.startDate || new Date();
-
-        const endDate = updatedStripeSub.current_period_end
-            ? new Date(updatedStripeSub.current_period_end * 1000)
-            : subscription.endDate || new Date(Date.now() + 30 * 24 * 60 * 60 * 1000);
-
-        await this._subscriptionRepository.updateSubscription(subscription._id!.toString(), {
-            planId: plan._id!.toString(),
-            endDate,
-            startDate,
-            status: SubscriptionStatus.ACTIVE,
+        const checkoutUrl = await this._stripeService.createCheckoutSession({
+            priceId: plan.stripePriceId,
+            customerEmail: "",
+            customerId: subscription.stripeCustomerId,
+            metadata: {
+                workspaceId: workspaceId,
+                userId: userId,
+                planId: plan._id!.toString(),
+                isUpgrade: "true"
+            },
+            successUrl: `${process.env.FRONTEND_URL}/payment-success`,
+            cancelUrl: `${process.env.FRONTEND_URL}/payment-cancel`
         })
 
-        // 2. Update workspace record immediately
-        await this._workspaceRepository.updateWorkspace(workspaceId, {
-            ...workspace,
-            planId: plan._id!.toString()
-        })
+        return checkoutUrl;
     }
 
 }
