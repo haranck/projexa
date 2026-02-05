@@ -68,7 +68,9 @@ export const SUBSCRIPTION_ERRORS = {
     PLAN_CREATION_FAILED: "Plan creation failed",
     PLAN_ALREADY_EXISTS: "Plan Already Exists",
     PLAN_NOT_FOUND: "Plan not found !",
-    STRIPE_PRICE_ID_MISSING: "Stripe price not configured for this plan"
+    STRIPE_PRICE_ID_MISSING: "Stripe price not configured for this plan",
+    STRIPE_CUSTOMER_NOT_FOUND: "Stripe customer not found !",
+    NO_BILLING_CUSTOMER_FOUND: "No billing customer found !"
 };
 
 export const WORKSPACE_ERRORS = {

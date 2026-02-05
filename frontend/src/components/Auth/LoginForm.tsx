@@ -55,13 +55,15 @@ export const LoginForm = () => {
             dispatch(setWorkspaces(response.data.workspaces));
             dispatch(setCurrentWorkspace(response.data.defaultWorkspace));
             toast.success("Google login successful!");
-            if (response.data.hasWorkspace && response.data.defaultWorkspaceId) {
+
+            if (response.data.hasWorkspace && response.data.defaultWorkspace) {
               navigate(FRONTEND_ROUTES.HOME)
             } else {
               navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE)
             }
+
           }
-        },
+        },                                                                                                                                  
         onError: (error) => {
           console.error("Backend Google Login Failed:", error);
           toast.error("Google login failed. Please try again.");

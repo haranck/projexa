@@ -317,7 +317,7 @@ export const UserProfile = () => {
                             {[
                                 { title: 'Security & Access', desc: 'Password and settings', icon: Shield },
                                 { title: 'Personal Information', desc: 'FirstName,LastName,Phone Number Details', icon: Edit3 },
-                                { title: 'Workspace Roles', desc: 'Permissions and team access', icon: Users },
+                                { title: 'Manage Roles & Permissions', desc: 'Permissions and team access', icon: Users },
                             ].map((item, i) => (
                                 <button key={i} className="w-full flex items-center justify-between p-4 px-5 hover:bg-white/5 transition-all text-left group"
                                     onClick={() => {

@@ -204,5 +204,10 @@ export class UseCaseModule {
         container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase', {
             useClass: UpgradeSubscriptionUseCase
         })
+
+        container.register<ISubscriptionRepository>('ISubscriptionRepository', {
+            useClass: SubscriptionRepository
+        })
+        
     }
 }

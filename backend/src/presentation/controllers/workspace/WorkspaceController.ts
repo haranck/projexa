@@ -11,7 +11,6 @@ import { ICreateCheckoutSessionUseCase } from "../../../application/interface/us
 import { IGetUserWorkspaceUseCase } from "../../../application/interface/user/IGetUserWorkspaceUseCase";
 import { IUpgradeSubscriptionUseCase } from "../../../application/interface/user/IUpgradeSubscriptionUseCase";
 
-
 @injectable()
 export class WorkspaceController {
 
@@ -21,7 +20,7 @@ export class WorkspaceController {
         @inject("ISelectPlanUseCase") private _selectPlanUseCase: ISelectPlanUseCase,
         @inject("ICreateCheckoutSessionUseCase") private _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
         @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase: IGetUserWorkspaceUseCase,
-        @inject('IUpgradeSubscriptionUseCase') private _upgradeSubscriptionUseCase: IUpgradeSubscriptionUseCase
+        @inject('IUpgradeSubscriptionUseCase') private _upgradeSubscriptionUseCase: IUpgradeSubscriptionUseCase,
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {

@@ -70,10 +70,10 @@ export const PaymentSuccess = () => {
             </div>
 
             <button
-              onClick={() => navigate(FRONTEND_ROUTES.HOME)}
+              onClick={() => navigate(FRONTEND_ROUTES.PROFILE)}
               className="w-full group flex items-center justify-center gap-2 px-4 py-3 bg-white text-black rounded-lg font-semibold hover:bg-zinc-200 transition-colors"
             >
-              <span>Go to Dashboard</span>
+              <span>Go to Profile</span>
               <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>

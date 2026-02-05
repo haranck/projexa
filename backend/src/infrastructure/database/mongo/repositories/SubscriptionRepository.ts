@@ -43,4 +43,9 @@ export class SubscriptionRepository extends BaseRepo<ISubscriptionEntity> implem
         if (!updatedDoc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
         return updatedDoc;
     }
+    async findByWorkspaceId(workspaceId: string): Promise<ISubscriptionEntity | null> {
+        const doc = await this.model.findOne({ workspaceId });
+        if (!doc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
+        return doc;
+    }
 }
