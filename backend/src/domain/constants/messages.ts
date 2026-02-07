@@ -61,6 +61,7 @@ export const MESSAGES = {
         GET_USER_WORKSPACES_SUCCESSFULLY: "Fetched user workspaces successfully",
         SUBSCRIPTION_UPGRADED_SUCCESSFULLY: "Subscription upgraded successfully",
         GET_BILLING_SUCCESSFULLY: "Fetched billing successfully",
-        PORTAL_SESSION_CREATED_SUCCESSFULLY: "Portal session created successfully"
+        PORTAL_SESSION_CREATED_SUCCESSFULLY: "Portal session created successfully",
+        GET_WORKSPACE_INVOICES_SUCCESSFULLY: "Fetched workspace invoices successfully",
     }
 };

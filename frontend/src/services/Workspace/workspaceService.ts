@@ -55,3 +55,8 @@ export const upgradePlan = async (data: upgradePlanPayload) => {
     const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.UPGRADE_PLAN, data)
     return response.data;
 }
+
+export const getWorkspaceInvoices = async (workspaceId: string) => {
+    const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.GET_WORKSPACE_INVOICES.replace(":workspaceId", workspaceId))
+    return response.data;
+}

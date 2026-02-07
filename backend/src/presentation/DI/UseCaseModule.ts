@@ -65,6 +65,9 @@ import { IStripeWebhookHandler } from "../../application/interface/stripe/IStrip
 import { CheckoutCompleteHandler } from "../../application/useCases/stripe/CheckoutCompleteHandler";
 import { IUpgradeSubscriptionUseCase } from "../../application/interface/user/IUpgradeSubscriptionUseCase";
 import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/UpgradeSubscriptionUseCase";
+import { IGetWorkspaceInvoicesUseCase } from "../../application/interface/user/IGetWorkspaceInvoicesUseCase";
+import { GetWorkspaceInvoicesUseCase } from "../../application/useCases/user/GetWorkspaceInvoicesUseCase";
+import { InvoiceSucceededHandler } from "../../application/useCases/stripe/InvoiceSucceededHandler";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -201,6 +204,10 @@ export class UseCaseModule {
             useClass: CheckoutCompleteHandler
         })
 
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: InvoiceSucceededHandler
+        })
+
         container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase', {
             useClass: UpgradeSubscriptionUseCase
         })
@@ -208,6 +215,10 @@ export class UseCaseModule {
         container.register<ISubscriptionRepository>('ISubscriptionRepository', {
             useClass: SubscriptionRepository
         })
-        
+
+        container.register<IGetWorkspaceInvoicesUseCase>('IGetWorkspaceInvoicesUseCase', {
+            useClass: GetWorkspaceInvoicesUseCase
+        })
+
     }
 }

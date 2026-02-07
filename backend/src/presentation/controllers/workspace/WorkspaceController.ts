@@ -10,6 +10,7 @@ import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { ICreateCheckoutSessionUseCase } from "../../../application/interface/user/ICreateCheckoutSessionUseCase";
 import { IGetUserWorkspaceUseCase } from "../../../application/interface/user/IGetUserWorkspaceUseCase";
 import { IUpgradeSubscriptionUseCase } from "../../../application/interface/user/IUpgradeSubscriptionUseCase";
+import { IGetWorkspaceInvoicesUseCase } from "../../../application/interface/user/IGetWorkspaceInvoicesUseCase";
 
 @injectable()
 export class WorkspaceController {
@@ -21,6 +22,7 @@ export class WorkspaceController {
         @inject("ICreateCheckoutSessionUseCase") private _createCheckoutSessionUseCase: ICreateCheckoutSessionUseCase,
         @inject('IGetUserWorkspaceUseCase') private _getUserWorkspaceUseCase: IGetUserWorkspaceUseCase,
         @inject('IUpgradeSubscriptionUseCase') private _upgradeSubscriptionUseCase: IUpgradeSubscriptionUseCase,
+        @inject('IGetWorkspaceInvoicesUseCase') private _getWorkspaceInvoicesUseCase: IGetWorkspaceInvoicesUseCase,
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -89,6 +91,15 @@ export class WorkspaceController {
         res.status(HTTP_STATUS.OK).json({
             message: MESSAGES.WORKSPACE.SUBSCRIPTION_UPGRADED_SUCCESSFULLY,
             data: checkoutUrl
+        })
+    }
+
+    getWorkspaceInvoices = async (req: AuthRequest, res: Response): Promise<void> => {
+        const { workspaceId } = req.params
+        const result = await this._getWorkspaceInvoicesUseCase.execute(workspaceId!)
+        res.status(HTTP_STATUS.OK).json({
+            message: MESSAGES.WORKSPACE.GET_WORKSPACE_INVOICES_SUCCESSFULLY,
+            data: result
         })
     }
 }

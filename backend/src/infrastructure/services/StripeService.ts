@@ -7,6 +7,8 @@ import { WebhookEventInputDTO } from "../../application/dtos/user/requestDTOs/We
 import { GetSubscriptionInputDTO } from "../../application/dtos/user/requestDTOs/GetSubscriptionInputDTO";
 import { UpdateSubscriptionInputDTO } from "../../application/dtos/user/requestDTOs/UpdateSubscriptonInputDTO";
 import { SUBSCRIPTION_ERRORS } from "../../domain/constants/errorMessages";
+import { InvoiceDTO } from "../../application/dtos/user/requestDTOs/InvoiceDTO";
+import { BillingMapper } from "../../application/mappers/BillingMapper";
 
 @injectable()
 export class StripeService implements IStripeService {
@@ -78,4 +80,13 @@ export class StripeService implements IStripeService {
 
         return updatedSub;
     }
+
+    async getInvoicesByCustomer(customerId: string): Promise<InvoiceDTO[]> {
+        const invoices = await this.stripe.invoices.list({
+            customer:customerId,
+            limit:20
+        })
+        return invoices.data.map(BillingMapper.toInvoiceDTO)
+    }
+
 }

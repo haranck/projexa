@@ -2,7 +2,8 @@ import { createSlice, type PayloadAction } from '@reduxjs/toolkit'
 
 
 export interface Workspace {
-    id: string,
+    _id?: string,
+    id?: string,
     name: string,
     ownerId?: string,
 }
