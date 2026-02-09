@@ -62,11 +62,11 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
       defaultWorkspace,
       user: {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.firstName!,
+        lastName: user.lastName!,
         phone: user.phone || "",
         email: user.email,
-        isEmailVerified: user.isEmailVerified,
+        isEmailVerified: user.isEmailVerified!,
         avatarUrl: user.avatarUrl,
       },
     };

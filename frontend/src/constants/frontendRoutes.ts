@@ -9,7 +9,6 @@ export const FRONTEND_ROUTES = {
   RESET_PASSWORD: '/reset-password',
   LOGOUT: '/logout',
   PROJECTS: '/projects',
-  SETTINGS: '/settings',
   CHAT: '/chat',
   MEETINGS: '/meetings',
   TEAMS: '/teams',
@@ -22,14 +21,15 @@ export const FRONTEND_ROUTES = {
 
   //Workspce Routes
 
-  WORKSPACE : {
-    CREATE_WORKSPACE : "/workspace/create-workspace",
-    GET_PLANS : "/workspace/get-plans",
-    SELECT_PLAN : "/workspace/select-plan",
-    CREATE_CHECKOUT_SESSION : "/workspace/checkout",
-    UPGRADE_PLAN : "/workspace/upgrade-plan",
-    PAYMENT_SUCCESS : "/payment-success",
-    PAYMENT_CANCEL : "/payment-cancel"
+  WORKSPACE: {
+    CREATE_WORKSPACE: "/workspace/create-workspace",
+    GET_PLANS: "/workspace/get-plans",
+    SELECT_PLAN: "/workspace/select-plan",
+    CREATE_CHECKOUT_SESSION: "/workspace/checkout",
+    UPGRADE_PLAN: "/workspace/upgrade-plan",
+    PAYMENT_SUCCESS: "/payment-success",
+    PAYMENT_CANCEL: "/payment-cancel",
+    ACCEPT_INVITE: "/workspace/accept-invite"
   },
 
   //Admin Routes

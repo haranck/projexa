@@ -1,9 +1,10 @@
 import { IWorkspaceRepository } from "../../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { IWorkspaceEntity } from "../../../../domain/entities/IWorkspaceEntity";
+import { IUserEntity } from "../../../../domain/entities/IUserEntity";
 import { injectable } from "tsyringe";
 import { BaseRepo } from "./base/BaseRepo";
 import { WorkspaceModel } from "../models/WorkspaceModel";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { WORKSPACE_ERRORS } from "../../../../domain/constants/errorMessages";
 
 @injectable()
@@ -67,4 +68,16 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
         return docs;
     }
 
+    async addMemberToWorkspace(workspaceId: string, userId: string): Promise<void> {
+        const doc = await this.model.findByIdAndUpdate(workspaceId, {
+            $addToSet: { members: new Types.ObjectId(userId) }
+        });
+        if (!doc) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
+    }
+
+    async getWorkspaceMembers(workspaceId: string): Promise<IUserEntity[]> {
+        const workspace = await this.model.findById(workspaceId).populate('members');
+        if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
+        return workspace.members as unknown as IUserEntity[];
+    }
 }

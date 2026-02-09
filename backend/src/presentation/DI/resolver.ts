@@ -7,6 +7,7 @@ import { AdminController } from '../controllers/admin/AdminController'
 import { UserController } from '../controllers/user/UserController'
 import { WorkspaceController } from '../controllers/workspace/WorkspaceController'
 import { StripeWebhookController } from '../controllers/workspace/StripeWebhookController'
+import { OnBoardingMiddleware } from '../middleware/onBoarding/onBoardingMiddleware'
 
 ContainerSetup.registerAll();
 
@@ -16,5 +17,6 @@ export const adminController = container.resolve(AdminController);
 export const userController = container.resolve(UserController)
 export const workspaceController = container.resolve(WorkspaceController)
 export const stripeWebhookController = container.resolve(StripeWebhookController)
+export const onBoardingMiddleware = container.resolve(OnBoardingMiddleware)
 
 

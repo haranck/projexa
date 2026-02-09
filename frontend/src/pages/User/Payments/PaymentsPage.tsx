@@ -31,7 +31,7 @@ export const PaymentsPage = () => {
     const selectedWorkspace = workspacesData?.data?.find((ws: Workspace) =>
         (ws._id === workspaceId) || (ws.id === workspaceId)
     );
-
+    
     const plan = selectedWorkspace?.subscriptionId?.planId;
     const subscription = selectedWorkspace?.subscriptionId;
 

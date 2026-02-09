@@ -18,7 +18,7 @@ export class InvoiceSucceededHandler implements IStripeWebhookHandler {
     }
 
     async handle(event: Stripe.Event): Promise<void> {
-        console.log("🔥 invoice.payment_succeeded webhook received");
+        console.log("invoice.payment_succeeded webhook received");
 
         const invoice = event.data.object as Stripe.Invoice & { subscription?: string | Stripe.Subscription };
 
@@ -52,7 +52,7 @@ export class InvoiceSucceededHandler implements IStripeWebhookHandler {
             status: SubscriptionStatus.ACTIVE,
         });
 
-        console.log("✅ Subscription updated in DB for renewal:", stripeSubscriptionId);
+        console.log("Subscription updated in DB for renewal:", stripeSubscriptionId);
 
     }
 

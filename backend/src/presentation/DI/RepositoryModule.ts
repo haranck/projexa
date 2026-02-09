@@ -9,6 +9,10 @@ import { IPlanRepository } from "../../domain/interfaces/repositories/IPlanRepos
 import { PlanRepository } from "../../infrastructure/database/mongo/repositories/PlanRepository";
 import { IWorkspaceRedisRepository } from "../../domain/interfaces/repositories/IWorkspaceRedisRepository";
 import { WorkspaceRedisRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceRedisRepository";
+// import { IWorkspaceInviteRepository } from "../../domain/interfaces/repositories/IWorkspaceInviteRepository";
+// import { WorkspaceInviteRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceInviteRepository";
+import { IWorkspaceInviteRepository } from "../../domain/interfaces/repositories/IWorkspaceInviteRepository";
+import { WorkspaceInviteRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceInviteRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -31,6 +35,10 @@ export class RepositoryModule {
 
         container.register<IWorkspaceRedisRepository>('IWorkspaceRedisRepository', {
             useClass: WorkspaceRedisRepository
+        })
+
+        container.register<IWorkspaceInviteRepository>('IWorkspaceInviteRepository', {
+            useClass: WorkspaceInviteRepository
         })
 
     }

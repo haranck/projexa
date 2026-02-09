@@ -6,7 +6,6 @@ import { HomePage } from '../../pages/User/Home/HomePage'
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes'
 import { ForgotPassword } from '../../pages/Auth/ForgotPassword'
 import { ResetPassword } from '../../pages/Auth/ResetPassword'
-import { SettingsPage } from '../../pages/User/Settings/SettingsPage'
 import { ProjectsPage } from '../../pages/User/Projects/ProjectsPage'
 import { ChatPage } from '../../pages/User/Chat/ChatPage'
 import { MeetingsPage } from '../../pages/User/Meeting/MeetingsPage'
@@ -21,6 +20,7 @@ import { CreateWorkspacePage } from '../../pages/Workspace/CreateWorkspacePage'
 import { SelectPlan } from '../../pages/Workspace/SelectPlan'
 import { PaymentSuccess } from '@/components/PaymentPages/PaymentSuccess'
 import { PaymentCancel } from '@/components/PaymentPages/PaymentCancel'
+import { AcceptInvitePage } from '@/pages/User/Teams/AcceptInvitePage'
 
 const UserRoutes = () => {
     return (
@@ -31,12 +31,12 @@ const UserRoutes = () => {
                 <Route path={FRONTEND_ROUTES.LOGIN} element={<LoginPage />} />
                 <Route path={FRONTEND_ROUTES.FORGOT_PASSWORD} element={<ForgotPassword />} />
                 <Route path={FRONTEND_ROUTES.RESET_PASSWORD} element={<ResetPassword />} />
-
             </Route>
+
+            <Route path={FRONTEND_ROUTES.WORKSPACE.ACCEPT_INVITE} element={<AcceptInvitePage />} />
 
             <Route element={<ProtectedRoute />}>
                 <Route path={FRONTEND_ROUTES.HOME} element={<HomePage />} />
-                <Route path={FRONTEND_ROUTES.SETTINGS} element={<SettingsPage />} />
                 <Route path={FRONTEND_ROUTES.PROJECTS} element={<ProjectsPage />} />
                 <Route path={FRONTEND_ROUTES.CHAT} element={<ChatPage />} />
                 <Route path={FRONTEND_ROUTES.MEETINGS} element={<MeetingsPage />} />
@@ -49,8 +49,6 @@ const UserRoutes = () => {
                 <Route path={FRONTEND_ROUTES.WORKSPACE.SELECT_PLAN} element={<SelectPlan />} />
                 <Route path={FRONTEND_ROUTES.WORKSPACE.PAYMENT_SUCCESS} element={<PaymentSuccess />} />
                 <Route path={FRONTEND_ROUTES.WORKSPACE.PAYMENT_CANCEL} element={<PaymentCancel />} />
-
-
             </Route>
         </Routes>
     )

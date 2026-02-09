@@ -21,6 +21,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
 
+
+
     if (dto.email === env.ADMIN_EMAIL) throw new Error(ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED);
 
     const user = await this._userRepo.findByEmail(dto.email);
@@ -31,7 +33,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     if (!user.isEmailVerified) throw new Error(USER_ERRORS.USER_EMAIL_NOT_VERIFIED);
 
-    const isMatch = await this._passwordService.compare(dto.password, user.password);
+    const isMatch = await this._passwordService.compare(dto.password, user.password!);
 
     if (!isMatch) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
@@ -64,8 +66,8 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       defaultWorkspace,
       user: {
         id: user.id,
-        firstName: user.firstName,
-        lastName: user.lastName,
+        firstName: user.firstName!,
+        lastName: user.lastName!,
         email: user.email,
         phone: user.phone || "",
         isEmailVerified: user.isEmailVerified,

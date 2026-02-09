@@ -35,6 +35,7 @@ export class VerifyEmailUseCase implements IVerifyEmailUseCase {
       avatarUrl: tempUser.avatarUrl,
       isBlocked: false,
       isEmailVerified: true,
+      onboardingCompleted: true,
       createdAt: new Date(),
       updatedAt: new Date()
     })

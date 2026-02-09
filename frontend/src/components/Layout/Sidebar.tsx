@@ -8,9 +8,8 @@ import {
     Video,
     Users,
     FolderKanban,
-    Settings,
-    CreditCard,
     ChevronRight,
+    CreditCard,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useSelector } from "react-redux";
@@ -53,7 +52,7 @@ const Sidebar = ({ className }: SidebarProps) => {
         {
             label: "System",
             items: [
-                { name: "Settings", icon: Settings, path: FRONTEND_ROUTES.SETTINGS },
+                // { name: "Settings", icon: Settings, path: FRONTEND_ROUTES.SETTINGS },
                 { name: "Payment Details", icon: CreditCard, path: FRONTEND_ROUTES.PAYMENTS },
             ],
         },

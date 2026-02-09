@@ -55,7 +55,14 @@ export const USER_ERRORS = {
     NO_PROFILE_FOUND: "No profile img found",
     USER_EMAIL_NOT_VERIFIED: "User email not verified",
     USER_CREATION_FAILED: "User creation failed",
-    INVALID_PASSWORD: "Invalid password"
+    INVALID_PASSWORD: "Invalid password",
+    ALREADY_INVITED: "User is already invited",
+    INVITE_NOT_FOUND: "Invite not found !",
+    INVITE_EXPIRED: "Invite expired !",
+    INVITE_ALREADY_USED: "Invite already used !",
+    INVITE_INVALIDATION: "Error while validating invite !",
+    ONBOARDING_ALREADY_COMPLETED: "Onboarding already completed !",
+    ONBOARDING_NOT_COMPLETED: "Onboarding not completed !",
 };
 
 export const SUBSCRIPTION_ERRORS = {
@@ -79,5 +86,10 @@ export const WORKSPACE_ERRORS = {
     WORKSPACE_INVALIDATION: "Error while validating workspace !",
     NO_WORKSPACES_FOUND: "No workspaces found",
     WORKSPACE_ALREADY_EXISTS: "Workspace Already Exists",
-    UNAUTHORIZED_TO_SELECT_PLAN_FOR_WORKSPACE: "Unauthorized to select plan for this workspace"
+    UNAUTHORIZED_TO_SELECT_PLAN_FOR_WORKSPACE: "Unauthorized to select plan for this workspace",
+    INVITE_CREATION_FAILED: "Invite creation failed",
+    INVITE_NOT_FOUND: "Invite not found !",
+    INVITE_EXPIRED: "Invite expired !",
+    INVITE_ALREADY_USED: "Invite already used !",
+    INVITE_INVALIDATION: "Error while validating invite !",
 };

@@ -25,7 +25,11 @@ export const ROUTES = {
         CREATE_CHECKOUT_SESSION: "/checkout",
         USER_WORKSPACES_LIST: "/user-workspaces-list",
         UPGRADE_PLAN: "/upgrade-plan",
-        GET_WORKSPACE_INVOICES: "/:workspaceId/invoices"
+        GET_WORKSPACE_INVOICES: "/:workspaceId/invoices",
+        INVITE_MEMBER: "/:id/invite",
+        ACCEPT_INVITE: "/accept-invite/:token",
+        COMPLETE_PROFILE: "/complete-profile",
+        GET_WORKSPACE_MEMBERS: "/:workspaceId/members",
     },
     STRIPE: {
         WEBHOOK: "/webhook"

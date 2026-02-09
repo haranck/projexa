@@ -33,7 +33,7 @@ export class SelectPlanUseCase implements ISelectPlanUseCase {
 
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND)
 
-        if (workspace.ownerId !== userId) throw new Error(WORKSPACE_ERRORS.UNAUTHORIZED_TO_SELECT_PLAN_FOR_WORKSPACE)
+        if (workspace.ownerId?.toString() !== userId) throw new Error(WORKSPACE_ERRORS.UNAUTHORIZED_TO_SELECT_PLAN_FOR_WORKSPACE)
 
         workspace.planId = planId;
 
