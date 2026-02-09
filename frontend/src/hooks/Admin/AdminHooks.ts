@@ -5,7 +5,10 @@ import {
     adminLogout,
     getUsers,
     blockUser,
-    unblockUser
+    unblockUser,
+    createPlan,
+    getPlans,
+    updatePlan
 } from "../../services/Admin/adminService";
 import type { UserResponse } from "../../types/user";
 
@@ -76,6 +79,34 @@ export const useUnblockUser = () => {
                     }
                 };
             });
+        }
+    })
+}
+
+export const useCreatePlan = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: createPlan,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['plans'] })
+        }
+    })
+}
+
+export const useGetPlans = () => {
+    return useQuery({
+        queryKey: ['plans'],
+        queryFn: getPlans,
+        placeholderData: keepPreviousData,
+    })
+}
+
+export const useUpdatePlan = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: updatePlan,
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['plans'] })
         }
     })
 }

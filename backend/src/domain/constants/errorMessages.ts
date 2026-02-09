@@ -40,8 +40,8 @@ export const ERROR_MESSAGES = {
     AUTHENTICATION_FAILED: "Authentication failed",
     GOOGLE_LOGIN_FAILED: "Google login failed",
     JWT_SECRET_MISSING: 'Missing JWT secrets: set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET',
-    ADMIN_LOGIN_NOT_ALLOWED : 'Admin login not allowed',
-    BAD_REQUEST : "Bad Request"
+    ADMIN_LOGIN_NOT_ALLOWED: 'Admin login not allowed',
+    BAD_REQUEST: "Bad Request"
 };
 
 export const USER_ERRORS = {
@@ -55,5 +55,29 @@ export const USER_ERRORS = {
     NO_PROFILE_FOUND: "No profile img found",
     USER_EMAIL_NOT_VERIFIED: "User email not verified",
     USER_CREATION_FAILED: "User creation failed",
-    INVALID_PASSWORD:"Invalid password"
+    INVALID_PASSWORD: "Invalid password"
+};
+
+export const SUBSCRIPTION_ERRORS = {
+    SUBSCRIPTION_CREATION_FAILED: "Subscription creation failed",
+    SUBSCRIPTION_NOT_FOUND: "Subscription not found !",
+    SUBSCRIPTION_INVALIDATION: "Error while validating subscription !",
+    NO_SUBSCRIPTIONS_FOUND: "No subscriptions found",
+    SUBSCRIPTION_EMAIL_NOT_VERIFIED: "Subscription email not verified",
+    INVALID_PASSWORD: "Invalid password",
+    PLAN_CREATION_FAILED: "Plan creation failed",
+    PLAN_ALREADY_EXISTS: "Plan Already Exists",
+    PLAN_NOT_FOUND: "Plan not found !",
+    STRIPE_PRICE_ID_MISSING: "Stripe price not configured for this plan",
+    STRIPE_CUSTOMER_NOT_FOUND: "Stripe customer not found !",
+    NO_BILLING_CUSTOMER_FOUND: "No billing customer found !"
+};
+
+export const WORKSPACE_ERRORS = {
+    WORKSPACE_CREATION_FAILED: "Workspace creation failed",
+    WORKSPACE_NOT_FOUND: "Workspace not found !",
+    WORKSPACE_INVALIDATION: "Error while validating workspace !",
+    NO_WORKSPACES_FOUND: "No workspaces found",
+    WORKSPACE_ALREADY_EXISTS: "Workspace Already Exists",
+    UNAUTHORIZED_TO_SELECT_PLAN_FOR_WORKSPACE: "Unauthorized to select plan for this workspace"
 };

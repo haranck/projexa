@@ -39,6 +39,35 @@ import { IUpdateProfileImageUseCase } from "../../application/interface/user/IUp
 import { UpdateProfileImageUseCase } from "../../application/useCases/user/UpdateProfileImageUseCase";
 import { IUpdateProfileUseCase } from "../../application/interface/user/IUpdateProfileUseCase";
 import { UpdateProfileUseCase } from "../../application/useCases/user/UpdateProfileUseCase";
+import { ICreatePlanUseCase } from "../../application/interface/admin/ICreatePlanUseCase";
+import { CreatePlanUseCase } from "../../application/useCases/admin/CreatePlanUseCase";
+import { IGetPlanUseCase } from "../../application/interface/admin/IGetPlanUseCase";
+import { GetPlanUseCase } from "../../application/useCases/admin/GetPlanUseCase";
+import { IUpdatePlanUseCase } from "../../application/interface/admin/IUpdatePlanUseCase";
+import { UpdatePlanUseCase } from "../../application/useCases/admin/UpdatePlanUseCase";
+import { ICreateWorkspaceUseCase } from "../../application/interface/user/ICreateWorkspaceUseCase";
+import { CreateWorkspaceUseCase } from "../../application/useCases/user/CreateWorkspaceUseCase";
+import { IGetAllPlansForUserUseCase } from "../../application/interface/user/IGetAllPlansForUserUseCase";
+import { GetAllPlansForUserUseCase } from "../../application/useCases/user/GetAllPlansForUserUseCase";
+import { ISelectPlanUseCase } from "../../application/interface/user/ISelectPlanUseCase";
+import { SelectPlanUseCase } from "../../application/useCases/user/SelectPlanUseCase";
+import { ICreateCheckoutSessionUseCase } from "../../application/interface/user/ICreateCheckoutSessionUseCase";
+import { CreateCheckoutSessionUseCase } from "../../application/useCases/user/CreateCheckoutSessionUseCase";
+import { IWorkspaceRepository } from "../../domain/interfaces/repositories/IWorkspaceRepository";
+import { WorkspaceRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceRepository";
+import { ISubscriptionRepository } from "../../domain/interfaces/repositories/ISubscriptionRepository";
+import { SubscriptionRepository } from "../../infrastructure/database/mongo/repositories/SubscriptionRepository";
+import { IGetUserWorkspaceUseCase } from "../../application/interface/user/IGetUserWorkspaceUseCase";
+import { GetUserWorkspaceUseCase } from "../../application/useCases/user/GetUserWorkspaceUseCase";
+import { IStripeWebhookUseCase } from "../../application/interface/stripe/IStripeWebhookUseCase";
+import { StripeWebhookUseCase } from "../../application/useCases/stripe/StripeWebhookUseCase";
+import { IStripeWebhookHandler } from "../../application/interface/stripe/IStripeWebhookHandler";
+import { CheckoutCompleteHandler } from "../../application/useCases/stripe/CheckoutCompleteHandler";
+import { IUpgradeSubscriptionUseCase } from "../../application/interface/user/IUpgradeSubscriptionUseCase";
+import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/UpgradeSubscriptionUseCase";
+import { IGetWorkspaceInvoicesUseCase } from "../../application/interface/user/IGetWorkspaceInvoicesUseCase";
+import { GetWorkspaceInvoicesUseCase } from "../../application/useCases/user/GetWorkspaceInvoicesUseCase";
+import { InvoiceSucceededHandler } from "../../application/useCases/stripe/InvoiceSucceededHandler";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -109,8 +138,20 @@ export class UseCaseModule {
             useClass: GetUsersUseCase
         })
 
+        container.register<ICreatePlanUseCase>('ICreatePlanUseCase', {
+            useClass: CreatePlanUseCase
+        })
+
+        container.register<IGetPlanUseCase>("IGetPlanUseCase", {
+            useClass: GetPlanUseCase
+        })
+
+        container.register<IUpdatePlanUseCase>('IUpdatePlanUseCase', {
+            useClass: UpdatePlanUseCase
+        })
+
         /*--------------------- User UseCases ---------------------*/
-        
+
         container.register<IVerifyPasswordUseCase>('IVerifyPasswordUseCase', {
             useClass: VerifyPasswordUseCase
         })
@@ -126,5 +167,58 @@ export class UseCaseModule {
         container.register<IUpdateProfileUseCase>('IUpdateProfileUseCase', {
             useClass: UpdateProfileUseCase
         })
+
+        container.register<ICreateWorkspaceUseCase>('ICreateWorkspaceUseCase', {
+            useClass: CreateWorkspaceUseCase
+        })
+
+        container.register<IGetAllPlansForUserUseCase>('IGetAllPlansForUserUseCase', {
+            useClass: GetAllPlansForUserUseCase
+        })
+
+        container.register<ISelectPlanUseCase>('ISelectPlanUseCase', {
+            useClass: SelectPlanUseCase
+        })
+
+        container.register<ICreateCheckoutSessionUseCase>('ICreateCheckoutSessionUseCase', {
+            useClass: CreateCheckoutSessionUseCase
+        })
+
+        container.register<IWorkspaceRepository>('IWorkspaceRepository', {
+            useClass: WorkspaceRepository
+        })
+
+        container.register<ISubscriptionRepository>('ISubscriptionRepository', {
+            useClass: SubscriptionRepository
+        })
+
+        container.register<IGetUserWorkspaceUseCase>('IGetUserWorkspaceUseCase', {
+            useClass: GetUserWorkspaceUseCase
+        })
+
+        container.register<IStripeWebhookUseCase>('IStripeWebhookUseCase', {
+            useClass: StripeWebhookUseCase
+        })
+
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: CheckoutCompleteHandler
+        })
+
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: InvoiceSucceededHandler
+        })
+
+        container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase', {
+            useClass: UpgradeSubscriptionUseCase
+        })
+
+        container.register<ISubscriptionRepository>('ISubscriptionRepository', {
+            useClass: SubscriptionRepository
+        })
+
+        container.register<IGetWorkspaceInvoicesUseCase>('IGetWorkspaceInvoicesUseCase', {
+            useClass: GetWorkspaceInvoicesUseCase
+        })
+
     }
 }

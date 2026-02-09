@@ -15,14 +15,29 @@ export const ROUTES = {
     USERS: {
         VERIFY_PASSWORD: "/verify-password",
         PROFILE_IMAGE_UPLOAD_URL: "/profile/image-upload-url",
-        UPDATE_PROFILE_IMAGE : "/profile/image",
-        UPDATE_PROFILE : "/update-profile"
+        UPDATE_PROFILE_IMAGE: "/profile/image",
+        UPDATE_PROFILE: "/update-profile"
+    },
+    WORKSPACE: {
+        CREATE_WORKSPACE: "/create-workspace",
+        GET_PLANS: "/get-plans",
+        SELECT_PLAN: "/select-plan",
+        CREATE_CHECKOUT_SESSION: "/checkout",
+        USER_WORKSPACES_LIST: "/user-workspaces-list",
+        UPGRADE_PLAN: "/upgrade-plan",
+        GET_WORKSPACE_INVOICES: "/:workspaceId/invoices"
+    },
+    STRIPE: {
+        WEBHOOK: "/webhook"
     },
     ADMIN: {
         LOGIN: "/login",
         LOGOUT: "/logout",
         GET_USERS: "/users",
         BLOCK_USER: "/block-user/:userId",
-        UNBLOCK_USER: "/unblock-user/:userId"
+        UNBLOCK_USER: "/unblock-user/:userId",
+        CREATE_PLAN: "/create-plan",
+        GET_ALL_PLAN: "/get-plans",
+        UPDATE_PLAN: "/update-plan/:planId"
     }
 };

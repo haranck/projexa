@@ -11,6 +11,8 @@ import { RedisTempUserStore } from "../../infrastructure/services/RedisTempUserS
 import { ITempUserStore } from "../../domain/interfaces/services/ITempUserStore";
 import { IS3Service } from "../../domain/interfaces/services/IS3Service";
 import { S3Service } from "../../infrastructure/services/S3service";
+import { IStripeService } from "../../domain/interfaces/services/IStripeService";
+import { StripeService } from "../../infrastructure/services/StripeService";
 
 export class ServiceModule {
     static registerModules():void{
@@ -39,5 +41,8 @@ export class ServiceModule {
             useClass: S3Service
         })
 
+        container.register<IStripeService>('IStripeService',{
+            useClass: StripeService
+        })
     }
 }

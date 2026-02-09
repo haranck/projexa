@@ -2,6 +2,7 @@ import { injectable, inject } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { IGoogleAuthService } from "../../../domain/interfaces/services/IGoogleAuthService";
+import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { IGoogleLoginUseCase } from "../../interface/auth/IGoogleLoginUseCase";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
@@ -12,7 +13,8 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
   constructor(
     @inject('IUserRepository') private _userRepo: IUserRepository,
     @inject('IJwtService') private _jwtService: IJwtService,
-    @inject('IGoogleAuthService') private _googleAuthService: IGoogleAuthService
+    @inject('IGoogleAuthService') private _googleAuthService: IGoogleAuthService,
+    @inject("IWorkspaceRepository") private _workspaceRepository: IWorkspaceRepository,
   ) { }
 
   async execute(idToken: string): Promise<GoogleLoginResponseDTO> {
@@ -43,9 +45,21 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
       email: user.email,
     };
 
+    const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user.id.toString());
+    const workspaceMap = workspaces.map(workspace => ({
+      id: workspace._id!.toString(),
+      name: workspace.name,
+      ownerId: workspace.ownerId!
+    }))
+
+    const defaultWorkspace = workspaceMap.length > 0 ? workspaceMap[0] : null;
+
     return {
       accessToken: this._jwtService.signAccessToken(payload),
       refreshToken: this._jwtService.signRefreshToken(payload),
+      hasWorkspace: workspaces.length > 0,
+      workspaces: workspaceMap,
+      defaultWorkspace,
       user: {
         id: user.id,
         firstName: user.firstName,

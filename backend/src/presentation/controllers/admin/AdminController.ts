@@ -8,6 +8,9 @@ import { MESSAGES } from "../../../domain/constants/messages";
 import { IBlockUserUseCase } from "../../../application/interface/admin/IBlockUserUseCase";
 import { IUnblockUserUseCase } from "../../../application/interface/admin/IUnblockUserUseCase";
 import { IGetUsersUseCase } from "../../../application/interface/admin/IGetUsersUseCase";
+import { ICreatePlanUseCase } from "../../../application/interface/admin/ICreatePlanUseCase";
+import { IGetPlanUseCase } from "../../../application/interface/admin/IGetPlanUseCase";
+import { IUpdatePlanUseCase } from "../../../application/interface/admin/IUpdatePlanUseCase";
 
 @injectable()
 export class AdminController {
@@ -16,7 +19,11 @@ export class AdminController {
         @inject("IAdminLogoutUseCase") private _adminLogoutUseCase: IAdminLogoutUseCase,
         @inject('IBlockUserUseCase') private _blockUserUseCase: IBlockUserUseCase,
         @inject('IUnblockUserUseCase') private _unblockUserUseCase: IUnblockUserUseCase,
-        @inject('IGetUsersUseCase') private _getUsersUseCase: IGetUsersUseCase
+        @inject('IGetUsersUseCase') private _getUsersUseCase: IGetUsersUseCase,
+        @inject('ICreatePlanUseCase') private _createPlanUseCase: ICreatePlanUseCase,
+        @inject('IGetPlanUseCase') private _getPlanUseCase: IGetPlanUseCase,
+        @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase
+
     ) { }
 
     adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -77,6 +84,36 @@ export class AdminController {
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UNBLOCK_USER_SUCCESS })
         } catch (error) {
             next(error)
+        }
+    }
+
+    createPlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { name, price, interval, features, maxMembers, maxProjects } = req.body;
+            const response = await this._createPlanUseCase.execute({ name, price, interval, features, maxMembers, maxProjects });
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.CREATE_PLAN_SUCCESS, data: response });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    getAllPlans = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const response = await this._getPlanUseCase.execute();
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.GET_PLANS_SUCCESS, data: response });
+        } catch (error) {
+            next(error)
+        }
+    }
+
+    updatePlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { planId } = req.params;
+            const dto = req.body;
+            const response = await this._updatePlanUseCase.execute(planId, dto);
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UPDATE_PLAN_SUCCESS, data: response });
+        } catch (error) {
+            next(error);
         }
     }
 }

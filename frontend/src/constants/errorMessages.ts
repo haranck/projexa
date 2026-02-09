@@ -53,3 +53,20 @@ export const USER_ERRORS = {
     USER_CREATION_FAILED: "User creation failed",
     UPDATE_PROFILE_FAILED: "Update profile failed",
 };
+
+export const WORKSPACE_ERRORS = {
+    WORKSPACE_CREATION_FAILED: "Workspace creation failed",
+    WORKSPACE_NOT_FOUND: "Workspace not found !",
+    WORKSPACE_ID_MISSING: "Workspace id is missing",
+    WORKSPACE_FETCHING_FAILED: "Failed to fetch workspace !",
+    WORKSPACE_UPDATING_FAILED: "Failed to update workspace !",
+    WORKSPACE_DELETING_FAILED: "Failed to delete workspace !",
+    WORKSPACE_ALREADY_EXISTS: "Workspace with this name already exists",
+    WORKSPACE_INACTIVE: "Workspace is inactive", 
+    WORKSPACE_BLOCKED: "Workspace is blocked",
+    WORKSPACE_INVALIDATION: "Error while validating workspace !",
+    NO_WORKSPACES_FOUND: "No workspaces found",
+    NO_WORKSPACE_FOUND: "No workspace found",
+    WORKSPACE_EMAIL_NOT_VERIFIED: "Workspace email not verified",
+    UPDATE_WORKSPACE_FAILED: "Update workspace failed",
+}

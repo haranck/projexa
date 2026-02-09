@@ -25,6 +25,8 @@ const Sidebar = ({ className }: SidebarProps) => {
     const navigate = useNavigate()
     const location = useLocation();
     const user = useSelector((state: RootState) => state.auth.user);
+    const { currentWorkspace } = useSelector((state: RootState) => state.workspace);
+
     const menuSections = [
         {
             label: "Main",
@@ -131,7 +133,7 @@ const Sidebar = ({ className }: SidebarProps) => {
                             {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.firstName || "Unknown User")}
                         </p>
                         <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest truncate mt-0.5">
-                            Team Member
+                            {user?.id === currentWorkspace?.ownerId ? "Owner" : "Member"}
                         </p>
                     </div>
                     <ChevronRight className="h-3.5 w-3.5 text-zinc-700 group-hover:text-white transition-colors shrink-0" />

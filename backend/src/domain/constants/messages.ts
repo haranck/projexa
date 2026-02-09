@@ -25,6 +25,10 @@ export const MESSAGES = {
         BLOCK_USER_SUCCESS: "User blocked successfully",
         UNBLOCK_USER_SUCCESS: "User unblocked successfully",
         GET_USERS_SUCCESS: "Fetched users successfully",
+        CREATE_PLAN_SUCCESS: "Plan created successfully",
+        ADD_SUBSCRIPTION_PLAN_SUCCESS: "Subscription plan added successfully",
+        GET_PLANS_SUCCESS: "Fetched plans successfully",
+        UPDATE_PLAN_SUCCESS: "Plan updated successfully"
     },
 
     OTP: {
@@ -48,5 +52,16 @@ export const MESSAGES = {
         PROJECT_UPDATED_SUCCESSFULLY: "Project updated successfully",
         STATUS_UPDATED_SUCCESSFULLY: "Project status updated successfully",
         GET_ALL_PROJECTS: "Fetched projects successfully",
+    },
+    WORKSPACE: {
+        WORKSPACE_CREATED_SUCCESSFULLY: "Workspace created successfully",
+        GET_ALL_PLANS_SUCCESSFULLY: "Fetched plans successfully",
+        PLAN_SELECTED_SUCCESSFULLY: "Plan selected successfully",
+        CHECKOUT_SESSION_CREATED_SUCCESSFULLY: "Checkout session created successfully",
+        GET_USER_WORKSPACES_SUCCESSFULLY: "Fetched user workspaces successfully",
+        SUBSCRIPTION_UPGRADED_SUCCESSFULLY: "Subscription upgraded successfully",
+        GET_BILLING_SUCCESSFULLY: "Fetched billing successfully",
+        PORTAL_SESSION_CREATED_SUCCESSFULLY: "Portal session created successfully",
+        GET_WORKSPACE_INVOICES_SUCCESSFULLY: "Fetched workspace invoices successfully",
     }
 };

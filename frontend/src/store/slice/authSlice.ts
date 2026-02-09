@@ -8,6 +8,7 @@ export interface AuthUser {
   phone: string;
   isEmailVerified: boolean;
   avatarUrl?: string;
+  hasWorkspace: boolean;
 }
 
 interface AuthState {

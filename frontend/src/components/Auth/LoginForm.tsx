@@ -24,6 +24,7 @@ import { loginSchema, type LoginSchemaType } from "../../lib/validations/login.s
 import { useLogin, useBackendGoogleLogin } from "../../hooks/Auth/AuthHooks";
 import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 import { setAuthUser } from "../../store/slice/authSlice";
+import { setWorkspaces, setCurrentWorkspace } from "../../store/slice/workspaceSlice";
 import { setAccessToken } from "../../store/slice/tokenSlice";
 import { ERROR_MESSAGES } from "../../constants/errorMessages";
 
@@ -50,11 +51,19 @@ export const LoginForm = () => {
         onSuccess: (response) => {
           if (response?.data) {
             dispatch(setAccessToken(response.data.accessToken));
-            dispatch(setAuthUser(response.data.user));
+            dispatch(setAuthUser({ ...response.data.user, hasWorkspace: response.data.hasWorkspace }));
+            dispatch(setWorkspaces(response.data.workspaces));
+            dispatch(setCurrentWorkspace(response.data.defaultWorkspace));
             toast.success("Google login successful!");
-            navigate(FRONTEND_ROUTES.HOME);
+
+            if (response.data.hasWorkspace && response.data.defaultWorkspace) {
+              navigate(FRONTEND_ROUTES.HOME)
+            } else {
+              navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE)
+            }
+
           }
-        },
+        },                                                                                                                                  
         onError: (error) => {
           console.error("Backend Google Login Failed:", error);
           toast.error("Google login failed. Please try again.");
@@ -69,9 +78,16 @@ export const LoginForm = () => {
       onSuccess: (response) => {
         if (response?.data) {
           dispatch(setAccessToken(response.data.accessToken));
-          dispatch(setAuthUser(response.data.user));
+          dispatch(setWorkspaces(response.data.workspaces));
+          dispatch(setCurrentWorkspace(response.data.defaultWorkspace));
+          dispatch(setAuthUser({ ...response.data.user, hasWorkspace: response.data.hasWorkspace }));
           toast.success("Login successful!");
-          navigate(FRONTEND_ROUTES.HOME);
+
+          // if (response.data.hasWorkspace && response.data.defaultWorkspaceId) {
+          //   navigate(FRONTEND_ROUTES.HOME)
+          // } else {
+          //   navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE)
+          // }
         }
       },
       onError: (error: unknown) => {

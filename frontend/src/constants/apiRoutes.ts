@@ -10,19 +10,30 @@ export const API_ROUTES = {
     GOOGLE_LOGIN: "/auth/google-login",
     REFRESH_TOKEN: "/auth/refresh-token",
     LOGOUT: "/auth/logout",
-    // VERIFY_PASSWORD: "/auth/verify-password"
   },
   ADMIN: {
     LOGIN: "/admin/login",
     LOGOUT: "/admin/logout",
     GET_USERS: "/admin/users",
     BLOCK_USER: "/admin/block-user/:userId",
-    UNBLOCK_USER: "/admin/unblock-user/:userId"
+    UNBLOCK_USER: "/admin/unblock-user/:userId",
+    CREATE_PLAN: "/admin/create-plan",
+    GET_ALL_PLANS: "/admin/get-plans",
+    UPDATE_PLAN: "/admin/update-plan/:planId"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",
     PROFILE_IMAGE_UPLOAD_URL: "/user/profile/image-upload-url",
     UPDATE_PROFILE_IMAGE: "/user/profile/image",
     UPDATE_PROFILE: "/user/update-profile"
+  },
+  WORKSPACE: {
+    CREATE_WORKSPACE : "/v1/workspace/create-workspace",
+    GET_PLANS : "/v1/workspace/get-plans",
+    SELECT_PLAN : "/v1/workspace/select-plan",
+    CREATE_CHECKOUT_SESSION : "/v1/workspace/checkout",
+    GET_USER_WORKSPACES : "/v1/workspace/user-workspaces-list",
+    UPGRADE_PLAN : "/v1/workspace/upgrade-plan",
+    GET_WORKSPACE_INVOICES : "/v1/workspace/:workspaceId/invoices"
   }
 };
