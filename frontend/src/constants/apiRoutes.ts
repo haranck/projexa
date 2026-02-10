@@ -19,7 +19,8 @@ export const API_ROUTES = {
     UNBLOCK_USER: "/admin/unblock-user/:userId",
     CREATE_PLAN: "/admin/create-plan",
     GET_ALL_PLANS: "/admin/get-plans",
-    UPDATE_PLAN: "/admin/update-plan/:planId"
+    UPDATE_PLAN: "/admin/update-plan/:planId",
+    GET_ADMIN_PAYMENTS: "/admin/payments"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",

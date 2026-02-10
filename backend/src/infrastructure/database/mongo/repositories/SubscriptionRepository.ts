@@ -48,4 +48,8 @@ export class SubscriptionRepository extends BaseRepo<ISubscriptionEntity> implem
         if (!doc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
         return doc;
     }
+    async findByStripeCustomerId(stripeCustomerId: string): Promise<ISubscriptionEntity | null> {
+        const doc = await this.model.findOne({ stripeCustomerId });
+        return doc;
+    }
 }

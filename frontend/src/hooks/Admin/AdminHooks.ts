@@ -8,8 +8,10 @@ import {
     unblockUser,
     createPlan,
     getPlans,
-    updatePlan
+    updatePlan,
+    getAdminPayments,
 } from "../../services/Admin/adminService";
+import type { GetAdminPaymentsParams } from "../../services/Admin/adminService";
 import type { UserResponse } from "../../types/user";
 
 interface UseGetUsersProps {
@@ -108,5 +110,13 @@ export const useUpdatePlan = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['plans'] })
         }
+    })
+}
+
+export const useGetAdminPayments = (params?: GetAdminPaymentsParams) => {
+    return useQuery({
+        queryKey: ['admin-payments', params],
+        queryFn: () => getAdminPayments(params || {}),
+        placeholderData: keepPreviousData,
     })
 }

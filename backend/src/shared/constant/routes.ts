@@ -43,6 +43,7 @@ export const ROUTES = {
         UNBLOCK_USER: "/unblock-user/:userId",
         CREATE_PLAN: "/create-plan",
         GET_ALL_PLAN: "/get-plans",
-        UPDATE_PLAN: "/update-plan/:planId"
+        UPDATE_PLAN: "/update-plan/:planId",
+        GET_PAYMENTS:'/payments'
     }
 };

@@ -11,6 +11,7 @@ import { IGetUsersUseCase } from "../../../application/interface/admin/IGetUsers
 import { ICreatePlanUseCase } from "../../../application/interface/admin/ICreatePlanUseCase";
 import { IGetPlanUseCase } from "../../../application/interface/admin/IGetPlanUseCase";
 import { IUpdatePlanUseCase } from "../../../application/interface/admin/IUpdatePlanUseCase";
+import { IGetAdminPaymentsUseCase } from "../../../application/interface/admin/IGetAdminPaymentsUseCase";
 
 @injectable()
 export class AdminController {
@@ -22,7 +23,8 @@ export class AdminController {
         @inject('IGetUsersUseCase') private _getUsersUseCase: IGetUsersUseCase,
         @inject('ICreatePlanUseCase') private _createPlanUseCase: ICreatePlanUseCase,
         @inject('IGetPlanUseCase') private _getPlanUseCase: IGetPlanUseCase,
-        @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase
+        @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase,
+        @inject('IGetAdminPaymentsUseCase') private _getAdminPaymentsUseCase: IGetAdminPaymentsUseCase
 
     ) { }
 
@@ -113,6 +115,16 @@ export class AdminController {
             const dto = req.body;
             const response = await this._updatePlanUseCase.execute(planId, dto);
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UPDATE_PLAN_SUCCESS, data: response });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    getAdminPayments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const { startDate, endDate } = req.query;
+            const response = await this._getAdminPaymentsUseCase.execute({ startDate: startDate as string, endDate: endDate as string});
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.GET_ADMIN_PAYMENTS_SUCCESS, data: response });
         } catch (error) {
             next(error);
         }

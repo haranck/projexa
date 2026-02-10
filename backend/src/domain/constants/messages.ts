@@ -29,7 +29,8 @@ export const MESSAGES = {
         CREATE_PLAN_SUCCESS: "Plan created successfully",
         ADD_SUBSCRIPTION_PLAN_SUCCESS: "Subscription plan added successfully",
         GET_PLANS_SUCCESS: "Fetched plans successfully",
-        UPDATE_PLAN_SUCCESS: "Plan updated successfully"
+        UPDATE_PLAN_SUCCESS: "Plan updated successfully",
+        GET_ADMIN_PAYMENTS_SUCCESS:"Get payments succcessfully"
     },
 
     OTP: {

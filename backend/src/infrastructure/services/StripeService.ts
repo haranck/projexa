@@ -9,6 +9,7 @@ import { UpdateSubscriptionInputDTO } from "../../application/dtos/user/requestD
 import { SUBSCRIPTION_ERRORS } from "../../domain/constants/errorMessages";
 import { InvoiceDTO } from "../../application/dtos/user/requestDTOs/InvoiceDTO";
 import { BillingMapper } from "../../application/mappers/BillingMapper";
+import { AdminPaymentResponseDTO } from "../../application/dtos/admin/responseDTOs/AdminPaymentResponseDTO";
 
 @injectable()
 export class StripeService implements IStripeService {
@@ -83,10 +84,48 @@ export class StripeService implements IStripeService {
 
     async getInvoicesByCustomer(customerId: string): Promise<InvoiceDTO[]> {
         const invoices = await this.stripe.invoices.list({
-            customer:customerId,
-            limit:20,
+            customer: customerId,
+            limit: 20,
         })
         return invoices.data.map(BillingMapper.toInvoiceDTO)
+    }
+
+    async getPaidInvoices(start?: number, end?: number, workspaceName?: string): Promise<AdminPaymentResponseDTO[]> {
+        const invoices = await this.stripe.invoices.list({
+            status: "paid",
+            created: start && end ? { gte: start, lte: end } : undefined,
+            limit: 20,
+            expand: ['data.charge']
+        });
+
+        return invoices.data.map(invoice => {
+            let paymentMethodResult: string = invoice.collection_method || "Unknown";
+
+            const expandedInvoice = invoice as Stripe.Invoice & { charge?: string | Stripe.Charge | null };
+
+            if (expandedInvoice.charge && typeof expandedInvoice.charge !== 'string') {
+                const charge = expandedInvoice.charge as Stripe.Charge;
+                if (charge.payment_method_details?.card) {
+                    const card = charge.payment_method_details.card;
+                    const brand = card.brand ? card.brand.toUpperCase() : "CARD";
+                    paymentMethodResult = `${brand} **** ${card.last4}`;
+                } else if (charge.payment_method_details?.type) {
+                    paymentMethodResult = charge.payment_method_details.type;
+                }
+            }
+
+            return {
+                invoiceId: invoice.id,
+                userName: invoice.customer_name || "Unknown",
+                workspaceName: workspaceName || "Unknown",
+                amount: (invoice.total ?? 0) / 100,
+                currency: invoice.currency,
+                status: invoice.status ?? "unknown",
+                paymentMethod: paymentMethodResult,
+                paidAt: new Date(invoice.status_transitions.paid_at ? invoice.status_transitions.paid_at * 1000 : Date.now()),
+                stripeCustomerId: invoice.customer as string
+            };
+        });
     }
 
 }

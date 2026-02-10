@@ -15,5 +15,6 @@ router.post(ROUTES.ADMIN.UNBLOCK_USER, authMiddleware.authenticate, adminControl
 router.post(ROUTES.ADMIN.CREATE_PLAN, authMiddleware.authenticate, adminController.createPlan)
 router.get(ROUTES.ADMIN.GET_ALL_PLAN, authMiddleware.authenticate, adminController.getAllPlans)
 router.patch(ROUTES.ADMIN.UPDATE_PLAN, authMiddleware.authenticate, adminController.updatePlan)
+router.get(ROUTES.ADMIN.GET_PAYMENTS, authMiddleware.authenticate, adminController.getAdminPayments)
 
 export default router       

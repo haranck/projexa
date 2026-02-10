@@ -4,6 +4,7 @@ import { WebhookEventInputDTO } from "../../../application/dtos/user/requestDTOs
 import { GetSubscriptionInputDTO } from "../../../application/dtos/user/requestDTOs/GetSubscriptionInputDTO";
 import { UpdateSubscriptionInputDTO } from "../../../application/dtos/user/requestDTOs/UpdateSubscriptonInputDTO";
 import { InvoiceDTO } from "../../../application/dtos/user/requestDTOs/InvoiceDTO";
+import { AdminPaymentResponseDTO } from "../../../application/dtos/admin/responseDTOs/AdminPaymentResponseDTO";
 
 export interface IStripeService {
     createCheckoutSession(params: CreateCheckoutSessionInputDTO): Promise<string>;
@@ -12,4 +13,5 @@ export interface IStripeService {
     createProductAndPrice(params: { name: string; amount: number; interval: 'month' | 'year' }): Promise<{ productId: string; priceId: string }>;
     updateSubscriptionPlan(params: UpdateSubscriptionInputDTO): Promise<Stripe.Subscription>;
     getInvoicesByCustomer(customerId: string): Promise<InvoiceDTO[]>;
+    getPaidInvoices(start?: number, end?: number, workspaceName?: string): Promise<AdminPaymentResponseDTO[]>
 }

@@ -78,7 +78,8 @@ import { IGetWorkspaceMembersUseCase } from "../../application/interface/user/IG
 import { GetWorkspaceMembersUseCase } from "../../application/useCases/user/GetWorkspaceMembersUseCase";
 import { IRemoveWorkspaceMemberUseCase } from "../../application/interface/user/IRemoveWorkspaceMemberUseCase";
 import { RemoveWorkspaceMemberUseCase } from "../../application/useCases/user/RemoveWorkspaceMemberUseCase";
-
+import { IGetAdminPaymentsUseCase } from "../../application/interface/admin/IGetAdminPaymentsUseCase";
+import { GetAdminPaymentsUseCase } from "../../application/useCases/admin/GetAdminPaymentsUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -159,6 +160,10 @@ export class UseCaseModule {
 
         container.register<IUpdatePlanUseCase>('IUpdatePlanUseCase', {
             useClass: UpdatePlanUseCase
+        })
+
+        container.register<IGetAdminPaymentsUseCase>('IGetAdminPaymentsUseCase', {
+            useClass: GetAdminPaymentsUseCase
         })
 
         /*--------------------- User UseCases ---------------------*/
