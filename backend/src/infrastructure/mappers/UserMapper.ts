@@ -13,6 +13,7 @@ export class UserMapper {
       avatarUrl: doc.avatarUrl,
       isBlocked: doc.isBlocked,
       isEmailVerified: doc.isEmailVerified,
+      onboardingCompleted: doc.onboardingCompleted,
       lastSeenAt: doc.lastSeenAt,
       createdAt: doc.createdAt,
       updatedAt: doc.updatedAt,

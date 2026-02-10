@@ -23,6 +23,17 @@ interface upgradePlanPayload {
     newPriceId: string
 }
 
+interface inviteMembersPayload {
+    workspaceId: string,
+    email: string
+}
+
+interface completeProfilePayload {
+    firstName: string,
+    lastName: string,
+    password: string,
+}
+
 export const createWorkspace = async (data: createWorkspacePayload) => {
     const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.CREATE_WORKSPACE, {
         name: data.workspaceName,
@@ -58,5 +69,25 @@ export const upgradePlan = async (data: upgradePlanPayload) => {
 
 export const getWorkspaceInvoices = async (workspaceId: string) => {
     const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.GET_WORKSPACE_INVOICES.replace(":workspaceId", workspaceId))
+    return response.data;
+}
+
+export const inviteMembers = async (data: inviteMembersPayload) => {
+    const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.INVITE_MEMBER.replace(":id", data.workspaceId), { email: data.email })
+    return response.data;
+}
+
+export const acceptInvite = async (token: string) => {
+    const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.ACCEPT_INVITE.replace(":token", token))
+    return response.data;
+}
+
+export const completeProfile = async (data: completeProfilePayload) => {
+    const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.COMPLETE_PROFILE, data)
+    return response.data;
+}
+
+export const getWorkspaceMembers = async (workspaceId: string) => { 
+    const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.GET_WORKSPACE_MEMBERS.replace(":workspaceId", workspaceId))
     return response.data;
 }

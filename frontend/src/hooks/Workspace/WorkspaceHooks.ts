@@ -7,7 +7,11 @@ import {
     createCheckoutSession,
     getUserWorkspaces,
     upgradePlan,
-    getWorkspaceInvoices
+    getWorkspaceInvoices,
+    inviteMembers,
+    acceptInvite,
+    completeProfile,
+    getWorkspaceMembers,
 } from "../../services/Workspace/workspaceService";
 
 export const useCreateWorkspace = () => {
@@ -52,5 +56,32 @@ export const useGetWorkspaceInvoices = (workspaceId: string) => {
     return useQuery({
         queryKey: ['workspace-invoices', workspaceId],
         queryFn: () => getWorkspaceInvoices(workspaceId)
+    })
+}
+
+export const useInviteMembers = () => {
+    return useMutation({
+        mutationFn: inviteMembers
+    })
+}
+
+export const useAcceptInvite = (token: string) => {
+    return useQuery({
+        queryKey: ['accept-invite', token],
+        queryFn: () => acceptInvite(token)
+    })
+}
+
+export const useCompleteProfile = () => {
+    return useMutation({
+        mutationFn: completeProfile
+    })
+}
+
+export const useGetWorkspaceMembers = (workspaceId: string) => {
+    return useQuery({
+        queryKey: ['workspace-members', workspaceId],
+        queryFn: () => getWorkspaceMembers(workspaceId),
+        enabled: !!workspaceId
     })
 }

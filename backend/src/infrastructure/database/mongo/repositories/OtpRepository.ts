@@ -4,7 +4,9 @@ import { OtpModel } from "../models/OtpModel";
 import { OtpMapper } from "../../../mappers/OtpMapper";
 import { BaseRepo } from "./base/BaseRepo";
 import { Model } from "mongoose";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class OtpRepository extends BaseRepo<IOtpEntity> implements IOtpRepository {
   constructor() {
     super(OtpModel as unknown as Model<IOtpEntity>)

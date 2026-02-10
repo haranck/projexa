@@ -68,6 +68,16 @@ import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/Upgr
 import { IGetWorkspaceInvoicesUseCase } from "../../application/interface/user/IGetWorkspaceInvoicesUseCase";
 import { GetWorkspaceInvoicesUseCase } from "../../application/useCases/user/GetWorkspaceInvoicesUseCase";
 import { InvoiceSucceededHandler } from "../../application/useCases/stripe/InvoiceSucceededHandler";
+import { IInviteMemberUseCase } from "../../application/interface/user/IInviteMemberUseCase";
+import { InviteMemberUseCase } from "../../application/useCases/user/InviteMemberUseCase";
+import { ICompleteProfileUseCase } from "../../application/interface/user/ICompleteProfileUseCase";
+import { CompleteProfileUseCase } from "../../application/useCases/user/CompleteProfileUseCase";
+import { IAcceptInviteUseCase } from "../../application/interface/user/IAcceptInviteUseCase";
+import { AcceptInviteUseCase } from "../../application/useCases/user/AcceptInviteUseCase";
+import { IGetWorkspaceMembersUseCase } from "../../application/interface/user/IGetWorkspaceMembersUseCase";
+import { GetWorkspaceMembersUseCase } from "../../application/useCases/user/GetWorkspaceMembersUseCase";
+
+
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -220,5 +230,20 @@ export class UseCaseModule {
             useClass: GetWorkspaceInvoicesUseCase
         })
 
+        container.register<IInviteMemberUseCase>('IInviteMemberUseCase', {
+            useClass: InviteMemberUseCase
+        })
+
+        container.register<IAcceptInviteUseCase>('IAcceptInviteUseCase', {
+            useClass: AcceptInviteUseCase
+        })
+
+        container.register<ICompleteProfileUseCase>('ICompleteProfileUseCase', {
+            useClass: CompleteProfileUseCase
+        })
+
+        container.register<IGetWorkspaceMembersUseCase>('IGetWorkspaceMembersUseCase', {
+            useClass: GetWorkspaceMembersUseCase
+        })
     }
 }

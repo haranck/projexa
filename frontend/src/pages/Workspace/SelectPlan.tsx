@@ -4,6 +4,7 @@ import { useGetPlans, useCreateCheckoutSession, useUpgradePlan } from "@/hooks/W
 import { Package, Check, Loader2, ArrowRight } from "lucide-react"
 import { toast } from "react-hot-toast"
 import { FRONTEND_ROUTES } from "@/constants/frontendRoutes"
+import { getErrorMessage } from "@/utils/errorHandler"
 
 interface Plan {
     id: string;
@@ -63,8 +64,9 @@ export const SelectPlan = () => {
                     }
                 },
                 onError: (error: unknown) => {
-                    console.error("Upgrade Plan Failed:", error)
-                    toast.error("Failed to upgrade plan. Please try again.")
+                    const err = getErrorMessage(error)
+                    console.error("Upgrade Plan Failed:", err)
+                    toast.error(err)
                     setSelectedPlanId("")
                 }
             })

@@ -26,7 +26,7 @@ export const CreateWorkspaceForm = () => {
         toast.success("Workspace created successfully!")
         navigate(FRONTEND_ROUTES.WORKSPACE.SELECT_PLAN, { state: { workspaceName: data.workspaceName } })
       },
-      onError: (error) => { 
+      onError: (error) => {
         console.log("Create Workspace Failed:", error)
         toast.error(WORKSPACE_ERRORS.WORKSPACE_CREATION_FAILED)
       }

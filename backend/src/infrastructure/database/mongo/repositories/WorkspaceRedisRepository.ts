@@ -1,7 +1,9 @@
 import { IWorkspaceRedisRepository } from "../../../../domain/interfaces/repositories/IWorkspaceRedisRepository";
 import { redisClient } from "../../../cache/redisClient";
 import { IWorkspaceEntity } from "../../../../domain/entities/IWorkspaceEntity";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class WorkspaceRedisRepository implements IWorkspaceRedisRepository {
     private readonly prefix = "workspace";
     private readonly ttl = 60 * 30;

@@ -15,6 +15,7 @@ export const MESSAGES = {
         PROFILE_IMAGE_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Profile image upload URL generated successfully",
         PROFILE_IMAGE_UPDATED_SUCCESSFULLY: "Profile image updated successfully",
         PROFILE_UPDATED_SUCCESSFULLY: "Profile updated successfully",
+        PROFILE_COMPLETED_SUCCESSFULLY: "Profile completed successfully",
     },
 
     ADMIN: {
@@ -63,5 +64,7 @@ export const MESSAGES = {
         GET_BILLING_SUCCESSFULLY: "Fetched billing successfully",
         PORTAL_SESSION_CREATED_SUCCESSFULLY: "Portal session created successfully",
         GET_WORKSPACE_INVOICES_SUCCESSFULLY: "Fetched workspace invoices successfully",
+        MEMBER_INVITED_SUCCESSFULLY: "Member invited successfully",
+        GET_WORKSPACE_MEMBERS_SUCCESSFULLY: "Fetched workspace members successfully",
     }
 };

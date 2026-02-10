@@ -34,6 +34,10 @@ export const API_ROUTES = {
     CREATE_CHECKOUT_SESSION : "/v1/workspace/checkout",
     GET_USER_WORKSPACES : "/v1/workspace/user-workspaces-list",
     UPGRADE_PLAN : "/v1/workspace/upgrade-plan",
-    GET_WORKSPACE_INVOICES : "/v1/workspace/:workspaceId/invoices"
+    GET_WORKSPACE_INVOICES : "/v1/workspace/:workspaceId/invoices",
+    INVITE_MEMBER : "/v1/workspace/:id/invite",
+    ACCEPT_INVITE : "/v1/workspace/accept-invite/:token",
+    COMPLETE_PROFILE : "/v1/workspace/complete-profile",
+    GET_WORKSPACE_MEMBERS : "/v1/workspace/:workspaceId/members"
   }
 };

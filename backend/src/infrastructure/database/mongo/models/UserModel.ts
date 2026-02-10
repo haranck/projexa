@@ -5,10 +5,11 @@ export interface UserDocument extends Document {
   firstName: string;
   lastName: string;
   email: string;
-  password: string;
+  password?: string;
   phone?: string;
   avatarUrl?: string;
   isEmailVerified: boolean;
+  onboardingCompleted: boolean;
   isBlocked: boolean;
   lastSeenAt?: Date;
   createdAt: Date;
@@ -19,12 +20,13 @@ const userSchema = new mongoose.Schema(
   {
     firstName: String,
     lastName: String,
-    email: { type: String, unique: true },
-    password: String,
+    email: { type: String, required: true },
+    password: { type: String, required: false },
     phone: String,
     isBlocked: Boolean,
     avatarUrl: String,
     isEmailVerified: Boolean,
+    onboardingCompleted: { type: Boolean, default: false },
     lastSeenAt: Date,
   },
   { timestamps: true }

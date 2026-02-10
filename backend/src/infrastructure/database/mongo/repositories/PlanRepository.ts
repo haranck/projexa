@@ -6,7 +6,9 @@ import { PlanModel } from "../models/PlanModel";
 import { SUBSCRIPTION_ERRORS } from "../../../../domain/constants/errorMessages";
 import { UpdatePlanDTO } from "../../../../application/dtos/admin/requestDTOs/UpdatePlanDTO";
 import { UpdatePlanResponseDTO } from "../../../../application/dtos/admin/responseDTOs/UpdatePlanResponseDTO";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class PlanRepository extends BaseRepo<IPlanEntity> implements IPlanRepository {
 
     constructor() {

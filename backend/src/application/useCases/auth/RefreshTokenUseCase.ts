@@ -50,10 +50,10 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
             refreshToken: refreshToken,
             user: {
                 id: user.id!,
-                firstName: user.firstName,
-                lastName: user.lastName,
+                firstName: user.firstName!,
+                lastName: user.lastName!,
                 email: user.email,
-                isEmailVerified: user.isEmailVerified
+                isEmailVerified: user.isEmailVerified!
             }
         }
     }

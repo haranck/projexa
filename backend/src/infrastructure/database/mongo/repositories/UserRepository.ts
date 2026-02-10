@@ -7,7 +7,9 @@ import { BaseRepo } from "./base/BaseRepo";
 import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
 import { GetUsersRequestDTO } from "../../../../application/dtos/admin/requestDTOs/GetUsersRequestDTO";
 import { GetUsersResponseDTO } from "../../../../application/dtos/admin/responseDTOs/GetUsersResponseDTO";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class UserRepository extends BaseRepo<IUserEntity> implements IUserRepository {
   constructor() {
     super(UserModel);
@@ -34,6 +36,7 @@ export class UserRepository extends BaseRepo<IUserEntity> implements IUserReposi
       phone: user.phone,
       avatarUrl: user.avatarUrl,
       isEmailVerified: user.isEmailVerified,
+      onboardingCompleted: user.onboardingCompleted || false,
       isBlocked: user.isBlocked,
       lastSeenAt: user.lastSeenAt,
       createdAt: user.createdAt,
@@ -42,21 +45,21 @@ export class UserRepository extends BaseRepo<IUserEntity> implements IUserReposi
 
     const createdDoc = await super.findById(id);
     if (!createdDoc) throw new Error(USER_ERRORS.USER_CREATION_FAILED);
-    return createdDoc;
-  } 
+    return UserMapper.toEntity(createdDoc as unknown as UserDocument);
+  }
 
   async updatePassword(userId: string, hashedPassword: string): Promise<void> {
     await super.update({
       password: hashedPassword,
       updatedAt: new Date(),
-    }, userId); 
+    }, userId);
   }
-  
+
   async blockUser(userId: string): Promise<void> {
     await super.update({
       isBlocked: true,
       updatedAt: new Date(),
-    },userId);
+    }, userId);
   }
 
   async unblockUser(userId: string): Promise<void> {

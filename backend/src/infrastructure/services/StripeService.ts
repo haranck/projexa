@@ -84,7 +84,7 @@ export class StripeService implements IStripeService {
     async getInvoicesByCustomer(customerId: string): Promise<InvoiceDTO[]> {
         const invoices = await this.stripe.invoices.list({
             customer:customerId,
-            limit:20
+            limit:20,
         })
         return invoices.data.map(BillingMapper.toInvoiceDTO)
     }

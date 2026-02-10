@@ -17,6 +17,7 @@ export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
     ) { }
 
     async execute(dto: UpgradeSubscriptionInputDTO): Promise<string> {
+        
         const { workspaceId, userId, newPriceId } = dto
 
         const plan = await this._planRepository.getPlanById(newPriceId)
@@ -25,7 +26,10 @@ export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
 
         const workspace = await this._workspaceRepository.getWorkspaceById(workspaceId)
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND)
-        if (workspace.ownerId?.toString() !== userId) throw new Error('Unauthorized')
+
+        if (!workspace || workspace.ownerId?.toString() !== userId) {
+            throw new Error("Only workspace owner can Upgrade Subscription");
+        }
 
         const subscription = await this._subscriptionRepository.findById(workspace.subscriptionId!.toString())
         if (!subscription) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND)
