@@ -1,11 +1,12 @@
-import { Calendar, MoreVertical, Mail } from "lucide-react";
+import { Calendar, Mail, TrashIcon } from "lucide-react";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import { ConfirmationModal } from "../../../components/common/ConfirmationModal";
 import type { RootState } from "@/store/store";
 import { useGetUserWorkspaces, useGetWorkspaceMembers } from "../../../hooks/Workspace/WorkspaceHooks";
 import type { Workspace } from "@/types/workspace";
-import { useInviteMembers } from "../../../hooks/Workspace/WorkspaceHooks";
+import { useInviteMembers, useRemoveWorkspaceMember } from "../../../hooks/Workspace/WorkspaceHooks";
 import { toast } from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
 
@@ -30,6 +31,10 @@ export const TeamsPage = () => {
     );
     const { mutate: inviteMember, isPending: isInviting } = useInviteMembers();
     const { data: membersData, isLoading: isLoadingMembers } = useGetWorkspaceMembers(workspaceId);
+    const { mutate: removeMember, isPending: isRemoving } = useRemoveWorkspaceMember();
+
+    const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
+    const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
 
     const handleInvite = () => {
         if (!email) return toast.error("Please enter an email");
@@ -49,6 +54,31 @@ export const TeamsPage = () => {
         })
     };
 
+    const handleRemoveMember = (memberId: string) => {
+        setMemberToRemove(memberId);
+        setIsRemoveModalOpen(true);
+    };
+
+    const confirmRemoveMember = () => {
+        if (!memberToRemove) return;
+
+        removeMember({
+            workspaceId: selectedWorkspace?._id || '',
+            memberId: memberToRemove,
+        }, {
+            onSuccess: () => {
+                toast.success("Member removed successfully");
+                setIsRemoveModalOpen(false);
+                setMemberToRemove(null);
+            },
+            onError: (error) => {
+                const err = getErrorMessage(error)
+                console.log('Failed remove member', err)
+                toast.error(err || "Failed to remove member");
+                setIsRemoveModalOpen(false);
+            }
+        })
+    };
 
     return (
         <DashboardLayout>
@@ -144,8 +174,9 @@ export const TeamsPage = () => {
                                                 <span>{new Date(member.createdAt).toLocaleDateString()}</span>
                                             </div>
 
-                                            <button className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-all">
-                                                <MoreVertical className="w-5 h-5" />
+                                            <button className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-all"
+                                                onClick={() => handleRemoveMember(member._id)}>
+                                                <TrashIcon className="w-5 h-5" />
                                             </button>
                                         </div>
                                     </div>
@@ -155,6 +186,21 @@ export const TeamsPage = () => {
                     </div>
                 </div>
             </div>
+
+            <ConfirmationModal
+                isOpen={isRemoveModalOpen}
+                onClose={() => {
+                    setIsRemoveModalOpen(false);
+                    setMemberToRemove(null);
+                }}
+                onConfirm={confirmRemoveMember}
+                title="Remove Member?"
+                description="Are you sure you want to remove this member from the workspace? This action cannot be undone."
+                confirmText="Remove"
+                cancelText="Cancel"
+                variant="danger"
+                isLoading={isRemoving}
+            />
         </DashboardLayout>
     );
 };

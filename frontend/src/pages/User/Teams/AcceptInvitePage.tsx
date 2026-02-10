@@ -55,6 +55,11 @@ export const AcceptInvitePage = () => {
     }, [inviteResponse, dispatch])
 
     const handleSuccess = (user: Partial<AuthUser>) => {
+        if (!user) {
+            console.error("handleSuccess called with undefined user")
+            toast.error("Failed to process user data")
+            return
+        }
         // Ensure user matches AuthUser interface
         const authUser: AuthUser = {
             id: user.id || '',
@@ -86,7 +91,7 @@ export const AcceptInvitePage = () => {
                 handleSuccess(apiResponse.data)
             },
             onError: (err: unknown) => {
-                const error =  getErrorMessage(err)
+                const error = getErrorMessage(err)
                 console.log(error)
                 toast.dismiss(loadingToast)
                 toast.error(error || "Failed to complete profile")

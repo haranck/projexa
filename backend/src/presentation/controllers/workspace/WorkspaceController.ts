@@ -15,7 +15,7 @@ import { IAcceptInviteUseCase } from "../../../application/interface/user/IAccep
 import { IInviteMemberUseCase } from "../../../application/interface/user/IInviteMemberUseCase";
 import { ICompleteProfileUseCase } from "../../../application/interface/user/ICompleteProfileUseCase";
 import { IGetWorkspaceMembersUseCase } from "../../../application/interface/user/IGetWorkspaceMembersUseCase";
-
+import { IRemoveWorkspaceMemberUseCase } from "../../../application/interface/user/IRemoveWorkspaceMemberUseCase";
 
 @injectable()
 export class WorkspaceController {
@@ -32,6 +32,7 @@ export class WorkspaceController {
         @inject('IAcceptInviteUseCase') private _acceptInviteUseCase: IAcceptInviteUseCase,
         @inject('ICompleteProfileUseCase') private _completeProfileUseCase: ICompleteProfileUseCase,
         @inject('IGetWorkspaceMembersUseCase') private _getWorkspaceMembersUseCase: IGetWorkspaceMembersUseCase,
+        @inject('IRemoveWorkspaceMemberUseCase') private _removeWorkspaceMemberUseCase: IRemoveWorkspaceMemberUseCase,
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -191,9 +192,16 @@ export class WorkspaceController {
             const userId = req.user?.userId
             const { firstName, lastName, password } = req.body
             if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
-            await this._completeProfileUseCase.execute(userId, { firstName, lastName, password })
+            const user = await this._completeProfileUseCase.execute(userId, { firstName, lastName, password })
             res.status(HTTP_STATUS.OK).json({
-                message: MESSAGES.USERS.PROFILE_COMPLETED_SUCCESSFULLY
+                message: MESSAGES.USERS.PROFILE_COMPLETED_SUCCESSFULLY,
+                data: {
+                    id: user.id,
+                    email: user.email,
+                    firstName: user.firstName,
+                    lastName: user.lastName,
+                    avatarUrl: user.avatarUrl
+                }
             })
         } catch (error: unknown) {
             let message = ERROR_MESSAGES.INTERNAL_SERVER_ERROR;
@@ -229,6 +237,23 @@ export class WorkspaceController {
                 }
             }
             res.status(status).json({ message });
+        }
+    }
+    removeWorkspaceMember = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const {workspaceId} = req.params
+            const {memberId} =req.body
+            const userId = req.user?.userId
+
+            await this._removeWorkspaceMemberUseCase.execute({workspaceId,memberId,requesterId:userId!})
+            
+            res.status(HTTP_STATUS.OK).json({
+                message: MESSAGES.WORKSPACE.MEMBER_REMOVED_SUCCESSFULLY
+            })
+
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
 }

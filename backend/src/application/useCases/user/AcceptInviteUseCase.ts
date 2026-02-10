@@ -24,7 +24,6 @@ export class AcceptInviteUseCase implements IAcceptInviteUseCase {
         let user = await this._userRepository.findByEmail(invite.email)
 
         if (invite.used) {
-            // Idempotency: If already used, check if the user is already a member
             if (!user) throw new Error(USER_ERRORS.INVITE_ALREADY_USED)
 
             const workspace = await this._workspaceRepo.getWorkspaceById(invite.workspaceId)

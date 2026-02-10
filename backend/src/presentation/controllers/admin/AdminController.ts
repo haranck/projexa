@@ -90,6 +90,7 @@ export class AdminController {
     createPlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { name, price, interval, features, maxMembers, maxProjects } = req.body;
+            console.log(req.body)
             const response = await this._createPlanUseCase.execute({ name, price, interval, features, maxMembers, maxProjects });
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.CREATE_PLAN_SUCCESS, data: response });
         } catch (error) {

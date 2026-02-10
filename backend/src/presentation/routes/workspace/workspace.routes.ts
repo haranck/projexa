@@ -18,5 +18,6 @@ router.get(ROUTES.WORKSPACE.GET_WORKSPACE_INVOICES, workspaceController.getWorks
 router.post(ROUTES.WORKSPACE.INVITE_MEMBER, workspaceController.inviteMember)
 router.post(ROUTES.WORKSPACE.COMPLETE_PROFILE, workspaceController.completeProfile)
 router.get(ROUTES.WORKSPACE.GET_WORKSPACE_MEMBERS, workspaceController.getWorkspaceMembers)
+router.delete(ROUTES.WORKSPACE.REMOVE_MEMBER, workspaceController.removeWorkspaceMember)
 
 export default router

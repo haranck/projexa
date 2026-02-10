@@ -63,6 +63,7 @@ export const USER_ERRORS = {
     INVITE_INVALIDATION: "Error while validating invite !",
     ONBOARDING_ALREADY_COMPLETED: "Onboarding already completed !",
     ONBOARDING_NOT_COMPLETED: "Onboarding not completed !",
+    MAX_MEMBERS_REACHED: "Workspace member limit reached. Upgrade to add more members.",
 };
 
 export const SUBSCRIPTION_ERRORS = {
@@ -92,4 +93,7 @@ export const WORKSPACE_ERRORS = {
     INVITE_EXPIRED: "Invite expired !",
     INVITE_ALREADY_USED: "Invite already used !",
     INVITE_INVALIDATION: "Error while validating invite !",
+    MEMBER_NOT_FOUND: "Member not found in workspace !",
+    CANNOT_REMOVE_OWNER: "Owner cannot be removed from workspace !",
+    NOT_AUTHORIZED_REMOVE_MEMBER: "You are not authorized to remove members !",
 };

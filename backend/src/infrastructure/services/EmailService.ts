@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import { IEmailService } from "../../domain/interfaces/services/IEmailService";
 import { OtpTemplate } from "../../shared/utils/OtpTemplate";
+import { InviteTemplate } from "../../shared/utils/InviteTemplate";
 import { env } from "../../config/envValidation";
 
 export class EmailService implements IEmailService {
@@ -32,11 +33,12 @@ export class EmailService implements IEmailService {
 
   async sendInvitationEmail(email: string, token: string): Promise<void> {
     const link = `${env.FRONTEND_URL}/workspace/accept-invite?token=${token}`;
+    const html = InviteTemplate.generate(link);
     await this.transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: email,
       subject: "Invitation to join Projexa",
-      html: `<a href="${link}">Join Workspace</a>`
+      html
     })
   }
 }

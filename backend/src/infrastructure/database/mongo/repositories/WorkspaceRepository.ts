@@ -80,4 +80,11 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
         return workspace.members as unknown as IUserEntity[];
     }
+
+    async removeMember(workspaceId: string, memberId: string): Promise<void> {
+        await this.model.updateOne(
+            { _id: new Types.ObjectId(workspaceId) },
+            { $pull: { members: new Types.ObjectId(memberId) } }
+        );
+    }
 }

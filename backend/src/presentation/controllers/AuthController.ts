@@ -110,11 +110,9 @@ export class AuthController {
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, data: response });
     } catch (err: unknown) {
-      if (err instanceof Error) {
-        console.log('Error: ', err)
-        return
-      }
-      res.status(HTTP_STATUS.FORBIDDEN).json({ message: ERROR_MESSAGES.REFRESH_TOKEN_EXPIRED });
+      res.clearCookie("refreshToken");
+      const message = err instanceof Error ? err.message : ERROR_MESSAGES.REFRESH_TOKEN_EXPIRED;
+      res.status(HTTP_STATUS.FORBIDDEN).json({ message });
     }
   };
 
@@ -173,5 +171,5 @@ export class AuthController {
     }
   };
 
-  
+
 }

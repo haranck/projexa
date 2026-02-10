@@ -38,6 +38,7 @@ export const API_ROUTES = {
     INVITE_MEMBER : "/v1/workspace/:id/invite",
     ACCEPT_INVITE : "/v1/workspace/accept-invite/:token",
     COMPLETE_PROFILE : "/v1/workspace/complete-profile",
-    GET_WORKSPACE_MEMBERS : "/v1/workspace/:workspaceId/members"
+    GET_WORKSPACE_MEMBERS : "/v1/workspace/:workspaceId/members",
+    REMOVE_MEMBER : "/v1/workspace/:workspaceId/members"
   }
 };

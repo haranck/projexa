@@ -66,5 +66,6 @@ export const MESSAGES = {
         GET_WORKSPACE_INVOICES_SUCCESSFULLY: "Fetched workspace invoices successfully",
         MEMBER_INVITED_SUCCESSFULLY: "Member invited successfully",
         GET_WORKSPACE_MEMBERS_SUCCESSFULLY: "Fetched workspace members successfully",
+        MEMBER_REMOVED_SUCCESSFULLY: "Member removed successfully",
     }
 };

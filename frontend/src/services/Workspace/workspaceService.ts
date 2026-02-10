@@ -34,6 +34,11 @@ interface completeProfilePayload {
     password: string,
 }
 
+interface removeWorkspaceMemberPayload {
+    workspaceId: string,
+    memberId: string
+}
+
 export const createWorkspace = async (data: createWorkspacePayload) => {
     const response = await AxiosInstance.post(API_ROUTES.WORKSPACE.CREATE_WORKSPACE, {
         name: data.workspaceName,
@@ -89,5 +94,10 @@ export const completeProfile = async (data: completeProfilePayload) => {
 
 export const getWorkspaceMembers = async (workspaceId: string) => { 
     const response = await AxiosInstance.get(API_ROUTES.WORKSPACE.GET_WORKSPACE_MEMBERS.replace(":workspaceId", workspaceId))
+    return response.data;
+}
+
+export const removeWorkspaceMember = async (data: removeWorkspaceMemberPayload) => {
+    const response = await AxiosInstance.delete(API_ROUTES.WORKSPACE.REMOVE_MEMBER.replace(":workspaceId", data.workspaceId), { data: { memberId: data.memberId } })
     return response.data;
 }

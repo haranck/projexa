@@ -76,7 +76,8 @@ import { IAcceptInviteUseCase } from "../../application/interface/user/IAcceptIn
 import { AcceptInviteUseCase } from "../../application/useCases/user/AcceptInviteUseCase";
 import { IGetWorkspaceMembersUseCase } from "../../application/interface/user/IGetWorkspaceMembersUseCase";
 import { GetWorkspaceMembersUseCase } from "../../application/useCases/user/GetWorkspaceMembersUseCase";
-
+import { IRemoveWorkspaceMemberUseCase } from "../../application/interface/user/IRemoveWorkspaceMemberUseCase";
+import { RemoveWorkspaceMemberUseCase } from "../../application/useCases/user/RemoveWorkspaceMemberUseCase";
 
 
 export class UseCaseModule {
@@ -244,6 +245,10 @@ export class UseCaseModule {
 
         container.register<IGetWorkspaceMembersUseCase>('IGetWorkspaceMembersUseCase', {
             useClass: GetWorkspaceMembersUseCase
+        })
+
+        container.register<IRemoveWorkspaceMemberUseCase>('IRemoveWorkspaceMemberUseCase', {
+            useClass: RemoveWorkspaceMemberUseCase
         })
     }
 }

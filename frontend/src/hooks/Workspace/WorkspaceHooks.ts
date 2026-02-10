@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 import {
     createWorkspace,
@@ -12,6 +12,7 @@ import {
     acceptInvite,
     completeProfile,
     getWorkspaceMembers,
+    removeWorkspaceMember
 } from "../../services/Workspace/workspaceService";
 
 export const useCreateWorkspace = () => {
@@ -83,5 +84,15 @@ export const useGetWorkspaceMembers = (workspaceId: string) => {
         queryKey: ['workspace-members', workspaceId],
         queryFn: () => getWorkspaceMembers(workspaceId),
         enabled: !!workspaceId
+    })
+}
+
+export const useRemoveWorkspaceMember = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: removeWorkspaceMember,
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ['workspace-members', variables.workspaceId] });
+        }
     })
 }

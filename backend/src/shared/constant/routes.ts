@@ -30,6 +30,7 @@ export const ROUTES = {
         ACCEPT_INVITE: "/accept-invite/:token",
         COMPLETE_PROFILE: "/complete-profile",
         GET_WORKSPACE_MEMBERS: "/:workspaceId/members",
+        REMOVE_MEMBER: "/:workspaceId/members",
     },
     STRIPE: {
         WEBHOOK: "/webhook"
