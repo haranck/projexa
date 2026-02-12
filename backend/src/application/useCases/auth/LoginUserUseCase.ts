@@ -21,8 +21,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
   async execute(dto: LoginUserDTO): Promise<LoginResponseDTO> {
 
-
-
     if (dto.email === env.ADMIN_EMAIL) throw new Error(ERROR_MESSAGES.ADMIN_LOGIN_NOT_ALLOWED);
 
     const user = await this._userRepo.findByEmail(dto.email);
@@ -56,7 +54,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     const accessToken = this._jwtService.signAccessToken(payload);
     const refreshToken = this._jwtService.signRefreshToken(payload);
-
 
     return {
       accessToken,

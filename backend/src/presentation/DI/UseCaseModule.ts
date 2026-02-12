@@ -80,6 +80,8 @@ import { IRemoveWorkspaceMemberUseCase } from "../../application/interface/user/
 import { RemoveWorkspaceMemberUseCase } from "../../application/useCases/user/RemoveWorkspaceMemberUseCase";
 import { IGetAdminPaymentsUseCase } from "../../application/interface/admin/IGetAdminPaymentsUseCase";
 import { GetAdminPaymentsUseCase } from "../../application/useCases/admin/GetAdminPaymentsUseCase";
+import { IExportAdminPaymentsPDFUseCase } from "../../application/interface/admin/IExportAdminPaymentsPDFUseCase";
+import { ExportAdminPaymentsPDFUseCase } from "../../application/useCases/admin/ExportAdminPaymentsPDFUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -164,6 +166,10 @@ export class UseCaseModule {
 
         container.register<IGetAdminPaymentsUseCase>('IGetAdminPaymentsUseCase', {
             useClass: GetAdminPaymentsUseCase
+        })
+
+        container.register<IExportAdminPaymentsPDFUseCase>('IExportAdminPaymentsPDFUseCase', {
+            useClass: ExportAdminPaymentsPDFUseCase
         })
 
         /*--------------------- User UseCases ---------------------*/

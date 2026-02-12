@@ -44,6 +44,7 @@ export const ROUTES = {
         CREATE_PLAN: "/create-plan",
         GET_ALL_PLAN: "/get-plans",
         UPDATE_PLAN: "/update-plan/:planId",
-        GET_PAYMENTS:'/payments'
+        GET_PAYMENTS: '/payments',
+        GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf'
     }
 };

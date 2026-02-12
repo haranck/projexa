@@ -241,12 +241,12 @@ export class WorkspaceController {
     }
     removeWorkspaceMember = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const {workspaceId} = req.params
-            const {memberId} =req.body
+            const { workspaceId } = req.params
+            const { memberId } = req.body
             const userId = req.user?.userId
 
-            await this._removeWorkspaceMemberUseCase.execute({workspaceId,memberId,requesterId:userId!})
-            
+            await this._removeWorkspaceMemberUseCase.execute({ workspaceId, memberId, requesterId: userId! })
+
             res.status(HTTP_STATUS.OK).json({
                 message: MESSAGES.WORKSPACE.MEMBER_REMOVED_SUCCESSFULLY
             })

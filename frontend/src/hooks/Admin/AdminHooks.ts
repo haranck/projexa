@@ -10,6 +10,7 @@ import {
     getPlans,
     updatePlan,
     getAdminPayments,
+    exportAdminPaymentsPDF
 } from "../../services/Admin/adminService";
 import type { GetAdminPaymentsParams } from "../../services/Admin/adminService";
 import type { UserResponse } from "../../types/user";
@@ -19,6 +20,7 @@ interface UseGetUsersProps {
     limit: number;
     search?: string;
 }
+
 export const useAdminLogin = () => {
     return useMutation({
         mutationFn: adminLogin
@@ -118,5 +120,11 @@ export const useGetAdminPayments = (params?: GetAdminPaymentsParams) => {
         queryKey: ['admin-payments', params],
         queryFn: () => getAdminPayments(params || {}),
         placeholderData: keepPreviousData,
+    })
+}
+
+export const useExportAdminPaymentsPDF = () => {
+    return useMutation({
+        mutationFn: exportAdminPaymentsPDF
     })
 }

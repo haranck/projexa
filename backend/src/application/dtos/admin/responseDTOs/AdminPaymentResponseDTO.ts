@@ -9,3 +9,13 @@ export interface AdminPaymentResponseDTO {
     paidAt: Date;
     stripeCustomerId?: string;
 }
+
+export interface GetAdminPaymentsResponseDTO {
+    data: AdminPaymentResponseDTO[];
+    meta: {
+        totalDocs: number;
+        totalPages: number;
+        page: number;
+        limit: number;
+    };
+}

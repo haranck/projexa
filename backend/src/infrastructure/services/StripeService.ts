@@ -91,10 +91,14 @@ export class StripeService implements IStripeService {
     }
 
     async getPaidInvoices(start?: number, end?: number, workspaceName?: string): Promise<AdminPaymentResponseDTO[]> {
+        const created: { gte?: number; lte?: number } = {};
+        if (start) created.gte = start;
+        if (end) created.lte = end;
+
         const invoices = await this.stripe.invoices.list({
             status: "paid",
-            created: start && end ? { gte: start, lte: end } : undefined,
-            limit: 20,
+            created: Object.keys(created).length > 0 ? created : undefined,
+            limit: 100,
             expand: ['data.charge']
         });
 

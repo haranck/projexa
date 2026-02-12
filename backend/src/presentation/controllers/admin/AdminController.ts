@@ -12,6 +12,7 @@ import { ICreatePlanUseCase } from "../../../application/interface/admin/ICreate
 import { IGetPlanUseCase } from "../../../application/interface/admin/IGetPlanUseCase";
 import { IUpdatePlanUseCase } from "../../../application/interface/admin/IUpdatePlanUseCase";
 import { IGetAdminPaymentsUseCase } from "../../../application/interface/admin/IGetAdminPaymentsUseCase";
+import { IExportAdminPaymentsPDFUseCase } from "../../../application/interface/admin/IExportAdminPaymentsPDFUseCase";
 
 @injectable()
 export class AdminController {
@@ -24,8 +25,8 @@ export class AdminController {
         @inject('ICreatePlanUseCase') private _createPlanUseCase: ICreatePlanUseCase,
         @inject('IGetPlanUseCase') private _getPlanUseCase: IGetPlanUseCase,
         @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase,
-        @inject('IGetAdminPaymentsUseCase') private _getAdminPaymentsUseCase: IGetAdminPaymentsUseCase
-
+        @inject('IGetAdminPaymentsUseCase') private _getAdminPaymentsUseCase: IGetAdminPaymentsUseCase,
+        @inject('IExportAdminPaymentsPDFUseCase') private _exportAdminPaymentsPDFUseCase: IExportAdminPaymentsPDFUseCase
     ) { }
 
     adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -122,9 +123,32 @@ export class AdminController {
 
     getAdminPayments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
+            const page = Number(req.query.page)
+            const limit = Number(req.query.limit)
+            const search = String(req.query.search)
             const { startDate, endDate } = req.query;
-            const response = await this._getAdminPaymentsUseCase.execute({ startDate: startDate as string, endDate: endDate as string});
+            const response = await this._getAdminPaymentsUseCase.execute({ startDate: startDate as string, endDate: endDate as string, page, limit, search });
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.GET_ADMIN_PAYMENTS_SUCCESS, data: response });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    exportAdminPaymentsPDF = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try { 
+            const search = req.query.search ? String(req.query.search) : undefined;
+            const startDate = req.query.startDate ? String(req.query.startDate) : undefined;
+            const endDate = req.query.endDate ? String(req.query.endDate) : undefined;
+
+            const pdfBuffer = await this._exportAdminPaymentsPDFUseCase.execute({
+                startDate,
+                endDate,
+                search
+            });
+
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
+            res.status(HTTP_STATUS.OK).send(pdfBuffer);
         } catch (error) {
             next(error);
         }

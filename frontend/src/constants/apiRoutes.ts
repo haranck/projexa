@@ -20,7 +20,8 @@ export const API_ROUTES = {
     CREATE_PLAN: "/admin/create-plan",
     GET_ALL_PLANS: "/admin/get-plans",
     UPDATE_PLAN: "/admin/update-plan/:planId",
-    GET_ADMIN_PAYMENTS: "/admin/payments"
+    GET_ADMIN_PAYMENTS: "/admin/payments",
+    EXPORT_ADMIN_PAYMENTS_PDF: "/admin/payments/export-pdf"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",
@@ -29,17 +30,17 @@ export const API_ROUTES = {
     UPDATE_PROFILE: "/user/update-profile"
   },
   WORKSPACE: {
-    CREATE_WORKSPACE : "/v1/workspace/create-workspace",
-    GET_PLANS : "/v1/workspace/get-plans",
-    SELECT_PLAN : "/v1/workspace/select-plan",
-    CREATE_CHECKOUT_SESSION : "/v1/workspace/checkout",
-    GET_USER_WORKSPACES : "/v1/workspace/user-workspaces-list",
-    UPGRADE_PLAN : "/v1/workspace/upgrade-plan",
-    GET_WORKSPACE_INVOICES : "/v1/workspace/:workspaceId/invoices",
-    INVITE_MEMBER : "/v1/workspace/:id/invite",
-    ACCEPT_INVITE : "/v1/workspace/accept-invite/:token",
-    COMPLETE_PROFILE : "/v1/workspace/complete-profile",
-    GET_WORKSPACE_MEMBERS : "/v1/workspace/:workspaceId/members",
-    REMOVE_MEMBER : "/v1/workspace/:workspaceId/members"
+    CREATE_WORKSPACE: "/v1/workspace/create-workspace",
+    GET_PLANS: "/v1/workspace/get-plans",
+    SELECT_PLAN: "/v1/workspace/select-plan",
+    CREATE_CHECKOUT_SESSION: "/v1/workspace/checkout",
+    GET_USER_WORKSPACES: "/v1/workspace/user-workspaces-list",
+    UPGRADE_PLAN: "/v1/workspace/upgrade-plan",
+    GET_WORKSPACE_INVOICES: "/v1/workspace/:workspaceId/invoices",
+    INVITE_MEMBER: "/v1/workspace/:id/invite",
+    ACCEPT_INVITE: "/v1/workspace/accept-invite/:token",
+    COMPLETE_PROFILE: "/v1/workspace/complete-profile",
+    GET_WORKSPACE_MEMBERS: "/v1/workspace/:workspaceId/members",
+    REMOVE_MEMBER: "/v1/workspace/:workspaceId/members"
   }
 };
