@@ -82,6 +82,14 @@ import { IGetAdminPaymentsUseCase } from "../../application/interface/admin/IGet
 import { GetAdminPaymentsUseCase } from "../../application/useCases/admin/GetAdminPaymentsUseCase";
 import { IExportAdminPaymentsPDFUseCase } from "../../application/interface/admin/IExportAdminPaymentsPDFUseCase";
 import { ExportAdminPaymentsPDFUseCase } from "../../application/useCases/admin/ExportAdminPaymentsPDFUseCase";
+import { ICreateRoleUseCase } from "../../application/interface/user/ICreateRoleUseCase";
+import { CreateRoleUseCase } from "../../application/useCases/user/CreateRoleUseCase";
+import { IUpdateRoleUseCase } from "../../application/interface/user/IUpdateRoleUseCase";
+import { UpdateRoleUseCase } from "../../application/useCases/user/UpdateRoleUseCase";
+import { IDeleteRoleUseCase } from "../../application/interface/user/IDeleteRoleUseCase";
+import { DeleteRoleUseCase } from "../../application/useCases/user/DeleteRoleUseCase";
+import { IGetAllRolesUseCase } from "../../application/interface/user/IGetAllRolesUseCase";
+import { GetAllRolesUseCase } from "../../application/useCases/user/GetAllRolesUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -260,6 +268,22 @@ export class UseCaseModule {
 
         container.register<IRemoveWorkspaceMemberUseCase>('IRemoveWorkspaceMemberUseCase', {
             useClass: RemoveWorkspaceMemberUseCase
+        })
+
+        container.register<ICreateRoleUseCase>('ICreateRoleUseCase', {
+            useClass: CreateRoleUseCase
+        })
+
+        container.register<IUpdateRoleUseCase>('IUpdateRoleUseCase', {
+            useClass: UpdateRoleUseCase
+        })
+
+        container.register<IDeleteRoleUseCase>('IDeleteRoleUseCase', {
+            useClass: DeleteRoleUseCase
+        })
+
+        container.register<IGetAllRolesUseCase>('IGetAllRolesUseCase', {
+            useClass: GetAllRolesUseCase
         })
     }
 }

@@ -12,7 +12,11 @@ import {
     acceptInvite,
     completeProfile,
     getWorkspaceMembers,
-    removeWorkspaceMember
+    removeWorkspaceMember,
+    createRole,
+    updateRole,
+    deleteRole,
+    getRoles
 } from "../../services/Workspace/workspaceService";
 
 export const useCreateWorkspace = () => {
@@ -94,5 +98,30 @@ export const useRemoveWorkspaceMember = () => {
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ['workspace-members', variables.workspaceId] });
         }
+    })
+}
+
+export const useCreateRole = () => {
+    return useMutation({
+        mutationFn: createRole
+    })
+}
+
+export const useUpdateRole = () => {
+    return useMutation({
+        mutationFn: updateRole
+    })
+}
+
+export const useDeleteRole = () => {
+    return useMutation({
+        mutationFn: deleteRole
+    })
+}
+
+export const useGetRoles = () => {
+    return useQuery({
+        queryKey: ['roles'],
+        queryFn: getRoles
     })
 }

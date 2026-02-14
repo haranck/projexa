@@ -51,6 +51,7 @@ export class GetAdminPaymentsUseCase implements IGetAdminPaymentsUseCase {
         }
 
         filteredInvoices.sort((a, b) => b.paidAt.getTime() - a.paidAt.getTime());
+        
         const page = params.page || 1;
         const limit = params.limit || 5;
         const totalDocs = filteredInvoices.length;

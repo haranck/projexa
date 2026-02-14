@@ -31,6 +31,10 @@ export const ROUTES = {
         COMPLETE_PROFILE: "/complete-profile",
         GET_WORKSPACE_MEMBERS: "/:workspaceId/members",
         REMOVE_MEMBER: "/:workspaceId/members",
+        CREATE_ROLE: "/create-role",
+        UPDATE_ROLE: "/update-role/:roleId",
+        DELETE_ROLE: "/delete-role/:roleId",
+        GET_ROLES: "/get-roles",
     },
     STRIPE: {
         WEBHOOK: "/webhook"

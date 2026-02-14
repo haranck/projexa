@@ -41,6 +41,10 @@ export const API_ROUTES = {
     ACCEPT_INVITE: "/v1/workspace/accept-invite/:token",
     COMPLETE_PROFILE: "/v1/workspace/complete-profile",
     GET_WORKSPACE_MEMBERS: "/v1/workspace/:workspaceId/members",
-    REMOVE_MEMBER: "/v1/workspace/:workspaceId/members"
+    REMOVE_MEMBER: "/v1/workspace/:workspaceId/members",
+    CREATE_ROLE: "/v1/workspace/create-role",
+    UPDATE_ROLE: "/v1/workspace/update-role/:roleId",
+    DELETE_ROLE: "/v1/workspace/delete-role/:roleId",
+    GET_ROLES: "/v1/workspace/get-roles"
   }
 };

@@ -10,5 +10,5 @@ export interface IUserRepository {
   blockUser(userId: string): Promise<void>;
   unblockUser(userId: string): Promise<void>;
   findAllUsers(dto: GetUsersRequestDTO): Promise<GetUsersResponseDTO>;
-  update(user: Partial<IUserEntity>, id: string): Promise<void>;
+  update(user: Partial<IUserEntity>, id: string): Promise<IUserEntity | null>;
 }

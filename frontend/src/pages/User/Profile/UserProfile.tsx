@@ -25,6 +25,7 @@ import {
 import { useState } from "react";
 import axios from "axios";
 import EditProfileModal from "@/components/modals/EditProfileModal";
+import RoleManagementModal from "@/components/modals/RoleManagementModal";
 import { useGetUserWorkspaces } from "@/hooks/Workspace/WorkspaceHooks";
 
 
@@ -35,6 +36,7 @@ export const UserProfile = () => {
     const { mutate: logoutUser } = useUserLogout()
     const [isChangePasswordOpen, setChangePasswordOpen] = useState(false)
     const [isEditProfileOpen, setEditProfileOpen] = useState(false);
+    const [isRoleModalOpen, setRoleModalOpen] = useState(false);
     const { mutate: profileImageUploadUrl } = useProfileImageUploadUrl()
     const { mutate: updateProfileImage } = useUpdateProfileImage()
     const { data: workspacesData, isLoading } = useGetUserWorkspaces();
@@ -345,6 +347,9 @@ export const UserProfile = () => {
                                         else if (item.title === 'Personal Information') {
                                             setEditProfileOpen(true)
                                         }
+                                        else if (item.title === 'Manage Roles') {
+                                            setRoleModalOpen(true)
+                                        }
                                     }}
                                 >
                                     <div className="mb-4 p-3 rounded-2xl bg-zinc-800/50 text-zinc-400 group-hover:text-blue-500 group-hover:scale-110 transition-all duration-300 border border-white/5">
@@ -366,6 +371,8 @@ export const UserProfile = () => {
                 </div>
                 <ChangePasswordModal open={isChangePasswordOpen} onClose={() => setChangePasswordOpen(false)} />
                 <EditProfileModal open={isEditProfileOpen} onClose={() => setEditProfileOpen(false)} />
+                <RoleManagementModal open={isRoleModalOpen} onClose={() => setRoleModalOpen(false)} />
+
             </div>
         </DashboardLayout>
     );

@@ -140,12 +140,7 @@ export class AdminController {
             const startDate = req.query.startDate ? String(req.query.startDate) : undefined;
             const endDate = req.query.endDate ? String(req.query.endDate) : undefined;
 
-            const pdfBuffer = await this._exportAdminPaymentsPDFUseCase.execute({
-                startDate,
-                endDate,
-                search
-            });
-
+            const pdfBuffer = await this._exportAdminPaymentsPDFUseCase.execute({startDate,endDate,search});
             res.setHeader('Content-Type', 'application/pdf');
             res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
             res.status(HTTP_STATUS.OK).send(pdfBuffer);

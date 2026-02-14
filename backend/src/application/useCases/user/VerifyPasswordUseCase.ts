@@ -16,7 +16,7 @@ export class VerifyPasswordUseCase implements IVerifyPasswordUseCase {
         if (!user) {
             throw new Error(USER_ERRORS.USER_NOT_FOUND)
         }
-        const isPasswordValid = await this._passwordService.compare(dto.password,user.password)
+        const isPasswordValid = await this._passwordService.compare(dto.password,user.password!)
         if(!isPasswordValid){
             throw new Error(USER_ERRORS.INVALID_PASSWORD)
         }

@@ -64,6 +64,11 @@ export const USER_ERRORS = {
     ONBOARDING_ALREADY_COMPLETED: "Onboarding already completed !",
     ONBOARDING_NOT_COMPLETED: "Onboarding not completed !",
     MAX_MEMBERS_REACHED: "Workspace member limit reached. Upgrade to add more members.",
+    ROLE_ALREADY_EXISTS: "Role Already Exists",
+    ROLE_NOT_FOUND: "Role not found !",
+    PERMISSION_CANNOT_EMPTY: "Permission cannot be empty !",
+    ROLE_NAME_ALREADY_EXISTS: "Role name already exists !",
+    ROLE_FETCHING_FAILED: "Failed to fetch roles !",
 };
 
 export const SUBSCRIPTION_ERRORS = {

@@ -46,11 +46,10 @@ export class InviteMemberUseCase implements IInviteMemberUseCase {
             createdAt: new Date(),
             updatedAt: new Date()
         }
-        // 🔹 Get workspace with members
+
         const workspace = await this._workspaceRepo.getWorkspaceById(dto.workspaceId);
         if (!workspace) throw new Error("Workspace not found");
 
-        // 🔹 Get active subscription
         const subscription = await this._subscriptionRepo.findByWorkspaceId(dto.workspaceId);
 
         if (subscription?.planId) {
@@ -59,7 +58,6 @@ export class InviteMemberUseCase implements IInviteMemberUseCase {
 
             const currentMemberCount = workspace.members?.length || 0;
 
-            // 🚦 Enforce limit ONLY if not unlimited
             if (plan.maxMembers !== -1 && currentMemberCount >= plan.maxMembers) {
                 throw new Error(USER_ERRORS.MAX_MEMBERS_REACHED);
             }

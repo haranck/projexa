@@ -16,6 +16,10 @@ import { IInviteMemberUseCase } from "../../../application/interface/user/IInvit
 import { ICompleteProfileUseCase } from "../../../application/interface/user/ICompleteProfileUseCase";
 import { IGetWorkspaceMembersUseCase } from "../../../application/interface/user/IGetWorkspaceMembersUseCase";
 import { IRemoveWorkspaceMemberUseCase } from "../../../application/interface/user/IRemoveWorkspaceMemberUseCase";
+import { ICreateRoleUseCase } from "../../../application/interface/user/ICreateRoleUseCase";
+import { IUpdateRoleUseCase } from "../../../application/interface/user/IUpdateRoleUseCase";
+import { IDeleteRoleUseCase } from "../../../application/interface/user/IDeleteRoleUseCase";
+import { IGetAllRolesUseCase } from "../../../application/interface/user/IGetAllRolesUseCase";
 
 @injectable()
 export class WorkspaceController {
@@ -33,6 +37,10 @@ export class WorkspaceController {
         @inject('ICompleteProfileUseCase') private _completeProfileUseCase: ICompleteProfileUseCase,
         @inject('IGetWorkspaceMembersUseCase') private _getWorkspaceMembersUseCase: IGetWorkspaceMembersUseCase,
         @inject('IRemoveWorkspaceMemberUseCase') private _removeWorkspaceMemberUseCase: IRemoveWorkspaceMemberUseCase,
+        @inject('ICreateRoleUseCase') private _createRoleUseCase: ICreateRoleUseCase,
+        @inject('IUpdateRoleUseCase') private _updateRoleUseCase: IUpdateRoleUseCase,
+        @inject('IDeleteRoleUseCase') private _deleteRoleUseCase: IDeleteRoleUseCase,
+        @inject('IGetAllRolesUseCase') private _getAllRolesUseCase: IGetAllRolesUseCase,
     ) { }
 
     createWorkspace = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -254,6 +262,67 @@ export class WorkspaceController {
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
             res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+        }
+    }
+
+    createRole = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const { name, permissions } = req.body
+            const userId = req.user?.userId
+            if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
+
+            await this._createRoleUseCase.execute({ name, permissions, createdBy: userId })
+
+            res.status(HTTP_STATUS.OK).json({
+                message: MESSAGES.WORKSPACE.ROLE_CREATED_SUCCESSFULLY
+            })
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+        }
+    }
+
+    updateRole = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const { roleId } = req.params
+            const { name, permissions } = req.body
+
+            const updatedRole = await this._updateRoleUseCase.execute({ roleId, name, permissions })
+
+            res.status(HTTP_STATUS.OK).json({
+                message: MESSAGES.WORKSPACE.ROLE_UPDATED_SUCCESSFULLY,
+                data: updatedRole
+            })
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+        }
+    }
+
+    deleteRole = async(req:AuthRequest,res:Response):Promise<void> => {
+        try {
+            const {roleId} = req.params
+            await this._deleteRoleUseCase.execute(roleId!)
+            res.status(HTTP_STATUS.OK).json({
+                message:MESSAGES.WORKSPACE.ROLE_DELETED_SUCCESSFULLY
+            })
+            
+        } catch (error) {
+            const err = error as {status?:number,message:string}
+            res.status(err.status|| HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:err.message})
+        }
+    }
+
+    getAllRoles = async(req:AuthRequest,res:Response):Promise<void> => {
+        try {
+            const roles = await this._getAllRolesUseCase.execute()
+            res.status(HTTP_STATUS.OK).json({
+                message:MESSAGES.WORKSPACE.GET_ALL_ROLES_SUCCESSFULLY,
+                data:roles
+            })
+        } catch (error) {
+            const err = error as {status?:number,message:string}
+            res.status(err.status|| HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:err.message})
         }
     }
 }

@@ -30,7 +30,7 @@ export const MESSAGES = {
         ADD_SUBSCRIPTION_PLAN_SUCCESS: "Subscription plan added successfully",
         GET_PLANS_SUCCESS: "Fetched plans successfully",
         UPDATE_PLAN_SUCCESS: "Plan updated successfully",
-        GET_ADMIN_PAYMENTS_SUCCESS:"Get payments succcessfully"
+        GET_ADMIN_PAYMENTS_SUCCESS: "Get payments succcessfully"
     },
 
     OTP: {
@@ -68,5 +68,10 @@ export const MESSAGES = {
         MEMBER_INVITED_SUCCESSFULLY: "Member invited successfully",
         GET_WORKSPACE_MEMBERS_SUCCESSFULLY: "Fetched workspace members successfully",
         MEMBER_REMOVED_SUCCESSFULLY: "Member removed successfully",
+        ROLE_CREATED_SUCCESSFULLY: "Role created successfully",
+        ROLE_UPDATED_SUCCESSFULLY: "Role updated successfully",
+        ROLE_DELETED_SUCCESSFULLY: "Role deleted successfully",
+        GET_ROLES_SUCCESSFULLY: "Roles fetched successfully",
+        GET_ALL_ROLES_SUCCESSFULLY: "Roles fetched successfully",
     }
 };

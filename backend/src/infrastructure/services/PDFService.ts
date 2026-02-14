@@ -12,19 +12,16 @@ export class PDFService {
                 doc.on('end', () => resolve(Buffer.concat(chunks)));
                 doc.on('error', reject);
 
-                // Header
                 doc.fontSize(20).font('Helvetica-Bold').text('Sales Report', { align: 'center' });
                 doc.moveDown(0.5);
                 doc.fontSize(10).font('Helvetica').text(`Generated on: ${new Date().toLocaleString('en-IN')}`, { align: 'center' });
                 doc.fontSize(10).text(`Total Records: ${payments.length}`, { align: 'center' });
                 doc.moveDown(1);
 
-                // Calculate total revenue
                 const totalRevenue = payments.reduce((sum, p) => sum + p.amount, 0);
                 doc.fontSize(12).font('Helvetica-Bold').text(`Total Revenue: ₹${totalRevenue.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, { align: 'center' });
                 doc.moveDown(1.5);
 
-                // Table setup
                 const tableTop = doc.y;
                 const colWidths = {
                     date: 70,
@@ -38,7 +35,6 @@ export class PDFService {
 
                 let xPos = 50;
 
-                // Table headers
                 doc.fontSize(9).font('Helvetica-Bold');
                 doc.text('Date', xPos, tableTop, { width: colWidths.date, align: 'left' });
                 xPos += colWidths.date;
@@ -60,7 +56,6 @@ export class PDFService {
                 doc.font('Helvetica').fontSize(8);
 
                 payments.forEach((payment, index) => {
-                    // Check if we need a new page
                     if (yPos > 700) {
                         doc.addPage();
                         yPos = 50;
@@ -68,7 +63,6 @@ export class PDFService {
 
                     xPos = 50;
 
-                    // Date
                     const date = new Date(payment.paidAt).toLocaleDateString('en-IN', {
                         day: '2-digit',
                         month: 'short',
@@ -77,39 +71,31 @@ export class PDFService {
                     doc.text(date, xPos, yPos, { width: colWidths.date, align: 'left' });
                     xPos += colWidths.date;
 
-                    // Customer
                     doc.text(payment.userName, xPos, yPos, { width: colWidths.customer, align: 'left', ellipsis: true });
                     xPos += colWidths.customer;
 
-                    // Workspace
                     doc.text(payment.workspaceName, xPos, yPos, { width: colWidths.workspace, align: 'left', ellipsis: true });
                     xPos += colWidths.workspace;
 
-                    // Amount
                     const amount = `₹${payment.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
                     doc.text(amount, xPos, yPos, { width: colWidths.amount, align: 'right' });
                     xPos += colWidths.amount;
 
-                    // Status
                     doc.text(payment.status, xPos, yPos, { width: colWidths.status, align: 'center' });
                     xPos += colWidths.status;
 
-                    // Invoice
                     doc.text(payment.invoiceId.slice(0, 15) + '...', xPos, yPos, { width: colWidths.invoice, align: 'left' });
                     xPos += colWidths.invoice;
 
-                    // Method
                     doc.text(payment.paymentMethod, xPos, yPos, { width: colWidths.method, align: 'left', ellipsis: true });
 
                     yPos += 20;
 
-                    // Draw separator line every 5 rows
                     if ((index + 1) % 5 === 0) {
                         doc.moveTo(50, yPos - 5).lineTo(545, yPos - 5).strokeOpacity(0.2).stroke().strokeOpacity(1);
                     }
                 });
 
-                // Footer
                 const pageCount = doc.bufferedPageRange().count;
                 for (let i = 0; i < pageCount; i++) {
                     doc.switchToPage(i);
