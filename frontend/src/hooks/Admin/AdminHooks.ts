@@ -8,8 +8,11 @@ import {
     unblockUser,
     createPlan,
     getPlans,
-    updatePlan
+    updatePlan,
+    getAdminPayments,
+    exportAdminPaymentsPDF
 } from "../../services/Admin/adminService";
+import type { GetAdminPaymentsParams } from "../../services/Admin/adminService";
 import type { UserResponse } from "../../types/user";
 
 interface UseGetUsersProps {
@@ -17,6 +20,7 @@ interface UseGetUsersProps {
     limit: number;
     search?: string;
 }
+
 export const useAdminLogin = () => {
     return useMutation({
         mutationFn: adminLogin
@@ -108,5 +112,19 @@ export const useUpdatePlan = () => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['plans'] })
         }
+    })
+}
+
+export const useGetAdminPayments = (params?: GetAdminPaymentsParams) => {
+    return useQuery({
+        queryKey: ['admin-payments', params],
+        queryFn: () => getAdminPayments(params || {}),
+        placeholderData: keepPreviousData,
+    })
+}
+
+export const useExportAdminPaymentsPDF = () => {
+    return useMutation({
+        mutationFn: exportAdminPaymentsPDF
     })
 }

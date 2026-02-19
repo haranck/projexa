@@ -38,14 +38,14 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
       });
       user = await this._userRepo.findByEmail(googleUser.email);
     }
-    if (!user?.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
+    if (!user?._id) throw new Error(USER_ERRORS.USER_ID_MISSING);
 
     const payload = {
-      userId: user.id,
+      userId: user._id,
       email: user.email,
     };
 
-    const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user.id.toString());
+    const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user._id.toString());
     const workspaceMap = workspaces.map(workspace => ({
       id: workspace._id!.toString(),
       name: workspace.name,
@@ -61,7 +61,7 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
       workspaces: workspaceMap,
       defaultWorkspace,
       user: {
-        id: user.id,
+        id: user._id,
         firstName: user.firstName!,
         lastName: user.lastName!,
         phone: user.phone || "",

@@ -4,7 +4,7 @@ import { UserDocument } from "../database/mongo/models/UserModel";
 export class UserMapper {
   static toEntity(doc: UserDocument): IUserEntity {
     return {
-      id: doc._id.toString(),
+      _id: doc._id.toString(),
       firstName: doc.firstName,
       lastName: doc.lastName,
       email: doc.email,

@@ -13,36 +13,41 @@ import { IS3Service } from "../../domain/interfaces/services/IS3Service";
 import { S3Service } from "../../infrastructure/services/S3service";
 import { IStripeService } from "../../domain/interfaces/services/IStripeService";
 import { StripeService } from "../../infrastructure/services/StripeService";
+import { PDFService } from "../../infrastructure/services/PDFService";
 
 export class ServiceModule {
-    static registerModules():void{
+    static registerModules(): void {
 
-        container.register<IPasswordService>("IPasswordService",{
+        container.register<IPasswordService>("IPasswordService", {
             useClass: PasswordService
         });
 
-        container.register<IEmailService>('IEmailService',{
+        container.register<IEmailService>('IEmailService', {
             useClass: EmailService
         });
 
-        container.register<IJwtService>('IJwtService',{
+        container.register<IJwtService>('IJwtService', {
             useClass: JwtService
         })
 
-        container.register<IGoogleAuthService>('IGoogleAuthService',{
+        container.register<IGoogleAuthService>('IGoogleAuthService', {
             useClass: GoogleAuthService
         })
 
-        container.register<ITempUserStore>('ITempUserStore',{
+        container.register<ITempUserStore>('ITempUserStore', {
             useClass: RedisTempUserStore
         })
 
-        container.register<IS3Service>('IS3Service',{
+        container.register<IS3Service>('IS3Service', {
             useClass: S3Service
         })
 
-        container.register<IStripeService>('IStripeService',{
+        container.register<IStripeService>('IStripeService', {
             useClass: StripeService
+        })
+
+        container.register<PDFService>('PDFService', {
+            useClass: PDFService
         })
     }
 }

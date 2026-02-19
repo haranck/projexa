@@ -29,7 +29,8 @@ export const MESSAGES = {
         CREATE_PLAN_SUCCESS: "Plan created successfully",
         ADD_SUBSCRIPTION_PLAN_SUCCESS: "Subscription plan added successfully",
         GET_PLANS_SUCCESS: "Fetched plans successfully",
-        UPDATE_PLAN_SUCCESS: "Plan updated successfully"
+        UPDATE_PLAN_SUCCESS: "Plan updated successfully",
+        GET_ADMIN_PAYMENTS_SUCCESS: "Get payments succcessfully"
     },
 
     OTP: {
@@ -53,6 +54,10 @@ export const MESSAGES = {
         PROJECT_UPDATED_SUCCESSFULLY: "Project updated successfully",
         STATUS_UPDATED_SUCCESSFULLY: "Project status updated successfully",
         GET_ALL_PROJECTS: "Fetched projects successfully",
+        PROJECT_DELETED_SUCCESSFULLY: "Project deleted successfully",
+        PROJECT_MEMBER_ADDED_SUCCESSFULLY: "Project member added successfully",
+        PROJECT_MEMBER_REMOVED_SUCCESSFULLY: "Project member removed successfully",
+        PROJECT_MEMBER_UPDATED_SUCCESSFULLY: "Project member updated successfully",
     },
     WORKSPACE: {
         WORKSPACE_CREATED_SUCCESSFULLY: "Workspace created successfully",
@@ -66,5 +71,11 @@ export const MESSAGES = {
         GET_WORKSPACE_INVOICES_SUCCESSFULLY: "Fetched workspace invoices successfully",
         MEMBER_INVITED_SUCCESSFULLY: "Member invited successfully",
         GET_WORKSPACE_MEMBERS_SUCCESSFULLY: "Fetched workspace members successfully",
+        MEMBER_REMOVED_SUCCESSFULLY: "Member removed successfully",
+        ROLE_CREATED_SUCCESSFULLY: "Role created successfully",
+        ROLE_UPDATED_SUCCESSFULLY: "Role updated successfully",
+        ROLE_DELETED_SUCCESSFULLY: "Role deleted successfully",
+        GET_ROLES_SUCCESSFULLY: "Roles fetched successfully",
+        GET_ALL_ROLES_SUCCESSFULLY: "Roles fetched successfully",
     }
 };

@@ -28,6 +28,13 @@ interface UpdatePlan extends Partial<CreatePlan> {
   planId: string;
   isActive?: boolean;
 }
+export interface GetAdminPaymentsParams {
+  page?: number;
+  limit?: number;
+  search?: string;
+  startDate?: string;
+  endDate?: string;
+}
 
 export const adminLogin = async (data: adminLoginPayload) => {
   const response = await AxiosInstance.post(API_ROUTES.ADMIN.LOGIN, data);
@@ -70,4 +77,17 @@ export const updatePlan = async ({ planId, ...data }: UpdatePlan) => {
   const url = API_ROUTES.ADMIN.UPDATE_PLAN.replace(':planId', planId)
   const response = await AxiosInstance.patch(url, data)
   return response.data
+}
+
+export const getAdminPayments = async (params: GetAdminPaymentsParams) => {
+  const response = await AxiosInstance.get(API_ROUTES.ADMIN.GET_ADMIN_PAYMENTS, { params })
+  return response.data
+}
+
+export const exportAdminPaymentsPDF = async (params: Omit<GetAdminPaymentsParams, 'page' | 'limit'>) => {
+  const response = await AxiosInstance.get(API_ROUTES.ADMIN.EXPORT_ADMIN_PAYMENTS_PDF, {
+    params,
+    responseType: 'blob'
+  });
+  return response.data;
 }

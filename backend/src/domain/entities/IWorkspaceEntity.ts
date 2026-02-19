@@ -1,7 +1,5 @@
-import { Types } from "mongoose";
-
 export interface IWorkspaceEntity {
-    _id?: Types.ObjectId;
+    _id?: string;
     name: string;
     description?: string;
     ownerId?: string;

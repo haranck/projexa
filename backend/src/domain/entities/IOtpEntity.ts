@@ -1,6 +1,5 @@
-import type { Types } from "mongoose";
 export interface IOtpEntity {
-    _id?: Types.ObjectId;
+    _id?: string;
     userId: string;
     code: string;
     expiresAt: Date;

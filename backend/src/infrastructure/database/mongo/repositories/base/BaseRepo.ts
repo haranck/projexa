@@ -1,8 +1,8 @@
 import { Model, Types } from "mongoose";
 import { IBaseRepository } from "../../../../../domain/interfaces/repositories/base/IBaseRepository";
 
-type WithId = {
-  _id?: Types.ObjectId;
+export type WithId = {
+  _id?: string | Types.ObjectId;
 };
 
 export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
@@ -18,12 +18,13 @@ export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
     return doc ?? null;
   }
 
-  async update(e: Partial<T>, id: string): Promise<void> {
-    await this.model.findByIdAndUpdate(id, e);
+  async update(e: Partial<T>, id: string): Promise<T | null> {
+    const doc = await this.model.findByIdAndUpdate(id, e, { new: true }).lean<T>();
+    return doc ?? null;
   }
 
-  async deleteById(id: string): Promise<boolean> {
-    const result = await this.model.findByIdAndDelete(id);
-    return !!result;
+  async deleteById(id: string): Promise<T | null> {
+    const result = await this.model.findByIdAndDelete(id).lean<T>();
+    return result ?? null;
   }
 }

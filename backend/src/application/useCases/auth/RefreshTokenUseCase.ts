@@ -42,14 +42,14 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
             throw new Error(USER_ERRORS.USER_NOT_FOUND);
         }
 
-        const newPayload = { userId: user.id!, email: user.email };
+        const newPayload = { userId: user._id!, email: user.email };
         const newAccessToken = this._jwtService.signAccessToken(newPayload);
 
         return {
             accessToken: newAccessToken,
             refreshToken: refreshToken,
             user: {
-                id: user.id!,
+                id: user._id!,
                 firstName: user.firstName!,
                 lastName: user.lastName!,
                 email: user.email,

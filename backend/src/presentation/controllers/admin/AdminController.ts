@@ -11,6 +11,8 @@ import { IGetUsersUseCase } from "../../../application/interface/admin/IGetUsers
 import { ICreatePlanUseCase } from "../../../application/interface/admin/ICreatePlanUseCase";
 import { IGetPlanUseCase } from "../../../application/interface/admin/IGetPlanUseCase";
 import { IUpdatePlanUseCase } from "../../../application/interface/admin/IUpdatePlanUseCase";
+import { IGetAdminPaymentsUseCase } from "../../../application/interface/admin/IGetAdminPaymentsUseCase";
+import { IExportAdminPaymentsPDFUseCase } from "../../../application/interface/admin/IExportAdminPaymentsPDFUseCase";
 
 @injectable()
 export class AdminController {
@@ -22,8 +24,9 @@ export class AdminController {
         @inject('IGetUsersUseCase') private _getUsersUseCase: IGetUsersUseCase,
         @inject('ICreatePlanUseCase') private _createPlanUseCase: ICreatePlanUseCase,
         @inject('IGetPlanUseCase') private _getPlanUseCase: IGetPlanUseCase,
-        @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase
-
+        @inject('IUpdatePlanUseCase') private _updatePlanUseCase: IUpdatePlanUseCase,
+        @inject('IGetAdminPaymentsUseCase') private _getAdminPaymentsUseCase: IGetAdminPaymentsUseCase,
+        @inject('IExportAdminPaymentsPDFUseCase') private _exportAdminPaymentsPDFUseCase: IExportAdminPaymentsPDFUseCase
     ) { }
 
     adminLogin = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -90,6 +93,7 @@ export class AdminController {
     createPlan = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { name, price, interval, features, maxMembers, maxProjects } = req.body;
+            console.log(req.body)
             const response = await this._createPlanUseCase.execute({ name, price, interval, features, maxMembers, maxProjects });
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.CREATE_PLAN_SUCCESS, data: response });
         } catch (error) {
@@ -112,6 +116,34 @@ export class AdminController {
             const dto = req.body;
             const response = await this._updatePlanUseCase.execute(planId, dto);
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UPDATE_PLAN_SUCCESS, data: response });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    getAdminPayments = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try {
+            const page = Number(req.query.page)
+            const limit = Number(req.query.limit)
+            const search = String(req.query.search)
+            const { startDate, endDate } = req.query;
+            const response = await this._getAdminPaymentsUseCase.execute({ startDate: startDate as string, endDate: endDate as string, page, limit, search });
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.GET_ADMIN_PAYMENTS_SUCCESS, data: response });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    exportAdminPaymentsPDF = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+        try { 
+            const search = req.query.search ? String(req.query.search) : undefined;
+            const startDate = req.query.startDate ? String(req.query.startDate) : undefined;
+            const endDate = req.query.endDate ? String(req.query.endDate) : undefined;
+
+            const pdfBuffer = await this._exportAdminPaymentsPDFUseCase.execute({startDate,endDate,search});
+            res.setHeader('Content-Type', 'application/pdf');
+            res.setHeader('Content-Disposition', 'attachment; filename=sales-report.pdf');
+            res.status(HTTP_STATUS.OK).send(pdfBuffer);
         } catch (error) {
             next(error);
         }

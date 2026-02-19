@@ -1,8 +1,5 @@
-import { Types } from "mongoose";
-
 export interface IWorkspaceInviteEntity {
-    _id?: Types.ObjectId;
-    id: string;
+    _id?: string;
     workspaceId: string;
     email: string;
     role: string;

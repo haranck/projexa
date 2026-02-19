@@ -1,0 +1,15 @@
+import { Router } from 'express'
+import { projectController, authMiddleware } from '../../DI/resolver';
+import { ROUTES } from '../../../shared/constant/routes'
+
+const router = Router();
+
+router.post(ROUTES.PROJECTS.CREATE_PROJECT, authMiddleware.authenticate, projectController.createProject)
+router.get(ROUTES.PROJECTS.GET_ALL_PROJECTS, authMiddleware.authenticate, projectController.getAllProjects)
+router.put(ROUTES.PROJECTS.UPDATE_PROJECT, authMiddleware.authenticate, projectController.updateProject)
+router.delete(ROUTES.PROJECTS.DELETE_PROJECT, authMiddleware.authenticate, projectController.deleteProject)
+router.post(ROUTES.PROJECTS.ADD_PROJECT_MEMBER, authMiddleware.authenticate, projectController.addProjectMember)
+router.delete(ROUTES.PROJECTS.REMOVE_PROJECT_MEMBER, authMiddleware.authenticate, projectController.removeProjectMember)
+router.patch(ROUTES.PROJECTS.UPDATE_PROJECT_MEMBER_ROLE, authMiddleware.authenticate, projectController.updateProjectMemberRole)
+
+export default router;

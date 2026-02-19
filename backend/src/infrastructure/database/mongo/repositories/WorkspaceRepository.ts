@@ -22,7 +22,7 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
             members: workspace.members,
             createdAt: workspace.createdAt,
             updatedAt: workspace.updatedAt,
-        })
+        } as IWorkspaceEntity)
         const createdDoc = await super.findById(id);
         if (!createdDoc) throw new Error(WORKSPACE_ERRORS.WORKSPACE_CREATION_FAILED);
         return createdDoc;
@@ -76,8 +76,29 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
     }
 
     async getWorkspaceMembers(workspaceId: string): Promise<IUserEntity[]> {
-        const workspace = await this.model.findById(workspaceId).populate('members');
+        const workspace = await this.model.findById(workspaceId).populate('members').populate('ownerId');
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
-        return workspace.members as unknown as IUserEntity[];
+
+        const members = workspace.members as unknown as IUserEntity[];
+
+        return members;
+    }
+
+    async removeMember(workspaceId: string, memberId: string): Promise<void> {
+        await this.model.updateOne(
+            { _id: workspaceId },
+            { $pull: { members: new Types.ObjectId(memberId) } }
+        );
+    }
+
+    async findWorkspaceAndUser(workspaceId: string, userId: string): Promise<boolean> {
+        const doc = await this.model.findOne({
+            _id: workspaceId,
+            $or: [
+                { ownerId: userId },
+                { members: userId }
+            ]
+        });
+        return !!doc;
     }
 }

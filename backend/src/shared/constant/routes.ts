@@ -30,9 +30,23 @@ export const ROUTES = {
         ACCEPT_INVITE: "/accept-invite/:token",
         COMPLETE_PROFILE: "/complete-profile",
         GET_WORKSPACE_MEMBERS: "/:workspaceId/members",
+        REMOVE_MEMBER: "/:workspaceId/members",
+        CREATE_ROLE: "/create-role",
+        UPDATE_ROLE: "/update-role/:roleId",
+        DELETE_ROLE: "/delete-role/:roleId",
+        GET_ROLES: "/get-roles",
     },
     STRIPE: {
         WEBHOOK: "/webhook"
+    },
+    PROJECTS: {
+        CREATE_PROJECT: "/create-project",
+        GET_ALL_PROJECTS: "/get-all-projects/:workspaceId",
+        UPDATE_PROJECT: "/update-project/:projectId",
+        DELETE_PROJECT: "/delete-project/:projectId",
+        ADD_PROJECT_MEMBER: "/add-project-member/:projectId",
+        REMOVE_PROJECT_MEMBER: "/remove-project-member/:projectId/:userId",
+        UPDATE_PROJECT_MEMBER_ROLE: "/update-member-role/:projectId",
     },
     ADMIN: {
         LOGIN: "/login",
@@ -42,6 +56,8 @@ export const ROUTES = {
         UNBLOCK_USER: "/unblock-user/:userId",
         CREATE_PLAN: "/create-plan",
         GET_ALL_PLAN: "/get-plans",
-        UPDATE_PLAN: "/update-plan/:planId"
+        UPDATE_PLAN: "/update-plan/:planId",
+        GET_PAYMENTS: '/payments',
+        GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf'
     }
 };

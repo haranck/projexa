@@ -1,7 +1,7 @@
-import mongoose,{Document,Types} from "mongoose";
+import mongoose, { Document } from "mongoose";
 
 export interface OtpDocument extends Document {
-  userId: Types.ObjectId;
+  userId: string;
   code: string;
   expiresAt: Date;
   isUsed: boolean;
@@ -12,8 +12,8 @@ const otpSchema = new mongoose.Schema({
   userId: String,
   code: String,
   expiresAt: {
-    type:Date,
-    expires:60
+    type: Date,
+    expires: 60
   },
   isUsed: Boolean,
 }, { timestamps: true });

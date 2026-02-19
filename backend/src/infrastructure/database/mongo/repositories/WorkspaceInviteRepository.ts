@@ -24,21 +24,6 @@ export class WorkspaceInviteRepository extends BaseRepo<IWorkspaceInviteEntity> 
         if (!createdDoc) throw new Error("Invite creation failed")
         return createdDoc
     }
-    async getWorkspacesByUserId(userId: string): Promise<IWorkspaceInviteEntity[]> {
-        const docs = await this.model.find({
-            $or: [
-                { ownerId: userId },
-                { members: userId }
-            ]
-        }).populate({
-            path: 'subscriptionId',
-            populate: {
-                path: 'planId'
-            }
-        });
-
-        return docs;
-    }
     async findByToken(token: string): Promise<IWorkspaceInviteEntity | null> {
         const doc = await this.model.findOne({ token });
         return doc;

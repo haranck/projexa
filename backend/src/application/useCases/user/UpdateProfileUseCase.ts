@@ -9,7 +9,7 @@ import { MESSAGES } from "../../../domain/constants/messages";
 @injectable()
 export class UpdateProfileUseCase implements IUpdateProfileUseCase {
     constructor(
-        @inject('IUserRepository') private readonly _userRepository: IUserRepository
+        @inject("IUserRepository") private readonly _userRepository: IUserRepository
     ) { }
     async execute(dto: UpdateProfileDTO): Promise<UpdateProfileResponseDTO> {
         const user = await this._userRepository.findById(dto.userId)

@@ -76,7 +76,34 @@ import { IAcceptInviteUseCase } from "../../application/interface/user/IAcceptIn
 import { AcceptInviteUseCase } from "../../application/useCases/user/AcceptInviteUseCase";
 import { IGetWorkspaceMembersUseCase } from "../../application/interface/user/IGetWorkspaceMembersUseCase";
 import { GetWorkspaceMembersUseCase } from "../../application/useCases/user/GetWorkspaceMembersUseCase";
-
+import { IRemoveWorkspaceMemberUseCase } from "../../application/interface/user/IRemoveWorkspaceMemberUseCase";
+import { RemoveWorkspaceMemberUseCase } from "../../application/useCases/user/RemoveWorkspaceMemberUseCase";
+import { IGetAdminPaymentsUseCase } from "../../application/interface/admin/IGetAdminPaymentsUseCase";
+import { GetAdminPaymentsUseCase } from "../../application/useCases/admin/GetAdminPaymentsUseCase";
+import { IExportAdminPaymentsPDFUseCase } from "../../application/interface/admin/IExportAdminPaymentsPDFUseCase";
+import { ExportAdminPaymentsPDFUseCase } from "../../application/useCases/admin/ExportAdminPaymentsPDFUseCase";
+import { ICreateRoleUseCase } from "../../application/interface/user/ICreateRoleUseCase";
+import { CreateRoleUseCase } from "../../application/useCases/user/CreateRoleUseCase";
+import { IUpdateRoleUseCase } from "../../application/interface/user/IUpdateRoleUseCase";
+import { UpdateRoleUseCase } from "../../application/useCases/user/UpdateRoleUseCase";
+import { IDeleteRoleUseCase } from "../../application/interface/user/IDeleteRoleUseCase";
+import { DeleteRoleUseCase } from "../../application/useCases/user/DeleteRoleUseCase";
+import { IGetAllRolesUseCase } from "../../application/interface/user/IGetAllRolesUseCase";
+import { GetAllRolesUseCase } from "../../application/useCases/user/GetAllRolesUseCase";
+import { IAddProjectMemberUseCase } from "../../application/interface/project/IAddProjectMemberUseCase";
+import { ICreateProjectUseCase } from "../../application/interface/project/ICreateProjectUseCase";
+import { CreateProjectUseCase } from "../../application/useCases/project/CreateProjectUseCase";
+import { AddProjectMemberUseCase } from "../../application/useCases/project/AddProjectMemberUseCase";
+import { IGetAllProjectsUseCase } from "../../application/interface/project/IGetAllProjectsUseCase";
+import { GetAllProjectsUseCase } from "../../application/useCases/project/GetAllProjectsUseCase";
+import { IDeleteProjectUseCase } from "../../application/interface/project/IDeleteProjectUseCase";
+import { DeleteProjectUseCase } from "../../application/useCases/project/DeleteProjectUseCase";
+import { IUpdateProjectUseCase } from "../../application/interface/project/IUpdateProjectUseCase";
+import { UpdateProjectUseCase } from "../../application/useCases/project/UpdateProjectUseCase";
+import { IRemoveProjectMemberUseCase } from "../../application/interface/project/IRemoveProjectMemberUseCase";
+import { RemoveProjectMemberUseCase } from "../../application/useCases/project/RemoveProjectMemberUseCase";
+import { IUpdateProjectMemberRoleUseCase } from "../../application/interface/project/IUpdateProjectMemberRoleUseCase";
+import { UpdateProjectMemberRoleUseCase } from "../../application/useCases/project/UpdateProjectMemberRoleUseCase";
 
 
 export class UseCaseModule {
@@ -158,6 +185,14 @@ export class UseCaseModule {
 
         container.register<IUpdatePlanUseCase>('IUpdatePlanUseCase', {
             useClass: UpdatePlanUseCase
+        })
+
+        container.register<IGetAdminPaymentsUseCase>('IGetAdminPaymentsUseCase', {
+            useClass: GetAdminPaymentsUseCase
+        })
+
+        container.register<IExportAdminPaymentsPDFUseCase>('IExportAdminPaymentsPDFUseCase', {
+            useClass: ExportAdminPaymentsPDFUseCase
         })
 
         /*--------------------- User UseCases ---------------------*/
@@ -244,6 +279,54 @@ export class UseCaseModule {
 
         container.register<IGetWorkspaceMembersUseCase>('IGetWorkspaceMembersUseCase', {
             useClass: GetWorkspaceMembersUseCase
+        })
+
+        container.register<IRemoveWorkspaceMemberUseCase>('IRemoveWorkspaceMemberUseCase', {
+            useClass: RemoveWorkspaceMemberUseCase
+        })
+
+        container.register<ICreateRoleUseCase>('ICreateRoleUseCase', {
+            useClass: CreateRoleUseCase
+        })
+
+        container.register<IUpdateRoleUseCase>('IUpdateRoleUseCase', {
+            useClass: UpdateRoleUseCase
+        })
+
+        container.register<IDeleteRoleUseCase>('IDeleteRoleUseCase', {
+            useClass: DeleteRoleUseCase
+        })
+
+        container.register<IGetAllRolesUseCase>('IGetAllRolesUseCase', {
+            useClass: GetAllRolesUseCase
+        })
+
+        container.register<ICreateProjectUseCase>('ICreateProjectUseCase', {
+            useClass: CreateProjectUseCase
+        })
+
+        container.register<IAddProjectMemberUseCase>('IAddProjectMemberUseCase', {
+            useClass: AddProjectMemberUseCase
+        })
+
+        container.register<IGetAllProjectsUseCase>('IGetAllProjectsUseCase', {
+            useClass: GetAllProjectsUseCase
+        })
+
+        container.register<IDeleteProjectUseCase>('IDeleteProjectUseCase', {
+            useClass: DeleteProjectUseCase
+        })
+
+        container.register<IUpdateProjectUseCase>('IUpdateProjectUseCase', {
+            useClass: UpdateProjectUseCase
+        })
+
+        container.register<IRemoveProjectMemberUseCase>('IRemoveProjectMemberUseCase', {
+            useClass: RemoveProjectMemberUseCase
+        })
+
+        container.register<IUpdateProjectMemberRoleUseCase>('IUpdateProjectMemberRoleUseCase', {
+            useClass: UpdateProjectMemberRoleUseCase
         })
     }
 }
