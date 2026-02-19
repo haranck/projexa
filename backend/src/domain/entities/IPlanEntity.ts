@@ -1,9 +1,7 @@
-import type { Types } from "mongoose";
 import { PlanInterval } from "../enums/PlanInterval";
 
 export interface IPlanEntity {
-    _id?: Types.ObjectId;
-    id?: string;
+    _id?: string;
     name: string;
     price: number;
     interval: PlanInterval;

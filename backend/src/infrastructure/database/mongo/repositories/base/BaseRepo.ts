@@ -1,8 +1,8 @@
 import { Model, Types } from "mongoose";
 import { IBaseRepository } from "../../../../../domain/interfaces/repositories/base/IBaseRepository";
 
-type WithId = {
-  _id?: Types.ObjectId;
+export type WithId = {
+  _id?: string | Types.ObjectId;
 };
 
 export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {

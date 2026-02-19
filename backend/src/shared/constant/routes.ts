@@ -39,6 +39,15 @@ export const ROUTES = {
     STRIPE: {
         WEBHOOK: "/webhook"
     },
+    PROJECTS: {
+        CREATE_PROJECT: "/create-project",
+        GET_ALL_PROJECTS: "/get-all-projects/:workspaceId",
+        UPDATE_PROJECT: "/update-project/:projectId",
+        DELETE_PROJECT: "/delete-project/:projectId",
+        ADD_PROJECT_MEMBER: "/add-project-member/:projectId",
+        REMOVE_PROJECT_MEMBER: "/remove-project-member/:projectId/:userId",
+        UPDATE_PROJECT_MEMBER_ROLE: "/update-member-role/:projectId",
+    },
     ADMIN: {
         LOGIN: "/login",
         LOGOUT: "/logout",

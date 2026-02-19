@@ -15,7 +15,7 @@ export class UserController {
         @inject("IVerifyPasswordUseCase") private readonly _verifyPasswordUseCase: IVerifyPasswordUseCase,
         @inject("IProfileImageUploadUrlUseCase") private readonly _profileImageUploadUrlUseCase: IProfileImageUploadUrlUseCase,
         @inject("IUpdateProfileImageUseCase") private readonly _updateProfileImageUseCase: IUpdateProfileImageUseCase,
-        @inject("IUpdateProfileUseCase") private readonly _updateProfileUseCase :IUpdateProfileUseCase
+        @inject("IUpdateProfileUseCase") private readonly _updateProfileUseCase: IUpdateProfileUseCase
     ) { }
 
     verifyPassword = async (req: AuthRequest, res: Response): Promise<void> => {

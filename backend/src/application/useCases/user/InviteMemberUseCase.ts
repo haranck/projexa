@@ -35,7 +35,7 @@ export class InviteMemberUseCase implements IInviteMemberUseCase {
         const token = crypto.randomBytes(64).toString('hex')
 
         const inviteEntity: IWorkspaceInviteEntity = {
-            id: '',
+            _id: '',
             workspaceId: dto.workspaceId,
             email: dto.email,
             role: 'MEMBER',

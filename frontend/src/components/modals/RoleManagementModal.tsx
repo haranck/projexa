@@ -34,7 +34,7 @@ interface RoleManagementModalProps {
 }
 
 interface IRole {
-    id: string;
+    _id: string;
     name: string;
     permissions: string[];
 }
@@ -85,7 +85,7 @@ const RoleManagementModal: React.FC<RoleManagementModalProps> = ({ open, onClose
     };
 
     const handleStartEdit = (role: IRole) => {
-        setEditingRoleId(role.id);
+        setEditingRoleId(role._id);
         setEditRoleName(role.name);
         setEditRolePermissions(role.permissions);
     };
@@ -125,7 +125,7 @@ const RoleManagementModal: React.FC<RoleManagementModalProps> = ({ open, onClose
     const handleConfirmDelete = () => {
         if (!roleToDelete) return;
 
-        deleteRoleMutation.mutate(roleToDelete.id, {
+        deleteRoleMutation.mutate(roleToDelete._id, {
             onSuccess: () => {
                 toast.success("Role deleted successfully");
                 setIsDeleteDialogOpen(false);
@@ -191,15 +191,15 @@ const RoleManagementModal: React.FC<RoleManagementModalProps> = ({ open, onClose
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {rolesData?.data?.map((role: IRole) => (
                                     <div
-                                        key={role.id}
+                                        key={role._id}
                                         className="group relative bg-[#0a0c10] border border-white/5 rounded-2xl p-5 transition-all duration-300 hover:border-blue-500/30 hover:bg-[#0d1016] flex flex-col min-h-[180px]"
                                     >
                                         {/* Actions Overlay */}
                                         <div className="absolute top-4 right-4 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                                            {editingRoleId === role.id ? (
+                                            {editingRoleId === role._id ? (
                                                 <>
                                                     <button
-                                                        onClick={() => handleSaveEdit(role.id)}
+                                                        onClick={() => handleSaveEdit(role._id)}
                                                         className="p-1.5 rounded-md bg-blue-500 text-white hover:bg-blue-600 transition-all shadow-lg shadow-blue-500/20"
                                                     >
                                                         <Save className="w-3.5 h-3.5" />
@@ -230,7 +230,7 @@ const RoleManagementModal: React.FC<RoleManagementModalProps> = ({ open, onClose
                                         </div>
 
                                         <div className="space-y-4 flex-1">
-                                            {editingRoleId === role.id ? (
+                                            {editingRoleId === role._id ? (
                                                 <input
                                                     type="text"
                                                     value={editRoleName}
@@ -246,18 +246,18 @@ const RoleManagementModal: React.FC<RoleManagementModalProps> = ({ open, onClose
 
                                             <ul className="space-y-2.5">
                                                 {AVAILABLE_PERMISSIONS.map((perm) => {
-                                                    const isSelected = editingRoleId === role.id
+                                                    const isSelected = editingRoleId === role._id
                                                         ? editRolePermissions.includes(perm.key)
                                                         : role.permissions.includes(perm.key);
 
-                                                    if (editingRoleId !== role.id && !isSelected) return null;
+                                                    if (editingRoleId !== role._id && !isSelected) return null;
 
                                                     return (
                                                         <li
                                                             key={perm.key}
                                                             className="flex items-center gap-2 group/item"
                                                         >
-                                                            {editingRoleId === role.id ? (
+                                                            {editingRoleId === role._id ? (
                                                                 <button
                                                                     onClick={() => togglePermission(editRolePermissions, setEditRolePermissions, perm.key)}
                                                                     className={`flex items-center gap-2 w-full text-left transition-all ${isSelected ? 'text-blue-400' : 'text-zinc-600'}`}

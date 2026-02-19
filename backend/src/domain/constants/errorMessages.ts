@@ -102,3 +102,20 @@ export const WORKSPACE_ERRORS = {
     CANNOT_REMOVE_OWNER: "Owner cannot be removed from workspace !",
     NOT_AUTHORIZED_REMOVE_MEMBER: "You are not authorized to remove members !",
 };
+
+export const PROJECT_ERRORS = {
+    PROJECT_NOT_FOUND: "Project not found !",
+    PROJECT_CREATION_FAILED: "Project creation failed",
+    PROJECT_INVALIDATION: "Error while validating project !",
+    NO_PROJECTS_FOUND: "No projects found",
+    PROJECT_ALREADY_EXISTS: "Project Already Exists",
+    PROJECT_FETCHING_FAILED: "Failed to fetch projects !",
+    PROJECT_ROLE_NOT_FOUND: "Project role not found !",
+    PROJECT_MEMBER_ALREADY_EXISTS: "Project member already exists !",
+    PROJECT_ROLE_REQUIRED: "Project role is required !",
+    PROJECT_UPDATE_FAILED: "Project update failed !",
+    PROJECT_MEMBER_NOT_FOUND: "Project member not found !",
+    INVALID_DATA: "ProjectId, UserId and RoleId are required.",
+    ROLE_NOT_FOUND: "Role not found !",
+    CANNOT_REMOVE_CREATOR: "Creator cannot be removed from project !"
+};

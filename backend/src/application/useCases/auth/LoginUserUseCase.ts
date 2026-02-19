@@ -35,9 +35,9 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     if (!isMatch) throw new Error(ERROR_MESSAGES.INVALID_CREDENTIALS);
 
-    if (!user.id) throw new Error(USER_ERRORS.USER_ID_MISSING);
+    if (!user._id) throw new Error(USER_ERRORS.USER_ID_MISSING);
 
-    const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user.id.toString());
+    const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user._id.toString());
 
     const workspaceMap = workspaces.map(workspace => ({
       id: workspace._id!.toString(),
@@ -48,7 +48,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     const defaultWorkspace = workspaceMap.length > 0 ? workspaceMap[0] : null;
 
     const payload = {
-      userId: user.id,
+      userId: user._id,
       email: user.email,
     };
 
@@ -62,7 +62,7 @@ export class LoginUserUseCase implements ILoginUserUseCase {
       workspaces: workspaceMap,
       defaultWorkspace,
       user: {
-        id: user.id,
+        id: user._id,
         firstName: user.firstName!,
         lastName: user.lastName!,
         email: user.email,

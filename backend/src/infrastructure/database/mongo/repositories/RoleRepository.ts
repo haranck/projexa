@@ -16,7 +16,11 @@ export class RoleRepository extends BaseRepo<IRoleEntity> implements IRoleReposi
     }
 
     async createRole(role: CreateRoleDTO): Promise<IRoleEntity> {
-        const id = await super.create(RoleMapper.toPersistence(role) as IRoleEntity)
+        const id = await super.create({
+            name: role.name,
+            permissions: role.permissions,
+            createdBy: role.createdBy
+        } as IRoleEntity)
         const doc = await super.findById(id)
         if (!doc) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
         return RoleMapper.toEntity(doc as unknown as RoleDocument)
@@ -38,7 +42,10 @@ export class RoleRepository extends BaseRepo<IRoleEntity> implements IRoleReposi
     }
 
     async updateRole(id: string, role: UpdateRoleDTO): Promise<IRoleEntity | null> {
-        const doc = await super.update(RoleMapper.toUpdatePersistence(role) as IRoleEntity, id)
+        const doc = await super.update({
+            name: role.name,
+            permissions: role.permissions
+        } as Partial<IRoleEntity>, id)
         return doc ? RoleMapper.toEntity(doc as unknown as RoleDocument) : null
     }
 

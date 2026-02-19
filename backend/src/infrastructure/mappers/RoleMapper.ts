@@ -7,10 +7,10 @@ import { UpdateRoleDTO } from "../../application/dtos/user/requestDTOs/UpdateRol
 export class RoleMapper {
     static toEntity(doc: RoleDocument): IRoleEntity {
         return {
-            id: doc._id.toString(),
+            _id: doc._id.toString(),
             name: doc.name,
             permissions: doc.permissions,
-            createdBy: doc.createdBy,
+            createdBy: doc.createdBy.toString(),
             createdAt: doc.createdAt,
             updatedAt: doc.updatedAt
         };

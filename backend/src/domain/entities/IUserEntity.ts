@@ -1,8 +1,5 @@
-import type { Types } from "mongoose";
-
 export interface IUserEntity {
-  _id?: Types.ObjectId;
-  id?: string;
+  _id?: string;
   firstName?: string;
   lastName?: string;
   email: string;

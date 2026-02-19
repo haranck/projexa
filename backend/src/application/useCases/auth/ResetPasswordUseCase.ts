@@ -19,11 +19,11 @@ export class ResetPasswordUseCase implements IResetPasswordUseCase {
     }
 
     const user = await this._userRepo.findByEmail(dto.email);
-    if (!user || !user.id) {
+    if (!user || !user._id) {
       throw new Error(USER_ERRORS.USER_NOT_FOUND);
     }
 
     const hashedPassword = await this._passwordService.hash(dto.password);
-    await this._userRepo.updatePassword(user.id, hashedPassword);
+    await this._userRepo.updatePassword(user._id, hashedPassword);
   }
 }

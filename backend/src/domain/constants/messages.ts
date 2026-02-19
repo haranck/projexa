@@ -54,6 +54,10 @@ export const MESSAGES = {
         PROJECT_UPDATED_SUCCESSFULLY: "Project updated successfully",
         STATUS_UPDATED_SUCCESSFULLY: "Project status updated successfully",
         GET_ALL_PROJECTS: "Fetched projects successfully",
+        PROJECT_DELETED_SUCCESSFULLY: "Project deleted successfully",
+        PROJECT_MEMBER_ADDED_SUCCESSFULLY: "Project member added successfully",
+        PROJECT_MEMBER_REMOVED_SUCCESSFULLY: "Project member removed successfully",
+        PROJECT_MEMBER_UPDATED_SUCCESSFULLY: "Project member updated successfully",
     },
     WORKSPACE: {
         WORKSPACE_CREATED_SUCCESSFULLY: "Workspace created successfully",

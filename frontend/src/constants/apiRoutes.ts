@@ -46,5 +46,14 @@ export const API_ROUTES = {
     UPDATE_ROLE: "/v1/workspace/update-role/:roleId",
     DELETE_ROLE: "/v1/workspace/delete-role/:roleId",
     GET_ROLES: "/v1/workspace/get-roles"
+  },
+  PROJECTS: {
+    CREATE_PROJECT: "/project/create-project",
+    GET_ALL_PROJECTS: "/project/get-all-projects/:workspaceId",
+    UPDATE_PROJECT: "/project/update-project/:projectId",
+    DELETE_PROJECT: "/project/delete-project/:projectId",
+    ADD_PROJECT_MEMBER: "/project/add-project-member/:projectId",
+    REMOVE_PROJECT_MEMBER: "/project/remove-project-member/:projectId/:userId",
+    UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId"
   }
 };

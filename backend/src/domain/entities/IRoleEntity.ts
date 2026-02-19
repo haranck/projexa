@@ -1,11 +1,8 @@
-import { Types } from "mongoose";
-
 export interface IRoleEntity {
-    _id?: Types.ObjectId;
-    id?: string;
+    _id?: string;
     name: string;
     permissions: string[];
-    createdBy: Types.ObjectId;
+    createdBy: string;
     createdAt?: Date;
     updatedAt?: Date;
 }

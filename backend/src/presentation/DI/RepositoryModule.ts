@@ -13,6 +13,10 @@ import { IWorkspaceInviteRepository } from "../../domain/interfaces/repositories
 import { WorkspaceInviteRepository } from "../../infrastructure/database/mongo/repositories/WorkspaceInviteRepository";
 import { IRoleRepository } from "../../domain/interfaces/repositories/IRoleRepository";
 import { RoleRepository } from "../../infrastructure/database/mongo/repositories/RoleRepository";
+import { IProjectRepository } from "../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
+import { ProjectRepository } from "../../infrastructure/database/mongo/repositories/ProjectRepo/ProjectRepository";
+import { IProjectMemberRepository } from "../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
+import { ProjectMemberRepository } from "../../infrastructure/database/mongo/repositories/ProjectRepo/ProjectMemberRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -43,6 +47,14 @@ export class RepositoryModule {
 
         container.register<IRoleRepository>('IRoleRepository', {
             useClass: RoleRepository
+        })
+
+        container.register<IProjectRepository>('IProjectRepository', {
+            useClass: ProjectRepository
+        })
+
+        container.register<IProjectMemberRepository>('IProjectMemberRepository', {
+            useClass: ProjectMemberRepository
         })
     }
 }

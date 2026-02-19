@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 export class WorkspaceInviteMapper {
     static toEntity(doc: WorkspaceInviteDocument): IWorkspaceInviteEntity {
         return {
-            id: doc._id.toString(),
+            _id: doc._id.toString(),
             workspaceId: doc.workspaceId.toString(),
             email: doc.email,
             role: doc.role,

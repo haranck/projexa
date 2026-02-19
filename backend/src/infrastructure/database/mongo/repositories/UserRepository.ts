@@ -8,11 +8,13 @@ import { USER_ERRORS } from "../../../../domain/constants/errorMessages";
 import { GetUsersRequestDTO } from "../../../../application/dtos/admin/requestDTOs/GetUsersRequestDTO";
 import { GetUsersResponseDTO } from "../../../../application/dtos/admin/responseDTOs/GetUsersResponseDTO";
 import { injectable } from "tsyringe";
+import { Model } from "mongoose";
+
 
 @injectable()
 export class UserRepository extends BaseRepo<IUserEntity> implements IUserRepository {
   constructor() {
-    super(UserModel);
+    super(UserModel as unknown as Model<IUserEntity>);
   }
 
   async findByEmail(email: string): Promise<IUserEntity | null> {
@@ -24,7 +26,7 @@ export class UserRepository extends BaseRepo<IUserEntity> implements IUserReposi
   async findById(id: string): Promise<IUserEntity | null> {
     const doc = await super.findById(id);
     if (!doc) return null;
-    return UserMapper.toEntity(doc as UserDocument);
+    return UserMapper.toEntity(doc as unknown as UserDocument);
   }
 
   async createUser(user: IUserEntity): Promise<IUserEntity> {
@@ -52,21 +54,21 @@ export class UserRepository extends BaseRepo<IUserEntity> implements IUserReposi
     await super.update({
       password: hashedPassword,
       updatedAt: new Date(),
-    }, userId);
+    } as Partial<IUserEntity>, userId);
   }
 
   async blockUser(userId: string): Promise<void> {
     await super.update({
       isBlocked: true,
       updatedAt: new Date(),
-    }, userId);
+    } as Partial<IUserEntity>, userId);
   }
 
   async unblockUser(userId: string): Promise<void> {
     await super.update({
       isBlocked: false,
       updatedAt: new Date(),
-    }, userId);
+    } as Partial<IUserEntity>, userId);
   }
 
   async findAllUsers(dto: GetUsersRequestDTO): Promise<GetUsersResponseDTO> {

@@ -11,4 +11,5 @@ export interface IWorkspaceRepository {
     addMemberToWorkspace(workspaceId: string, userId: string): Promise<void>;
     getWorkspaceMembers(workspaceId: string): Promise<IUserEntity[]>;
     removeMember(workspaceId:string,memberId:string):Promise<void>
+    findWorkspaceAndUser(workspaceId:string,userId:string):Promise<boolean>
 }

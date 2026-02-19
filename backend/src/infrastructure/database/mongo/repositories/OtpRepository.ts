@@ -22,11 +22,11 @@ export class OtpRepository extends BaseRepo<IOtpEntity> implements IOtpRepositor
     });
   }
 
-  async findValidOtp(email: string, code: string): Promise<IOtpEntity | null> {
+  async findValidOtp(userId: string, code: string): Promise<IOtpEntity | null> {
     const doc = await OtpModel.findOne({
-      userId: email,
+      userId,
       code,
-      isUsed: false, 
+      isUsed: false,
       expiresAt: { $gt: new Date() },
     }).sort({ createdAt: -1 });
 
@@ -39,9 +39,9 @@ export class OtpRepository extends BaseRepo<IOtpEntity> implements IOtpRepositor
     await super.update({ isUsed: true }, otpId);
   }
 
-  async invalidateAll(email: string): Promise<void> {
+  async invalidateAll(userId: string): Promise<void> {
     await OtpModel.updateMany(
-      { email, isUsed: false },
+      { userId, isUsed: false },
       { isUsed: true }
     )
   }

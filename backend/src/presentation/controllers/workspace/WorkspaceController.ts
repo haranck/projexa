@@ -204,7 +204,7 @@ export class WorkspaceController {
             res.status(HTTP_STATUS.OK).json({
                 message: MESSAGES.USERS.PROFILE_COMPLETED_SUCCESSFULLY,
                 data: {
-                    id: user.id,
+                    id: user._id,
                     email: user.email,
                     firstName: user.firstName,
                     lastName: user.lastName,
@@ -286,7 +286,6 @@ export class WorkspaceController {
         try {
             const { roleId } = req.params
             const { name, permissions } = req.body
-
             const updatedRole = await this._updateRoleUseCase.execute({ roleId, name, permissions })
 
             res.status(HTTP_STATUS.OK).json({

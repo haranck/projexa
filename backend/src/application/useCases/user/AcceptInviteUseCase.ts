@@ -27,8 +27,7 @@ export class AcceptInviteUseCase implements IAcceptInviteUseCase {
             if (!user) throw new Error(USER_ERRORS.INVITE_ALREADY_USED)
 
             const workspace = await this._workspaceRepo.getWorkspaceById(invite.workspaceId)
-            const isMember = workspace?.members?.includes(user.id!)
-
+            const isMember = workspace?.members?.includes(user._id!)
             if (!isMember) {
                 throw new Error(USER_ERRORS.INVITE_ALREADY_USED)
             }
@@ -37,19 +36,19 @@ export class AcceptInviteUseCase implements IAcceptInviteUseCase {
                 user = await this._userRepository.createUser({ email: invite.email })
             }
 
-            await this._workspaceRepo.addMemberToWorkspace(invite.workspaceId, user.id!)
-            await this._workspaceInviteRepo.markAsUsed(invite.id)
+            await this._workspaceRepo.addMemberToWorkspace(invite.workspaceId, user._id!)
+            await this._workspaceInviteRepo.markAsUsed(invite._id!)
         }
 
-        const acccessToken = this._tokenService.signAccessToken({ userId: user!.id!, email: user!.email })
-        const refreshToken = this._tokenService.signRefreshToken({ userId: user!.id!, email: user!.email })
+        const acccessToken = this._tokenService.signAccessToken({ userId: user!._id!, email: user!.email })
+        const refreshToken = this._tokenService.signRefreshToken({ userId: user!._id!, email: user!.email })
 
         return {
             accessToken: acccessToken,
             refreshToken: refreshToken,
             workspaceId: invite.workspaceId,
             user: {
-                id: user!.id!,
+                id: user!._id!,
                 email: user!.email,
                 firstName: user!.firstName,
                 lastName: user!.lastName,
