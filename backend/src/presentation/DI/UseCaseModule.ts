@@ -104,7 +104,8 @@ import { IRemoveProjectMemberUseCase } from "../../application/interface/project
 import { RemoveProjectMemberUseCase } from "../../application/useCases/project/RemoveProjectMemberUseCase";
 import { IUpdateProjectMemberRoleUseCase } from "../../application/interface/project/IUpdateProjectMemberRoleUseCase";
 import { UpdateProjectMemberRoleUseCase } from "../../application/useCases/project/UpdateProjectMemberRoleUseCase";
-
+import { ICreateIssueUseCase } from "../../application/interface/Issue/ICreateIssueUseCase";
+import { CreateIssueUseCase } from "../../application/useCases/Issue/CreateIssueUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -327,6 +328,10 @@ export class UseCaseModule {
 
         container.register<IUpdateProjectMemberRoleUseCase>('IUpdateProjectMemberRoleUseCase', {
             useClass: UpdateProjectMemberRoleUseCase
+        })
+
+        container.register<ICreateIssueUseCase>('ICreateIssueUseCase', {
+            useClass: CreateIssueUseCase
         })
     }
 }

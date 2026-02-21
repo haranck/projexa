@@ -117,5 +117,16 @@ export const PROJECT_ERRORS = {
     PROJECT_MEMBER_NOT_FOUND: "Project member not found !",
     INVALID_DATA: "ProjectId, UserId and RoleId are required.",
     ROLE_NOT_FOUND: "Role not found !",
-    CANNOT_REMOVE_CREATOR: "Creator cannot be removed from project !"
+    CANNOT_REMOVE_CREATOR: "Creator cannot be removed from project !",
+    ISSUE_NOT_FOUND: "Issue not found !",
+    ISSUE_CREATION_FAILED: "Issue creation failed",
+    ISSUE_INVALIDATION: "Error while validating issue !",
+    NO_ISSUES_FOUND: "No issues found",
+    ISSUE_ALREADY_EXISTS: "Issue Already Exists",
+    ISSUE_FETCHING_FAILED: "Failed to fetch issues !",
+    ISSUE_MEMBER_ALREADY_EXISTS: "Issue member already exists !",
+    ISSUE_ROLE_REQUIRED: "Issue role is required !",
+    ISSUE_UPDATE_FAILED: "Issue update failed !",
+    ISSUE_MEMBER_NOT_FOUND: "Issue member not found !",
+    NON_EPIC_ISSUE_WITHOUT_PARENT: "Non epic issues must have a parent Issue",
 };

@@ -17,6 +17,8 @@ import { IProjectRepository } from "../../domain/interfaces/repositories/Project
 import { ProjectRepository } from "../../infrastructure/database/mongo/repositories/ProjectRepo/ProjectRepository";
 import { IProjectMemberRepository } from "../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
 import { ProjectMemberRepository } from "../../infrastructure/database/mongo/repositories/ProjectRepo/ProjectMemberRepository";
+import { IIssueRepository } from "../../domain/interfaces/repositories/IssueRepo/IIssueRepository";
+import { IssueRepository } from "../../infrastructure/database/mongo/repositories/IssueRepo/IssueRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -55,6 +57,10 @@ export class RepositoryModule {
 
         container.register<IProjectMemberRepository>('IProjectMemberRepository', {
             useClass: ProjectMemberRepository
+        })
+
+        container.register<IIssueRepository>('IssueRepository', {
+            useClass: IssueRepository
         })
     }
 }

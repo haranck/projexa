@@ -48,6 +48,12 @@ export const ROUTES = {
         REMOVE_PROJECT_MEMBER: "/remove-project-member/:projectId/:userId",
         UPDATE_PROJECT_MEMBER_ROLE: "/update-member-role/:projectId",
     },
+    ISSUES: {
+        CREATE_ISSUE: "/issues/create-issue/:projectId",
+        GET_ALL_ISSUES: "/issues/get-all-issues/:projectId",
+        UPDATE_ISSUE: "/issues/update-issue/:issueId",
+        DELETE_ISSUE: "/issues/delete-issue/:issueId",
+    },
     ADMIN: {
         LOGIN: "/login",
         LOGOUT: "/logout",

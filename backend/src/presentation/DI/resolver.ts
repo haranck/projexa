@@ -9,6 +9,7 @@ import { WorkspaceController } from '../controllers/workspace/WorkspaceControlle
 import { StripeWebhookController } from '../controllers/workspace/StripeWebhookController'
 import { OnBoardingMiddleware } from '../middleware/onBoarding/onBoardingMiddleware'
 import { ProjectController } from '../controllers/project/ProjectController'
+import { IssueController } from '../controllers/Issue/IssueController'
 
 ContainerSetup.registerAll();
 
@@ -20,3 +21,4 @@ export const workspaceController = container.resolve(WorkspaceController)
 export const stripeWebhookController = container.resolve(StripeWebhookController)
 export const onBoardingMiddleware = container.resolve(OnBoardingMiddleware)
 export const projectController = container.resolve(ProjectController)
+export const issueController = container.resolve(IssueController)

@@ -8,5 +8,6 @@ export enum IssueType {
     EPIC='EPIC',
     STORY='STORY',
     TASK='TASK',
-    BUG='BUG'
+    BUG='BUG',
+    SUBTASK='SUBTASK'
 }

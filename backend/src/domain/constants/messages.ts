@@ -77,5 +77,8 @@ export const MESSAGES = {
         ROLE_DELETED_SUCCESSFULLY: "Role deleted successfully",
         GET_ROLES_SUCCESSFULLY: "Roles fetched successfully",
         GET_ALL_ROLES_SUCCESSFULLY: "Roles fetched successfully",
+    },
+    ISSUE: {
+        ISSUE_CREATED_SUCCESSFULLY: "Issue created successfully",
     }
 };

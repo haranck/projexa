@@ -18,29 +18,6 @@ export class ProjectRepository extends BaseRepo<IProjectEntity> implements IProj
         super(ProjectModel as unknown as Model<IProjectEntity>)
     }
 
-    private async _getPopulatedMembers(projectId: Types.ObjectId) {
-        interface PopulatedMember {
-            _id: Types.ObjectId;
-            userId: { _id: Types.ObjectId, firstName: string, lastName: string, avatarUrl: string } | null;
-            roleId: Types.ObjectId;
-            createdAt: Date;
-        }
-
-        const members = await ProjectMemberModel.find({ projectId })
-            .populate('userId', 'firstName lastName avatarUrl')
-            .lean<PopulatedMember[]>();
-
-        return members.map(m => ({
-            userId: m.userId?._id?.toString() || (m.userId as unknown as Types.ObjectId)?.toString() || "",
-            roleId: m.roleId.toString(),
-            joinedAt: m.createdAt,
-            user: (m.userId && typeof m.userId === 'object' && 'firstName' in m.userId) ? {
-                userName: `${m.userId.firstName || ''} ${m.userId.lastName || ''}`.trim() || 'Unknown User',
-                profilePicture: m.userId.avatarUrl || ""
-            } : undefined
-        }));
-    }
-
     async createProject(project: CreateProjectDTO): Promise<IProjectEntity> {
         const id = await super.create({
             projectName: project.projectName,
@@ -128,5 +105,28 @@ export class ProjectRepository extends BaseRepo<IProjectEntity> implements IProj
             limit: limitNumber,
             totalPages: Math.ceil(total / limitNumber)
         };
+    }
+
+    private async _getPopulatedMembers(projectId: Types.ObjectId) {
+        interface PopulatedMember {
+            _id: Types.ObjectId;
+            userId: { _id: Types.ObjectId, firstName: string, lastName: string, avatarUrl: string } | null;
+            roleId: Types.ObjectId;
+            createdAt: Date;
+        }
+
+        const members = await ProjectMemberModel.find({ projectId })
+            .populate('userId', 'firstName lastName avatarUrl')
+            .lean<PopulatedMember[]>();
+
+        return members.map(m => ({
+            userId: m.userId?._id?.toString() || (m.userId as unknown as Types.ObjectId)?.toString() || "",
+            roleId: m.roleId.toString(),
+            joinedAt: m.createdAt,
+            user: (m.userId && typeof m.userId === 'object' && 'firstName' in m.userId) ? {
+                userName: `${m.userId.firstName || ''} ${m.userId.lastName || ''}`.trim() || 'Unknown User',
+                profilePicture: m.userId.avatarUrl || ""
+            } : undefined
+        }));
     }
 }
