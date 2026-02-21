@@ -4,8 +4,8 @@ export interface CreateProjectDTO {
     description: string;
     workspaceId: string;
     createdBy: string;
-    members?:{
-        userId:string;
-        roleId:string;
-    }[]
+    members?: {
+        userId: string;
+        roleId: string;
+    }[];
 }

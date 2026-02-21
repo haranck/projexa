@@ -16,14 +16,14 @@ export class AddProjectMemberUseCase implements IAddProjectMemberUseCase {
     ) { }
 
     async execute(projectMember: AddProjectMemberDTO): Promise<IProjectMemberEntity> {
+        console.log('project member ', projectMember)
         const Project = await this._projectRepo.getProjectById(projectMember.projectId)
         if (!Project) {
             throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND)
         }
 
-        const existingProjectMember = await this._projectMemberRepo.getProjectMembers(projectMember.projectId)
-
-        if (existingProjectMember.find((member) => member.userId === projectMember.userId)) {
+        const existingProjectMember = await this._projectMemberRepo.findProjectAndUser(projectMember.projectId, projectMember.userId)
+        if (existingProjectMember) {
             throw new Error(PROJECT_ERRORS.PROJECT_MEMBER_ALREADY_EXISTS)
         }
 
@@ -34,11 +34,6 @@ export class AddProjectMemberUseCase implements IAddProjectMemberUseCase {
         const role = await this._roleRepo.getRoleById(projectMember.roleId)
         if (!role) {
             throw new Error(PROJECT_ERRORS.PROJECT_ROLE_NOT_FOUND)
-        }
-
-        const userExists = await this._projectMemberRepo.findProjectAndUser(projectMember.projectId,projectMember.userId)
-        if(userExists){
-            throw new Error(PROJECT_ERRORS.PROJECT_MEMBER_ALREADY_EXISTS)
         }
 
         return await this._projectMemberRepo.addMemberToProject(projectMember)

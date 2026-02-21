@@ -5,14 +5,108 @@ import {
     ChevronDown,
     MoreHorizontal,
     ChevronRight,
-    X
+    X,
+    Search,
+    Loader2
 } from "lucide-react";
+import type { RootState } from "@/store/store";
+import { useSelector, useDispatch } from 'react-redux';
+import { useGetWorkspaceMembers, useGetRoles } from '../../../hooks/Workspace/WorkspaceHooks';
+import { useAddProjectMember } from '../../../hooks/Project/ProjectHooks';
+import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/utils/errorHandler';
+import type { User } from '../../../types/user';
+import { setCurrentProject, setProjects } from "@/store/slice/projectSlice";
+import type { ProjectMember } from "@/types/project";
+
+interface Role {
+    _id: string;
+    name: string;
+}
 
 export const BacklogPage = () => {
     const [isSprintOpen, setIsSprintOpen] = useState(true);
     const [isBacklogOpen, setIsBacklogOpen] = useState(true);
     const [expandedEpic, setExpandedEpic] = useState<string | null>(null);
     const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(true);
+    const [isMemberDropdownOpen, setIsMemberDropdownOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [preparingMember, setPreparingMember] = useState<User | null>(null);
+    const [preparingRoleId, setPreparingRoleId] = useState<string>('');
+    const dispatch = useDispatch();
+
+    const { currentProject, projects } = useSelector((state: RootState) => state.project);
+
+    const { data: workspaceMembersResponse, isLoading: isLoadingMembers } = useGetWorkspaceMembers(currentProject?.workspaceId || '');
+    const { data: rolesResponse } = useGetRoles();
+    const addMemberMutation = useAddProjectMember();
+
+    const workspaceMembers: User[] = workspaceMembersResponse?.data || [];
+    const roles: Role[] = rolesResponse?.data || [];
+
+    const projectMemberIds = currentProject?.members?.map(m => m.userId) || [];
+
+    const availableMembers = workspaceMembers.filter(m =>
+        m._id &&
+        !projectMemberIds.includes(m._id) &&
+        (m.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            m.email.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    const handlePrepareAdd = (member: User) => {
+        setPreparingMember(member);
+        setPreparingRoleId(roles[0]?._id || '');
+    };
+
+    const handleAddMember = () => {
+        if (!currentProject) return;
+        if (!preparingMember?._id || !preparingRoleId) {
+            toast.error("Please select a member and role");
+            return;
+        }
+
+        addMemberMutation.mutate({
+            projectId: currentProject._id,
+            userId: preparingMember._id,
+            roleId: preparingRoleId
+        }, {
+            onSuccess: () => {
+                toast.success("Member added to project");
+
+                const newMember: ProjectMember = {
+                    userId: preparingMember._id as string,
+                    roleId: preparingRoleId,
+                    joinedAt: new Date(),
+                    user: {
+                        userName: `${preparingMember.firstName || ''} ${preparingMember.lastName || ''}`.trim() || preparingMember.email,
+                        profilePicture: preparingMember.avatarUrl || ""
+                    }
+                };
+
+                const updatedProject = {
+                    ...currentProject,
+                    members: [...(currentProject.members || []), newMember]
+                };
+
+                dispatch(setCurrentProject(updatedProject));
+
+                // Sync with global projects list if it exists
+                if (projects.length > 0) {
+                    const updatedProjects = projects.map(p =>
+                        p._id === currentProject._id ? updatedProject : p
+                    );
+                    dispatch(setProjects(updatedProjects));
+                }
+
+                setIsMemberDropdownOpen(false);
+                setSearchQuery('');
+                setPreparingMember(null);
+            },
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to add member");
+            }
+        });
+    };
 
     const epics = [
         { id: '1', name: 'User Authentication', count: '1/1', color: 'bg-blue-500', startDate: 'Jan 15, 2024', endDate: 'Feb 28, 2024', task: 'OAuth integration' },
@@ -38,17 +132,148 @@ export const BacklogPage = () => {
                     </div>
 
                     <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center">
                             <div className="flex -space-x-2">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className=" w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 overflow-hidden">
-                                        <img src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="" className="w-full h-full object-cover" />
+                                {currentProject?.members?.map((member, i) => (
+                                    <div key={i} title={member.user?.userName} className=" w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 overflow-hidden">
+                                        {member.user?.profilePicture ? (
+                                            <img src={member.user.profilePicture} alt={member.user.userName} className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span>{member.user?.userName?.charAt(0).toUpperCase() || '?'}</span>
+                                        )}
                                     </div>
                                 ))}
-                                <button className="ml-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold hover:bg-emerald-500/20 transition-all active:scale-95">
+                            </div>
+
+                            <div className="relative ml-4">
+                                <button className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold hover:bg-emerald-500/20 transition-all active:scale-95"
+                                    onClick={() => {
+                                        setIsMemberDropdownOpen(!isMemberDropdownOpen);
+                                        if (!isMemberDropdownOpen) setPreparingMember(null);
+                                    }}
+                                >
                                     <Plus className="w-3.5 h-3.5" />
                                     Add Members
                                 </button>
+
+                                {isMemberDropdownOpen && (
+                                    <div className="absolute top-full left-0 mt-2 w-72 bg-[#0d1016] border border-white/10 rounded-2xl shadow-2xl overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
+                                        {preparingMember ? (
+                                            /* Step 2: Role Selection */
+                                            <div className="p-4 space-y-4 animate-in slide-in-from-right-2 duration-200 text-left">
+                                                <div className="flex items-center gap-3 p-3 bg-zinc-900/40 rounded-xl border border-white/5">
+                                                    <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-[10px] font-bold text-white overflow-hidden">
+                                                        {preparingMember.avatarUrl ? (
+                                                            <img src={preparingMember.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <>{preparingMember.firstName?.charAt(0) || preparingMember.email.charAt(0).toUpperCase()}</>
+                                                        )}
+                                                    </div>
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="text-xs font-bold text-white truncate">{preparingMember.firstName} {preparingMember.lastName}</p>
+                                                        <p className="text-[10px] text-zinc-500 truncate">{preparingMember.email}</p>
+                                                    </div>
+                                                </div>
+
+                                                <div className="space-y-2">
+                                                    <label className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest px-1">Select Role</label>
+                                                    <select
+                                                        value={preparingRoleId}
+                                                        onChange={(e) => setPreparingRoleId(e.target.value)}
+                                                        className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                                                    >
+                                                        {roles.map((role) => (
+                                                            <option key={role._id} value={role._id}>
+                                                                {role.name.toUpperCase()}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+
+                                                <div className="flex items-center gap-2 pt-2">
+                                                    <button
+                                                        onClick={() => setPreparingMember(null)}
+                                                        className="flex-1 py-2 text-[10px] font-bold text-zinc-500 hover:text-white transition-colors"
+                                                    >
+                                                        Back
+                                                    </button>
+                                                    <button
+                                                        onClick={handleAddMember}
+                                                        disabled={addMemberMutation.isPending}
+                                                        className="flex-2 py-2 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg shadow-lg shadow-blue-600/20 transition-all active:scale-95 disabled:opacity-50"
+                                                    >
+                                                        {addMemberMutation.isPending ? 'Adding...' : 'Confirm Addition'}
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            /* Step 1: Search Members */
+                                            <>
+                                                <div className="p-3 border-b border-white/5 bg-zinc-900/40">
+                                                    <div className="relative">
+                                                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-zinc-500" />
+                                                        <input
+                                                            type="text"
+                                                            value={searchQuery}
+                                                            onChange={(e) => setSearchQuery(e.target.value)}
+                                                            placeholder="Search workspace members..."
+                                                            className="w-full bg-zinc-950 border border-white/5 rounded-lg pl-9 pr-3 py-2 text-xs text-white focus:outline-none focus:ring-1 focus:ring-blue-500/40"
+                                                            autoFocus
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="max-h-60 overflow-y-auto custom-scrollbar p-1">
+                                                    {isLoadingMembers ? (
+                                                        <div className="p-4 text-center text-zinc-500 text-xs font-medium flex items-center justify-center gap-2">
+                                                            <Loader2 className="w-3 h-3 animate-spin" />
+                                                            Loading...
+                                                        </div>
+                                                    ) : availableMembers.length > 0 ? (
+                                                        availableMembers.map((member: User) => (
+                                                            <button
+                                                                key={member._id}
+                                                                onClick={() => handlePrepareAdd(member)}
+                                                                className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-left transition-all group"
+                                                            >
+                                                                <div className="w-8 h-8 rounded-lg bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 group-hover:bg-blue-500 group-hover:text-white transition-colors overflow-hidden">
+                                                                    {member.avatarUrl ? (
+                                                                        <img src={member.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                                                    ) : (
+                                                                        <>{member.firstName?.charAt(0) || member.email.charAt(0).toUpperCase()}</>
+                                                                    )}
+                                                                </div>
+                                                                <div className="flex-1 min-w-0">
+                                                                    <p className="text-xs font-bold text-white truncate">{member.firstName} {member.lastName}</p>
+                                                                    <p className="text-[10px] text-zinc-500 truncate">{member.email}</p>
+                                                                </div>
+                                                                <Plus className="w-4 h-4 text-zinc-700 group-hover:text-blue-500 transition-colors" />
+                                                            </button>
+                                                        ))
+                                                    ) : (
+                                                        <div className="p-8 text-center text-zinc-600 space-y-1">
+                                                            <p className="text-xs font-bold">No members found</p>
+                                                            <p className="text-[10px]">All team members are already in the project</p>
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* <AddMemberModal
+                                    isOpen={isMemberDropdownOpen}
+                                    onClose={() => setIsMemberDropdownOpen(false)}
+                                    preparingMember={preparingMember}
+                                    preparingRoleId={preparingRoleId}
+                                    setPreparingMember={setPreparingMember}
+                                    setPreparingRoleId={setPreparingRoleId}
+                                    handleAddMember={handleAddMember}
+                                    isLoadingMembers={isLoadingMembers}
+                                    availableMembers={availableMembers}
+                                    handlePrepareAdd={handlePrepareAdd}
+                                    isLoading={addMemberMutation.isPending}
+                                /> */}
                             </div>
                         </div>
                         <div className="flex items-center gap-2">

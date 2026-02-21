@@ -4,7 +4,7 @@ import { BaseRepo } from "../base/BaseRepo"
 import { ProjectMemberModel, ProjectMemberDocument } from "../../models/Project/ProjectMemberModel";
 import { injectable } from "tsyringe";
 import { ProjectMemberMapper } from "../../../../mappers/ProjectMemberMapper";
-import { Model } from "mongoose";
+import { Model, Types } from "mongoose";
 import { IProjectMemberEntity } from "../../../../../domain/entities/Project/IProjectMemberEntity";
 import { PROJECT_ERRORS } from "../../../../../domain/constants/errorMessages";
 import { UpdateProjectMemberRoleDTO } from "../../../../../application/dtos/project/requestDTOs/UpdateProjectMemberRoleDTO";
@@ -38,9 +38,9 @@ export class ProjectMemberRepository extends BaseRepo<IProjectMemberEntity> impl
 
     async updateProjectMemberRole(data: UpdateProjectMemberRoleDTO): Promise<IProjectMemberEntity> {
         const updatedDoc = await ProjectMemberModel.findOneAndUpdate(
-            {projectId:data.projectId,userId:data.userId},
-            {roleId:data.roleId},
-            {new:true}
+            { projectId: new Types.ObjectId(data.projectId), userId: new Types.ObjectId(data.userId) },
+            { roleId: new Types.ObjectId(data.roleId) },
+            { new: true }
         ).lean()
 
         if(!updatedDoc) throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND)
@@ -53,7 +53,10 @@ export class ProjectMemberRepository extends BaseRepo<IProjectMemberEntity> impl
     }
 
     async findProjectAndUser(projectId: string, userId: string): Promise<IProjectMemberEntity | null> {
-        const doc = await ProjectMemberModel.findOne({projectId,userId})
+        const doc = await ProjectMemberModel.findOne({
+            projectId: new Types.ObjectId(projectId),
+            userId: new Types.ObjectId(userId)
+        })
         return doc ? ProjectMemberMapper.toEntity(doc as unknown as ProjectMemberDocument) : null
     }
 

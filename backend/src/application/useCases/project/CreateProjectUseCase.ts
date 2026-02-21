@@ -31,8 +31,8 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
             roleId: projectManager._id!
         })
 
-        if(project.members && project.members.length > 0){
-            for(const member of project.members){
+        if (project.members && project.members.length > 0) {
+            for (const member of project.members) {
                 await this._projectMemberRepo.addMemberToProject({
                     projectId: createdProject._id!,
                     userId: member.userId,

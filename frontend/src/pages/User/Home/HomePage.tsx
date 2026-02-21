@@ -7,7 +7,7 @@ import { CreateProjectModal } from "../../../components/modals/CreateProjectModa
 export const HomePage = () => {
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
 
-    return (
+    return ( 
         <DashboardLayout>
             <div className="relative min-h-[calc(100vh-5rem)] flex items-center justify-center px-6 overflow-hidden">
                 <div className="absolute top-1/4 -left-20 w-80 h-80 bg-blue-600/10 blur-[100px] rounded-full" />
