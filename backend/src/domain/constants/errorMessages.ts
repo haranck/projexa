@@ -129,4 +129,5 @@ export const PROJECT_ERRORS = {
     ISSUE_UPDATE_FAILED: "Issue update failed !",
     ISSUE_MEMBER_NOT_FOUND: "Issue member not found !",
     NON_EPIC_ISSUE_WITHOUT_PARENT: "Non epic issues must have a parent Issue",
+    CONTENT_TYPE_REQUIRED: "Content Type is required",
 };

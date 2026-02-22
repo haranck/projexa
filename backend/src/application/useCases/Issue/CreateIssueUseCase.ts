@@ -6,6 +6,7 @@ import { IIssueRepository } from "../../../domain/interfaces/repositories/IssueR
 import { PROJECT_ERRORS } from "../../../domain/constants/errorMessages";
 import { IssueDTOmapper } from "../../mappers/IssueDTOmapper";
 import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
+import { IssueType } from "../../../domain/enums/IssueEnums";
 
 
 @injectable()
@@ -19,7 +20,7 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
         if(!dto.title.trim()){
             throw new Error(PROJECT_ERRORS.ISSUE_INVALIDATION)
         }
-        if(dto.issueType !== 'EPIC' && !dto.parentIssueId){
+        if(dto.issueType !== IssueType.EPIC && !dto.parentIssueId){
             throw new Error(PROJECT_ERRORS.NON_EPIC_ISSUE_WITHOUT_PARENT)
         }
 
@@ -34,4 +35,4 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
         const createdIssue = await this._issueRepo.createIssue(issueData)
         return createdIssue 
     }
-}
+}   

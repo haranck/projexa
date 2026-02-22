@@ -14,5 +14,7 @@ router.patch(ROUTES.PROJECTS.UPDATE_PROJECT_MEMBER_ROLE, authMiddleware.authenti
 
 // project issues routes
 router.post(ROUTES.ISSUES.CREATE_ISSUE, authMiddleware.authenticate, issueController.createIssue)
+router.get(ROUTES.ISSUES.ATTACHMENT_UPLOAD_URL, authMiddleware.authenticate, issueController.getAttachmentUploadUrl)
+
 
 export default router;

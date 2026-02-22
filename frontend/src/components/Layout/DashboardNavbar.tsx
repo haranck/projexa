@@ -10,8 +10,9 @@ import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 import { useUserLogout } from "@/hooks/Auth/AuthHooks";
 import { useGetUserWorkspaces } from "../../hooks/Workspace/WorkspaceHooks";
 import { useGetAllProjects } from "@/hooks/Project/ProjectHooks";
-import { setProjects, setCurrentProject, type Project } from "@/store/slice/projectSlice";
+import { setProjects, setCurrentProject } from "@/store/slice/projectSlice";
 import { CreateProjectModal } from "../modals/CreateProjectModal";
+import type { Project } from "@/types/project";
 
 const DashboardNavbar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);

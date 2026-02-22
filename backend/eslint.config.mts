@@ -11,4 +11,5 @@ export default defineConfig([
   },
   tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
+  {ignores: ["dist/**", "node_modules/**"]}
 ]);

@@ -53,6 +53,7 @@ export const ROUTES = {
         GET_ALL_ISSUES: "/issues/get-all-issues/:projectId",
         UPDATE_ISSUE: "/issues/update-issue/:issueId",
         DELETE_ISSUE: "/issues/delete-issue/:issueId",
+        ATTACHMENT_UPLOAD_URL: "/issues/attachment-upload-url",
     },
     ADMIN: {
         LOGIN: "/login",

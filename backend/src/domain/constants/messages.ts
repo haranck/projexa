@@ -80,5 +80,6 @@ export const MESSAGES = {
     },
     ISSUE: {
         ISSUE_CREATED_SUCCESSFULLY: "Issue created successfully",
+        ATTACHMENT_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Attachment upload URL generated successfully",
     }
 };

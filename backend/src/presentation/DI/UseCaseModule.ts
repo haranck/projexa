@@ -106,6 +106,8 @@ import { IUpdateProjectMemberRoleUseCase } from "../../application/interface/pro
 import { UpdateProjectMemberRoleUseCase } from "../../application/useCases/project/UpdateProjectMemberRoleUseCase";
 import { ICreateIssueUseCase } from "../../application/interface/Issue/ICreateIssueUseCase";
 import { CreateIssueUseCase } from "../../application/useCases/Issue/CreateIssueUseCase";
+import { IAttachmentUploadUrlUseCase } from "../../application/interface/Issue/IAttachementUploadUrlUseCase";
+import { AttachmentUploadUrlUseCase } from "../../application/useCases/Issue/AttachementUploadUrlUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -332,6 +334,10 @@ export class UseCaseModule {
 
         container.register<ICreateIssueUseCase>('ICreateIssueUseCase', {
             useClass: CreateIssueUseCase
+        })
+
+        container.register<IAttachmentUploadUrlUseCase>('IAttachmentUploadUrlUseCase', {
+            useClass: AttachmentUploadUrlUseCase
         })
     }
 }

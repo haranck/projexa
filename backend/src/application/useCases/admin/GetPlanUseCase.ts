@@ -11,7 +11,7 @@ export class GetPlanUseCase implements IGetPlanUseCase {
     async execute(): Promise<{ data: GetPlanResponseDTO[] }> {
         const plans = await this._planRepo.getAllPlans();
         const mappedPlans = plans.map(plan => ({
-            id: plan.id || plan._id?.toString(),
+            id: plan._id?.toString(),
             name: plan.name,
             price: plan.price,
             maxMembers: plan.maxMembers,
