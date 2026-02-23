@@ -13,11 +13,11 @@ export interface IIssueEntity {
     parentIssueId?: string | null;
     sprintId?: string | null;
     key: string;
-    title: string; 
+    title: string;
     description?: string;
     issueType: IssueType;
     status: IssueStatus;
-    attachements?: IAttachement[];
+    attachments?: IAttachement[];
     assigneeId?: string | null;
     startDate?: Date | null;
     endDate?: Date | null;

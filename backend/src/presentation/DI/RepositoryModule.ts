@@ -59,7 +59,7 @@ export class RepositoryModule {
             useClass: ProjectMemberRepository
         })
 
-        container.register<IIssueRepository>('IssueRepository', {
+        container.register<IIssueRepository>('IIssueRepository', {
             useClass: IssueRepository
         })
     }

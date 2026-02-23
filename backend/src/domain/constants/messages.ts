@@ -81,5 +81,8 @@ export const MESSAGES = {
     ISSUE: {
         ISSUE_CREATED_SUCCESSFULLY: "Issue created successfully",
         ATTACHMENT_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Attachment upload URL generated successfully",
+        EPIC_UPDATED_SUCCESSFULLY: "Epic updated successfully",
+        EPIC_DELETED_SUCCESSFULLY: "Epic deleted successfully",
+        ISSUES_FETCHED_SUCCESSFULLY: "Issues fetched successfully"
     }
 };

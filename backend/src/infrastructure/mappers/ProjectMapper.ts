@@ -13,6 +13,7 @@ export class ProjectMapper {
             workspaceId: doc.workspaceId.toString(),
             createdBy: doc.createdBy.toString(),
             members: members || [],
+            issueCounter: doc.issueCounter,
             createdAt: doc.createdAt,
             updatedAt: doc.updatedAt
         };

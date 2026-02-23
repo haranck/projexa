@@ -14,6 +14,7 @@ export interface IProjectEntity {
         }
     }[];
     createdBy: string;
+    issueCounter?: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

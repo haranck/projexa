@@ -108,6 +108,12 @@ import { ICreateIssueUseCase } from "../../application/interface/Issue/ICreateIs
 import { CreateIssueUseCase } from "../../application/useCases/Issue/CreateIssueUseCase";
 import { IAttachmentUploadUrlUseCase } from "../../application/interface/Issue/IAttachementUploadUrlUseCase";
 import { AttachmentUploadUrlUseCase } from "../../application/useCases/Issue/AttachementUploadUrlUseCase";
+import { IUpdateEpicUseCase } from "../../application/interface/Issue/IUpdateEpicUseCase"
+import { UpdateEpicUseCase } from "../../application/useCases/Issue/UpdateEpicUseCase";
+import { IDeleteIssueUseCase } from "../../application/interface/Issue/IDeleteIssueUseCase"
+import { DeleteIssueUseCase } from "../../application/useCases/Issue/DeleteIssueUseCase"
+import { IGetAllIssuesUseCase } from "../../application/interface/Issue/IGetAllIssuesUseCase";
+import { GetAllIssuesUseCase } from "../../application/useCases/Issue/GetAllIssuesUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -338,6 +344,18 @@ export class UseCaseModule {
 
         container.register<IAttachmentUploadUrlUseCase>('IAttachmentUploadUrlUseCase', {
             useClass: AttachmentUploadUrlUseCase
+        })
+
+        container.register<IUpdateEpicUseCase>('IUpdateEpicUseCase', {
+            useClass: UpdateEpicUseCase
+        })
+
+        container.register<IDeleteIssueUseCase>('IDeleteIssueUseCase', {
+            useClass: DeleteIssueUseCase
+        })
+
+        container.register<IGetAllIssuesUseCase>('IGetAllIssuesUseCase', {
+            useClass: GetAllIssuesUseCase
         })
     }
 }

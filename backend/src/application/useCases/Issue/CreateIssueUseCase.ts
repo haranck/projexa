@@ -12,27 +12,29 @@ import { IssueType } from "../../../domain/enums/IssueEnums";
 @injectable()
 export class CreateIssueUseCase implements ICreateIssueUseCase {
     constructor(
-        @inject("IssueRepository") private _issueRepo: IIssueRepository,
+        @inject("IIssueRepository") private _issueRepo: IIssueRepository,
         @inject("IProjectRepository") private _projectRepo: IProjectRepository
     ) { }
 
-    async execute(dto: CreateIssueDTO,userId:string): Promise<IIssueEntity> {
-        if(!dto.title.trim()){
+    async execute(dto: CreateIssueDTO, userId: string): Promise<IIssueEntity> {
+        console.log('dto ,',dto)
+        if (!dto.title.trim()) {
             throw new Error(PROJECT_ERRORS.ISSUE_INVALIDATION)
         }
-        if(dto.issueType !== IssueType.EPIC && !dto.parentIssueId){
+        if (dto.issueType !== IssueType.EPIC && !dto.parentIssueId) {
             throw new Error(PROJECT_ERRORS.NON_EPIC_ISSUE_WITHOUT_PARENT)
         }
 
-        const project  = await this._projectRepo.getProjectById(dto.projectId)
-        if(!project){
+        const project = await this._projectRepo.getProjectById(dto.projectId)
+        if (!project) {
             throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND)
         }
-        const totalIssues = await this._issueRepo.getIssuesByProjectId(dto.projectId)
-        const issueKey = `${project.key}-${totalIssues.length + 1}`
 
-        const issueData = IssueDTOmapper.toDomain(dto,userId,issueKey)
+        const nextNumber = await this._projectRepo.incrementIssueCounter(dto.projectId)
+        const issueKey = `${project.key}-${nextNumber}`
+
+        const issueData = IssueDTOmapper.toDomain(dto, userId, issueKey)
         const createdIssue = await this._issueRepo.createIssue(issueData)
-        return createdIssue 
+        return createdIssue
     }
 }   

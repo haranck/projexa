@@ -13,8 +13,8 @@ export class IssueDTOmapper {
             title: dto.title,
             description: dto.description ?? "",
             issueType: dto.issueType,
-            status: IssueStatus.TODO,
-            attachements: dto.attachments?.map(attachement => ({
+            status: dto.status ?? IssueStatus.TODO,
+            attachments: dto.attachments?.map(attachement => ({
                 type: attachement.type,
                 url: attachement.url,
                 fileName: attachement.fileName

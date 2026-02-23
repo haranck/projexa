@@ -55,5 +55,12 @@ export const API_ROUTES = {
     ADD_PROJECT_MEMBER: "/project/add-project-member/:projectId",
     REMOVE_PROJECT_MEMBER: "/project/remove-project-member/:projectId/:userId",
     UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId"
+  },
+  ISSUE: {
+    CREATE_ISSUE: "/project/issues/create-issue/:projectId",
+    GET_ATTACHMENT_UPLOAD_URL: "/project/issues/attachment-upload-url",
+    UPDATE_ISSUE: "/project/issues/update-issue/:issueId",
+    DELETE_ISSUE: "/project/issues/delete-issue/:issueId",
+    GET_ALL_ISSUES: "/project/issues/get-all-issues/:projectId"
   }
 };

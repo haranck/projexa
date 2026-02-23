@@ -130,4 +130,9 @@ export const PROJECT_ERRORS = {
     ISSUE_MEMBER_NOT_FOUND: "Issue member not found !",
     NON_EPIC_ISSUE_WITHOUT_PARENT: "Non epic issues must have a parent Issue",
     CONTENT_TYPE_REQUIRED: "Content Type is required",
+    INVALID_ISSUE_TYPE: 'Invalid issue type',
+    INVALID_DATES: 'Invalid dates',
+    MEMBER_NOT_FOUND: "Member not found in project !",
+    NOT_AUTHORIZED: "You are not authorized to delete this issue !",
+    HAS_CHILDREN : "Cannot delete issue with child issues"
 };

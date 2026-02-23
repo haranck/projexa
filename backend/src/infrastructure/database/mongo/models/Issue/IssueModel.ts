@@ -1,31 +1,31 @@
-import mongoose, {Document} from 'mongoose'
-import { IssueStatus,IssueType } from '../../../../../domain/enums/IssueEnums'
+import mongoose, { Document } from 'mongoose'
+import { IssueStatus, IssueType } from '../../../../../domain/enums/IssueEnums'
 import { IAttachement } from '../../../../../domain/entities/Issue/IIssueEntity';
 
 export interface IssueDocument extends Document {
-    workspaceId:string;
-    projectId:string;
-    parentIssueId?:string|null;
-    sprintId?:string|null;
-    key:string;
-    title:string;
-    description?:string|null;
-    issueType:IssueType;
-    status:IssueStatus;
-    attachements?:IAttachement[]|null;
-    assigneeId?:string|null;
-    startDate?:Date|null;
-    endDate?:Date|null;
-    createdBy:string;
-    createdAt:Date;
-    updatedAt:Date;
+    workspaceId: string;
+    projectId: string;
+    parentIssueId?: string | null;
+    sprintId?: string | null;
+    key: string;
+    title: string;
+    description?: string | null;
+    issueType: IssueType;
+    status: IssueStatus;
+    attachments?: IAttachement[] | null;
+    assigneeId?: string | null;
+    startDate?: Date | null;
+    endDate?: Date | null;
+    createdBy: string;
+    createdAt: Date;
+    updatedAt: Date;
 }
 
-const attachementSchema = new mongoose.Schema<IAttachement>({
+const attachmentSchema = new mongoose.Schema<IAttachement>({
     type: { type: String, enum: ['link', 'file'], required: true },
     url: { type: String, required: true },
     fileName: { type: String }
-},{_id:false});
+}, { _id: false });
 
 const issueSchema = new mongoose.Schema({
     workspaceId:{
@@ -77,9 +77,9 @@ const issueSchema = new mongoose.Schema({
         default:IssueStatus.TODO,
         index:true
     },
-    attachements:{
-        type:[attachementSchema],
-        default:[]
+    attachments: {
+        type: [attachmentSchema],
+        default: []
     },
     assigneeId:{
         type:String,
@@ -97,7 +97,7 @@ const issueSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    
+
 }, { timestamps: true })
 
 issueSchema.index({workspaceId:1,projectId:1}) 

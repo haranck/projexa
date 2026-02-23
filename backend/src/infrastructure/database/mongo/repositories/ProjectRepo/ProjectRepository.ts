@@ -1,6 +1,7 @@
 import { IProjectRepository } from "../../../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
 import { ProjectDocument, ProjectModel } from "../../models/Project/ProjectModel";
 import { ProjectMemberModel } from "../../models/Project/ProjectMemberModel";
+import { IssueModel } from "../../models/Issue/IssueModel";
 import { injectable } from "tsyringe";
 import { BaseRepo } from "../base/BaseRepo";
 import { Model, Types } from "mongoose";
@@ -128,5 +129,33 @@ export class ProjectRepository extends BaseRepo<IProjectEntity> implements IProj
                 profilePicture: m.userId.avatarUrl || ""
             } : undefined
         }));
+    }
+
+    async incrementIssueCounter(projectId: string): Promise<number> {
+        const projectBefore = await super.findById(projectId);
+        if (!projectBefore) throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND);
+
+        // If counter is 0, it might be an existing project that needs sync
+        if (projectBefore.issueCounter === 0) {
+            const issues = await IssueModel.find({ projectId });
+            if (issues.length > 0) {
+                const maxNum = Math.max(...issues.map(i => {
+                    const parts = i.key.split('-');
+                    const num = parseInt(parts[parts.length - 1]);
+                    return isNaN(num) ? 0 : num;
+                }));
+                if (maxNum > 0) {
+                    await ProjectModel.findByIdAndUpdate(projectId, { issueCounter: maxNum });
+                }
+            }
+        }
+
+        const project = await ProjectModel.findByIdAndUpdate(
+            projectId,
+            { $inc: { issueCounter: 1 } },
+            { new: true, upsert: false }
+        );
+        if (!project) throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND);
+        return project.issueCounter;
     }
 }

@@ -55,7 +55,7 @@ export const ROUTES = {
         DELETE_ISSUE: "/issues/delete-issue/:issueId",
         ATTACHMENT_UPLOAD_URL: "/issues/attachment-upload-url",
     },
-    ADMIN: {
+    ADMIN: { 
         LOGIN: "/login",
         LOGOUT: "/logout",
         GET_USERS: "/users",

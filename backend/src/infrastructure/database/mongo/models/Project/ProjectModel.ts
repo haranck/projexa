@@ -6,6 +6,7 @@ export interface ProjectDocument extends Document {
     description: string;
     workspaceId: Types.ObjectId;
     createdBy: Types.ObjectId;
+    issueCounter: number;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -35,6 +36,10 @@ const ProjectSchema = new mongoose.Schema({
         ref: 'User',
         required: true
     },
+    issueCounter: {
+        type: Number,
+        default: 0
+    }
 }, { timestamps: true })
 
 ProjectSchema.index(
