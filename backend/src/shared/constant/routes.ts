@@ -54,6 +54,7 @@ export const ROUTES = {
         UPDATE_ISSUE: "/issues/update-issue/:issueId",
         DELETE_ISSUE: "/issues/delete-issue/:issueId",
         ATTACHMENT_UPLOAD_URL: "/issues/attachment-upload-url",
+        MOVE_ISSUE_TO_SPRINT:"/issues/move-issue-to-sprint/:issueId"
     },
     ADMIN: { 
         LOGIN: "/login",

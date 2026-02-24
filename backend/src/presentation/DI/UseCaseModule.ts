@@ -114,6 +114,8 @@ import { IDeleteIssueUseCase } from "../../application/interface/Issue/IDeleteIs
 import { DeleteIssueUseCase } from "../../application/useCases/Issue/DeleteIssueUseCase"
 import { IGetAllIssuesUseCase } from "../../application/interface/Issue/IGetAllIssuesUseCase";
 import { GetAllIssuesUseCase } from "../../application/useCases/Issue/GetAllIssuesUseCase";
+import { IMoveIssueToSprintUseCase } from "../../application/interface/Issue/IMoveIssueToSprintUseCase";
+import { MoveIssueToSprintUseCase } from "../../application/useCases/Issue/MoveIssueToSprintUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -356,6 +358,10 @@ export class UseCaseModule {
 
         container.register<IGetAllIssuesUseCase>('IGetAllIssuesUseCase', {
             useClass: GetAllIssuesUseCase
+        })
+
+        container.register<IMoveIssueToSprintUseCase>('IMoveIssueToSprintUseCase', {
+            useClass: MoveIssueToSprintUseCase
         })
     }
 }

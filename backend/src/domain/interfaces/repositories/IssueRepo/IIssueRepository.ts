@@ -7,4 +7,5 @@ export interface IIssueRepository {
     findIssueById(issueId: string): Promise<IIssueEntity | null>
     findIssueByKey(key: string): Promise<IIssueEntity | null>
     getIssuesByProjectId(projectId: string): Promise<IIssueEntity[]>
+    countIssuesByAssignee(projectId: string, assigneeId: string): Promise<number>
 }

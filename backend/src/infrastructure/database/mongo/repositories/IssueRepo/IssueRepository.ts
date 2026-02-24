@@ -43,9 +43,14 @@ export class IssueRepository extends BaseRepo<IIssueEntity> implements IIssueRep
     }
 
     async getIssuesByProjectId(projectId: string): Promise<IIssueEntity[]> {
-        const docs = await IssueModel.find({projectId:projectId})
-        if(!docs) return []
-        return docs.map(doc=>IssueMapper.toEntity(doc as unknown as IssueDocument))
+        const docs = await IssueModel.find({ projectId: projectId })
+        if (!docs) return []
+        return docs.map(doc => IssueMapper.toEntity(doc as unknown as IssueDocument))
+    }
+
+    async countIssuesByAssignee(projectId: string, assigneeId: string): Promise<number> {
+        const count = await IssueModel.countDocuments({ projectId, assigneeId });
+        return count;
     }
 }
 

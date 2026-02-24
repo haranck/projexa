@@ -12,6 +12,7 @@ import { IUpdateEpicUseCase } from "../../../application/interface/Issue/IUpdate
 import { UpdateEpicDTO } from "../../../application/dtos/issue/requestDTOs/UpdateEpicDTO";
 import { IDeleteIssueUseCase } from "../../../application/interface/Issue/IDeleteIssueUseCase";
 import { IGetAllIssuesUseCase } from "../../../application/interface/Issue/IGetAllIssuesUseCase";
+import { IMoveIssueToSprintUseCase } from "../../../application/interface/Issue/IMoveIssueToSprintUseCase";
 
 
 @injectable()
@@ -21,7 +22,8 @@ export class IssueController {
         @inject('IAttachmentUploadUrlUseCase') private readonly _attachmentUploadUrlUseCase: IAttachmentUploadUrlUseCase,
         @inject('IUpdateEpicUseCase') private readonly _updateEpicUseCase: IUpdateEpicUseCase,
         @inject('IDeleteIssueUseCase') private readonly _deleteIssueUseCase: IDeleteIssueUseCase,
-        @inject('IGetAllIssuesUseCase') private readonly _getAllIssuesUseCase: IGetAllIssuesUseCase
+        @inject('IGetAllIssuesUseCase') private readonly _getAllIssuesUseCase: IGetAllIssuesUseCase,
+        @inject('IMoveIssueToSprintUseCase') private readonly _moveIssueToSprintUseCase: IMoveIssueToSprintUseCase
     ) { }
 
 
@@ -91,5 +93,15 @@ export class IssueController {
         }
     }
 
-
+    moveIssueToSprint = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const {issueId} = req.params
+            const{sprintId} = req.body
+            const result = await this._moveIssueToSprintUseCase.execute({issueId,sprintId})
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.ISSUE_MOVED_TO_SPRINT_SUCCESSFULLY, data: result })
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string }
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message })
+        }
+    }
 }

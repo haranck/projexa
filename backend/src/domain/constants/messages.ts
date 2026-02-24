@@ -83,6 +83,8 @@ export const MESSAGES = {
         ATTACHMENT_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Attachment upload URL generated successfully",
         EPIC_UPDATED_SUCCESSFULLY: "Epic updated successfully",
         EPIC_DELETED_SUCCESSFULLY: "Epic deleted successfully",
-        ISSUES_FETCHED_SUCCESSFULLY: "Issues fetched successfully"
+        ISSUES_FETCHED_SUCCESSFULLY: "Issues fetched successfully",
+        ISSUE_MOVED_TO_SPRINT_SUCCESSFULLY: "Issue moved to sprint successfully",
+        
     }
 };

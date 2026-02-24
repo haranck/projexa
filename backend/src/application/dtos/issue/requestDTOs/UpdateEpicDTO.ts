@@ -5,6 +5,7 @@ export interface UpdateEpicDTO {
     title?: string;
     description?: string;
     status?: IssueStatus;
+    assigneeId?: string | null;
     attachments?: IAttachement[];
     startDate?: Date | null;
     endDate?: Date | null;

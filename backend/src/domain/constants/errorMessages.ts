@@ -134,5 +134,7 @@ export const PROJECT_ERRORS = {
     INVALID_DATES: 'Invalid dates',
     MEMBER_NOT_FOUND: "Member not found in project !",
     NOT_AUTHORIZED: "You are not authorized to delete this issue !",
-    HAS_CHILDREN : "Cannot delete issue with child issues"
+    HAS_CHILDREN: "Cannot delete issue with child issues",
+    CANNOT_REMOVE_MEMBER_HAS_ISSUES: "Cannot remove member who has assigned issues in this project",
+    FAILED_TO_UPDATE_ISSUE: "Failed to update issue"
 };

@@ -35,9 +35,9 @@ export const useCreateIssue = () => {
 export const useUpdateEpic = () => {
     const queryClient = useQueryClient()
     return useMutation({
-        mutationFn:(data:UpdateEpicProps) => updateEpic(data),
-        onSuccess:() => {
-            queryClient.invalidateQueries({queryKey:["issues"]})
+        mutationFn: (data: UpdateEpicProps & { projectId: string }) => updateEpic(data),
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["issues", variables.projectId] })
         }
     })
 }
@@ -46,9 +46,9 @@ export const useUpdateEpic = () => {
 export const useDeleteIssue = () => {
     const queryClient = useQueryClient();
     return useMutation({
-        mutationFn: (issueId: string) => deleteIssue(issueId),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["issues"] });
+        mutationFn: (data: { issueId: string, projectId: string }) => deleteIssue(data.issueId),
+        onSuccess: (_data, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["issues", variables.projectId] });
         },
     });
 };

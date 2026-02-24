@@ -12,6 +12,7 @@ interface CreateEpicModalProps {
     onClose: () => void;
     onSubmit: (data: EpicFormData) => void;
     isLoading: boolean;
+    projectKey: string;
 }
 
 export interface EpicFormData {
@@ -28,7 +29,7 @@ const EPIC_COLORS = [
     "bg-amber-500", "bg-rose-500", "bg-cyan-500",
 ];
 
-export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoading }: CreateEpicModalProps) => {
+export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoading, projectKey }: CreateEpicModalProps) => {
     const { user } = useSelector((state: RootState) => state.auth);
 
     const [title, setTitle] = useState("");
@@ -102,13 +103,23 @@ export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoad
         setAttachments(prev => prev.filter((_, i) => i !== index));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!title.trim()) {
             toast.error("Epic name is required");
             return;
         }
-        onSubmit({ title, description, status, startDate, endDate, attachments });
+        await onSubmit({ title, description, status, startDate, endDate, attachments });
+        setTitle("");
+        setDescription("");
+        setStatus(IssueStatus.TODO);
+        setStartDate("");
+        setEndDate("");
+        setAttachments([]);
+        setIsAddingLink(false);
+        setLinkUrl("");
+        setLinkName("");
+        onClose();
     };
 
     const handleClose = () => {
@@ -123,7 +134,7 @@ export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoad
         setLinkName("");
         onClose();
     };
-
+    console.log('key name', projectKey)
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <div
@@ -140,9 +151,12 @@ export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoad
                         >
                             <ArrowLeft className="w-5 h-5" />
                         </button>
-                        <h2 className="text-lg font-bold text-white">Create New Epic</h2>
+                        <h2 className="text-lg font-bold text-white">Create New Epic
+                            <span className="ml-3 text-[13px] font-semibold text-zinc-500 bg-white/5 px-2 py-0.5 rounded border border-white/5">{projectKey}</span>
+                        </h2>
                     </div>
                 </div>
+
 
                 <form onSubmit={handleSubmit} className="p-8 space-y-8 overflow-y-auto custom-scrollbar">
                     <div className="space-y-2">

@@ -44,6 +44,7 @@ export interface UpdateEpicProps {
     title?: string;
     description?: string;
     status?: string;
+    assigneeId?: string | null;
     attachments?: IAttachement[];
     startDate?: Date | null;
     endDate?: Date | null;
