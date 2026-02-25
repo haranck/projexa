@@ -12,6 +12,7 @@ import userRoutes from "./presentation/routes/user/user.routes";
 import workspaceRoutes from "./presentation/routes/workspace/workspace.routes";
 import stripeRoutes from "./presentation/routes/stripe.routes";
 import projectRoutes from "./presentation/routes/project/project.routes";
+import sprintRoutes from "./presentation/routes/sprint/sprint.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
 
 const app = express();
@@ -34,6 +35,7 @@ app.use(env.ADMIN_API_PREFIX, adminRoutes);
 app.use(env.USER_API_PREFIX, userRoutes);
 app.use(env.WORKSPACE_API_PREFIX, workspaceRoutes);
 app.use(env.PROJECT_API_PREFIX, projectRoutes);
+app.use(env.SPRINT_API_PREFIX, sprintRoutes);
 
 const startServer = async () => {
   await connectMongoDB();

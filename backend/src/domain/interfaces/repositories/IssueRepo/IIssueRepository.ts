@@ -8,4 +8,7 @@ export interface IIssueRepository {
     findIssueByKey(key: string): Promise<IIssueEntity | null>
     getIssuesByProjectId(projectId: string): Promise<IIssueEntity[]>
     countIssuesByAssignee(projectId: string, assigneeId: string): Promise<number>
+    removeSprintFromIssues(sprintId: string): Promise<void>
+    getIssuesBySprintId(sprintId: string): Promise<IIssueEntity[]>;
+    updateSprint(issueId: string, sprintId: string | null): Promise<void>;
 }

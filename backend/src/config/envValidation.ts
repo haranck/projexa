@@ -36,6 +36,7 @@ const envSchema = z.object({
   WORKSPACE_API_PREFIX: z.string().trim().min(1),
   STRIPE_API_PREFIX: z.string().trim().min(1),
   PROJECT_API_PREFIX: z.string().trim().min(1),
+  SPRINT_API_PREFIX: z.string().trim().min(1),
 
   AWS_REGION: z.string().trim(),
   AWS_ACCESS_KEY: z.string().trim(),

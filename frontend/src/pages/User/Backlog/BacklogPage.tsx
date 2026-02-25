@@ -22,6 +22,22 @@ import type { CreateIssueProps } from "@/services/Issue/IssueService";
 import { EpicSidebar } from "./components/EpicSidebar";
 import { SprintSection } from "./components/SprintSection";
 import { BacklogSection } from "./components/BacklogSection";
+import { DraggableIssueItem } from "./components/DraggableIssueItem";
+import { useMoveIssueToSprint, useGetSprints, useCreateSprint } from "@/hooks/sprint/SprintHooks";
+import {
+    DndContext,
+    type DragEndEvent,
+    type DragStartEvent,
+    PointerSensor,
+    KeyboardSensor,
+    useSensor,
+    useSensors,
+    pointerWithin,
+    DragOverlay,
+    defaultDropAnimationSideEffects,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import type { ISprintEntity } from "@/services/Sprint/sprintService";
 
 interface Role {
     _id: string;
@@ -39,12 +55,13 @@ export interface IssueItem {
     issueType: string;
     color: string;
     parentIssueId?: string | null;
+    sprintId?: string | null;
     status?: string;
     assigneeId?: string | null;
 }
 
 export const BacklogPage = () => {
-    const [isSprintOpen, setIsSprintOpen] = useState(true);
+    const [expandedSprints, setExpandedSprints] = useState<Record<string, boolean>>({});
     const [isBacklogOpen, setIsBacklogOpen] = useState(true);
     const [expandedEpic, setExpandedEpic] = useState<string | null>(null);
     const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(true);
@@ -56,6 +73,9 @@ export const BacklogPage = () => {
     const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);
     const [isIssueDrawerOpen, setIsIssueDrawerOpen] = useState(false);
     const [selectedDrawerIssueId, setSelectedDrawerIssueId] = useState<string | null>(null);
+    const [activeIssue, setActiveIssue] = useState<IssueItem | null>(null);
+    const [activeStatusDropdownId, setActiveStatusDropdownId] = useState<string | null>(null);
+    const [showCompletedSprints, setShowCompletedSprints] = useState(false);
     const dispatch = useDispatch();
 
     const { currentProject, projects } = useSelector((state: RootState) => state.project);
@@ -65,10 +85,12 @@ export const BacklogPage = () => {
     const { data: issuesResponse, isLoading: isLoadingIssues } = useGetAllIssues(currentProject?._id || '');
     const { data: workspaceMembersResponse, isLoading: isLoadingMembers } = useGetWorkspaceMembers(currentProject?.workspaceId || '');
     const { data: rolesResponse } = useGetRoles();
+    const { data: sprintsResponse, isLoading: isLoadingSprints } = useGetSprints(currentProject?._id || '');
     const addMemberMutation = useAddProjectMember();
 
     const workspaceMembers: User[] = workspaceMembersResponse?.data || [];
     const roles: Role[] = rolesResponse?.data || [];
+    const allIssues = (issuesResponse?.data || []) as IssueItem[];
 
     const projectMemberIds = currentProject?.members?.map(m => m.userId) || [];
 
@@ -83,6 +105,103 @@ export const BacklogPage = () => {
         setPreparingMember(member);
         setPreparingRoleId(roles[0]?._id || '');
     };
+
+    const { mutate: moveIssueToSprint } = useMoveIssueToSprint(currentProject?._id || '');
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+        const issue = allIssues.find(i => i._id === active.id);
+        if (issue) {
+            setActiveIssue(issue);
+        }
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveIssue(null);
+
+        if (!over) return;
+
+        const issueId = active.id as string;
+        const overId = over.id as string;
+
+        // Find the target sprint ID or 'backlog'
+        let targetSprintId: string | null = null;
+
+        // If dropped over a container itself
+        if (overId === 'backlog') {
+            targetSprintId = null;
+        } else if (sprintsResponse?.data?.some((s: ISprintEntity) => s._id === overId)) {
+            targetSprintId = overId;
+        } else {
+            // If dropped over another issue, find its container
+            const overIssue = allIssues.find(i => i._id === overId);
+            if (overIssue) {
+                targetSprintId = overIssue.sprintId || null;
+            }
+        }
+
+        const activeIssueObj = allIssues.find(i => i._id === issueId);
+        if (activeIssueObj && activeIssueObj.sprintId === (targetSprintId || null)) {
+            return; // No change needed
+        }
+
+        moveIssueToSprint({
+            issueId,
+            sprintId: targetSprintId || ''
+        }, {
+            onSuccess: () => {
+                toast.success(`Issue moved to ${targetSprintId ? 'sprint' : 'backlog'}`);
+            },
+            onError: (err) => {
+                toast.error("Failed to move issue");
+                console.error(err);
+            }
+        });
+    };
+
+    const dropAnimation = {
+        sideEffects: defaultDropAnimationSideEffects({
+            styles: {
+                active: {
+                    opacity: '0.5',
+                },
+            },
+        }),
+    };
+
+    const { mutate: createSprintMutation } = useCreateSprint(currentProject?._id || '');
+
+    const handleCreateSprint = () => {
+        if (!currentProject || !currentProject.workspaceId) {
+            toast.error("Project or Workspace context missing");
+            return;
+        }
+        createSprintMutation({
+            projectId: currentProject._id,
+            workspaceId: currentProject.workspaceId
+        }, {
+            onSuccess: () => {
+                toast.success("Sprint created successfully");
+            },
+            onError: (err) => {
+                toast.error("Failed to create sprint");
+                console.error(err);
+            }
+        });
+    };
+
 
     const handleAddMember = () => {
         if (!currentProject) return;
@@ -148,7 +267,7 @@ export const BacklogPage = () => {
 
     const EPIC_COLORS = ["bg-blue-500", "bg-purple-500", "bg-emerald-500", "bg-amber-500", "bg-rose-500", "bg-cyan-500"];
     const TASK_DOT_COLORS = ["bg-amber-400", "bg-cyan-400", "bg-rose-400", "bg-emerald-400", "bg-violet-400", "bg-pink-400"];
-    const allIssues = (issuesResponse?.data || []) as IssueItem[];
+
     const epics: IssueItem[] = allIssues
         .filter((issue) => issue.issueType === IssueType.EPIC)
         .map((epic, _i) => ({
@@ -198,6 +317,12 @@ export const BacklogPage = () => {
                 <div className="flex flex-col h-full bg-[#0b0e14] text-white min-h-[calc(100vh-5rem)]">
                     {/* Header Section */}
                     <div className="px-8 py-6">
+                        {isLoadingSprints && (
+                            <div className="mb-4 p-4 bg-zinc-900/20 border border-white/5 rounded-2xl animate-pulse">
+                                <div className="h-4 w-32 bg-zinc-800 rounded mb-2" />
+                                <div className="h-20 bg-zinc-800/50 rounded-xl" />
+                            </div>
+                        )}
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-4">
                                 <h1 className="text-2xl font-bold">Backlog</h1>
@@ -208,13 +333,13 @@ export const BacklogPage = () => {
 
                             <div className="flex items-center gap-6">
                                 {/* Search */}
-                                <div className="relative">
+                                {/* <div className="relative">
                                     <input
                                         type="text"
                                         placeholder="Search backlog..."
                                         className="w-64 bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-blue-500/50 transition-all"
                                     />
-                                </div>
+                                </div> */}
 
                                 {/* Members Stack */}
                                 <div className="flex items-center">
@@ -281,6 +406,13 @@ export const BacklogPage = () => {
                                 >
                                     Epic Panel
                                 </button>
+
+                                <button
+                                    onClick={() => setShowCompletedSprints(!showCompletedSprints)}
+                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${showCompletedSprints ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                >
+                                    Completed Sprints
+                                </button>
                             </div>
                         </div>
 
@@ -303,44 +435,105 @@ export const BacklogPage = () => {
                                 taskDotColors={TASK_DOT_COLORS}
                             />
 
-                            {/* Main Content Areas */}
-                            <div className="flex-1 space-y-6">
-                                <SprintSection
-                                    isOpen={isSprintOpen}
-                                    onToggle={() => setIsSprintOpen(!isSprintOpen)}
-                                    onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
-                                />
+                            <DndContext
+                                sensors={sensors}
+                                collisionDetection={pointerWithin}
+                                onDragStart={handleDragStart}
+                                onDragEnd={handleDragEnd}
+                            >
+                                <div className="flex-1 space-y-6">
+                                    {sprintsResponse?.data?.filter((s: ISprintEntity) => showCompletedSprints ? s.status === "COMPLETED" : s.status !== "COMPLETED").map((sprint: ISprintEntity) => (
+                                        <SprintSection
+                                            key={sprint._id}
+                                            sprint={sprint}
+                                            allSprints={sprintsResponse.data}
+                                            isOpen={expandedSprints[sprint._id as string] ?? true}
+                                            activeStatusDropdownId={activeStatusDropdownId}
+                                            onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                            onToggle={() => {
+                                                setExpandedSprints(prev => ({
+                                                    ...prev,
+                                                    [sprint._id as string]: !(prev[sprint._id as string] ?? true)
+                                                }));
+                                            }}
+                                            onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
+                                            issues={allIssues.filter(i => i.sprintId === sprint._id)}
+                                            allIssues={allIssues}
+                                            projectMembers={currentProject?.members || []}
+                                            taskDotColors={TASK_DOT_COLORS}
+                                            onIssueClick={(id) => {
+                                                setSelectedDrawerIssueId(id);
+                                                setIsIssueDrawerOpen(true);
+                                            }}
+                                            onUpdateStatus={(id, status) => {
+                                                updateIssue({
+                                                    epicId: id,
+                                                    status,
+                                                    projectId: currentProject?._id || "",
+                                                }, {
+                                                    onSuccess: () => {
+                                                        toast.success(`Status updated to ${status.replace("_", " ")}`);
+                                                    },
+                                                    onError: (err: unknown) => {
+                                                        toast.error("Failed to update status");
+                                                        console.error(err);
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    ))}
 
-                                <BacklogSection
-                                    isOpen={isBacklogOpen}
-                                    onToggle={() => setIsBacklogOpen(!isBacklogOpen)}
-                                    issues={allIssues.filter(i => i.issueType !== IssueType.EPIC && i.issueType !== IssueType.SUBTASK)}
-                                    allIssues={allIssues}
-                                    onIssueClick={(id) => {
-                                        setSelectedDrawerIssueId(id);
-                                        setIsIssueDrawerOpen(true);
-                                    }}
-                                    onCreateSprintClick={() => toast.success("Create Sprint flow coming soon")}
-                                    onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
-                                    projectMembers={currentProject?.members || []}
-                                    taskDotColors={TASK_DOT_COLORS}
-                                    onUpdateStatus={(id, status) => {
-                                        updateIssue({
-                                            epicId: id,
-                                            status,
-                                            projectId: currentProject?._id || "",
-                                        }, {
-                                            onSuccess: () => {
-                                                toast.success(`Status updated to ${status.replace("_", " ")}`);
-                                            },
-                                            onError: (err: unknown) => {
-                                                toast.error("Failed to update status");
-                                                console.error(err);
-                                            }
-                                        });
-                                    }}
-                                />
-                            </div>
+                                    {!showCompletedSprints && (
+                                        <BacklogSection
+                                            isOpen={isBacklogOpen}
+                                            onToggle={() => setIsBacklogOpen(!isBacklogOpen)}
+                                            activeStatusDropdownId={activeStatusDropdownId}
+                                            onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                            issues={allIssues.filter(i => i.issueType !== IssueType.EPIC && i.issueType !== IssueType.SUBTASK && !i.sprintId)}
+                                            allIssues={allIssues}
+                                            onIssueClick={(id) => {
+                                                setSelectedDrawerIssueId(id);
+                                                setIsIssueDrawerOpen(true);
+                                            }}
+                                            onCreateSprintClick={handleCreateSprint}
+                                            onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
+                                            projectMembers={currentProject?.members || []}
+                                            taskDotColors={TASK_DOT_COLORS}
+                                            onUpdateStatus={(id, status) => {
+                                                updateIssue({
+                                                    epicId: id,
+                                                    status,
+                                                    projectId: currentProject?._id || "",
+                                                }, {
+                                                    onSuccess: () => {
+                                                        toast.success(`Status updated to ${status.replace("_", " ")}`);
+                                                    },
+                                                    onError: (err: unknown) => {
+                                                        toast.error("Failed to update status");
+                                                        console.error(err);
+                                                    }
+                                                });
+                                            }}
+                                        />
+                                    )}
+                                </div>
+                                <DragOverlay dropAnimation={dropAnimation}>
+                                    {activeIssue ? (
+                                        <DraggableIssueItem
+                                            issue={activeIssue}
+                                            idx={0}
+                                            allIssues={allIssues}
+                                            projectMembers={currentProject?.members || []}
+                                            taskDotColors={TASK_DOT_COLORS}
+                                            onIssueClick={() => { }}
+                                            onUpdateStatus={() => { }}
+                                            activeStatusDropdownId={activeStatusDropdownId}
+                                            onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                            isOverlay
+                                        />
+                                    ) : null}
+                                </DragOverlay>
+                            </DndContext>
                         </div>
                     </div>
                 </div>
@@ -385,3 +578,4 @@ export const BacklogPage = () => {
         </>
     );
 };
+

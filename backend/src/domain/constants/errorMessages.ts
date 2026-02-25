@@ -41,7 +41,11 @@ export const ERROR_MESSAGES = {
     GOOGLE_LOGIN_FAILED: "Google login failed",
     JWT_SECRET_MISSING: 'Missing JWT secrets: set JWT_ACCESS_SECRET and JWT_REFRESH_SECRET',
     ADMIN_LOGIN_NOT_ALLOWED: 'Admin login not allowed',
-    BAD_REQUEST: "Bad Request"
+    BAD_REQUEST: "Bad Request",
+    INVALID_REQUEST: "Invalid Request",
+    SPRINT_ACTIVE:'cannot delete active sprints',
+    INVALID_DATES:'Invalid dates',
+    DATE_REQUIRED:'Date required'
 };
 
 export const USER_ERRORS = {
@@ -138,3 +142,46 @@ export const PROJECT_ERRORS = {
     CANNOT_REMOVE_MEMBER_HAS_ISSUES: "Cannot remove member who has assigned issues in this project",
     FAILED_TO_UPDATE_ISSUE: "Failed to update issue"
 };
+
+export const SPRINT_ERRORS = {
+    SPRINT_NOT_FOUND:'Sprint not Found',
+    SPRINT_COMPLETED:'Sprint Already Completed',
+    SPRINT_ALREADY_STARTED:'Sprint Already Started',
+    SPRINT_ALREADY_ACTIVE:'Sprint Already Active',
+    SPRINT_ALREADY_CLOSED:'Sprint Already Closed',
+    SPRINT_INVALIDATION:'Error while validating sprint !',
+    SPRINT_CREATION_FAILED:'Sprint creation failed',
+    SPRINT_UPDATE_FAILED:'Sprint update failed',
+    SPRINT_DELETE_FAILED:'Sprint delete failed',
+    SPRINT_FETCHING_FAILED:'Failed to fetch sprints !',
+    SPRINT_ALREADY_EXISTS:'Sprint Already Exists',
+    SPRINT_ROLE_NOT_FOUND:'Sprint role not found !',
+    SPRINT_MEMBER_ALREADY_EXISTS:'Sprint member already exists !',
+    SPRINT_ROLE_REQUIRED:'Sprint role is required !',
+    INVALID_DATA:'SprintId, UserId and RoleId are required.',
+    ROLE_NOT_FOUND:'Role not found !',
+    CANNOT_REMOVE_CREATOR:'Creator cannot be removed from sprint !',
+    ISSUE_NOT_FOUND:'Issue not found !',
+    ISSUE_CREATION_FAILED:'Issue creation failed',
+    ISSUE_INVALIDATION:'Error while validating issue !',
+    NO_ISSUES_FOUND:'No issues found',
+    ISSUE_ALREADY_EXISTS:'Issue Already Exists',
+    ISSUE_FETCHING_FAILED:'Failed to fetch issues !',
+    ISSUE_MEMBER_ALREADY_EXISTS:'Issue member already exists !',
+    ISSUE_ROLE_REQUIRED:'Issue role is required !',
+    ISSUE_UPDATE_FAILED:'Issue update failed !',
+    ISSUE_MEMBER_NOT_FOUND:'Issue member not found !',
+    NON_EPIC_ISSUE_WITHOUT_PARENT:'Non epic issues must have a parent Issue',
+    CONTENT_TYPE_REQUIRED:'Content Type is required',
+    INVALID_ISSUE_TYPE:'Invalid issue type',
+    INVALID_DATES:'Invalid dates',
+    MEMBER_NOT_FOUND:'Member not found in project !',
+    NOT_AUTHORIZED:'You are not authorized to delete this issue !',
+    HAS_CHILDREN:'Cannot delete issue with child issues',
+    CANNOT_REMOVE_MEMBER_HAS_ISSUES:'Cannot remove member who has assigned issues in this project',
+    FAILED_TO_UPDATE_ISSUE:'Failed to update issue',
+    SPRINT_NOT_ACTIVE:'Sprint is not active !',
+    ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED:'Only active sprint can be completed !',
+    
+
+}

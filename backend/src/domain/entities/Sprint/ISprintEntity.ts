@@ -1,8 +1,8 @@
 import { SprintStatus } from "../../enums/SprintStatus";
 
 export interface ISprintEntity {
-    _id: string;
-    workSpaceId: string;
+    _id?: string;
+    workspaceId: string;
     projectId: string;
     name: string;
     goal?: string;

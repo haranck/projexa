@@ -18,7 +18,7 @@ router.post(ROUTES.ISSUES.ATTACHMENT_UPLOAD_URL, authMiddleware.authenticate, is
 router.patch(ROUTES.ISSUES.UPDATE_ISSUE, authMiddleware.authenticate, issueController.updateEpic)
 router.delete(ROUTES.ISSUES.DELETE_ISSUE, authMiddleware.authenticate, issueController.deleteIssue)
 router.get(ROUTES.ISSUES.GET_ALL_ISSUES, authMiddleware.authenticate, issueController.getAllIssues)
-router.patch(ROUTES.ISSUES.MOVE_ISSUE_TO_SPRINT, authMiddleware.authenticate, issueController.moveIssueToSprint)
+
 
 
 export default router;

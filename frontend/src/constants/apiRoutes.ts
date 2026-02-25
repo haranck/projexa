@@ -62,5 +62,13 @@ export const API_ROUTES = {
     UPDATE_ISSUE: "/project/issues/update-issue/:issueId",
     DELETE_ISSUE: "/project/issues/delete-issue/:issueId",
     GET_ALL_ISSUES: "/project/issues/get-all-issues/:projectId"
+  },
+  SPRINT: {
+    MOVE_ISSUE_TO_SPRINT: "/project/sprint/move-issue-to-sprint/:issueId",
+    CREATE_SPRINT: "/project/sprint/create-sprint",
+    DELETE_SPRINT: "/project/sprint/delete-sprint/:sprintId",
+    START_SPRINT: "/project/sprint/start-sprint/:sprintId",
+    GET_SPRINTS: "/project/sprint/get-sprints/:projectId",
+    COMPLETE_SPRINT: "/project/sprint/complete-sprint/:sprintId"
   }
 };

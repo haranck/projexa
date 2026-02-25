@@ -52,6 +52,20 @@ export class IssueRepository extends BaseRepo<IIssueEntity> implements IIssueRep
         const count = await IssueModel.countDocuments({ projectId, assigneeId });
         return count;
     }
+
+    async removeSprintFromIssues(sprintId: string): Promise<void> {
+        await IssueModel.updateMany({ sprintId: sprintId }, { $set: { sprintId: null } })
+    }
+
+    async getIssuesBySprintId(sprintId: string): Promise<IIssueEntity[]> {
+        const docs = await IssueModel.find({ sprintId: sprintId })
+        if (!docs) return []
+        return docs.map(doc => IssueMapper.toEntity(doc as unknown as IssueDocument))
+    }
+
+    async updateSprint(issueId: string, sprintId: string | null): Promise<void> {
+        await IssueModel.updateOne({ _id: issueId }, { $set: { sprintId: sprintId } })
+    }
 }
 
 

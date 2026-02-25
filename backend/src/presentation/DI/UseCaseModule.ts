@@ -114,8 +114,18 @@ import { IDeleteIssueUseCase } from "../../application/interface/Issue/IDeleteIs
 import { DeleteIssueUseCase } from "../../application/useCases/Issue/DeleteIssueUseCase"
 import { IGetAllIssuesUseCase } from "../../application/interface/Issue/IGetAllIssuesUseCase";
 import { GetAllIssuesUseCase } from "../../application/useCases/Issue/GetAllIssuesUseCase";
-import { IMoveIssueToSprintUseCase } from "../../application/interface/Issue/IMoveIssueToSprintUseCase";
-import { MoveIssueToSprintUseCase } from "../../application/useCases/Issue/MoveIssueToSprintUseCase";
+import { ICreateSprintUseCase } from "../../application/interface/sprint/ICreateSprintuseCase";
+import { CreateSprintUseCase } from "../../application/useCases/sprint/CreateSprintUseCase";
+import { IMoveIssueToSprintUseCase } from "../../application/interface/sprint/IMoveIssueToSprintUseCase";
+import { MoveIssueToSprintUseCase } from "../../application/useCases/sprint/MoveIssueToSprintUseCase";
+import { IDeleteSprintUseCase } from "../../application/interface/sprint/IDeleteSprintUseCase";
+import { DeleteSprintUseCase } from "../../application/useCases/sprint/DeleteSprintUseCase";
+import { IStartSprintUseCase } from "../../application/interface/sprint/IStartSprintUseCase";
+import { StartSprintUseCase } from "../../application/useCases/sprint/StartSprintUseCase";
+import { IGetSprintsByProjectIdUseCase } from "../../application/interface/sprint/IGetSprintsByProjectIdUseCase";
+import { GetSprintsByProjectIdUseCase } from "../../application/useCases/sprint/GetSprintsByProjectIdUseCase";
+import { ICompleteSprintUseCase } from "../../application/interface/sprint/ICompleteSprintUseCase";
+import { CompleteSprintUseCase } from "../../application/useCases/sprint/CompleteSprintUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -360,8 +370,28 @@ export class UseCaseModule {
             useClass: GetAllIssuesUseCase
         })
 
+        container.register<ICreateSprintUseCase>('ICreateSprintUseCase', {
+            useClass: CreateSprintUseCase
+        })
+
         container.register<IMoveIssueToSprintUseCase>('IMoveIssueToSprintUseCase', {
             useClass: MoveIssueToSprintUseCase
+        })
+
+        container.register<IDeleteSprintUseCase>('IDeleteSprintUseCase', {
+            useClass: DeleteSprintUseCase
+        })
+
+        container.register<IStartSprintUseCase>('IStartSprintUseCase', {
+            useClass: StartSprintUseCase
+        })
+
+        container.register<IGetSprintsByProjectIdUseCase>('IGetSprintsByProjectIdUseCase', {
+            useClass: GetSprintsByProjectIdUseCase
+        })
+
+        container.register<ICompleteSprintUseCase>('ICompleteSprintUseCase', {
+            useClass: CompleteSprintUseCase
         })
     }
 }

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { X, Plus, Paperclip, Link as LinkIcon, User, Check, Loader2, FileText, Trash2, ChevronDown, ArrowLeft } from "lucide-react";
+import { X, Plus, Paperclip, Link as LinkIcon, User, Check, Loader2, FileText, Trash2, ChevronDown, ArrowLeft, AlertCircle } from "lucide-react";
 import { useUpdateEpic, useDeleteIssue, useCreateIssue } from "@/hooks/Issues/IssueHooks";
 import { getAttachmentUploadUrl, uploadFileToS3 } from "@/services/Issue/IssueService";
 import { CreateIssueModal } from "./CreateIssueModal";
@@ -108,6 +108,19 @@ export const IssueDetailDrawer = ({
     const handleUpdateIssue = (newStatus?: string) => {
         if (!issue?._id) return;
         const statusToUpdate = newStatus || status;
+
+        if (statusToUpdate.toUpperCase() === "DONE") {
+            const hasIncompleteSubtasks = childTasks.some(t => t.status?.toUpperCase() !== "DONE");
+            if (hasIncompleteSubtasks) {
+                toast.error("Finish all subtasks before moving to done", {
+                    icon: <AlertCircle className="w-4 h-4 text-rose-500" />,
+                });
+                return;
+            }
+        }
+
+        if (newStatus) setStatus(newStatus);
+
         updateIssue({
             epicId: issue._id,
             title,
@@ -378,7 +391,6 @@ export const IssueDetailDrawer = ({
                                             <button
                                                 key={s}
                                                 onClick={() => {
-                                                    setStatus(s);
                                                     setIsStatusDropdownOpen(false);
                                                     handleUpdateIssue(s);
                                                 }}

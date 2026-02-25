@@ -85,6 +85,14 @@ export const MESSAGES = {
         EPIC_DELETED_SUCCESSFULLY: "Epic deleted successfully",
         ISSUES_FETCHED_SUCCESSFULLY: "Issues fetched successfully",
         ISSUE_MOVED_TO_SPRINT_SUCCESSFULLY: "Issue moved to sprint successfully",
-        
+
+    }
+    ,
+    SPRINT:{
+        SPRINT_CREATED_SUCCESSFULLY: "Sprint created successfully",
+        SPRINT_DELETED_SUCCESSFULLY: "Sprint deleted successfully",
+        SPRINT_UPDATED_SUCCESSFULLY: "Sprint updated successfully",
+        SPRINT_STARTED_SUCCESSFULLY: "Sprint started successfully",
+        SPRINT_COMPLETED_SUCCESSFULLY: "Sprint completed successfully",
     }
 };

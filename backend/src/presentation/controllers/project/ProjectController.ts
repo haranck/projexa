@@ -12,7 +12,7 @@ import { IAddProjectMemberUseCase } from "../../../application/interface/project
 import { IRemoveProjectMemberUseCase } from "../../../application/interface/project/IRemoveProjectMemberUseCase";
 import { IUpdateProjectMemberRoleUseCase } from "../../../application/interface/project/IUpdateProjectMemberRoleUseCase";
 
-@injectable()
+@injectable() 
 export class ProjectController {
     constructor(
         @inject("ICreateProjectUseCase") private readonly _createProjectUseCase: ICreateProjectUseCase,
