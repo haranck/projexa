@@ -12,3 +12,4 @@ router.get(ROUTES.SPRINT.GET_SPRINTS, authMiddleware.authenticate, sprintControl
 router.patch(ROUTES.SPRINT.COMPLETE_SPRINT, authMiddleware.authenticate, sprintController.completeSprint)
 
 export default router
+ 

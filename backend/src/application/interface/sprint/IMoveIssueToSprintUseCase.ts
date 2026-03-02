@@ -2,5 +2,5 @@ import { MoveIssueToSprintDTO } from "../../dtos/issue/requestDTOs/MoveIssueToSp
 import { IIssueEntity } from "../../../domain/entities/Issue/IIssueEntity";
 
 export interface IMoveIssueToSprintUseCase {
-    execute(dto:MoveIssueToSprintDTO):Promise<IIssueEntity>
+    execute(dto:MoveIssueToSprintDTO, userId: string):Promise<IIssueEntity>
 }

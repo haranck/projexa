@@ -1,3 +1,4 @@
+import { GetAllIssuesFilterDTO } from "../../../../application/dtos/issue/requestDTOs/GetAllIssuesFilterDTO";
 import { IIssueEntity } from "../../../entities/Issue/IIssueEntity";
 
 export interface IIssueRepository {
@@ -11,4 +12,5 @@ export interface IIssueRepository {
     removeSprintFromIssues(sprintId: string): Promise<void>
     getIssuesBySprintId(sprintId: string): Promise<IIssueEntity[]>;
     updateSprint(issueId: string, sprintId: string | null): Promise<void>;
+    getFilteredIssues(filter:GetAllIssuesFilterDTO):Promise<IIssueEntity[]>
 }

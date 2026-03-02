@@ -3,7 +3,6 @@ import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import { env } from '../../config/envValidation'
 
-
 const s3 = new S3Client({
     region: env.AWS_REGION,
     credentials: {
@@ -21,7 +20,7 @@ export class S3Service implements IS3Service {
             ContentType: contentType,
         })
 
-        const uploadUrl = await getSignedUrl(s3, command, { expiresIn: 60 * 60 })
+        const uploadUrl = await getSignedUrl(s3, command, { expiresIn: env.S3_EXPIRY_TIME })
         return uploadUrl
     }
 }

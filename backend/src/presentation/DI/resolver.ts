@@ -24,4 +24,3 @@ export const onBoardingMiddleware = container.resolve(OnBoardingMiddleware)
 export const projectController = container.resolve(ProjectController)
 export const issueController = container.resolve(IssueController)
 export const sprintController = container.resolve(SprintController)
- 

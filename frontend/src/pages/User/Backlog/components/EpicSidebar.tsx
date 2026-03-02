@@ -33,7 +33,7 @@ export const EpicSidebar = ({
     if (!isOpen) return null;
 
     return (
-        <div className="w-80 shrink-0 animate-in slide-in-from-left duration-300">
+        <div className="w-80 shrink-0 animate-in slide-in-from-left duration-300 ml-6">
             <div className="bg-[#14171f] rounded-[2rem] border border-white/10 overflow-hidden flex flex-col h-[calc(100vh-14rem)] sticky top-6 shadow-2xl">
                 <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
                     <div className="relative group/epic-title">

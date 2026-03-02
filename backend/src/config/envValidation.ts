@@ -47,6 +47,7 @@ const envSchema = z.object({
   STRIPE_WEBHOOK_SECRET: z.string().trim(),
   STRIPE_PUBLIC_KEY: z.string().trim(),
   STRIPE_DEFAULT_PRICE_ID: z.string().trim().optional(),
+  S3_EXPIRY_TIME: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

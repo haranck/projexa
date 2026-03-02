@@ -12,6 +12,7 @@ import { IUpdateEpicUseCase } from "../../../application/interface/Issue/IUpdate
 import { UpdateEpicDTO } from "../../../application/dtos/issue/requestDTOs/UpdateEpicDTO";
 import { IDeleteIssueUseCase } from "../../../application/interface/Issue/IDeleteIssueUseCase";
 import { IGetAllIssuesUseCase } from "../../../application/interface/Issue/IGetAllIssuesUseCase";
+import { GetAllIssuesFilterDTO } from "../../../application/dtos/issue/requestDTOs/GetAllIssuesFilterDTO";
 
 
 
@@ -59,8 +60,10 @@ export class IssueController {
     updateEpic = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { issueId } = req.params
+            const userId = req.user?.userId
+            if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
             const dto: UpdateEpicDTO = req.body
-            const result = await this._updateEpicUseCase.execute(issueId, dto)
+            const result = await this._updateEpicUseCase.execute(issueId, dto, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.EPIC_UPDATED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
@@ -84,7 +87,15 @@ export class IssueController {
     getAllIssues = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { projectId } = req.params;
-            const result = await this._getAllIssuesUseCase.execute(projectId);
+            const { assigneeId, issueType, sprintId, dateFilter } = req.query;
+            const filter: GetAllIssuesFilterDTO = {
+                projectId,
+                assigneeId: assigneeId as string,
+                issueType: issueType as string,
+                sprintId: sprintId as string,
+                dateFilter: dateFilter as GetAllIssuesFilterDTO['dateFilter']
+            }
+            const result = await this._getAllIssuesUseCase.execute(filter);
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.ISSUES_FETCHED_SUCCESSFULLY, data: result });
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };

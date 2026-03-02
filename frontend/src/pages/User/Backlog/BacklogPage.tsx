@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Plus } from "lucide-react";
 import { AddMemberDropdown } from "@/components/Project/AddMemberDropdown";
@@ -16,8 +17,9 @@ import type { User } from '../../../types/user';
 import { setCurrentProject, setProjects } from "@/store/slice/projectSlice";
 import type { ProjectMember } from "@/types/project";
 import { useCreateIssue, useGetAllIssues, useUpdateEpic } from "@/hooks/Issues/IssueHooks";
-import { IssueType } from "@/services/Issue/IssueService";
+import { IssueType, type GetAllIssuesFilterProps } from "@/services/Issue/IssueService";
 import type { CreateIssueProps } from "@/services/Issue/IssueService";
+import { Filter, X, Calendar, Hash } from "lucide-react";
 
 import { EpicSidebar } from "./components/EpicSidebar";
 import { SprintSection } from "./components/SprintSection";
@@ -76,13 +78,18 @@ export const BacklogPage = () => {
     const [activeIssue, setActiveIssue] = useState<IssueItem | null>(null);
     const [activeStatusDropdownId, setActiveStatusDropdownId] = useState<string | null>(null);
     const [showCompletedSprints, setShowCompletedSprints] = useState(false);
+    const [activeFilter, setActiveFilter] = useState<Omit<GetAllIssuesFilterProps, 'projectId'>>({});
     const dispatch = useDispatch();
+    const queryClient = useQueryClient();
 
     const { currentProject, projects } = useSelector((state: RootState) => state.project);
 
     const { mutate: createIssue, isPending: isCreatingIssue } = useCreateIssue();
     const { mutate: updateIssue } = useUpdateEpic();
-    const { data: issuesResponse, isLoading: isLoadingIssues } = useGetAllIssues(currentProject?._id || '');
+    const { data: issuesResponse, isLoading: isLoadingIssues } = useGetAllIssues({
+        projectId: currentProject?._id || '',
+        ...activeFilter
+    });
     const { data: workspaceMembersResponse, isLoading: isLoadingMembers } = useGetWorkspaceMembers(currentProject?.workspaceId || '');
     const { data: rolesResponse } = useGetRoles();
     const { data: sprintsResponse, isLoading: isLoadingSprints } = useGetSprints(currentProject?._id || '');
@@ -164,8 +171,8 @@ export const BacklogPage = () => {
             onSuccess: () => {
                 toast.success(`Issue moved to ${targetSprintId ? 'sprint' : 'backlog'}`);
             },
-            onError: (err) => {
-                toast.error("Failed to move issue");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to move issue");
                 console.error(err);
             }
         });
@@ -195,8 +202,8 @@ export const BacklogPage = () => {
             onSuccess: () => {
                 toast.success("Sprint created successfully");
             },
-            onError: (err) => {
-                toast.error("Failed to create sprint");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to create sprint");
                 console.error(err);
             }
         });
@@ -210,21 +217,26 @@ export const BacklogPage = () => {
             return;
         }
 
+        const memberId = preparingMember._id;
+        const memberRole = preparingRoleId;
+        const memberData = preparingMember;
+
         addMemberMutation.mutate({
             projectId: currentProject._id,
-            userId: preparingMember._id,
-            roleId: preparingRoleId
+            userId: memberId,
+            roleId: memberRole
         }, {
             onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ["issues"] });
                 toast.success("Member added to project");
 
                 const newMember: ProjectMember = {
-                    userId: preparingMember._id as string,
-                    roleId: preparingRoleId,
+                    userId: memberId,
+                    roleId: memberRole,
                     joinedAt: new Date(),
                     user: {
-                        userName: `${preparingMember.firstName || ''} ${preparingMember.lastName || ''}`.trim() || preparingMember.email,
-                        profilePicture: preparingMember.avatarUrl || ""
+                        userName: `${memberData.firstName || ''} ${memberData.lastName || ''}`.trim() || memberData.email || 'Unknown',
+                        profilePicture: memberData.avatarUrl || ""
                     }
                 };
 
@@ -258,8 +270,8 @@ export const BacklogPage = () => {
                 toast.success("Issue created successfully");
                 setIsCreateIssueModalOpen(false);
             },
-            onError: (err) => {
-                toast.error("Failed to create issue");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to create issue");
                 console.error(err);
             }
         });
@@ -326,20 +338,67 @@ export const BacklogPage = () => {
                         <div className="flex items-center justify-between mb-8">
                             <div className="flex items-center gap-4">
                                 <h1 className="text-2xl font-bold">Backlog</h1>
-                                <button className="px-3 py-1 bg-zinc-900/50 border border-white/5 rounded-lg text-[10px] font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
-                                    {currentProject?.projectName}
-                                </button>
                             </div>
 
                             <div className="flex items-center gap-6">
-                                {/* Search */}
-                                {/* <div className="relative">
-                                    <input
-                                        type="text"
-                                        placeholder="Search backlog..."
-                                        className="w-64 bg-zinc-900/50 border border-white/5 rounded-xl px-4 py-2 text-xs focus:outline-none focus:border-blue-500/50 transition-all"
-                                    />
-                                </div> */}
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                        <Filter className="w-3 h-3 text-zinc-500" />
+                                        <select
+                                            value={activeFilter.assigneeId || ''}
+                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, assigneeId: e.target.value || undefined }))}
+                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none min-w-[90px]"
+                                        >
+                                            <option value="" className="bg-[#0b0e14]">All Assignees</option>
+                                            {currentProject?.members?.map(m => (
+                                                <option key={m.userId} value={m.userId} className="bg-[#0b0e14]">
+                                                    {m.user?.userName || 'Unknown'}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                        <Hash className="w-3 h-3 text-zinc-500" />
+                                        <select
+                                            value={activeFilter.issueType || ''}
+                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, issueType: e.target.value || undefined }))}
+                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                        >
+                                            <option value="" className="bg-[#0b0e14]">All Types</option>
+                                            {Object.values(IssueType).map(type => (
+                                                <option key={type} value={type} className="bg-[#0b0e14]">
+                                                    {type}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                        <Calendar className="w-3 h-3 text-zinc-500" />
+                                        <select
+                                            value={activeFilter.dateFilter || ''}
+                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, dateFilter: (e.target.value as GetAllIssuesFilterProps['dateFilter']) || undefined }))}
+                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                        >
+                                            <option value="" className="bg-[#0b0e14]">All Time</option>
+                                            <option value="RECENT" className="bg-[#0b0e14]">Recent (7d)</option>
+                                            <option value="DUE_SOON" className="bg-[#0b0e14]">Due Soon (3d)</option>
+                                        </select>
+                                    </div>
+
+                                    {Object.keys(activeFilter).length > 0 && (
+                                        <button
+                                            onClick={() => setActiveFilter({})}
+                                            className="p-1 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-rose-400 transition-colors"
+                                            title="Clear filters"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="h-6 w-px bg-zinc-800 mx-2" />
 
                                 {/* Members Stack */}
                                 <div className="flex items-center">
@@ -402,139 +461,139 @@ export const BacklogPage = () => {
 
                                 <button
                                     onClick={() => setIsEpicSidebarOpen(!isEpicSidebarOpen)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${isEpicSidebarOpen ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${isEpicSidebarOpen ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
                                 >
                                     Epic Panel
                                 </button>
 
                                 <button
                                     onClick={() => setShowCompletedSprints(!showCompletedSprints)}
-                                    className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${showCompletedSprints ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${showCompletedSprints ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
                                 >
                                     Completed Sprints
                                 </button>
                             </div>
                         </div>
+                    </div>
 
-                        <div className="flex gap-6">
-                            <EpicSidebar
-                                isOpen={isEpicSidebarOpen}
-                                onClose={() => setIsEpicSidebarOpen(false)}
-                                isLoading={isLoadingIssues}
-                                epics={epics}
-                                getChildTasks={getChildTasks}
-                                getCompletedCount={getCompletedCount}
-                                expandedEpicId={expandedEpic}
-                                setExpandedEpicId={setExpandedEpic}
-                                onIssueClick={(id) => {
-                                    setSelectedDrawerIssueId(id);
-                                    setIsIssueDrawerOpen(true);
-                                }}
-                                onCreateEpicClick={() => setIsCreateEpicModalOpen(true)}
-                                isCreating={isCreatingIssue}
-                                taskDotColors={TASK_DOT_COLORS}
-                            />
+                    <div className="flex gap-6">
+                        <EpicSidebar
+                            isOpen={isEpicSidebarOpen}
+                            onClose={() => setIsEpicSidebarOpen(false)}
+                            isLoading={isLoadingIssues}
+                            epics={epics}
+                            getChildTasks={getChildTasks}
+                            getCompletedCount={getCompletedCount}
+                            expandedEpicId={expandedEpic}
+                            setExpandedEpicId={setExpandedEpic}
+                            onIssueClick={(id) => {
+                                setSelectedDrawerIssueId(id);
+                                setIsIssueDrawerOpen(true);
+                            }}
+                            onCreateEpicClick={() => setIsCreateEpicModalOpen(true)}
+                            isCreating={isCreatingIssue}
+                            taskDotColors={TASK_DOT_COLORS}
+                        />
 
-                            <DndContext
-                                sensors={sensors}
-                                collisionDetection={pointerWithin}
-                                onDragStart={handleDragStart}
-                                onDragEnd={handleDragEnd}
-                            >
-                                <div className="flex-1 space-y-6">
-                                    {sprintsResponse?.data?.filter((s: ISprintEntity) => showCompletedSprints ? s.status === "COMPLETED" : s.status !== "COMPLETED").map((sprint: ISprintEntity) => (
-                                        <SprintSection
-                                            key={sprint._id}
-                                            sprint={sprint}
-                                            allSprints={sprintsResponse.data}
-                                            isOpen={expandedSprints[sprint._id as string] ?? true}
-                                            activeStatusDropdownId={activeStatusDropdownId}
-                                            onActiveStatusDropdownChange={setActiveStatusDropdownId}
-                                            onToggle={() => {
-                                                setExpandedSprints(prev => ({
-                                                    ...prev,
-                                                    [sprint._id as string]: !(prev[sprint._id as string] ?? true)
-                                                }));
-                                            }}
-                                            onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
-                                            issues={allIssues.filter(i => i.sprintId === sprint._id)}
-                                            allIssues={allIssues}
-                                            projectMembers={currentProject?.members || []}
-                                            taskDotColors={TASK_DOT_COLORS}
-                                            onIssueClick={(id) => {
-                                                setSelectedDrawerIssueId(id);
-                                                setIsIssueDrawerOpen(true);
-                                            }}
-                                            onUpdateStatus={(id, status) => {
-                                                updateIssue({
-                                                    epicId: id,
-                                                    status,
-                                                    projectId: currentProject?._id || "",
-                                                }, {
-                                                    onSuccess: () => {
-                                                        toast.success(`Status updated to ${status.replace("_", " ")}`);
-                                                    },
-                                                    onError: (err: unknown) => {
-                                                        toast.error("Failed to update status");
-                                                        console.error(err);
-                                                    }
-                                                });
-                                            }}
-                                        />
-                                    ))}
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={pointerWithin}
+                            onDragStart={handleDragStart}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <div className="flex-1 space-y-6">
+                                {sprintsResponse?.data?.filter((s: ISprintEntity) => showCompletedSprints ? s.status === "COMPLETED" : s.status !== "COMPLETED").map((sprint: ISprintEntity) => (
+                                    <SprintSection
+                                        key={sprint._id}
+                                        sprint={sprint}
+                                        allSprints={sprintsResponse.data}
+                                        isOpen={expandedSprints[sprint._id as string] ?? true}
+                                        activeStatusDropdownId={activeStatusDropdownId}
+                                        onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                        onToggle={() => {
+                                            setExpandedSprints(prev => ({
+                                                ...prev,
+                                                [sprint._id as string]: !(prev[sprint._id as string] ?? true)
+                                            }));
+                                        }}
+                                        onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
+                                        issues={allIssues.filter(i => i.sprintId === sprint._id)}
+                                        allIssues={allIssues}
+                                        projectMembers={currentProject?.members || []}
+                                        taskDotColors={TASK_DOT_COLORS}
+                                        onIssueClick={(id) => {
+                                            setSelectedDrawerIssueId(id);
+                                            setIsIssueDrawerOpen(true);
+                                        }}
+                                        onUpdateStatus={(id, status) => {
+                                            updateIssue({
+                                                epicId: id,
+                                                status,
+                                                projectId: currentProject?._id || "",
+                                            }, {
+                                                onSuccess: () => {
+                                                    toast.success(`Status updated to ${status.replace("_", " ")}`);
+                                                },
+                                                onError: (err: unknown) => {
+                                                    toast.error(getErrorMessage(err) || "Failed to update status");
+                                                    console.error(err);
+                                                }
+                                            });
+                                        }}
+                                    />
+                                ))}
 
-                                    {!showCompletedSprints && (
-                                        <BacklogSection
-                                            isOpen={isBacklogOpen}
-                                            onToggle={() => setIsBacklogOpen(!isBacklogOpen)}
-                                            activeStatusDropdownId={activeStatusDropdownId}
-                                            onActiveStatusDropdownChange={setActiveStatusDropdownId}
-                                            issues={allIssues.filter(i => i.issueType !== IssueType.EPIC && i.issueType !== IssueType.SUBTASK && !i.sprintId)}
-                                            allIssues={allIssues}
-                                            onIssueClick={(id) => {
-                                                setSelectedDrawerIssueId(id);
-                                                setIsIssueDrawerOpen(true);
-                                            }}
-                                            onCreateSprintClick={handleCreateSprint}
-                                            onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
-                                            projectMembers={currentProject?.members || []}
-                                            taskDotColors={TASK_DOT_COLORS}
-                                            onUpdateStatus={(id, status) => {
-                                                updateIssue({
-                                                    epicId: id,
-                                                    status,
-                                                    projectId: currentProject?._id || "",
-                                                }, {
-                                                    onSuccess: () => {
-                                                        toast.success(`Status updated to ${status.replace("_", " ")}`);
-                                                    },
-                                                    onError: (err: unknown) => {
-                                                        toast.error("Failed to update status");
-                                                        console.error(err);
-                                                    }
-                                                });
-                                            }}
-                                        />
-                                    )}
-                                </div>
-                                <DragOverlay dropAnimation={dropAnimation}>
-                                    {activeIssue ? (
-                                        <DraggableIssueItem
-                                            issue={activeIssue}
-                                            idx={0}
-                                            allIssues={allIssues}
-                                            projectMembers={currentProject?.members || []}
-                                            taskDotColors={TASK_DOT_COLORS}
-                                            onIssueClick={() => { }}
-                                            onUpdateStatus={() => { }}
-                                            activeStatusDropdownId={activeStatusDropdownId}
-                                            onActiveStatusDropdownChange={setActiveStatusDropdownId}
-                                            isOverlay
-                                        />
-                                    ) : null}
-                                </DragOverlay>
-                            </DndContext>
-                        </div>
+                                {!showCompletedSprints && (
+                                    <BacklogSection
+                                        isOpen={isBacklogOpen}
+                                        onToggle={() => setIsBacklogOpen(!isBacklogOpen)}
+                                        activeStatusDropdownId={activeStatusDropdownId}
+                                        onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                        issues={allIssues.filter(i => i.issueType !== IssueType.EPIC && i.issueType !== IssueType.SUBTASK && !i.sprintId)}
+                                        allIssues={allIssues}
+                                        onIssueClick={(id) => {
+                                            setSelectedDrawerIssueId(id);
+                                            setIsIssueDrawerOpen(true);
+                                        }}
+                                        onCreateSprintClick={handleCreateSprint}
+                                        onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
+                                        projectMembers={currentProject?.members || []}
+                                        taskDotColors={TASK_DOT_COLORS}
+                                        onUpdateStatus={(id, status) => {
+                                            updateIssue({
+                                                epicId: id,
+                                                status,
+                                                projectId: currentProject?._id || "",
+                                            }, {
+                                                onSuccess: () => {
+                                                    toast.success(`Status updated to ${status.replace("_", " ")}`);
+                                                },
+                                                onError: (err: unknown) => {
+                                                    toast.error(getErrorMessage(err) || "Failed to update status");
+                                                    console.error(err);
+                                                }
+                                            });
+                                        }}
+                                    />
+                                )}
+                            </div>
+                            <DragOverlay dropAnimation={dropAnimation}>
+                                {activeIssue ? (
+                                    <DraggableIssueItem
+                                        issue={activeIssue}
+                                        idx={0}
+                                        allIssues={allIssues}
+                                        projectMembers={currentProject?.members || []}
+                                        taskDotColors={TASK_DOT_COLORS}
+                                        onIssueClick={() => { }}
+                                        onUpdateStatus={() => { }}
+                                        activeStatusDropdownId={activeStatusDropdownId}
+                                        onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                        isOverlay
+                                    />
+                                ) : null}
+                            </DragOverlay>
+                        </DndContext>
                     </div>
                 </div>
             </DashboardLayout>
@@ -555,7 +614,7 @@ export const BacklogPage = () => {
                     setSelectedDrawerIssueId(null);
                 }}
                 issue={selectedDrawerIssueId ? allIssues.find(e => e._id === selectedDrawerIssueId) || null : null}
-                childTasks={selectedDrawerIssueId ? getChildTasks(selectedDrawerIssueId) : []}
+                childTasks={selectedDrawerIssueId ? getChildTasks(selectedDrawerIssueId as string) : []}
                 projectName={currentProject?.projectName || ""}
                 projectKey={currentProject?.key || ""}
                 projectId={currentProject?._id || ""}

@@ -10,14 +10,15 @@ import {
 import type {
     CreateIssueProps,
     UpdateEpicProps,
+    GetAllIssuesFilterProps
 } from "../../services/Issue/IssueService";
 
 
-export const useGetAllIssues = (projectId: string) => {
+export const useGetAllIssues = (filter: GetAllIssuesFilterProps) => {
     return useQuery({
-        queryKey: ["issues", projectId],
-        queryFn: () => getAllIssues(projectId),
-        enabled: !!projectId,
+        queryKey: ["issues", filter],
+        queryFn: () => getAllIssues(filter),
+        enabled: !!filter.projectId,
     });
 };
 
@@ -26,8 +27,8 @@ export const useCreateIssue = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: CreateIssueProps) => createIssue(data),
-        onSuccess: (_data, variables) => {
-            queryClient.invalidateQueries({ queryKey: ["issues", variables.projectId] });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["issues"] });
         },
     });
 };
@@ -36,8 +37,8 @@ export const useUpdateEpic = () => {
     const queryClient = useQueryClient()
     return useMutation({
         mutationFn: (data: UpdateEpicProps & { projectId: string }) => updateEpic(data),
-        onSuccess: (_data, variables) => {
-            queryClient.invalidateQueries({ queryKey: ["issues", variables.projectId] })
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["issues"] })
         }
     })
 }
@@ -47,8 +48,8 @@ export const useDeleteIssue = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: { issueId: string, projectId: string }) => deleteIssue(data.issueId),
-        onSuccess: (_data, variables) => {
-            queryClient.invalidateQueries({ queryKey: ["issues", variables.projectId] });
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["issues"] });
         },
     });
 };

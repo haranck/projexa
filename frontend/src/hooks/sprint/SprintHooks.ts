@@ -7,7 +7,7 @@ export const useMoveIssueToSprint = (projectId: string) => {
         mutationFn: moveIssueToSprint,
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['sprints', projectId] });
-            queryClient.invalidateQueries({ queryKey: ['issues', projectId] });
+            queryClient.invalidateQueries({ queryKey: ['issues'] });
         }
     })
 }

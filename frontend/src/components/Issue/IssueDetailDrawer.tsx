@@ -6,6 +6,7 @@ import { CreateIssueModal } from "./CreateIssueModal";
 import type { IAttachement, CreateIssueProps } from "@/services/Issue/IssueService";
 import type { ProjectMember } from "@/types/project";
 import { toast } from "react-hot-toast";
+import { getErrorMessage } from "@/utils/errorHandler";
 
 interface ChildTask {
     _id: string;
@@ -135,8 +136,8 @@ export const IssueDetailDrawer = ({
             onSuccess: () => {
                 toast.success("Issue updated successfully");
             },
-            onError: (err) => {
-                toast.error("Failed to update issue");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to update issue");
                 console.error(err);
             }
         });
@@ -201,8 +202,8 @@ export const IssueDetailDrawer = ({
                 toast.success("Issue created successfully");
                 setIsCreateChildModalOpen(false);
             },
-            onError: (err) => {
-                toast.error("Failed to create issue");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to create issue");
                 console.error(err);
             }
         });
@@ -218,8 +219,8 @@ export const IssueDetailDrawer = ({
                 toast.success(`Subtask status updated to ${newStatus.replace("_", " ")}`);
                 setOpenSubtaskStatusId(null);
             },
-            onError: (err) => {
-                toast.error("Failed to update subtask status");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to update subtask status");
                 console.error(err);
             }
         });
@@ -232,8 +233,8 @@ export const IssueDetailDrawer = ({
                 toast.success("Issue deleted successfully");
                 onClose();
             },
-            onError: () => {
-                toast.error("Failed to delete issue");
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to delete issue");
                 setShowDeleteConfirm(false);
             }
         });

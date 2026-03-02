@@ -2,6 +2,7 @@ import { inject, injectable } from "tsyringe";
 import { IGetAllIssuesUseCase } from "../../interface/Issue/IGetAllIssuesUseCase";
 import { IIssueRepository } from "../../../domain/interfaces/repositories/IssueRepo/IIssueRepository";
 import { IIssueEntity } from "../../../domain/entities/Issue/IIssueEntity";
+import { GetAllIssuesFilterDTO } from "../../dtos/issue/requestDTOs/GetAllIssuesFilterDTO";
 
 @injectable()
 export class GetAllIssuesUseCase implements IGetAllIssuesUseCase {
@@ -9,7 +10,7 @@ export class GetAllIssuesUseCase implements IGetAllIssuesUseCase {
         @inject("IIssueRepository") private readonly _issueRepository: IIssueRepository
     ) { }
 
-    async execute(projectId: string): Promise<IIssueEntity[]> {
-        return await this._issueRepository.getIssuesByProjectId(projectId);
+    async execute(filter :GetAllIssuesFilterDTO): Promise<IIssueEntity[]> {
+        return await this._issueRepository.getFilteredIssues(filter);
     }
 }

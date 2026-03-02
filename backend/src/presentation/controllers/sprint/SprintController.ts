@@ -26,7 +26,11 @@ export class SprintController {
         try {
             const { issueId } = req.params
             const { sprintId } = req.body
-            const result = await this._moveIssueToSprintUseCase.execute({ issueId, sprintId })
+            const userId = req.user?.userId
+            if (!userId) {
+                throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
+            }
+            const result = await this._moveIssueToSprintUseCase.execute({ issueId, sprintId }, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.ISSUE_MOVED_TO_SPRINT_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }
@@ -38,7 +42,7 @@ export class SprintController {
         try {
             const { workspaceId, projectId } = req.body
             const userId = req.user?.userId
-            if (!userId) {
+            if (!userId) { 
                 throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
             }
             if (!workspaceId || !projectId) {

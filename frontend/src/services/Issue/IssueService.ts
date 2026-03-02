@@ -50,14 +50,21 @@ export interface UpdateEpicProps {
     endDate?: Date | null;
 }
 
+export interface GetAllIssuesFilterProps {
+    projectId: string;
+    assigneeId?: string;
+    issueType?: string;
+    sprintId?: string;
+    dateFilter?: "RECENT" | "DUE_SOON";
+}
 
 export const createIssue = async (data: CreateIssueProps) => {
     const response = await AxiosInstance.post(API_ROUTES.ISSUE.CREATE_ISSUE.replace(":projectId", data.projectId), data);
     return response.data;
 };
 
-export const getAllIssues = async (projectId: string) => {
-    const response = await AxiosInstance.get(API_ROUTES.ISSUE.GET_ALL_ISSUES.replace(":projectId", projectId));
+export const getAllIssues = async (filter:GetAllIssuesFilterProps) => {
+    const response = await AxiosInstance.get(API_ROUTES.ISSUE.GET_ALL_ISSUES.replace(":projectId", filter.projectId), { params: filter });
     return response.data;
 };
 

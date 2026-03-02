@@ -3,21 +3,25 @@ import { IIssueEntity } from "../../../domain/entities/Issue/IIssueEntity";
 import { injectable, inject } from "tsyringe";
 import { ICreateIssueUseCase } from "../../interface/Issue/ICreateIssueUseCase";
 import { IIssueRepository } from "../../../domain/interfaces/repositories/IssueRepo/IIssueRepository";
-import { PROJECT_ERRORS } from "../../../domain/constants/errorMessages";
+import { PROJECT_ERRORS, ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { IssueDTOmapper } from "../../mappers/IssueDTOmapper";
 import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
 import { IssueType } from "../../../domain/enums/IssueEnums";
+import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
+import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRepository";
+import { ProjectRole } from "../../../domain/enums/ProjectRole";
 
 
 @injectable()
 export class CreateIssueUseCase implements ICreateIssueUseCase {
     constructor(
         @inject("IIssueRepository") private _issueRepo: IIssueRepository,
-        @inject("IProjectRepository") private _projectRepo: IProjectRepository
+        @inject("IProjectRepository") private _projectRepo: IProjectRepository,
+        @inject("IProjectMemberRepository") private _projectMemberRepo: IProjectMemberRepository,
+        @inject("IRoleRepository") private _roleRepo: IRoleRepository
     ) { }
 
     async execute(dto: CreateIssueDTO, userId: string): Promise<IIssueEntity> {
-        console.log('dto ,',dto)
         if (!dto.title.trim()) {
             throw new Error(PROJECT_ERRORS.ISSUE_INVALIDATION)
         }
@@ -28,6 +32,18 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
         const project = await this._projectRepo.getProjectById(dto.projectId)
         if (!project) {
             throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND)
+        }
+
+        const projectMember = await this._projectMemberRepo.findProjectAndUser(dto.projectId, userId);
+        if (!projectMember) {
+            throw new Error(PROJECT_ERRORS.MEMBER_NOT_FOUND);
+        }
+
+        if (dto.issueType !== IssueType.SUBTASK) {
+            const role = await this._roleRepo.getRoleById(projectMember.roleId);
+            if (!role || role.name !== ProjectRole.PROJECT_MANAGER) {
+                throw new Error(ERROR_MESSAGES.NOT_AUTHORIZED);
+            }
         }
 
         const nextNumber = await this._projectRepo.incrementIssueCounter(dto.projectId)

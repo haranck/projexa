@@ -45,7 +45,9 @@ export const ERROR_MESSAGES = {
     INVALID_REQUEST: "Invalid Request",
     SPRINT_ACTIVE:'cannot delete active sprints',
     INVALID_DATES:'Invalid dates',
-    DATE_REQUIRED:'Date required'
+    DATE_REQUIRED:'Date required',
+    YOU_ARE_NOT_AUTHORIZED: "You can't update this issue",
+    ONLY_PM_CAN_MOVE_ISSUE: "Only Project Manager can move the issue",
 };
 
 export const USER_ERRORS = {
