@@ -187,3 +187,28 @@ export const SPRINT_ERRORS = {
     
 
 }
+
+export const NOTIFICATION_ERRORS = {
+    NOTIFICATION_NOT_FOUND:'Notification not found !',
+    NOTIFICATION_CREATION_FAILED:'Notification creation failed',
+    NOTIFICATION_INVALIDATION:'Error while validating notification !',
+    NO_NOTIFICATIONS_FOUND:'No notifications found',
+    NOTIFICATION_ALREADY_EXISTS:'Notification Already Exists',
+    NOTIFICATION_FETCHING_FAILED:'Failed to fetch notifications !',
+    NOTIFICATION_MEMBER_ALREADY_EXISTS:'Notification member already exists !',
+    NOTIFICATION_ROLE_REQUIRED:'Notification role is required !',
+    NOTIFICATION_UPDATE_FAILED:'Notification update failed !',
+    NOTIFICATION_MEMBER_NOT_FOUND:'Notification member not found !',
+    NOTIFICATION_NON_EPIC_ISSUE_WITHOUT_PARENT:'Non epic issues must have a parent issue',
+    NOTIFICATION_CONTENT_TYPE_REQUIRED:'Content Type is required',
+    NOTIFICATION_INVALID_ISSUE_TYPE:'Invalid issue type',
+    NOTIFICATION_INVALID_DATES:'Invalid dates',
+    NOTIFICATION_NOT_AUTHORIZED:'You are not authorized to delete this issue !',
+    NOTIFICATION_HAS_CHILDREN:'Cannot delete issue with child issues',
+    NOTIFICATION_CANNOT_REMOVE_MEMBER_HAS_ISSUES:'Cannot remove member who has assigned issues in this project',
+    NOTIFICATION_FAILED_TO_UPDATE_ISSUE:'Failed to update issue',
+    NOTIFICATION_SPRINT_NOT_ACTIVE:'Sprint is not active !',
+    NOTIFICATION_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED:'Only active sprint can be completed !',
+    
+
+}

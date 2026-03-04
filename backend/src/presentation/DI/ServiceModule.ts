@@ -14,6 +14,8 @@ import { S3Service } from "../../infrastructure/services/S3service";
 import { IStripeService } from "../../domain/interfaces/services/IStripeService";
 import { StripeService } from "../../infrastructure/services/StripeService";
 import { PDFService } from "../../infrastructure/services/PDFService";
+import { INotificationService } from "../../domain/interfaces/services/INotificationService";
+import { NotificationService } from "../../infrastructure/services/NotificationService";
 
 export class ServiceModule {
     static registerModules(): void {
@@ -48,6 +50,10 @@ export class ServiceModule {
 
         container.register<PDFService>('PDFService', {
             useClass: PDFService
+        })
+
+        container.register<INotificationService>('INotificationService', {
+            useClass: NotificationService
         })
     }
 }

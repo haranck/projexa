@@ -126,6 +126,14 @@ import { IGetSprintsByProjectIdUseCase } from "../../application/interface/sprin
 import { GetSprintsByProjectIdUseCase } from "../../application/useCases/sprint/GetSprintsByProjectIdUseCase";
 import { ICompleteSprintUseCase } from "../../application/interface/sprint/ICompleteSprintUseCase";
 import { CompleteSprintUseCase } from "../../application/useCases/sprint/CompleteSprintUseCase";
+import { ISendNotificationUseCase } from "../../application/interface/notification/ISendNotificationUseCase";
+import { SendNotificationUseCase } from "../../application/useCases/notification/SendNotificationUseCase";
+import { IGetNotificationUseCase } from "../../application/interface/notification/IGetNotificationUseCase";
+import { GetNotificationUseCase } from "../../application/useCases/notification/GetNotificationUseCase";
+import { IMarkNotificationReadUseCase } from "../../application/interface/notification/IMarkNotificationReadUseCase";
+import { MarkNotificationReadUseCase } from "../../application/useCases/notification/MarkNotificationReadUseCase";
+import { IMarkAllNotificationsReadUseCase } from "../../application/interface/notification/IMarkAllNotificationsReadUseCase";
+import { MarkAllNotificationsReadUseCase } from "../../application/useCases/notification/MarkAllNotificationsReadUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -392,6 +400,22 @@ export class UseCaseModule {
 
         container.register<ICompleteSprintUseCase>('ICompleteSprintUseCase', {
             useClass: CompleteSprintUseCase
+        })
+
+        container.register<ISendNotificationUseCase>('ISendNotificationUseCase', {
+            useClass: SendNotificationUseCase
+        })
+
+        container.register<IGetNotificationUseCase>('IGetNotificationUseCase', {
+            useClass: GetNotificationUseCase
+        })
+
+        container.register<IMarkNotificationReadUseCase>('IMarkNotificationReadUseCase', {
+            useClass: MarkNotificationReadUseCase
+        })
+
+        container.register<IMarkAllNotificationsReadUseCase>('IMarkAllNotificationsReadUseCase', {
+            useClass: MarkAllNotificationsReadUseCase
         })
     }
 }

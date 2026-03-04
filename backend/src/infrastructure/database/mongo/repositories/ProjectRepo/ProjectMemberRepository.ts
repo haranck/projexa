@@ -40,7 +40,7 @@ export class ProjectMemberRepository extends BaseRepo<IProjectMemberEntity> impl
         const updatedDoc = await ProjectMemberModel.findOneAndUpdate(
             { projectId: new Types.ObjectId(data.projectId), userId: new Types.ObjectId(data.userId) },
             { roleId: new Types.ObjectId(data.roleId) },
-            { new: true }
+            { returnDocument: 'after' }
         ).lean()
 
         if(!updatedDoc) throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND)

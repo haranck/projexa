@@ -21,6 +21,8 @@ import { IIssueRepository } from "../../domain/interfaces/repositories/IssueRepo
 import { IssueRepository } from "../../infrastructure/database/mongo/repositories/IssueRepo/IssueRepository";
 import { ISprintRepository } from "../../domain/interfaces/repositories/SprintRepo/ISprintRepository";
 import { SprintRepository } from "../../infrastructure/database/mongo/repositories/Sprint/SprintRepository";
+import { INotificationRepository } from "../../domain/interfaces/repositories/NotificationRepo/INotificationRepository";
+import { NotificationRepository } from "../../infrastructure/database/mongo/repositories/NotificationRepo/NotificationRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -67,6 +69,10 @@ export class RepositoryModule {
 
         container.register<ISprintRepository>('ISprintRepository', {
             useClass: SprintRepository
+        })
+
+        container.register<INotificationRepository>('INotificationRepository', {
+            useClass: NotificationRepository
         })
     }
 }

@@ -94,5 +94,11 @@ export const MESSAGES = {
         SPRINT_UPDATED_SUCCESSFULLY: "Sprint updated successfully",
         SPRINT_STARTED_SUCCESSFULLY: "Sprint started successfully",
         SPRINT_COMPLETED_SUCCESSFULLY: "Sprint completed successfully",
+    },
+    NOTIFICATION:{
+        GET_ALL_NOTIFICATIONS: "Notifications fetched successfully",
+        NOTIFICATION_READ_SUCCESSFULLY: "Notification read successfully",
+        NOTIFICATION_MARK_AS_READ_SUCCESSFULLY: "Notification marked as read successfully",
+        NOTIFICATION_MARK_ALL_AS_READ_SUCCESSFULLY: "All notifications marked as read successfully",
     }
 };

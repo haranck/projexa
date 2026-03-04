@@ -13,7 +13,10 @@ import workspaceRoutes from "./presentation/routes/workspace/workspace.routes";
 import stripeRoutes from "./presentation/routes/stripe.routes";
 import projectRoutes from "./presentation/routes/project/project.routes";
 import sprintRoutes from "./presentation/routes/sprint/sprint.routes";
+import notificationRoutes from "./presentation/routes/notification/notification.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
+import { initSocket } from './presentation/webSocket/server/socketServer';
+import http from 'http'
 
 const app = express();
 
@@ -36,11 +39,13 @@ app.use(env.USER_API_PREFIX, userRoutes);
 app.use(env.WORKSPACE_API_PREFIX, workspaceRoutes);
 app.use(env.PROJECT_API_PREFIX, projectRoutes);
 app.use(env.SPRINT_API_PREFIX, sprintRoutes);
+app.use(env.NOTIFICATION_API_PREFIX, notificationRoutes);
 
 const startServer = async () => {
   await connectMongoDB();
-
-  app.listen(env.PORT, () => {
+  const server = http.createServer(app);
+  initSocket(server)
+  server.listen(env.PORT, () => {
     console.log(`Server running on port ${process.env.PORT}`);
   });
 };

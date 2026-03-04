@@ -70,5 +70,10 @@ export const API_ROUTES = {
     START_SPRINT: "/project/sprint/start-sprint/:sprintId",
     GET_SPRINTS: "/project/sprint/get-sprints/:projectId",
     COMPLETE_SPRINT: "/project/sprint/complete-sprint/:sprintId"
+  },
+  NOTIFICATION: {
+    GET_ALL_NOTIFICATIONS: "/notifications/get-all-notifications",
+    MARK_AS_READ: "/notifications/mark-as-read/:notificationId",
+    MARK_ALL_AS_READ: "/notifications/mark-all-as-read",
   }
 };

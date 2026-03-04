@@ -10,6 +10,8 @@ import { IssueType } from "../../../domain/enums/IssueEnums";
 import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
 import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRepository";
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
+import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
+import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
 
 
 @injectable()
@@ -18,7 +20,8 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
         @inject("IIssueRepository") private _issueRepo: IIssueRepository,
         @inject("IProjectRepository") private _projectRepo: IProjectRepository,
         @inject("IProjectMemberRepository") private _projectMemberRepo: IProjectMemberRepository,
-        @inject("IRoleRepository") private _roleRepo: IRoleRepository
+        @inject("IRoleRepository") private _roleRepo: IRoleRepository,
+        @inject("ISendNotificationUseCase") private _sendNotification: ISendNotificationUseCase
     ) { }
 
     async execute(dto: CreateIssueDTO, userId: string): Promise<IIssueEntity> {
@@ -50,7 +53,27 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
         const issueKey = `${project.key}-${nextNumber}`
 
         const issueData = IssueDTOmapper.toDomain(dto, userId, issueKey)
+
         const createdIssue = await this._issueRepo.createIssue(issueData)
+
+        await this._sendNotification.execute({
+            recipientId: project.createdBy,
+            eventType: NotificationEventType.ISSUE_CREATED,
+            message: `Issue "${createdIssue.title}" created successfully`,
+            resourceId: createdIssue._id,
+            resourceType: 'issue'
+        })
+
+        if (createdIssue.assigneeId) {
+            await this._sendNotification.execute({
+                recipientId: createdIssue.assigneeId,
+                eventType: NotificationEventType.ISSUE_ASSIGNED,
+                message: `Issue "${createdIssue.title}" has been assigned to you`,
+                resourceId: createdIssue._id,
+                resourceType: "issue"
+            })
+        }
+
         return createdIssue
     }
 }

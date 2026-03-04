@@ -56,7 +56,7 @@ export const ROUTES = {
         ATTACHMENT_UPLOAD_URL: "/issues/attachment-upload-url",
     },
     SPRINT: {
-        MOVE_ISSUE_TO_SPRINT: "/move-issue-to-sprint/:issueId", 
+        MOVE_ISSUE_TO_SPRINT: "/move-issue-to-sprint/:issueId",
         CREATE_SPRINT: "/create-sprint",
         DELETE_SPRINT: "/delete-sprint/:sprintId",
         START_SPRINT: "/start-sprint/:sprintId",
@@ -74,5 +74,10 @@ export const ROUTES = {
         UPDATE_PLAN: "/update-plan/:planId",
         GET_PAYMENTS: '/payments',
         GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf'
+    },
+    NOTIFICATION: {
+        GET_ALL_NOTIFICATIONS: "/get-all-notifications",
+        MARK_AS_READ: "/mark-as-read/:notificationId",
+        MARK_ALL_AS_READ: "/mark-all-as-read"
     }
 };

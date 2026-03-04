@@ -12,15 +12,20 @@ import { useGetUserWorkspaces } from "../../hooks/Workspace/WorkspaceHooks";
 import { useGetAllProjects } from "@/hooks/Project/ProjectHooks";
 import { setProjects, setCurrentProject } from "@/store/slice/projectSlice";
 import { CreateProjectModal } from "../modals/CreateProjectModal";
+import { NotificationModal } from "../modals/NotificationModal";
+import { useNotifications } from "../../hooks/Notification/NotificationHooks";
+import type { NotificationResponse, Notification } from "../../types/notification";
 import type { Project } from "@/types/project";
 
 const DashboardNavbar = () => {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isWorkspaceDropdownOpen, setIsWorkspaceDropdownOpen] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+    const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
     const workspaceDropdownRef = useRef<HTMLDivElement>(null);
     const projectDropdownRef = useRef<HTMLDivElement>(null);
     const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
+    const { data: notificationsResponse } = useNotifications() as { data: NotificationResponse | undefined };
     const { projects, currentProject } = useSelector((state: RootState) => state.project);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -223,11 +228,22 @@ const DashboardNavbar = () => {
                     <div className="flex items-center gap-6">
 
 
-                        <div className="flex items-center gap-2">
-                            <button className="relative p-2.5 rounded-xl hover:bg-white/5 text-zinc-400 hover:text-white transition-all">
+                        <div className="flex items-center gap-2 relative">
+                            <button
+                                onClick={() => setIsNotificationModalOpen(!isNotificationModalOpen)}
+                                className={`relative p-2.5 rounded-xl hover:bg-white/5 transition-all ${isNotificationModalOpen ? 'text-white bg-white/5' : 'text-zinc-400 hover:text-white'}`}
+                            >
                                 <Bell className="h-5 w-5" />
-                                <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#0b0e14]"></span>
+                                {(notificationsResponse?.data || []).filter((n: Notification) => !n.isRead).length > 0 && (
+                                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#0b0e14]"></span>
+                                )}
                             </button>
+
+                            <NotificationModal
+                                isOpen={isNotificationModalOpen}
+                                onClose={() => setIsNotificationModalOpen(false)}
+                            />
+
                             <button className="p-2.5 rounded-xl hover:bg-white/5 text-zinc-400 hover:text-white transition-all">
                                 <SettingsIcon className="h-5 w-5" />
                             </button>
