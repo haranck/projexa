@@ -1,11 +1,12 @@
 import DashboardLayout from "@/components/Layout/DashboardLayout";
-import { Search, MoreHorizontal, Check, X } from "lucide-react";
+import { Search, MoreHorizontal, Check, X, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetAllIssues } from "@/hooks/Issues/IssueHooks";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { filterIssues, type IssueItem } from "@/utils/filterIssues";
 import { IssueStatus, IssueType } from "@/services/Issue/IssueService";
 import { useCompleteSprint, useGetSprints } from "@/hooks/sprint/SprintHooks";
@@ -26,6 +27,7 @@ import type { DragEndEvent, DragStartEvent } from "@dnd-kit/core";
 import { BoardColumn } from "./components/BoardColumn";
 import { BoardCard } from "./components/BoardCard";
 import { getErrorMessage } from "@/utils/errorHandler";
+import { IssueDetailDrawer, type IssueData } from "@/components/Issue/IssueDetailDrawer";
 
 export const BoardPage = () => {
     const [selectedAssignee, setSelectedAssignee] = useState<string | null>(null);
@@ -35,7 +37,19 @@ export const BoardPage = () => {
     const [searchQuery, setSearchQuery] = useState<string>("");
     const [isCompleteModalOpen, setIsCompleteModalOpen] = useState(false);
     const [activeIssue, setActiveIssue] = useState<IssueItem | null>(null);
+    const [isIssueDrawerOpen, setIsIssueDrawerOpen] = useState(false);
+    const [selectedDrawerIssueId, setSelectedDrawerIssueId] = useState<string | null>(null);
     const queryClient = useQueryClient();
+    const location = useLocation();
+
+    useEffect(() => {
+        const state = location.state as { selectedIssueId?: string };
+        if (state?.selectedIssueId) {
+            setSelectedDrawerIssueId(state.selectedIssueId);
+            setIsIssueDrawerOpen(true);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
     const { mutate: updateIssue } = useUpdateEpic();
 
     const sensors = useSensors(
@@ -116,6 +130,21 @@ export const BoardPage = () => {
         ];
     }, [filteredIssues]);
 
+    const getChildTasks = (parentId: string) => {
+        return allIssues.filter(i => i.parentIssueId === parentId);
+    };
+
+    const checkSubtasksDone = (parentId: string) => {
+        const subtasks = getChildTasks(parentId);
+        if (subtasks.length === 0) return true;
+        return subtasks.every(s => s.status?.toUpperCase() === "DONE");
+    };
+
+    const handleIssueClick = (id: string) => {
+        setSelectedDrawerIssueId(id);
+        setIsIssueDrawerOpen(true);
+    };
+
     const handleDragStart = (event: DragStartEvent) => {
         const { active } = event;
         const issue = allIssues.find(i => i._id === active.id);
@@ -141,6 +170,22 @@ export const BoardPage = () => {
             const overIssue = allIssues.find(i => i._id === over.id);
             if (!overIssue) return;
             newStatus = overIssue.status as IssueStatus;
+        }
+
+        if (newStatus === IssueStatus.DONE) {
+            if (!checkSubtasksDone(issueId)) {
+                toast.error("Finish all subtasks before moving to done", {
+                    icon: <AlertCircle className="w-4 h-4 text-rose-500" />,
+                    style: {
+                        background: '#1a1c22',
+                        color: '#fff',
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        fontSize: '11px',
+                        fontWeight: 'bold',
+                    }
+                });
+                return;
+            }
         }
 
         // Optimistic Update
@@ -342,6 +387,7 @@ export const BoardPage = () => {
                                 issues={column.issues}
                                 allIssues={allIssues}
                                 currentProject={currentProject}
+                                onIssueClick={handleIssueClick}
                             />
                         ))}
                     </div>
@@ -352,6 +398,7 @@ export const BoardPage = () => {
                                 issue={activeIssue}
                                 allIssues={allIssues}
                                 currentProject={currentProject}
+                                onIssueClick={handleIssueClick}
                             />
                         ) : null}
                     </DragOverlay>
@@ -369,6 +416,19 @@ export const BoardPage = () => {
                     plannedSprints={sprints.filter(s => s.status === SprintStatus.PLANNED)}
                 />
             )}
+
+            <IssueDetailDrawer
+                isOpen={isIssueDrawerOpen}
+                onClose={() => setIsIssueDrawerOpen(false)}
+                issue={allIssues.find(i => i._id === selectedDrawerIssueId) as unknown as IssueData || null}
+                childTasks={selectedDrawerIssueId ? getChildTasks(selectedDrawerIssueId) : []}
+                projectName={currentProject.projectName || ""}
+                projectId={currentProject._id || ""}
+                workspaceId={currentProject.workspaceId || ""}
+                members={currentProject.members || []}
+                projectKey={currentProject.key || ""}
+                onSubtaskClick={(id) => setSelectedDrawerIssueId(id)}
+            />
         </DashboardLayout>
     );
 };

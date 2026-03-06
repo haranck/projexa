@@ -19,7 +19,7 @@ export class SprintController {
         @inject('IDeleteSprintUseCase') private readonly _deleteSprintUseCase: IDeleteSprintUseCase,
         @inject('IStartSprintUseCase') private readonly _startSprintUseCase: IStartSprintUseCase,
         @inject('IGetSprintsByProjectIdUseCase') private readonly _getSprintsByProjectIdUseCase: IGetSprintsByProjectIdUseCase,
-        @inject('ICompleteSprintUseCase') private readonly _completeSprintUseCase : ICompleteSprintUseCase
+        @inject('ICompleteSprintUseCase') private readonly _completeSprintUseCase: ICompleteSprintUseCase
     ) { }
 
     moveIssueToSprint = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -30,7 +30,7 @@ export class SprintController {
             if (!userId) {
                 throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
             }
-            const result = await this._moveIssueToSprintUseCase.execute({ issueId, sprintId }, userId)
+            const result = await this._moveIssueToSprintUseCase.execute({ issueId: issueId as string, sprintId: sprintId as string }, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.ISSUE_MOVED_TO_SPRINT_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }
@@ -42,13 +42,13 @@ export class SprintController {
         try {
             const { workspaceId, projectId } = req.body
             const userId = req.user?.userId
-            if (!userId) { 
+            if (!userId) {
                 throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
             }
             if (!workspaceId || !projectId) {
                 throw new Error(ERROR_MESSAGES.INVALID_REQUEST)
             }
-            const result = await this._createSprintUseCase.execute({ workspaceId: workspaceId, projectId, createdBy: userId })
+            const result = await this._createSprintUseCase.execute({ workspaceId: workspaceId, projectId, createdBy: userId }, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.SPRINT.SPRINT_CREATED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }
@@ -59,7 +59,7 @@ export class SprintController {
     deleteSprint = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { sprintId } = req.params
-            const result = await this._deleteSprintUseCase.execute(sprintId)
+            const result = await this._deleteSprintUseCase.execute(sprintId as string)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.SPRINT.SPRINT_DELETED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }
@@ -70,8 +70,9 @@ export class SprintController {
     startSprint = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { sprintId } = req.params
+            const userId = req.user?.userId
             const { startDate, endDate, goal } = req.body
-            const result = await this._startSprintUseCase.execute({ sprintId, startDate, endDate, goal })
+            const result = await this._startSprintUseCase.execute({ sprintId: sprintId as string, startDate, endDate, goal }, userId!)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.SPRINT.SPRINT_STARTED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }
@@ -82,7 +83,7 @@ export class SprintController {
     getSprintsByProjectId = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { projectId } = req.params
-            const result = await this._getSprintsByProjectIdUseCase.execute(projectId)
+            const result = await this._getSprintsByProjectIdUseCase.execute(projectId as string)
             res.status(HTTP_STATUS.OK).json({ message: "Sprints fetched successfully", data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }
@@ -92,9 +93,9 @@ export class SprintController {
 
     completeSprint = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const {sprintId} = req.params
-            const {moveIncompleteIssuesToSprintId} = req.body
-            const result = await this._completeSprintUseCase.execute({sprintId,moveIncompleteIssuesToSprintId})
+            const { sprintId } = req.params
+            const { moveIncompleteIssuesToSprintId } = req.body
+            const result = await this._completeSprintUseCase.execute({ sprintId: sprintId as string, moveIncompleteIssuesToSprintId })
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.SPRINT.SPRINT_COMPLETED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }

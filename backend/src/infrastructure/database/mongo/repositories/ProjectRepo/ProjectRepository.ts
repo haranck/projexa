@@ -131,34 +131,10 @@ export class ProjectRepository extends BaseRepo<IProjectEntity> implements IProj
     }
 
     async incrementIssueCounter(projectId: string): Promise<number> {
-        // const projectBefore = await super.findById(projectId);
-        // if (!projectBefore) throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND);
-
-        // if (projectBefore.issueCounter === 0) {
-        //     const issues = await IssueModel.find({ projectId });
-        //     if (issues.length > 0) {
-        //         const maxNum = Math.max(...issues.map(i => {
-        //             const parts = i.key.split('-');
-        //             const num = parseInt(parts[parts.length - 1]);
-        //             return isNaN(num) ? 0 : num;
-        //         }));
-        //         if (maxNum > 0) {
-        //             await ProjectModel.findByIdAndUpdate(projectId, { issueCounter: maxNum });
-        //         }
-        //     }
-        // }
-
-        // const project = await ProjectModel.findByIdAndUpdate(
-        //     projectId,
-        //     { $inc: { issueCounter: 1 } },
-        //     { new: true, upsert: false }
-        // );
-        // if (!project) throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND);
-        // return project.issueCounter;
         const project = await ProjectModel.findByIdAndUpdate(
             projectId,
             { $inc: { issueCounter: 1 } },
-            { new: true }
+            { returnDocument: "after" }
         );
 
         if (!project) {

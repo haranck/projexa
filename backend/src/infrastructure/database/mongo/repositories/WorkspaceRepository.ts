@@ -47,7 +47,7 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
     }
 
     async updateWorkspace(id: string, workspace: IWorkspaceEntity): Promise<IWorkspaceEntity> {
-        const doc = await this.model.findByIdAndUpdate(id, workspace, { new: true });
+        const doc = await this.model.findByIdAndUpdate(id, workspace, { returnDocument: "after" });
         if (!doc) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
         return doc;
     }

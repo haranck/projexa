@@ -63,7 +63,7 @@ export class IssueController {
             const userId = req.user?.userId
             if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
             const dto: UpdateEpicDTO = req.body
-            const result = await this._updateEpicUseCase.execute(issueId, dto, userId)
+            const result = await this._updateEpicUseCase.execute(issueId as string, dto, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.EPIC_UPDATED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
@@ -76,7 +76,7 @@ export class IssueController {
             const { issueId } = req.params
             const userId = req.user?.userId
             if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
-            const result = await this._deleteIssueUseCase.execute(issueId, userId)
+            const result = await this._deleteIssueUseCase.execute(issueId as string, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.EPIC_DELETED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
@@ -89,7 +89,7 @@ export class IssueController {
             const { projectId } = req.params;
             const { assigneeId, issueType, sprintId, dateFilter } = req.query;
             const filter: GetAllIssuesFilterDTO = {
-                projectId,
+                projectId: projectId as string,
                 assigneeId: assigneeId as string,
                 issueType: issueType as string,
                 sprintId: sprintId as string,

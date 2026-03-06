@@ -27,7 +27,7 @@ export const initSocket = (server: http.Server) => {
             console.log(`User ${userId} connected with socket ${socket.id}`);
             socket.join(`user:${userId}`);
             socketUserStore.addUser(userId, socket.id);
-        } 
+        }
 
         new NotificationEvents(socket, io).register();
 

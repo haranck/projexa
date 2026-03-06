@@ -12,7 +12,7 @@ import { IAddProjectMemberUseCase } from "../../../application/interface/project
 import { IRemoveProjectMemberUseCase } from "../../../application/interface/project/IRemoveProjectMemberUseCase";
 import { IUpdateProjectMemberRoleUseCase } from "../../../application/interface/project/IUpdateProjectMemberRoleUseCase";
 
-@injectable() 
+@injectable()
 export class ProjectController {
     constructor(
         @inject("ICreateProjectUseCase") private readonly _createProjectUseCase: ICreateProjectUseCase,
@@ -41,7 +41,7 @@ export class ProjectController {
         try {
             const { page, limit, search } = req.query;
             const { workspaceId } = req.params
-            const result = await this._getAllProjectsUseCase.execute({ workspaceId, page: page as string, limit: limit as string, search: search as string })
+            const result = await this._getAllProjectsUseCase.execute({ workspaceId: workspaceId as string, page: page as string, limit: limit as string, search: search as string })
 
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.GET_ALL_PROJECTS, data: result });
         } catch (error: unknown) {
@@ -52,10 +52,12 @@ export class ProjectController {
 
     updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { projectId } = req.params
-            const { projectName, description, key } = req.body
-            const result = await this._updateProjectUseCase.execute({ projectId, projectName, description, key })
-            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.PROJECT_UPDATED_SUCCESSFULLY, data: result })
+            const { projectId } = req.params;
+            const { projectName, description, key } = req.body;
+            const requesterId = req.user?.userId;
+            if (!requesterId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+            const result = await this._updateProjectUseCase.execute({ projectId: projectId as string, projectName, description, key }, requesterId);
+            res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.PROJECT_UPDATED_SUCCESSFULLY, data: result });
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
             res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
@@ -64,8 +66,10 @@ export class ProjectController {
 
     deleteProject = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { projectId } = req.params
-            await this._deleteProjectUseCase.execute(projectId)
+            const { projectId } = req.params;
+            const requesterId = req.user?.userId;
+            if (!requesterId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+            await this._deleteProjectUseCase.execute(projectId as string, requesterId);
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.PROJECT_DELETED_SUCCESSFULLY })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
@@ -77,7 +81,9 @@ export class ProjectController {
         try {
             const { projectId } = req.params
             const { userId, roleId } = req.body
-            await this._addProjectMemberUseCase.execute({ projectId, userId, roleId })
+            const requesterId = req.user?.userId;
+            if (!requesterId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+            await this._addProjectMemberUseCase.execute({ projectId: projectId as string, userId, roleId }, requesterId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.PROJECT_MEMBER_ADDED_SUCCESSFULLY })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
@@ -88,7 +94,9 @@ export class ProjectController {
     removeProjectMember = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { projectId, userId } = req.params
-            await this._removeProjectMemberUseCase.execute({ projectId, userId })
+            const requesterId = req.user?.userId;
+            if (!requesterId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+            await this._removeProjectMemberUseCase.execute({ projectId: projectId as string, userId: userId as string }, requesterId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.PROJECT_MEMBER_REMOVED_SUCCESSFULLY })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
@@ -100,8 +108,9 @@ export class ProjectController {
         try {
             const { projectId } = req.params;
             const { userId, roleId } = req.body;
-            const result = await this._updateProjectMemberRoleUseCase.execute({ projectId, userId, roleId });
-            console.log('updated data', result)
+            const requesterId = req.user?.userId;
+            if (!requesterId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED);
+            const result = await this._updateProjectMemberRoleUseCase.execute({ projectId: projectId as string, userId: userId as string, roleId: roleId as string }, requesterId);
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.PROJECT.PROJECT_MEMBER_UPDATED_SUCCESSFULLY, data: result });
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };

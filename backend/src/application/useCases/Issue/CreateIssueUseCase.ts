@@ -56,14 +56,6 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
 
         const createdIssue = await this._issueRepo.createIssue(issueData)
 
-        await this._sendNotification.execute({
-            recipientId: project.createdBy,
-            eventType: NotificationEventType.ISSUE_CREATED,
-            message: `Issue "${createdIssue.title}" created successfully`,
-            resourceId: createdIssue._id,
-            resourceType: 'issue'
-        })
-
         if (createdIssue.assigneeId) {
             await this._sendNotification.execute({
                 recipientId: createdIssue.assigneeId,

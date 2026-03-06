@@ -11,6 +11,8 @@ import { IProjectMemberRepository } from "../../../domain/interfaces/repositorie
 import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRepository";
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
+import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 
 
 @injectable()
@@ -19,7 +21,8 @@ export class MoveIssueToSprintUseCase implements IMoveIssueToSprintUseCase {
         @inject('IIssueRepository') private readonly _issueRepository: IIssueRepository,
         @inject('ISprintRepository') private readonly _sprintRepository: ISprintRepository,
         @inject('IProjectMemberRepository') private readonly _projectMemberRepo: IProjectMemberRepository,
-        @inject('IRoleRepository') private readonly _roleRepo: IRoleRepository
+        @inject('IRoleRepository') private readonly _roleRepo: IRoleRepository,
+        @inject("ISendNotificationUseCase") private readonly _sendNotification: ISendNotificationUseCase
     ) { }
 
     async execute(dto: MoveIssueToSprintDTO, userId: string): Promise<IIssueEntity> {
@@ -55,6 +58,23 @@ export class MoveIssueToSprintUseCase implements IMoveIssueToSprintUseCase {
 
         const updated = await this._issueRepository.updateIssue(issue._id.toString(), { sprintId: sprintId })
         if (!updated) throw new Error(PROJECT_ERRORS.FAILED_TO_UPDATE_ISSUE)
+
+        if (updated.assigneeId) {
+            let sprintName = "Backlog";
+            if (sprintId) {
+                const sprint = await this._sprintRepository.getSprintById(sprintId);
+                sprintName = sprint?.name || "Sprint";
+            }
+
+            await this._sendNotification.execute({
+                recipientId: updated.assigneeId,
+                eventType: NotificationEventType.ISSUE_UPDATED,
+                message: `Issue "${updated.title}" has been moved to ${sprintName}`,
+                resourceId: updated._id,
+                resourceType: "issue"
+            }).catch(err => console.error("Failed to send movement notification:", err));
+        }
+
         return updated
     }
 }

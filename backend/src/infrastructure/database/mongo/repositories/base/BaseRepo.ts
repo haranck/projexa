@@ -19,7 +19,7 @@ export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
   }
 
   async update(e: Partial<T>, id: string): Promise<T | null> {
-    const doc = await this.model.findByIdAndUpdate(id, e, { new: true }).lean<T>();
+    const doc = await this.model.findByIdAndUpdate(id, e, { returnDocument: "after" }).lean<T>();
     return doc ?? null;
   }
 

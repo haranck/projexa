@@ -3,8 +3,8 @@ import { useSelector } from 'react-redux';
 import { useQueryClient } from '@tanstack/react-query';
 import { socket } from '../socket/socket';
 import type { RootState } from '../store/store';
-import toast from 'react-hot-toast';
 import { NOTIFICATION_EVENTS } from '../constants/notification.events';
+import { showNotificationToast } from '../utils/customToast';
 
 export const useNotificationSocket = () => {
     const { user, isAuthenticated } = useSelector((state: RootState) => state.auth);
@@ -23,7 +23,8 @@ export const useNotificationSocket = () => {
 
             socket.on(NOTIFICATION_EVENTS.RECEIVED, (notification) => {
                 if (notification && notification.message) {
-                    toast.success(notification.message);
+                    showNotificationToast(notification);
+                    console.log('notification message : ', notification.message)
                     queryClient.invalidateQueries({ queryKey: ["notifications"] });
                 }
             });

@@ -8,7 +8,7 @@ import type { ProjectMember } from "@/types/project";
 import { toast } from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
 
-interface ChildTask {
+export interface ChildTask {
     _id: string;
     title: string;
     issueType: string;
@@ -16,7 +16,7 @@ interface ChildTask {
     assigneeId?: string | null;
 }
 
-interface IssueData {
+export interface IssueData {
     _id: string;
     title: string;
     description?: string;

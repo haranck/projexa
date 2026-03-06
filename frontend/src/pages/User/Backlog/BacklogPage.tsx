@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
 import { Plus } from "lucide-react";
@@ -81,6 +82,16 @@ export const BacklogPage = () => {
     const [activeFilter, setActiveFilter] = useState<Omit<GetAllIssuesFilterProps, 'projectId'>>({});
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
+    const location = useLocation();
+
+    useEffect(() => {
+        const state = location.state as { selectedIssueId?: string };
+        if (state?.selectedIssueId) {
+            setSelectedDrawerIssueId(state.selectedIssueId);
+            setIsIssueDrawerOpen(true);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
 
     const { currentProject, projects } = useSelector((state: RootState) => state.project);
 

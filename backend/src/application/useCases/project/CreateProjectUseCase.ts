@@ -9,6 +9,8 @@ import { PROJECT_ERRORS } from "../../../domain/constants/errorMessages";
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
+import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
+import { WORKSPACE_ERRORS } from "../../../domain/constants/errorMessages";
 
 @injectable()
 export class CreateProjectUseCase implements ICreateProjectUseCase {
@@ -16,7 +18,8 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
         @inject("IProjectRepository") private _projectRepo: IProjectRepository,
         @inject("IProjectMemberRepository") private _projectMemberRepo: IProjectMemberRepository,
         @inject("IRoleRepository") private _roleRepo: IRoleRepository,
-        @inject("ISendNotificationUseCase") private _sendNotificationUseCase: ISendNotificationUseCase
+        @inject("ISendNotificationUseCase") private _sendNotificationUseCase: ISendNotificationUseCase,
+        @inject("IWorkspaceRepository") private _workspaceRepository: IWorkspaceRepository,
     ) { }
 
     async execute(project: CreateProjectDTO): Promise<IProjectEntity> {
@@ -24,6 +27,11 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
         if (existingProject) throw new Error(PROJECT_ERRORS.PROJECT_ALREADY_EXISTS)
 
         const createdProject = await this._projectRepo.createProject(project)
+
+        const workspace = await this._workspaceRepository.getWorkspaceById(project.workspaceId)
+        if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND)
+        
+        if(workspace.ownerId !== project.createdBy) throw new Error(PROJECT_ERRORS.UNAUTHORIZED_TO_CREATE_PROJECT)
 
         const projectManager = await this._roleRepo.getRoleByName(ProjectRole.PROJECT_MANAGER)
         if (!projectManager) throw new Error(PROJECT_ERRORS.PROJECT_ROLE_NOT_FOUND)
@@ -33,14 +41,6 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
             userId: project.createdBy,
             roleId: projectManager._id!
         })
-
-        await this._sendNotificationUseCase.execute({
-            recipientId: project.createdBy,
-            eventType: NotificationEventType.PROJECT_CREATED,
-            message: `Project "${createdProject.projectName}" created successfully`,
-            resourceId: createdProject._id,
-            resourceType: 'project'
-        });
 
         if (project.members && project.members.length > 0) {
             for (const member of project.members) {

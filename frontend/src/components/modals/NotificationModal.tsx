@@ -1,4 +1,6 @@
 import React, { useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
 import { Bell, CheckCheck, Calendar, ExternalLink, UserPlus, FileText, AlertTriangle } from 'lucide-react';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/Notification/NotificationHooks';
 import { formatTimeAgo } from '../../utils/timeAgo';
@@ -12,9 +14,27 @@ interface NotificationModalProps {
 
 export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, onClose }) => {
     const modalRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
     const { data: notificationsResponse, isLoading } = useNotifications();
     const { mutate: markAsRead } = useMarkAsRead();
     const { mutate: markAllAsRead } = useMarkAllAsRead();
+
+
+    const handleNotificationClick = (notification: Notification) => {
+        if (!notification.isRead) {
+            markAsRead(notification._id);
+        }
+
+        if (notification.resourceType === 'issue' || notification.eventType.includes('ISSUE')) {
+            navigate(FRONTEND_ROUTES.BACKLOG, { state: { selectedIssueId: notification.resourceId } });
+        } else if (notification.resourceType === 'project' || notification.eventType.includes('PROJECT')) {
+            navigate(FRONTEND_ROUTES.PROJECTS);
+        } else if (notification.eventType.includes('EPIC')) {
+            navigate(FRONTEND_ROUTES.BACKLOG, { state: { selectedIssueId: notification.resourceId } });
+        }
+
+        onClose();
+    };
 
     const notifications: Notification[] = notificationsResponse?.data || [];
     const unreadCount = notifications.filter((n) => !n.isRead).length;
@@ -104,7 +124,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
                         {notifications.map((notification) => (
                             <div
                                 key={notification._id}
-                                className={`group relative px-5 py-4 border-b border-white/5 transition-all ${!notification.isRead ? 'bg-blue-500/2' : ''}`}
+                                onClick={() => handleNotificationClick(notification)}
+                                className={`group relative px-5 py-4 border-b border-white/5 transition-all cursor-pointer hover:bg-white/2 ${!notification.isRead ? 'bg-blue-500/2' : ''}`}
                             >
                                 <div className="flex gap-4">
                                     <div className={`mt-0.5 w-9 h-9 shrink-0 rounded-xl flex items-center justify-center transition-colors ${!notification.isRead ? 'bg-blue-500/10' : 'bg-white/5'}`}>

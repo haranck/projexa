@@ -39,7 +39,7 @@ export class SubscriptionRepository extends BaseRepo<ISubscriptionEntity> implem
         return doc;
     }
     async updateSubscription(subscriptionId: string, subscription: Partial<ISubscriptionEntity>): Promise<ISubscriptionEntity> {
-        const updatedDoc = await this.model.findByIdAndUpdate(subscriptionId, subscription, { new: true }).lean<ISubscriptionEntity>();
+        const updatedDoc = await this.model.findByIdAndUpdate(subscriptionId, subscription, { returnDocument: "after" }).lean<ISubscriptionEntity>();
         if (!updatedDoc) throw new Error(SUBSCRIPTION_ERRORS.SUBSCRIPTION_NOT_FOUND);
         return updatedDoc;
     }

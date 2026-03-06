@@ -18,7 +18,7 @@ export class SendNotificationUseCase implements ISendNotificationUseCase {
             isRead: false
         })
 
-        this.notificationService.emitToUser(notification.recipientId.toString(), notification);
+        await this.notificationService.emitToUser(notification.recipientId.toString(), notification);
 
         return notification;
     }

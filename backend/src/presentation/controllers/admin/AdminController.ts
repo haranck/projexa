@@ -74,7 +74,7 @@ export class AdminController {
     blockUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { userId } = req.params;
-            await this._blockUserUseCase.execute(userId)
+            await this._blockUserUseCase.execute(userId as string)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.BLOCK_USER_SUCCESS })
         } catch (error) {
             next(error)
@@ -83,7 +83,7 @@ export class AdminController {
     unblockUser = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
         try {
             const { userId } = req.params;
-            await this._unblockUserUseCase.execute(userId)
+            await this._unblockUserUseCase.execute(userId as string)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UNBLOCK_USER_SUCCESS })
         } catch (error) {
             next(error)
@@ -114,7 +114,7 @@ export class AdminController {
         try {
             const { planId } = req.params;
             const dto = req.body;
-            const response = await this._updatePlanUseCase.execute(planId, dto);
+            const response = await this._updatePlanUseCase.execute(planId as string, dto);
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.UPDATE_PLAN_SUCCESS, data: response });
         } catch (error) {
             next(error);

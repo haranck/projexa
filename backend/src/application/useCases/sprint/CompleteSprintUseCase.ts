@@ -6,12 +6,15 @@ import { IIssueRepository } from '../../../domain/interfaces/repositories/IssueR
 import { SPRINT_ERRORS } from '../../../domain/constants/errorMessages'
 import { SprintStatus } from '../../../domain/enums/SprintStatus'
 import { IssueStatus } from '../../../domain/enums/IssueEnums'
+import { ISendNotificationUseCase } from '../../interface/notification/ISendNotificationUseCase'
+import { NotificationEventType } from '../../../domain/enums/NotificationEventType'
 
 @injectable()
 export class CompleteSprintUseCase implements ICompleteSprintUseCase {
     constructor(
         @inject('ISprintRepository') private readonly _sprintRepo: ISprintRepository,
-        @inject('IIssueRepository') private readonly _issueRepo: IIssueRepository
+        @inject('IIssueRepository') private readonly _issueRepo: IIssueRepository,
+        @inject("ISendNotificationUseCase") private readonly _sendNotification: ISendNotificationUseCase
     ) { }
 
     async execute(data: CompleteSprintDTO): Promise<void> {
@@ -35,6 +38,14 @@ export class CompleteSprintUseCase implements ICompleteSprintUseCase {
         }
 
         await this._sprintRepo.updateSprint(sprintId, { status: SprintStatus.COMPLETED })
+
+        await this._sendNotification.execute({
+            recipientId: sprint.projectId,
+            eventType: NotificationEventType.SPRINT_COMPLETED,
+            message: `Sprint "${sprint.name}" has been completed`,
+            resourceId: sprint._id,
+            resourceType: "sprint"
+        })
 
     }
 }

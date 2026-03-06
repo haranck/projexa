@@ -7,13 +7,16 @@ import { PROJECT_ERRORS, ERROR_MESSAGES } from "../../../domain/constants/errorM
 import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
 import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRepository";
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
+import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
+import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 
 @injectable()
 export class UpdateEpicUseCase implements IUpdateEpicUseCase {
     constructor(
         @inject('IIssueRepository') private _issueRepository: IIssueRepository,
         @inject('IProjectMemberRepository') private _projectMemberRepo: IProjectMemberRepository,
-        @inject('IRoleRepository') private _roleRepo: IRoleRepository
+        @inject('IRoleRepository') private _roleRepo: IRoleRepository,
+        @inject("ISendNotificationUseCase") private _sendNotification: ISendNotificationUseCase
     ) { }
 
     async execute(issueId: string, dto: UpdateEpicDTO, userId: string): Promise<IIssueEntity> {
@@ -46,6 +49,16 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
         }
 
         const updatedIssue = await this._issueRepository.updateIssue(issueId, dto)
+
+        if (dto.assigneeId && dto.assigneeId !== issue.assigneeId) {
+            await this._sendNotification.execute({
+                recipientId: dto.assigneeId,
+                eventType: NotificationEventType.ISSUE_ASSIGNED,
+                message: `Issue "${updatedIssue.title}" has been assigned to you`,
+                resourceId: updatedIssue._id,
+                resourceType: "issue"
+            }).catch(err => console.error("Failed to send assignment notification:", err));
+        }
 
         return updatedIssue
     }

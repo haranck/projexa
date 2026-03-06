@@ -14,6 +14,7 @@ interface BoardColumnProps {
     issues: IssueItem[];
     allIssues: IssueItem[];
     currentProject: Project | null;
+    onIssueClick: (id: string) => void;
 }
 
 export const BoardColumn = ({
@@ -23,7 +24,8 @@ export const BoardColumn = ({
     borderColor,
     issues,
     allIssues,
-    currentProject
+    currentProject,
+    onIssueClick
 }: BoardColumnProps) => {
     const { setNodeRef, isOver } = useDroppable({
         id: status,
@@ -55,6 +57,7 @@ export const BoardColumn = ({
                                 issue={issue}
                                 allIssues={allIssues}
                                 currentProject={currentProject}
+                                onIssueClick={onIssueClick}
                             />
                         ))
                     ) : (

@@ -8,9 +8,10 @@ interface BoardCardProps {
     issue: IssueItem;
     allIssues: IssueItem[];
     currentProject: Project | null;
+    onIssueClick: (id: string) => void;
 }
 
-export const BoardCard = ({ issue, allIssues, currentProject }: BoardCardProps) => {
+export const BoardCard = ({ issue, allIssues, currentProject, onIssueClick }: BoardCardProps) => {
     const {
         attributes,
         listeners,
@@ -36,6 +37,7 @@ export const BoardCard = ({ issue, allIssues, currentProject }: BoardCardProps) 
             style={style}
             {...attributes}
             {...listeners}
+            onClick={() => onIssueClick(issue._id)}
             className="bg-[#161b22] border border-zinc-800 rounded-xl p-4 hover:border-zinc-700 cursor-grab active:cursor-grabbing transition-all group relative"
         >
             <div className={`absolute left-0 top-4 bottom-4 w-1 ${issue.issueType === IssueType.BUG ? "bg-rose-500" :
