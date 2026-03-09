@@ -17,7 +17,8 @@ export class StripeService implements IStripeService {
 
     constructor() {
         this.stripe = new Stripe(env.STRIPE_SECRET_KEY!, {
-            apiVersion: '2025-12-15.clover',
+            // apiVersion: '2025-12-15.clover',
+            apiVersion: '2026-02-25.clover',
         });
     }
     async createCheckoutSession(params: CreateCheckoutSessionInputDTO): Promise<string> {

@@ -29,14 +29,14 @@ const envSchema = z.object({
   ADMIN_PASSWORD: z.string().trim().min(6),
   NODE_ENV: z.enum(["development", "production"]),
   FRONTEND_URL: z.string().trim().url(),
-  
+
   AUTH_API_PREFIX: z.string().trim().min(1),
   ADMIN_API_PREFIX: z.string().trim().min(1),
   USER_API_PREFIX: z.string().trim().min(1),
   WORKSPACE_API_PREFIX: z.string().trim().min(1),
   STRIPE_API_PREFIX: z.string().trim().min(1),
   PROJECT_API_PREFIX: z.string().trim().min(1),
-  SPRINT_API_PREFIX: z.string().trim().min(1),  
+  SPRINT_API_PREFIX: z.string().trim().min(1),
   NOTIFICATION_API_PREFIX: z.string().trim().min(1),
 
   AWS_REGION: z.string().trim(),
@@ -49,6 +49,8 @@ const envSchema = z.object({
   STRIPE_PUBLIC_KEY: z.string().trim(),
   STRIPE_DEFAULT_PRICE_ID: z.string().trim().optional(),
   S3_EXPIRY_TIME: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
+  REDIS_HOST: z.string().trim().default("127.0.0.1"),
+  REDIS_PORT: z.string().trim().default("6379").transform(Number).refine((val) => !isNaN(val)),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

@@ -7,10 +7,10 @@ const socket = io("http://localhost:4000", {
 });
 
 socket.on("connect", () => {
-    console.log("✅Connected to socket server");
+    console.log("Connected to socket server");
     console.log("Socket ID:", socket.id);
 });
 
 socket.on("disconnect", () => {
-    console.log("❌Disconnected from server");
+    console.log("Disconnected from server");
 });
