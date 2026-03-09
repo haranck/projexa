@@ -16,7 +16,7 @@ export const FRONTEND_ROUTES = {
   BACKLOG: '/backlog',
   BOARD: '/board',
   PROFILE: '/profile',
-  CHANGE_PASSWORD: '/change-password',
+  CHANGE_PASSWORD: '/change-password', 
   UPDATE_PROFILE: '/update-profile',
 
   //Workspce Routes

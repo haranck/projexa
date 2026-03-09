@@ -48,6 +48,21 @@ export const ROUTES = {
         REMOVE_PROJECT_MEMBER: "/remove-project-member/:projectId/:userId",
         UPDATE_PROJECT_MEMBER_ROLE: "/update-member-role/:projectId",
     },
+    ISSUES: {
+        CREATE_ISSUE: "/issues/create-issue/:projectId",
+        GET_ALL_ISSUES: "/issues/get-all-issues/:projectId",
+        UPDATE_ISSUE: "/issues/update-issue/:issueId",
+        DELETE_ISSUE: "/issues/delete-issue/:issueId",
+        ATTACHMENT_UPLOAD_URL: "/issues/attachment-upload-url",
+    },
+    SPRINT: {
+        MOVE_ISSUE_TO_SPRINT: "/move-issue-to-sprint/:issueId",
+        CREATE_SPRINT: "/create-sprint",
+        DELETE_SPRINT: "/delete-sprint/:sprintId",
+        START_SPRINT: "/start-sprint/:sprintId",
+        GET_SPRINTS: "/get-sprints/:projectId",
+        COMPLETE_SPRINT: "/complete-sprint/:sprintId"
+    },
     ADMIN: {
         LOGIN: "/login",
         LOGOUT: "/logout",
@@ -59,5 +74,10 @@ export const ROUTES = {
         UPDATE_PLAN: "/update-plan/:planId",
         GET_PAYMENTS: '/payments',
         GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf'
+    },
+    NOTIFICATION: {
+        GET_ALL_NOTIFICATIONS: "/get-all-notifications",
+        MARK_AS_READ: "/mark-as-read/:notificationId",
+        MARK_ALL_AS_READ: "/mark-all-as-read"
     }
 };

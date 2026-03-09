@@ -12,4 +12,5 @@ export interface IProjectRepository {
     getProjectByKey(workspaceId: string, key: string): Promise<IProjectEntity | null>;
     deleteProject(id: string): Promise<IProjectEntity | null>;
     getAllProjects(params: GetAllProjectsDTO): Promise<GetAllProjectsResponseDTO>;
+    incrementIssueCounter(projectId: string): Promise<number>;
 }

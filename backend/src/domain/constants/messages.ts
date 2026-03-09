@@ -77,5 +77,28 @@ export const MESSAGES = {
         ROLE_DELETED_SUCCESSFULLY: "Role deleted successfully",
         GET_ROLES_SUCCESSFULLY: "Roles fetched successfully",
         GET_ALL_ROLES_SUCCESSFULLY: "Roles fetched successfully",
+    },
+    ISSUE: {
+        ISSUE_CREATED_SUCCESSFULLY: "Issue created successfully",
+        ATTACHMENT_UPLOAD_URL_GENERATED_SUCCESSFULLY: "Attachment upload URL generated successfully",
+        EPIC_UPDATED_SUCCESSFULLY: "Epic updated successfully",
+        EPIC_DELETED_SUCCESSFULLY: "Epic deleted successfully",
+        ISSUES_FETCHED_SUCCESSFULLY: "Issues fetched successfully",
+        ISSUE_MOVED_TO_SPRINT_SUCCESSFULLY: "Issue moved to sprint successfully",
+
+    }
+    ,
+    SPRINT:{
+        SPRINT_CREATED_SUCCESSFULLY: "Sprint created successfully",
+        SPRINT_DELETED_SUCCESSFULLY: "Sprint deleted successfully",
+        SPRINT_UPDATED_SUCCESSFULLY: "Sprint updated successfully",
+        SPRINT_STARTED_SUCCESSFULLY: "Sprint started successfully",
+        SPRINT_COMPLETED_SUCCESSFULLY: "Sprint completed successfully",
+    },
+    NOTIFICATION:{
+        GET_ALL_NOTIFICATIONS: "Notifications fetched successfully",
+        NOTIFICATION_READ_SUCCESSFULLY: "Notification read successfully",
+        NOTIFICATION_MARK_AS_READ_SUCCESSFULLY: "Notification marked as read successfully",
+        NOTIFICATION_MARK_ALL_AS_READ_SUCCESSFULLY: "All notifications marked as read successfully",
     }
 };

@@ -145,6 +145,8 @@
 @theme inline {
     --font-display: "Inter", "sans-serif";
     --animate-fade-in: fade-in 0.5s ease-out;
+    --animate-enter: enter 0.2s ease-out;
+    --animate-leave: leave 0.15s ease-in;
 
     @keyframes fade-in {
         0% {
@@ -155,6 +157,30 @@
         100% {
             opacity: 1;
             transform: translateY(0);
+        }
+    }
+
+    @keyframes enter {
+        0% {
+            transform: scale(0.9);
+            opacity: 0;
+        }
+
+        100% {
+            transform: scale(1);
+            opacity: 1;
+        }
+    }
+
+    @keyframes leave {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(0.9);
+            opacity: 0;
         }
     }
 }

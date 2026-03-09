@@ -4,12 +4,17 @@ export interface IProjectEntity {
     key: string;
     description: string;
     workspaceId: string;
-    members: {
+    members?: {
         userId: string;
         roleId: string;
         joinedAt: Date;
+        user?:{
+            userName:string;
+            profilePicture:string;
+        }
     }[];
     createdBy: string;
+    issueCounter?: number;
     createdAt?: Date;
     updatedAt?: Date;
 }

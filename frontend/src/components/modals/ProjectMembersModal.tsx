@@ -15,6 +15,11 @@ import { toast } from 'react-hot-toast';
 import { getErrorMessage } from '@/utils/errorHandler';
 import type { Project } from '../../types/project';
 import type { User } from '../../types/user';
+import { useDispatch, useSelector } from 'react-redux';
+import { setCurrentProject, setProjects } from '@/store/slice/projectSlice';
+import type { RootState } from '@/store/store';
+import type { ProjectMember } from '@/types/project';
+
 
 interface Role {
     _id: string;
@@ -32,6 +37,9 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
     const [searchQuery, setSearchQuery] = useState('');
     const [preparingMember, setPreparingMember] = useState<User | null>(null);
     const [preparingRoleId, setPreparingRoleId] = useState<string>('');
+    const dispatch = useDispatch();
+    const { projects } = useSelector((state: RootState) => state.project);
+
 
     const { data: workspaceMembersResponse, isLoading: isLoadingMembers } = useGetWorkspaceMembers(project?.workspaceId || '');
     const { data: rolesResponse, isLoading: isLoadingRoles } = useGetRoles();
@@ -64,6 +72,19 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
         }, {
             onSuccess: () => {
                 toast.success("Member role updated");
+
+                const updatedMembers = project.members.map(m =>
+                    m.userId === userId ? { ...m, roleId } : m
+                );
+                const updatedProject = { ...project, members: updatedMembers };
+                dispatch(setCurrentProject(updatedProject));
+
+                if (projects.length > 0) {
+                    const updatedProjects = projects.map(p =>
+                        p._id === project._id ? updatedProject : p
+                    );
+                    dispatch(setProjects(updatedProjects));
+                }
             },
             onError: (err) => {
                 toast.error(getErrorMessage(err) || "Failed to update role");
@@ -78,6 +99,17 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
         }, {
             onSuccess: () => {
                 toast.success("Member removed from project");
+
+                const updatedMembers = project.members.filter(m => m.userId !== userId);
+                const updatedProject = { ...project, members: updatedMembers };
+                dispatch(setCurrentProject(updatedProject));
+
+                if (projects.length > 0) {
+                    const updatedProjects = projects.map(p =>
+                        p._id === project._id ? updatedProject : p
+                    );
+                    dispatch(setProjects(updatedProjects));
+                }
             },
             onError: (err) => {
                 toast.error(getErrorMessage(err) || "Failed to remove member");
@@ -103,6 +135,31 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
         }, {
             onSuccess: () => {
                 toast.success("Member added to project");
+
+                const newMember: ProjectMember = {
+                    userId: preparingMember._id as string,
+                    roleId: preparingRoleId,
+                    joinedAt: new Date(),
+                    user: {
+                        userName: `${preparingMember.firstName || ''} ${preparingMember.lastName || ''}`.trim() || preparingMember.email,
+                        profilePicture: preparingMember.avatarUrl || ""
+                    }
+                };
+
+                const updatedProject = {
+                    ...project,
+                    members: [...project.members, newMember]
+                };
+
+                dispatch(setCurrentProject(updatedProject));
+
+                if (projects.length > 0) {
+                    const updatedProjects = projects.map(p =>
+                        p._id === project._id ? updatedProject : p
+                    );
+                    dispatch(setProjects(updatedProjects));
+                }
+
                 setIsMemberDropdownOpen(false);
                 setSearchQuery('');
                 setPreparingMember(null);
@@ -148,7 +205,11 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
                                         <div className="p-4 space-y-4 animate-in slide-in-from-right-2 duration-200">
                                             <div className="flex items-center gap-3 p-3 bg-zinc-900/40 rounded-xl border border-white/5">
                                                 <div className="w-8 h-8 rounded-lg bg-blue-500 flex items-center justify-center text-[10px] font-bold text-white">
-                                                    {preparingMember.firstName?.charAt(0) || preparingMember.email.charAt(0).toUpperCase()}
+                                                    {preparingMember.avatarUrl ? (
+                                                        <img src={preparingMember.avatarUrl} alt="" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <>{preparingMember.firstName?.charAt(0) || preparingMember.email.charAt(0).toUpperCase()}</>
+                                                    )}
                                                 </div>
                                                 <div className="flex-1 min-w-0">
                                                     <p className="text-xs font-bold text-white truncate">{preparingMember.firstName} {preparingMember.lastName}</p>

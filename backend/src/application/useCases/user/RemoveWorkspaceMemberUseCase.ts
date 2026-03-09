@@ -3,12 +3,14 @@ import { IRemoveWorkspaceMemberUseCase } from "../../interface/user/IRemoveWorks
 import { injectable, inject } from "tsyringe";
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { WORKSPACE_ERRORS } from "../../../domain/constants/errorMessages";
+import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
 
 
 @injectable()
 export class RemoveWorkspaceMemberUseCase implements IRemoveWorkspaceMemberUseCase {
     constructor(
-        @inject('IWorkspaceRepository') private _workspaceRepo: IWorkspaceRepository
+        @inject('IWorkspaceRepository') private _workspaceRepo: IWorkspaceRepository,
+        @inject('IProjectRepository') private _projectRepo: IProjectRepository
     ) { }
     async execute(dto: RemoveMemberDTO): Promise<void> {
         const workspace = await this._workspaceRepo.getWorkspaceById(dto.workspaceId)

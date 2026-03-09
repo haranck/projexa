@@ -9,7 +9,7 @@ export class OtpMapper {
     }
 
     return {
-      _id: doc._id,
+      _id: doc._id.toString(),
       userId: doc.userId.toString(),
       code: doc.code,
       expiresAt: doc.expiresAt,

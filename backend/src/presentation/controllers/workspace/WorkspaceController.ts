@@ -144,8 +144,8 @@ export class WorkspaceController {
 
     getWorkspaceInvoices = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { workspaceId } = req.params
-            const result = await this._getWorkspaceInvoicesUseCase.execute(workspaceId!)
+            const workspaceId = req.params.workspaceId as string;
+            const result = await this._getWorkspaceInvoicesUseCase.execute(workspaceId)
             res.status(HTTP_STATUS.OK).json({
                 message: MESSAGES.WORKSPACE.GET_WORKSPACE_INVOICES_SUCCESSFULLY,
                 data: result
@@ -158,7 +158,7 @@ export class WorkspaceController {
 
     inviteMember = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { id: workspaceId } = req.params;
+            const workspaceId = req.params.id as string;
             const { email } = req.body;
             const userId = req.user?.userId
             if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
@@ -175,8 +175,8 @@ export class WorkspaceController {
 
     acceptInvite = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { token } = req.params
-            const result = await this._acceptInviteUseCase.execute(token!)
+            const token = req.params.token as string;
+            const result = await this._acceptInviteUseCase.execute(token)
 
             res.cookie("refreshToken", result.refreshToken, {
                 httpOnly: true,
@@ -227,8 +227,8 @@ export class WorkspaceController {
     }
     getWorkspaceMembers = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { workspaceId } = req.params
-            const result = await this._getWorkspaceMembersUseCase.execute(workspaceId!)
+            const workspaceId = req.params.workspaceId as string;
+            const result = await this._getWorkspaceMembersUseCase.execute(workspaceId)
             res.status(HTTP_STATUS.OK).json({
                 message: MESSAGES.WORKSPACE.GET_WORKSPACE_MEMBERS_SUCCESSFULLY,
                 data: result
@@ -249,7 +249,7 @@ export class WorkspaceController {
     }
     removeWorkspaceMember = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { workspaceId } = req.params
+            const workspaceId = req.params.workspaceId as string;
             const { memberId } = req.body
             const userId = req.user?.userId
 
@@ -284,7 +284,7 @@ export class WorkspaceController {
 
     updateRole = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const { roleId } = req.params
+            const roleId = req.params.roleId as string;
             const { name, permissions } = req.body
             const updatedRole = await this._updateRoleUseCase.execute({ roleId, name, permissions })
 
@@ -298,30 +298,30 @@ export class WorkspaceController {
         }
     }
 
-    deleteRole = async(req:AuthRequest,res:Response):Promise<void> => {
+    deleteRole = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
-            const {roleId} = req.params
-            await this._deleteRoleUseCase.execute(roleId!)
+            const roleId = req.params.roleId as string;
+            await this._deleteRoleUseCase.execute(roleId)
             res.status(HTTP_STATUS.OK).json({
-                message:MESSAGES.WORKSPACE.ROLE_DELETED_SUCCESSFULLY
+                message: MESSAGES.WORKSPACE.ROLE_DELETED_SUCCESSFULLY
             })
-            
+
         } catch (error) {
-            const err = error as {status?:number,message:string}
-            res.status(err.status|| HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:err.message})
+            const err = error as { status?: number, message: string }
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message })
         }
     }
 
-    getAllRoles = async(req:AuthRequest,res:Response):Promise<void> => {
+    getAllRoles = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const roles = await this._getAllRolesUseCase.execute()
             res.status(HTTP_STATUS.OK).json({
-                message:MESSAGES.WORKSPACE.GET_ALL_ROLES_SUCCESSFULLY,
-                data:roles
+                message: MESSAGES.WORKSPACE.GET_ALL_ROLES_SUCCESSFULLY,
+                data: roles
             })
         } catch (error) {
-            const err = error as {status?:number,message:string}
-            res.status(err.status|| HTTP_STATUS.INTERNAL_SERVER_ERROR).json({message:err.message})
+            const err = error as { status?: number, message: string }
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message })
         }
     }
 }

@@ -104,7 +104,36 @@ import { IRemoveProjectMemberUseCase } from "../../application/interface/project
 import { RemoveProjectMemberUseCase } from "../../application/useCases/project/RemoveProjectMemberUseCase";
 import { IUpdateProjectMemberRoleUseCase } from "../../application/interface/project/IUpdateProjectMemberRoleUseCase";
 import { UpdateProjectMemberRoleUseCase } from "../../application/useCases/project/UpdateProjectMemberRoleUseCase";
-
+import { ICreateIssueUseCase } from "../../application/interface/Issue/ICreateIssueUseCase";
+import { CreateIssueUseCase } from "../../application/useCases/Issue/CreateIssueUseCase";
+import { IAttachmentUploadUrlUseCase } from "../../application/interface/Issue/IAttachementUploadUrlUseCase";
+import { AttachmentUploadUrlUseCase } from "../../application/useCases/Issue/AttachementUploadUrlUseCase";
+import { IUpdateEpicUseCase } from "../../application/interface/Issue/IUpdateEpicUseCase"
+import { UpdateEpicUseCase } from "../../application/useCases/Issue/UpdateEpicUseCase";
+import { IDeleteIssueUseCase } from "../../application/interface/Issue/IDeleteIssueUseCase"
+import { DeleteIssueUseCase } from "../../application/useCases/Issue/DeleteIssueUseCase"
+import { IGetAllIssuesUseCase } from "../../application/interface/Issue/IGetAllIssuesUseCase";
+import { GetAllIssuesUseCase } from "../../application/useCases/Issue/GetAllIssuesUseCase";
+import { ICreateSprintUseCase } from "../../application/interface/sprint/ICreateSprintuseCase";
+import { CreateSprintUseCase } from "../../application/useCases/sprint/CreateSprintUseCase";
+import { IMoveIssueToSprintUseCase } from "../../application/interface/sprint/IMoveIssueToSprintUseCase";
+import { MoveIssueToSprintUseCase } from "../../application/useCases/sprint/MoveIssueToSprintUseCase";
+import { IDeleteSprintUseCase } from "../../application/interface/sprint/IDeleteSprintUseCase";
+import { DeleteSprintUseCase } from "../../application/useCases/sprint/DeleteSprintUseCase";
+import { IStartSprintUseCase } from "../../application/interface/sprint/IStartSprintUseCase";
+import { StartSprintUseCase } from "../../application/useCases/sprint/StartSprintUseCase";
+import { IGetSprintsByProjectIdUseCase } from "../../application/interface/sprint/IGetSprintsByProjectIdUseCase";
+import { GetSprintsByProjectIdUseCase } from "../../application/useCases/sprint/GetSprintsByProjectIdUseCase";
+import { ICompleteSprintUseCase } from "../../application/interface/sprint/ICompleteSprintUseCase";
+import { CompleteSprintUseCase } from "../../application/useCases/sprint/CompleteSprintUseCase";
+import { ISendNotificationUseCase } from "../../application/interface/notification/ISendNotificationUseCase";
+import { SendNotificationUseCase } from "../../application/useCases/notification/SendNotificationUseCase";
+import { IGetNotificationUseCase } from "../../application/interface/notification/IGetNotificationUseCase";
+import { GetNotificationUseCase } from "../../application/useCases/notification/GetNotificationUseCase";
+import { IMarkNotificationReadUseCase } from "../../application/interface/notification/IMarkNotificationReadUseCase";
+import { MarkNotificationReadUseCase } from "../../application/useCases/notification/MarkNotificationReadUseCase";
+import { IMarkAllNotificationsReadUseCase } from "../../application/interface/notification/IMarkAllNotificationsReadUseCase";
+import { MarkAllNotificationsReadUseCase } from "../../application/useCases/notification/MarkAllNotificationsReadUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -327,6 +356,66 @@ export class UseCaseModule {
 
         container.register<IUpdateProjectMemberRoleUseCase>('IUpdateProjectMemberRoleUseCase', {
             useClass: UpdateProjectMemberRoleUseCase
+        })
+
+        container.register<ICreateIssueUseCase>('ICreateIssueUseCase', {
+            useClass: CreateIssueUseCase
+        })
+
+        container.register<IAttachmentUploadUrlUseCase>('IAttachmentUploadUrlUseCase', {
+            useClass: AttachmentUploadUrlUseCase
+        })
+
+        container.register<IUpdateEpicUseCase>('IUpdateEpicUseCase', {
+            useClass: UpdateEpicUseCase
+        })
+
+        container.register<IDeleteIssueUseCase>('IDeleteIssueUseCase', {
+            useClass: DeleteIssueUseCase
+        })
+
+        container.register<IGetAllIssuesUseCase>('IGetAllIssuesUseCase', {
+            useClass: GetAllIssuesUseCase
+        })
+
+        container.register<ICreateSprintUseCase>('ICreateSprintUseCase', {
+            useClass: CreateSprintUseCase
+        })
+
+        container.register<IMoveIssueToSprintUseCase>('IMoveIssueToSprintUseCase', {
+            useClass: MoveIssueToSprintUseCase
+        })
+
+        container.register<IDeleteSprintUseCase>('IDeleteSprintUseCase', {
+            useClass: DeleteSprintUseCase
+        })
+
+        container.register<IStartSprintUseCase>('IStartSprintUseCase', {
+            useClass: StartSprintUseCase
+        })
+
+        container.register<IGetSprintsByProjectIdUseCase>('IGetSprintsByProjectIdUseCase', {
+            useClass: GetSprintsByProjectIdUseCase
+        })
+
+        container.register<ICompleteSprintUseCase>('ICompleteSprintUseCase', {
+            useClass: CompleteSprintUseCase
+        })
+
+        container.register<ISendNotificationUseCase>('ISendNotificationUseCase', {
+            useClass: SendNotificationUseCase
+        })
+
+        container.register<IGetNotificationUseCase>('IGetNotificationUseCase', {
+            useClass: GetNotificationUseCase
+        })
+
+        container.register<IMarkNotificationReadUseCase>('IMarkNotificationReadUseCase', {
+            useClass: MarkNotificationReadUseCase
+        })
+
+        container.register<IMarkAllNotificationsReadUseCase>('IMarkAllNotificationsReadUseCase', {
+            useClass: MarkAllNotificationsReadUseCase
         })
     }
 }

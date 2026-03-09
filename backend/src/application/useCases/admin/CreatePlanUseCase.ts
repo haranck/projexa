@@ -39,7 +39,7 @@ export class CreatePlanUseCase implements ICreatePlanUseCase {
         const createdPlan = await this._planRepo.createPlan(plan);
 
         return {
-            id: createdPlan.id!,
+            id: createdPlan._id!,
             name: createdPlan.name,
             price: createdPlan.price,
             maxMembers: createdPlan.maxMembers,

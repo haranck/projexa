@@ -2,5 +2,5 @@ import { UpdateProjectMemberRoleDTO } from "../../dtos/project/requestDTOs/Updat
 import { IProjectMemberEntity } from "../../../domain/entities/Project/IProjectMemberEntity";
 
 export interface IUpdateProjectMemberRoleUseCase {
-    execute(data: UpdateProjectMemberRoleDTO): Promise<IProjectMemberEntity>;
+    execute(data: UpdateProjectMemberRoleDTO, requesterId: string): Promise<IProjectMemberEntity>;
 }

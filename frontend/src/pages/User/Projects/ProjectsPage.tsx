@@ -56,12 +56,16 @@ export const ProjectsPage = () => {
     console.log(projectsData)
     useEffect(() => {
         if (projectsData?.projects) {
-            dispatch(setProjects(projectsData.projects))
-            if (!currentProject && projectsData.projects) {
-                dispatch(setCurrentProject(projectsData.projects[0]))
+            dispatch(setProjects(projectsData.projects));
+
+            const updatedCurrentProject = projectsData.projects.find((p: Project) => p._id === currentProject?._id);
+            if (updatedCurrentProject) {
+                dispatch(setCurrentProject(updatedCurrentProject));
+            } else if (!currentProject && projectsData.projects.length > 0) {
+                dispatch(setCurrentProject(projectsData.projects[0]));
             }
         }
-    }, [projectsData])
+    }, [projectsData, currentProject?._id, dispatch]);
 
 
     const viewMembersProject = projects.find((p: Project) => p._id === viewMembersProjectId) || null;
@@ -91,7 +95,7 @@ export const ProjectsPage = () => {
 
     return (
         <DashboardLayout>
-            <div className="p-8 space-y-8 min-h-screen bg-[#101017]">
+            <div className="p-8 space-y-8 min-h-screen bg-[#0b0e14]">
                 {/* Header */}
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                     <div>
@@ -193,7 +197,23 @@ export const ProjectsPage = () => {
                                         </p>
                                     </div>
 
-                                    <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-6">
+                                        <div className="flex -space-x-2">
+                                            {project.members?.slice(0, 5).map((member, i) => (
+                                                <div key={i} title={member.user?.userName} className="w-8 h-8 rounded-full border-2 border-[#101017] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 overflow-hidden shadow-lg">
+                                                    {member.user?.profilePicture ? (
+                                                        <img src={member.user.profilePicture} alt={member.user.userName} className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <span>{member.user?.userName?.charAt(0).toUpperCase() || '?'}</span>
+                                                    )}
+                                                </div>
+                                            ))}
+                                            {project.members?.length > 5 && (
+                                                <div className="w-8 h-8 rounded-full border-2 border-[#101017] bg-zinc-900 flex items-center justify-center text-[10px] font-bold text-zinc-500 shadow-lg">
+                                                    +{project.members.length - 5}
+                                                </div>
+                                            )}
+                                        </div>
                                         <div className="flex items-center gap-2 text-[10px] font-bold text-zinc-600 uppercase tracking-widest bg-zinc-950/50 px-3 py-1.5 rounded-lg border border-white/5">
                                             <Calendar className="w-3.5 h-3.5 text-zinc-700 shrink-0" />
                                             <span>Created {new Date(project.createdAt).toLocaleDateString('en-US', {
@@ -210,7 +230,7 @@ export const ProjectsPage = () => {
                                         onClick={() => setViewMembersProjectId(project._id)}
                                         className="px-4 py-1.5 rounded-full border border-blue-500/30 text-blue-400 text-xs font-medium hover:bg-blue-500/10 transition-colors"
                                     >
-                                        View Members
+                                        Manage Members
                                     </button>
                                     <div className="flex items-center gap-1">
                                         <button

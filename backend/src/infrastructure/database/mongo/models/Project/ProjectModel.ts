@@ -5,15 +5,10 @@ export interface ProjectDocument extends Document {
     key: string;
     description: string;
     workspaceId: Types.ObjectId;
-    members: {
-        userId: Types.ObjectId;
-        roleId: Types.ObjectId;
-        joinedAt: Date;
-    }[];
     createdBy: Types.ObjectId;
+    issueCounter: number;
     createdAt: Date;
     updatedAt: Date;
-
 }
 
 const ProjectSchema = new mongoose.Schema({
@@ -36,29 +31,15 @@ const ProjectSchema = new mongoose.Schema({
         ref: 'Workspace',
         required: true
     },
-    members: [
-        {
-            userId: {
-                type: Types.ObjectId,
-                ref: 'User',
-                required: true
-            },
-            roleId: {
-                type: Types.ObjectId,
-                ref: 'Role',
-                required: true
-            },
-            joinedAt: {
-                type: Date,
-                default: Date.now
-            }
-        }
-    ],
     createdBy: {
         type: Types.ObjectId,
         ref: 'User',
         required: true
     },
+    issueCounter: {
+        type: Number,
+        default: 0
+    }
 }, { timestamps: true })
 
 ProjectSchema.index(

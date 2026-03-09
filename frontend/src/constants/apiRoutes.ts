@@ -55,5 +55,25 @@ export const API_ROUTES = {
     ADD_PROJECT_MEMBER: "/project/add-project-member/:projectId",
     REMOVE_PROJECT_MEMBER: "/project/remove-project-member/:projectId/:userId",
     UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId"
+  },
+  ISSUE: {
+    CREATE_ISSUE: "/project/issues/create-issue/:projectId",
+    GET_ATTACHMENT_UPLOAD_URL: "/project/issues/attachment-upload-url",
+    UPDATE_ISSUE: "/project/issues/update-issue/:issueId",
+    DELETE_ISSUE: "/project/issues/delete-issue/:issueId",
+    GET_ALL_ISSUES: "/project/issues/get-all-issues/:projectId"
+  },
+  SPRINT: {
+    MOVE_ISSUE_TO_SPRINT: "/project/sprint/move-issue-to-sprint/:issueId",
+    CREATE_SPRINT: "/project/sprint/create-sprint",
+    DELETE_SPRINT: "/project/sprint/delete-sprint/:sprintId",
+    START_SPRINT: "/project/sprint/start-sprint/:sprintId",
+    GET_SPRINTS: "/project/sprint/get-sprints/:projectId",
+    COMPLETE_SPRINT: "/project/sprint/complete-sprint/:sprintId"
+  },
+  NOTIFICATION: {
+    GET_ALL_NOTIFICATIONS: "/notifications/get-all-notifications",
+    MARK_AS_READ: "/notifications/mark-as-read/:notificationId",
+    MARK_ALL_AS_READ: "/notifications/mark-all-as-read",
   }
 };

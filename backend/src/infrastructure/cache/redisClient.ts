@@ -1,6 +1,7 @@
 import Redis from 'ioredis'
+import { env } from '../../config/envValidation'
 
-export const redisClient  = new Redis({
-    host:"127.0.0.1",
-    port:6379
+export const redisClient = new Redis({
+    host: env.REDIS_HOST,
+    port: env.REDIS_PORT
 })

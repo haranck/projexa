@@ -1,259 +1,651 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
+import { Plus } from "lucide-react";
+import { AddMemberDropdown } from "@/components/Project/AddMemberDropdown";
+import { CreateEpicModal } from "@/components/Issue/CreateEpicModal";
+import { CreateIssueModal } from "@/components/Issue/CreateIssueModal";
+import type { EpicFormData } from "@/components/Issue/CreateEpicModal";
+import { IssueDetailDrawer } from "@/components/Issue/IssueDetailDrawer";
+import type { RootState } from "@/store/store";
+import { useSelector, useDispatch } from 'react-redux';
+import { useGetWorkspaceMembers, useGetRoles } from '../../../hooks/Workspace/WorkspaceHooks';
+import { useAddProjectMember } from '../../../hooks/Project/ProjectHooks';
+import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/utils/errorHandler';
+import type { User } from '../../../types/user';
+import { setCurrentProject, setProjects } from "@/store/slice/projectSlice";
+import type { ProjectMember } from "@/types/project";
+import { useCreateIssue, useGetAllIssues, useUpdateEpic } from "@/hooks/Issues/IssueHooks";
+import { IssueType, type GetAllIssuesFilterProps } from "@/services/Issue/IssueService";
+import type { CreateIssueProps } from "@/services/Issue/IssueService";
+import { Filter, X, Calendar, Hash } from "lucide-react";
+
+import { EpicSidebar } from "./components/EpicSidebar";
+import { SprintSection } from "./components/SprintSection";
+import { BacklogSection } from "./components/BacklogSection";
+import { DraggableIssueItem } from "./components/DraggableIssueItem";
+import { useMoveIssueToSprint, useGetSprints, useCreateSprint } from "@/hooks/sprint/SprintHooks";
 import {
-    Plus,
-    ChevronDown,
-    MoreHorizontal,
-    ChevronRight,
-    X
-} from "lucide-react";
+    DndContext,
+    type DragEndEvent,
+    type DragStartEvent,
+    PointerSensor,
+    KeyboardSensor,
+    useSensor,
+    useSensors,
+    pointerWithin,
+    DragOverlay,
+    defaultDropAnimationSideEffects,
+} from "@dnd-kit/core";
+import { sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+import type { ISprintEntity } from "@/services/Sprint/sprintService";
+
+interface Role {
+    _id: string;
+    name: string;
+}
+
+export interface IssueItem {
+    _id: string;
+    key: string;
+    title: string;
+    description?: string;
+    startDate?: string | Date | null;
+    endDate?: string | Date | null;
+    attachments?: Array<{ type: "file" | "link"; url: string; fileName?: string }>;
+    issueType: string;
+    color: string;
+    parentIssueId?: string | null;
+    sprintId?: string | null;
+    status?: string;
+    assigneeId?: string | null;
+}
 
 export const BacklogPage = () => {
-    const [isSprintOpen, setIsSprintOpen] = useState(true);
+    const [expandedSprints, setExpandedSprints] = useState<Record<string, boolean>>({});
     const [isBacklogOpen, setIsBacklogOpen] = useState(true);
     const [expandedEpic, setExpandedEpic] = useState<string | null>(null);
     const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(true);
+    const [isMemberDropdownOpen, setIsMemberDropdownOpen] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [preparingMember, setPreparingMember] = useState<User | null>(null);
+    const [preparingRoleId, setPreparingRoleId] = useState<string>('');
+    const [isCreateEpicModalOpen, setIsCreateEpicModalOpen] = useState(false);
+    const [isCreateIssueModalOpen, setIsCreateIssueModalOpen] = useState(false);
+    const [isIssueDrawerOpen, setIsIssueDrawerOpen] = useState(false);
+    const [selectedDrawerIssueId, setSelectedDrawerIssueId] = useState<string | null>(null);
+    const [activeIssue, setActiveIssue] = useState<IssueItem | null>(null);
+    const [activeStatusDropdownId, setActiveStatusDropdownId] = useState<string | null>(null);
+    const [showCompletedSprints, setShowCompletedSprints] = useState(false);
+    const [activeFilter, setActiveFilter] = useState<Omit<GetAllIssuesFilterProps, 'projectId'>>({});
+    const dispatch = useDispatch();
+    const queryClient = useQueryClient();
+    const location = useLocation();
 
-    const epics = [
-        { id: '1', name: 'User Authentication', count: '1/1', color: 'bg-blue-500', startDate: 'Jan 15, 2024', endDate: 'Feb 28, 2024', task: 'OAuth integration' },
-        { id: '2', name: 'Dashboard Redesign', count: '2/5', color: 'bg-purple-500' },
-        { id: '3', name: 'API Integration', count: '0/2', color: 'bg-emerald-500' }
-    ];
+    useEffect(() => {
+        const state = location.state as { selectedIssueId?: string };
+        if (state?.selectedIssueId) {
+            setSelectedDrawerIssueId(state.selectedIssueId);
+            setIsIssueDrawerOpen(true);
+            window.history.replaceState({}, document.title);
+        }
+    }, [location]);
+
+    const { currentProject, projects } = useSelector((state: RootState) => state.project);
+
+    const { mutate: createIssue, isPending: isCreatingIssue } = useCreateIssue();
+    const { mutate: updateIssue } = useUpdateEpic();
+    const { data: issuesResponse, isLoading: isLoadingIssues } = useGetAllIssues({
+        projectId: currentProject?._id || '',
+        ...activeFilter
+    });
+    const { data: workspaceMembersResponse, isLoading: isLoadingMembers } = useGetWorkspaceMembers(currentProject?.workspaceId || '');
+    const { data: rolesResponse } = useGetRoles();
+    const { data: sprintsResponse, isLoading: isLoadingSprints } = useGetSprints(currentProject?._id || '');
+    const addMemberMutation = useAddProjectMember();
+
+    const workspaceMembers: User[] = workspaceMembersResponse?.data || [];
+    const roles: Role[] = rolesResponse?.data || [];
+    const allIssues = (issuesResponse?.data || []) as IssueItem[];
+
+    const projectMemberIds = currentProject?.members?.map(m => m.userId) || [];
+
+    const availableMembers = workspaceMembers.filter(m =>
+        m._id &&
+        !projectMemberIds.includes(m._id) &&
+        (m.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            m.email.toLowerCase().includes(searchQuery.toLowerCase()))
+    );
+
+    const handlePrepareAdd = (member: User) => {
+        setPreparingMember(member);
+        setPreparingRoleId(roles[0]?._id || '');
+    };
+
+    const { mutate: moveIssueToSprint } = useMoveIssueToSprint(currentProject?._id || '');
+
+    const sensors = useSensors(
+        useSensor(PointerSensor, {
+            activationConstraint: {
+                distance: 8,
+            },
+        }),
+        useSensor(KeyboardSensor, {
+            coordinateGetter: sortableKeyboardCoordinates,
+        })
+    );
+
+    const handleDragStart = (event: DragStartEvent) => {
+        const { active } = event;
+        const issue = allIssues.find(i => i._id === active.id);
+        if (issue) {
+            setActiveIssue(issue);
+        }
+    };
+
+    const handleDragEnd = (event: DragEndEvent) => {
+        const { active, over } = event;
+        setActiveIssue(null);
+
+        if (!over) return;
+
+        const issueId = active.id as string;
+        const overId = over.id as string;
+
+        // Find the target sprint ID or 'backlog'
+        let targetSprintId: string | null = null;
+
+        // If dropped over a container itself
+        if (overId === 'backlog') {
+            targetSprintId = null;
+        } else if (sprintsResponse?.data?.some((s: ISprintEntity) => s._id === overId)) {
+            targetSprintId = overId;
+        } else {
+            // If dropped over another issue, find its container
+            const overIssue = allIssues.find(i => i._id === overId);
+            if (overIssue) {
+                targetSprintId = overIssue.sprintId || null;
+            }
+        }
+
+        const activeIssueObj = allIssues.find(i => i._id === issueId);
+        if (activeIssueObj && activeIssueObj.sprintId === (targetSprintId || null)) {
+            return; // No change needed
+        }
+
+        moveIssueToSprint({
+            issueId,
+            sprintId: targetSprintId || ''
+        }, {
+            onSuccess: () => {
+                toast.success(`Issue moved to ${targetSprintId ? 'sprint' : 'backlog'}`);
+            },
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to move issue");
+                console.error(err);
+            }
+        });
+    };
+
+    const dropAnimation = {
+        sideEffects: defaultDropAnimationSideEffects({
+            styles: {
+                active: {
+                    opacity: '0.5',
+                },
+            },
+        }),
+    };
+
+    const { mutate: createSprintMutation } = useCreateSprint(currentProject?._id || '');
+
+    const handleCreateSprint = () => {
+        if (!currentProject || !currentProject.workspaceId) {
+            toast.error("Project or Workspace context missing");
+            return;
+        }
+        createSprintMutation({
+            projectId: currentProject._id,
+            workspaceId: currentProject.workspaceId
+        }, {
+            onSuccess: () => {
+                toast.success("Sprint created successfully");
+            },
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to create sprint");
+                console.error(err);
+            }
+        });
+    };
+
+
+    const handleAddMember = () => {
+        if (!currentProject) return;
+        if (!preparingMember?._id || !preparingRoleId) {
+            toast.error("Please select a member and role");
+            return;
+        }
+
+        const memberId = preparingMember._id;
+        const memberRole = preparingRoleId;
+        const memberData = preparingMember;
+
+        addMemberMutation.mutate({
+            projectId: currentProject._id,
+            userId: memberId,
+            roleId: memberRole
+        }, {
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ["issues"] });
+                toast.success("Member added to project");
+
+                const newMember: ProjectMember = {
+                    userId: memberId,
+                    roleId: memberRole,
+                    joinedAt: new Date(),
+                    user: {
+                        userName: `${memberData.firstName || ''} ${memberData.lastName || ''}`.trim() || memberData.email || 'Unknown',
+                        profilePicture: memberData.avatarUrl || ""
+                    }
+                };
+
+                const updatedProject = {
+                    ...currentProject,
+                    members: [...(currentProject.members || []), newMember]
+                };
+
+                dispatch(setCurrentProject(updatedProject));
+
+                if (projects.length > 0) {
+                    const updatedProjects = projects.map(p =>
+                        p._id === currentProject._id ? updatedProject : p
+                    );
+                    dispatch(setProjects(updatedProjects));
+                }
+
+                setIsMemberDropdownOpen(false);
+                setSearchQuery('');
+                setPreparingMember(null);
+            },
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to add member");
+            }
+        });
+    };
+
+    const handleCreateIssueSubmit = (data: CreateIssueProps) => {
+        createIssue(data, {
+            onSuccess: () => {
+                toast.success("Issue created successfully");
+                setIsCreateIssueModalOpen(false);
+            },
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to create issue");
+                console.error(err);
+            }
+        });
+    };
+
+    const EPIC_COLORS = ["bg-blue-500", "bg-purple-500", "bg-emerald-500", "bg-amber-500", "bg-rose-500", "bg-cyan-500"];
+    const TASK_DOT_COLORS = ["bg-amber-400", "bg-cyan-400", "bg-rose-400", "bg-emerald-400", "bg-violet-400", "bg-pink-400"];
+
+    const epics: IssueItem[] = allIssues
+        .filter((issue) => issue.issueType === IssueType.EPIC)
+        .map((epic, _i) => ({
+            ...epic,
+            color: EPIC_COLORS[_i % EPIC_COLORS.length],
+        }));
+
+    const getChildTasks = (parentId: string) => {
+        return allIssues.filter(
+            (issue) => issue.parentIssueId === parentId
+        );
+    };
+
+    const getCompletedCount = (tasks: IssueItem[]) => {
+        return tasks.filter(t => t.status === 'done' || t.status === 'Done' || t.status === 'DONE' || t.status === 'completed' || t.status === 'Completed').length;
+    };
+
+    const handleCreateEpicSubmit = (formData: EpicFormData) => {
+        if (!currentProject) return;
+        createIssue({
+            workspaceId: currentProject.workspaceId,
+            projectId: currentProject._id,
+            title: formData.title,
+            issueType: IssueType.EPIC,
+            description: formData.description,
+            status: formData.status,
+            parentIssueId: null,
+            sprintId: null,
+            assigneeId: null,
+            startDate: formData.startDate ? new Date(formData.startDate) : null,
+            endDate: formData.endDate ? new Date(formData.endDate) : null,
+            attachments: formData.attachments,
+        }, {
+            onSuccess: () => {
+                toast.success("Epic created successfully");
+                setIsCreateEpicModalOpen(false);
+            },
+            onError: (err: unknown) => {
+                toast.error(getErrorMessage(err) || "Failed to create epic");
+            }
+        });
+    };
 
     return (
-        <DashboardLayout>
-            <div className="flex flex-col h-full bg-[#0b0e14] text-white min-h-[calc(100vh-5rem)]">
-                {/* Header Section */}
-                <div className="px-8 py-6">
-                    <div className="flex items-center justify-between mb-8">
-                        <div className="flex items-center gap-4">
-                            <h1 className="text-2xl font-bold">Backlog</h1>
-                            <button className="px-3 py-1 bg-zinc-900/50 border border-white/5 rounded-lg text-[10px] font-bold text-zinc-400 hover:text-white transition-colors uppercase tracking-wider">
-                                Completed sprint
-                            </button>
-                        </div>
-                        <button className="px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl transition-all shadow-[0_0_15px_rgba(37,99,235,0.4)] active:scale-95">
-                            create Issue
-                        </button>
-                    </div>
+        <>
+            <DashboardLayout>
+                <div className="flex flex-col h-full bg-[#0b0e14] text-white min-h-[calc(100vh-5rem)]">
+                    {/* Header Section */}
+                    <div className="px-8 py-6">
+                        {isLoadingSprints && (
+                            <div className="mb-4 p-4 bg-zinc-900/20 border border-white/5 rounded-2xl animate-pulse">
+                                <div className="h-4 w-32 bg-zinc-800 rounded mb-2" />
+                                <div className="h-20 bg-zinc-800/50 rounded-xl" />
+                            </div>
+                        )}
+                        <div className="flex items-center justify-between mb-8">
+                            <div className="flex items-center gap-4">
+                                <h1 className="text-2xl font-bold">Backlog</h1>
+                            </div>
 
-                    <div className="flex items-center justify-between mb-6">
-                        <div className="flex items-center gap-4">
-                            <div className="flex -space-x-2">
-                                {[1, 2, 3].map((i) => (
-                                    <div key={i} className=" w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-800 flex items-center justify-center text-[10px] font-bold text-zinc-400 overflow-hidden">
-                                        <img src={`https://i.pravatar.cc/150?u=${i + 10}`} alt="" className="w-full h-full object-cover" />
+                            <div className="flex items-center gap-6">
+                                <div className="flex items-center gap-2">
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                        <Filter className="w-3 h-3 text-zinc-500" />
+                                        <select
+                                            value={activeFilter.assigneeId || ''}
+                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, assigneeId: e.target.value || undefined }))}
+                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none min-w-[90px]"
+                                        >
+                                            <option value="" className="bg-[#0b0e14]">All Assignees</option>
+                                            {currentProject?.members?.map(m => (
+                                                <option key={m.userId} value={m.userId} className="bg-[#0b0e14]">
+                                                    {m.user?.userName || 'Unknown'}
+                                                </option>
+                                            ))}
+                                        </select>
                                     </div>
-                                ))}
-                                <button className="ml-4 flex items-center gap-2 px-3 py-1.5 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-500 text-[10px] font-bold hover:bg-emerald-500/20 transition-all active:scale-95">
-                                    <Plus className="w-3.5 h-3.5" />
-                                    Add Members
+
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                        <Hash className="w-3 h-3 text-zinc-500" />
+                                        <select
+                                            value={activeFilter.issueType || ''}
+                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, issueType: e.target.value || undefined }))}
+                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                        >
+                                            <option value="" className="bg-[#0b0e14]">All Types</option>
+                                            {Object.values(IssueType).map(type => (
+                                                <option key={type} value={type} className="bg-[#0b0e14]">
+                                                    {type}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </div>
+
+                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                        <Calendar className="w-3 h-3 text-zinc-500" />
+                                        <select
+                                            value={activeFilter.dateFilter || ''}
+                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, dateFilter: (e.target.value as GetAllIssuesFilterProps['dateFilter']) || undefined }))}
+                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                        >
+                                            <option value="" className="bg-[#0b0e14]">All Time</option>
+                                            <option value="RECENT" className="bg-[#0b0e14]">Recent (7d)</option>
+                                            <option value="DUE_SOON" className="bg-[#0b0e14]">Due Soon (3d)</option>
+                                        </select>
+                                    </div>
+
+                                    {Object.keys(activeFilter).length > 0 && (
+                                        <button
+                                            onClick={() => setActiveFilter({})}
+                                            className="p-1 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-rose-400 transition-colors"
+                                            title="Clear filters"
+                                        >
+                                            <X className="w-3.5 h-3.5" />
+                                        </button>
+                                    )}
+                                </div>
+
+                                <div className="h-6 w-px bg-zinc-800 mx-2" />
+
+                                {/* Members Stack */}
+                                <div className="flex items-center">
+                                    <div className="flex -space-x-2 mr-4">
+                                        {currentProject?.members?.slice(0, 5).map((member) => (
+                                            <div
+                                                key={member.userId}
+                                                className="w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-800 flex items-center justify-center overflow-hidden"
+                                                title={member.user?.userName}
+                                            >
+                                                {member.user?.profilePicture ? (
+                                                    <img src={member.user.profilePicture} alt="" className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <span className="text-[10px] font-bold text-zinc-400">
+                                                        {member.user?.userName?.charAt(0).toUpperCase()}
+                                                    </span>
+                                                )}
+                                            </div>
+                                        ))}
+                                        {(currentProject?.members?.length || 0) > 5 && (
+                                            <div className="w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-900 flex items-center justify-center">
+                                                <span className="text-[10px] font-bold text-zinc-500">
+                                                    +{(currentProject?.members?.length || 0) - 5}
+                                                </span>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    <div className="relative">
+                                        <button
+                                            onClick={() => setIsMemberDropdownOpen(!isMemberDropdownOpen)}
+                                            className={`w-8 h-8 rounded-full border border-dashed transition-all flex items-center justify-center ${isMemberDropdownOpen ? 'border-blue-500 bg-blue-500/10 rotate-45' : 'border-zinc-700 hover:border-blue-500 hover:bg-blue-500/5 hover:scale-110'}`}
+                                            title="Add members"
+                                        >
+                                            <Plus className={`w-4 h-4 ${isMemberDropdownOpen ? 'text-blue-400' : 'text-zinc-500 hover:text-blue-500'}`} />
+                                        </button>
+
+                                        <AddMemberDropdown
+                                            isOpen={isMemberDropdownOpen}
+                                            preparingMember={preparingMember}
+                                            onMemberSelect={handlePrepareAdd}
+                                            preparingRoleId={preparingRoleId}
+                                            onRoleChange={setPreparingRoleId}
+                                            searchQuery={searchQuery}
+                                            onSearchChange={setSearchQuery}
+                                            roles={roles}
+                                            members={availableMembers}
+                                            isLoading={isLoadingMembers}
+                                            onConfirm={handleAddMember}
+                                            onCancel={() => {
+                                                setPreparingMember(null);
+                                            }}
+                                            onClose={() => setIsMemberDropdownOpen(false)}
+                                            isAdding={addMemberMutation.isPending}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className="h-6 w-px bg-zinc-800" />
+
+                                <button
+                                    onClick={() => setIsEpicSidebarOpen(!isEpicSidebarOpen)}
+                                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${isEpicSidebarOpen ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                >
+                                    Epic Panel
+                                </button>
+
+                                <button
+                                    onClick={() => setShowCompletedSprints(!showCompletedSprints)}
+                                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${showCompletedSprints ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                >
+                                    Completed Sprints
                                 </button>
                             </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <button
-                                onClick={() => setIsEpicSidebarOpen(!isEpicSidebarOpen)}
-                                className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border text-[10px] font-bold transition-all ${isEpicSidebarOpen ? 'bg-zinc-800 border-white/20 text-white' : 'bg-zinc-900 border-white/10 text-zinc-500 hover:bg-zinc-800'}`}
-                            >
-                                <span>Epic</span>
-                                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${isEpicSidebarOpen ? 'rotate-180' : ''}`} />
-                            </button>
-                            <button className="p-2 rounded-lg bg-zinc-900 border border-white/10 hover:bg-zinc-800 transition-colors">
-                                <MoreHorizontal className="w-4 h-4 text-zinc-500" />
-                            </button>
                         </div>
                     </div>
 
                     <div className="flex gap-6">
-                        {/* Epic Sidebar */}
-                        {isEpicSidebarOpen && (
-                            <div className="w-80 shrink-0 animate-in slide-in-from-left duration-300">
-                                <div className="bg-[#14171f] rounded-[2rem] border border-white/10 overflow-hidden flex flex-col h-[calc(100vh-14rem)] sticky top-6 shadow-2xl">
-                                    <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between">
-                                        <div className="relative group/epic-title">
-                                            <h3 className="font-bold text-sm tracking-tight text-white mb-1 px-1">Epic</h3>
-                                            <div className="absolute -bottom-5 left-1 w-8 h-[2px] bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)] rounded-full" />
-                                        </div>
-                                        <button
-                                            onClick={() => setIsEpicSidebarOpen(false)}
-                                            className="p-1.5 rounded-lg hover:bg-white/5 text-zinc-600 hover:text-white transition-all"
-                                        >
-                                            <X className="w-4 h-4" />
-                                        </button>
-                                    </div>
+                        <EpicSidebar
+                            isOpen={isEpicSidebarOpen}
+                            onClose={() => setIsEpicSidebarOpen(false)}
+                            isLoading={isLoadingIssues}
+                            epics={epics}
+                            getChildTasks={getChildTasks}
+                            getCompletedCount={getCompletedCount}
+                            expandedEpicId={expandedEpic}
+                            setExpandedEpicId={setExpandedEpic}
+                            onIssueClick={(id) => {
+                                setSelectedDrawerIssueId(id);
+                                setIsIssueDrawerOpen(true);
+                            }}
+                            onCreateEpicClick={() => setIsCreateEpicModalOpen(true)}
+                            isCreating={isCreatingIssue}
+                            taskDotColors={TASK_DOT_COLORS}
+                        />
 
-                                    <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar">
-                                        {epics.map((epic) => (
-                                            <div key={epic.id} className="space-y-2">
-                                                <div
-                                                    className={`p-5 rounded-3xl border transition-all cursor-pointer ${expandedEpic === epic.id ? 'bg-[#1a1d26] border-blue-500/20 shadow-lg' : 'bg-white/2 border-white/5 hover:border-white/10'}`}
-                                                    onClick={() => setExpandedEpic(expandedEpic === epic.id ? null : epic.id)}
-                                                >
-                                                    <div className="flex items-center justify-between mb-2">
-                                                        <div className="flex items-center gap-3">
-                                                            <div className={`w-3 h-3 rounded-[3px] shadow-sm ${epic.color}`} />
-                                                            <span className="text-xs font-extrabold text-white tracking-tight">{epic.name}</span>
-                                                        </div>
-                                                        <div className="flex items-center gap-3">
-                                                            <span className="text-[10px] font-bold text-zinc-700">{epic.count}</span>
-                                                            <ChevronDown className={`w-3.5 h-3.5 text-zinc-700 transition-transform ${expandedEpic === epic.id ? 'rotate-180' : ''}`} />
-                                                        </div>
-                                                    </div>
+                        <DndContext
+                            sensors={sensors}
+                            collisionDetection={pointerWithin}
+                            onDragStart={handleDragStart}
+                            onDragEnd={handleDragEnd}
+                        >
+                            <div className="flex-1 space-y-6">
+                                {sprintsResponse?.data?.filter((s: ISprintEntity) => showCompletedSprints ? s.status === "COMPLETED" : s.status !== "COMPLETED").map((sprint: ISprintEntity) => (
+                                    <SprintSection
+                                        key={sprint._id}
+                                        sprint={sprint}
+                                        allSprints={sprintsResponse.data}
+                                        isOpen={expandedSprints[sprint._id as string] ?? true}
+                                        activeStatusDropdownId={activeStatusDropdownId}
+                                        onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                        onToggle={() => {
+                                            setExpandedSprints(prev => ({
+                                                ...prev,
+                                                [sprint._id as string]: !(prev[sprint._id as string] ?? true)
+                                            }));
+                                        }}
+                                        onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
+                                        issues={allIssues.filter(i => i.sprintId === sprint._id)}
+                                        allIssues={allIssues}
+                                        projectMembers={currentProject?.members || []}
+                                        taskDotColors={TASK_DOT_COLORS}
+                                        onIssueClick={(id) => {
+                                            setSelectedDrawerIssueId(id);
+                                            setIsIssueDrawerOpen(true);
+                                        }}
+                                        onUpdateStatus={(id, status) => {
+                                            updateIssue({
+                                                epicId: id,
+                                                status,
+                                                projectId: currentProject?._id || "",
+                                            }, {
+                                                onSuccess: () => {
+                                                    toast.success(`Status updated to ${status.replace("_", " ")}`);
+                                                },
+                                                onError: (err: unknown) => {
+                                                    toast.error(getErrorMessage(err) || "Failed to update status");
+                                                    console.error(err);
+                                                }
+                                            });
+                                        }}
+                                    />
+                                ))}
 
-                                                    {expandedEpic === epic.id && (
-                                                        <div className="pt-6 space-y-6 animate-in fade-in duration-300">
-                                                            <div className="grid grid-cols-2 gap-6">
-                                                                <div>
-                                                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-2">Start Date</p>
-                                                                    <p className="text-[11px] font-bold text-zinc-500">{epic.startDate || 'Not set'}</p>
-                                                                </div>
-                                                                <div>
-                                                                    <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest mb-2">End Date</p>
-                                                                    <p className="text-[11px] font-bold text-zinc-500">{epic.endDate || 'Not set'}</p>
-                                                                </div>
-                                                            </div>
-
-                                                            <button className="w-full py-2.5 rounded-xl bg-transparent border border-blue-500/20 text-blue-400 text-[10px] font-black hover:bg-blue-500/5 hover:border-blue-500/40 transition-all flex items-center justify-center">
-                                                                View all details
-                                                            </button>
-
-                                                            <div className="space-y-3 pt-2">
-                                                                <p className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">Tasks</p>
-                                                                {epic.task && (
-                                                                    <div className="flex items-center gap-3 p-4 bg-zinc-950/40 rounded-2xl border border-white/5 group hover:border-white/10 transition-colors">
-                                                                        <div className="w-2 h-2 rounded-full bg-amber-500 shadow-[0_0_8px_rgba(245,158,11,0.3)]" />
-                                                                        <span className="text-[11px] font-bold text-zinc-400 group-hover:text-zinc-200 transition-colors">{epic.task}</span>
-                                                                    </div>
-                                                                )}
-                                                            </div>
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-
-                                    <div className="p-6 border-t border-white/5 bg-zinc-900/10">
-                                        <button className="w-full py-3.5 rounded-2xl bg-transparent border border-blue-500/30 text-blue-400 text-xs font-black hover:bg-blue-500/5 transition-all active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-500/5">
-                                            <Plus className="w-4 h-4" />
-                                            Create epic
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Main Content Areas */}
-                        <div className="flex-1 space-y-6">
-                            {/* Sprint Section */}
-                            <div className="bg-[#14171f] rounded-[2rem] border border-white/5 overflow-hidden">
-                                <div
-                                    className="flex items-center justify-between px-6 py-4 bg-white/2 cursor-pointer hover:bg-white/4 transition-colors"
-                                    onClick={() => setIsSprintOpen(!isSprintOpen)}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <button className="p-1 hover:bg-white/10 rounded transition-colors text-zinc-500">
-                                            {isSprintOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                                        </button>
-                                        <span className="font-bold text-sm tracking-tight uppercase">ECA Sprint 1</span>
-                                        <div className="flex items-center gap-2 px-2 py-0.5 rounded bg-blue-500/10 text-blue-400">
-                                            <Plus className="w-3 h-3" />
-                                            <span className="text-[10px] font-bold">Add dates</span>
-                                        </div>
-                                        <span className="text-xs font-medium text-zinc-600">(0 issues)</span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-4 h-1.5 bg-zinc-800 rounded-full" />
-                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                                        </div>
-                                        <button
-                                            className="px-4 py-1.5 text-[10px] font-bold bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg transition-colors border border-white/5 active:scale-95"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            Start sprint
-                                        </button>
-                                        <button className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-zinc-500">
-                                            <MoreHorizontal className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {isSprintOpen && (
-                                    <div className="p-6 bg-[#0e1117]/50 min-h-[160px] flex flex-col items-center justify-center border-y border-white/5 border-dashed mx-6 my-2 rounded-2xl">
-                                        <div className="text-center">
-                                            <h3 className="text-sm font-bold text-white mb-2">Plan your sprint</h3>
-                                            <p className="text-xs text-zinc-500 max-w-xs mx-auto leading-relaxed">
-                                                Drag issues from the Backlog section, or create new issues, to plan the work for this sprint.
-                                            </p>
-                                        </div>
-                                    </div>
+                                {!showCompletedSprints && (
+                                    <BacklogSection
+                                        isOpen={isBacklogOpen}
+                                        onToggle={() => setIsBacklogOpen(!isBacklogOpen)}
+                                        activeStatusDropdownId={activeStatusDropdownId}
+                                        onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                        issues={allIssues.filter(i => i.issueType !== IssueType.EPIC && i.issueType !== IssueType.SUBTASK && !i.sprintId)}
+                                        allIssues={allIssues}
+                                        onIssueClick={(id) => {
+                                            setSelectedDrawerIssueId(id);
+                                            setIsIssueDrawerOpen(true);
+                                        }}
+                                        onCreateSprintClick={handleCreateSprint}
+                                        onCreateIssueClick={() => setIsCreateIssueModalOpen(true)}
+                                        projectMembers={currentProject?.members || []}
+                                        taskDotColors={TASK_DOT_COLORS}
+                                        onUpdateStatus={(id, status) => {
+                                            updateIssue({
+                                                epicId: id,
+                                                status,
+                                                projectId: currentProject?._id || "",
+                                            }, {
+                                                onSuccess: () => {
+                                                    toast.success(`Status updated to ${status.replace("_", " ")}`);
+                                                },
+                                                onError: (err: unknown) => {
+                                                    toast.error(getErrorMessage(err) || "Failed to update status");
+                                                    console.error(err);
+                                                }
+                                            });
+                                        }}
+                                    />
                                 )}
-                                <div className="p-4 px-6">
-                                    <button className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 hover:text-white transition-colors group">
-                                        <div className="p-1 rounded bg-zinc-800 group-hover:bg-blue-600 transition-colors">
-                                            <Plus className="w-3 h-3 text-white" />
-                                        </div>
-                                        Create issue
-                                    </button>
-                                </div>
                             </div>
-
-                            {/* Backlog Section */}
-                            <div className="bg-[#14171f] rounded-[2rem] border border-white/5 overflow-hidden">
-                                <div
-                                    className="flex items-center justify-between px-6 py-4 bg-white/2 cursor-pointer hover:bg-white/4 transition-colors"
-                                    onClick={() => setIsBacklogOpen(!isBacklogOpen)}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <button className="p-1 hover:bg-white/10 rounded transition-colors text-zinc-500">
-                                            {isBacklogOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-                                        </button>
-                                        <span className="font-bold text-sm tracking-tight">Backlog</span>
-                                        <span className="text-xs font-medium text-zinc-600">(0 issues)</span>
-                                    </div>
-                                    <div className="flex items-center gap-4">
-                                        <div className="flex items-center gap-1.5">
-                                            <div className="w-4 h-1.5 bg-zinc-800 rounded-full" />
-                                            <div className="w-1.5 h-1.5 bg-blue-500 rounded-full" />
-                                            <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full" />
-                                        </div>
-                                        <button
-                                            className="px-4 py-1.5 text-[10px] font-bold bg-emerald-500 hover:bg-emerald-400 text-white rounded-lg transition-colors shadow-lg shadow-emerald-500/20 active:scale-95"
-                                            onClick={(e) => e.stopPropagation()}
-                                        >
-                                            Create Sprint
-                                        </button>
-                                        <button className="p-1.5 hover:bg-white/10 rounded-lg transition-colors text-zinc-500">
-                                            <MoreHorizontal className="w-4 h-4" />
-                                        </button>
-                                    </div>
-                                </div>
-
-                                {isBacklogOpen && (
-                                    <div className="p-6 bg-[#0e1117]/50 min-h-[120px] flex flex-col items-center justify-center border-y border-white/5 border-dashed mx-6 my-2 rounded-2xl">
-                                        <div className="text-center">
-                                            <p className="text-xs font-bold text-zinc-700">
-                                                Backlog is empty, or create new issues
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
-                                <div className="p-4 px-6">
-                                    <button className="flex items-center gap-2 text-[10px] font-bold text-zinc-500 hover:text-white transition-colors group">
-                                        <div className="p-1 rounded bg-zinc-800 group-hover:bg-blue-600 transition-colors">
-                                            <Plus className="w-3 h-3 text-white" />
-                                        </div>
-                                        Create issue
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+                            <DragOverlay dropAnimation={dropAnimation}>
+                                {activeIssue ? (
+                                    <DraggableIssueItem
+                                        issue={activeIssue}
+                                        idx={0}
+                                        allIssues={allIssues}
+                                        projectMembers={currentProject?.members || []}
+                                        taskDotColors={TASK_DOT_COLORS}
+                                        onIssueClick={() => { }}
+                                        onUpdateStatus={() => { }}
+                                        activeStatusDropdownId={activeStatusDropdownId}
+                                        onActiveStatusDropdownChange={setActiveStatusDropdownId}
+                                        isOverlay
+                                    />
+                                ) : null}
+                            </DragOverlay>
+                        </DndContext>
                     </div>
                 </div>
-            </div>
-        </DashboardLayout>
+            </DashboardLayout>
+
+            <CreateEpicModal
+                isOpen={isCreateEpicModalOpen}
+                projectKey={currentProject?.key || ""}
+                projectName={currentProject?.projectName || "Unknown Project"}
+                onClose={() => setIsCreateEpicModalOpen(false)}
+                onSubmit={handleCreateEpicSubmit}
+                isLoading={isCreatingIssue}
+            />
+
+            <IssueDetailDrawer
+                isOpen={isIssueDrawerOpen}
+                onClose={() => {
+                    setIsIssueDrawerOpen(false);
+                    setSelectedDrawerIssueId(null);
+                }}
+                issue={selectedDrawerIssueId ? allIssues.find(e => e._id === selectedDrawerIssueId) || null : null}
+                childTasks={selectedDrawerIssueId ? getChildTasks(selectedDrawerIssueId as string) : []}
+                projectName={currentProject?.projectName || ""}
+                projectKey={currentProject?.key || ""}
+                projectId={currentProject?._id || ""}
+                workspaceId={currentProject?.workspaceId || ""}
+                members={currentProject?.members || []}
+                onSubtaskClick={(id) => setSelectedDrawerIssueId(id)}
+            />
+
+            <CreateIssueModal
+                isOpen={isCreateIssueModalOpen}
+                onClose={() => setIsCreateIssueModalOpen(false)}
+                onSubmit={handleCreateIssueSubmit}
+                isLoading={isCreatingIssue}
+                projectKey={currentProject?.key || ""}
+                projectName={currentProject?.projectName || ""}
+                projectId={currentProject?._id || ""}
+                workspaceId={currentProject?.workspaceId || ""}
+                members={currentProject?.members || []}
+            />
+        </>
     );
 };
+

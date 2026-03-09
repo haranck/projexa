@@ -2,8 +2,11 @@ import UserRoutes from './routes/user/UserRoutes'
 import AdminRoutes from './routes/admin/AdminRoutes'
 import { Toaster } from 'react-hot-toast'
 import { CheckCircle2, XCircle } from 'lucide-react'
+import { useNotificationSocket } from './hooks/useNotificationSocket'
 
 export const App = () => {
+  useNotificationSocket();
+
   return (
     <>
       <Toaster
@@ -12,9 +15,9 @@ export const App = () => {
         toastOptions={{
           duration: 2500,
           style: {
-            background: "rgba(20, 20, 20, 0.8)", 
-            backdropFilter: "blur(12px)", 
-            border: "1px solid rgba(255, 255, 255, 0.08)", 
+            background: "rgba(20, 20, 20, 0.8)",
+            backdropFilter: "blur(12px)",
+            border: "1px solid rgba(255, 255, 255, 0.08)",
             color: "#FFFFFF",
             borderRadius: "14px",
             padding: "14px 18px",

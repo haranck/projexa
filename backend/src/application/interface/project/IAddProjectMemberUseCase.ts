@@ -2,5 +2,5 @@ import { IProjectMemberEntity } from "../../../domain/entities/Project/IProjectM
 import { AddProjectMemberDTO } from "../../dtos/project/requestDTOs/AddProjectMemberDTO";
 
 export interface IAddProjectMemberUseCase {
-    execute(projectMember: AddProjectMemberDTO): Promise<IProjectMemberEntity>;
+    execute(projectMember: AddProjectMemberDTO, requesterId: string): Promise<IProjectMemberEntity>;
 }
