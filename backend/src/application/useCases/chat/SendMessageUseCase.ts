@@ -3,7 +3,7 @@ import { injectable, inject } from "tsyringe";
 import { IMessageEntity } from "../../../domain/entities/Chat/IMessageEntity";
 import { IMessageRepository } from "../../../domain/interfaces/repositories/ChatRepo/IMessageRepository";
 import { IChatRepository } from "../../../domain/interfaces/repositories/ChatRepo/IChatRepository";
-import { ChatService } from "../../../infrastructure/services/ChatService";
+import { IChatService } from "../../../domain/interfaces/services/IChatService";
 import { MessageDTOmapper } from "../../mappers/MessageDTOmapper";
 import { MessageDTO } from "../../dtos/chat/requestDTOs/MessageDTO";
 
@@ -13,7 +13,7 @@ export class SendMessageUseCase implements ISendMessageUseCase {
     constructor(
         @inject("IMessageRepository") private readonly _messageRepository: IMessageRepository,
         @inject("IChatRepository") private readonly _chatRepository: IChatRepository,
-        @inject("ChatService") private readonly _chatService: ChatService
+        @inject("IChatService") private readonly _chatService: IChatService
     ) { }
 
     async execute(data: MessageDTO): Promise<IMessageEntity> {

@@ -3,5 +3,6 @@ export const CHAT_EVENTS = {
     SEND_MESSAGE: "chat:send",
     RECEIVE_MESSAGE: "chat:receive",
     TYPING: "chat:typing",
-    STOP_TYPING: "chat:stopTyping"
+    STOP_TYPING: "chat:stopTyping",
+    GET_HISTORY: "chat:getHistory"
 }

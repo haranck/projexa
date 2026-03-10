@@ -4,24 +4,19 @@ import { injectable, inject } from "tsyringe"
 import { IMessageEntity } from "../../../domain/entities/Chat/IMessageEntity";
 import { ISendMessageUseCase } from "../../../application/interface/chat/ISendMessageUseCase";
 import { MessageDTO } from "../../../application/dtos/chat/requestDTOs/MessageDTO";
+import { IGetMessagesUseCase } from "../../../application/interface/chat/IGetMessagesUseCase";
 
 @injectable()
 export class ChatHandler {
-    private _socket!: Socket;
-    private _io!: Server;
 
     constructor(
-        @inject("ISendMessageUseCase") private readonly _sendMessageUseCase: ISendMessageUseCase
+        @inject("ISendMessageUseCase") private readonly _sendMessageUseCase: ISendMessageUseCase,
+        @inject("IGetMessagesUseCase") private readonly _getMessagesUseCase: IGetMessagesUseCase
     ) { }
 
-    async setSocket(socket: Socket, io: Server) {
-        this._socket = socket;
-        this._io = io;
-    }
-
-    async handleJoinRoom(roomId: string) {
+    async handleJoinRoom(socket: Socket, roomId: string) {
         const roomName = `room:${roomId}`;
-        this._socket.join(roomName);
+        socket.join(roomName);
         console.log(`User Joined Room ${roomName}`)
     }
 
@@ -33,16 +28,25 @@ export class ChatHandler {
         }
     }
 
-    async handleTyping(roomId: string) {
+    async handleTyping(socket: Socket, roomId: string) {
         const roomName = `room:${roomId}`;
-        const userId = this._socket.handshake.auth?.userId;
-        this._socket.to(roomName).emit(CHAT_EVENTS.TYPING, { roomId, userId });
+        const userId = socket.handshake.auth?.userId;
+        socket.to(roomName).emit(CHAT_EVENTS.TYPING, { roomId, userId });
     }
 
-    async handleStopTyping(roomId: string) {
+    async handleStopTyping(socket: Socket, roomId: string) {
         const roomName = `room:${roomId}`;
-        const userId = this._socket.handshake.auth?.userId;
-        this._socket.to(roomName).emit(CHAT_EVENTS.STOP_TYPING, { roomId, userId });
+        const userId = socket.handshake.auth?.userId;
+        socket.to(roomName).emit(CHAT_EVENTS.STOP_TYPING, { roomId, userId });
+    }
+
+    async handleGetHistory(socket: Socket, roomId: string) {
+        try {
+            const messages = await this._getMessagesUseCase.execute(roomId);
+            socket.emit(CHAT_EVENTS.GET_HISTORY, messages);
+        } catch (error) {
+            console.error("Error in handleGetHistory:", error);
+        }
     }
 
     static emitToRoom(io: Server, roomId: string, message: IMessageEntity) {

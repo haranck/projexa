@@ -14,6 +14,8 @@ import { SprintController } from '../controllers/sprint/SprintController'
 import { NotificationHandler } from '../webSocket/handlers/notification.handler'
 import { NotificationController } from '../controllers/notification/NotificationController'
 import { ChatHandler } from '../webSocket/handlers/chat.handler'
+import { ChatController } from '../controllers/chat/ChatController'
+
 
 ContainerSetup.registerAll();
 
@@ -30,3 +32,4 @@ export const sprintController = container.resolve(SprintController)
 export const notificationHandler = container.resolve(NotificationHandler)
 export const notificationController = container.resolve(NotificationController)
 export const chatHandler = container.resolve(ChatHandler)
+export const chatController = container.resolve(ChatController)

@@ -134,6 +134,12 @@ import { IMarkNotificationReadUseCase } from "../../application/interface/notifi
 import { MarkNotificationReadUseCase } from "../../application/useCases/notification/MarkNotificationReadUseCase";
 import { IMarkAllNotificationsReadUseCase } from "../../application/interface/notification/IMarkAllNotificationsReadUseCase";
 import { MarkAllNotificationsReadUseCase } from "../../application/useCases/notification/MarkAllNotificationsReadUseCase";
+import { ISendMessageUseCase } from "../../application/interface/chat/ISendMessageUseCase";
+import { SendMessageUseCase } from "../../application/useCases/chat/SendMessageUseCase";
+import { IGetMessagesUseCase } from "../../application/interface/chat/IGetMessagesUseCase";
+import { GetMessagesUseCase } from "../../application/useCases/chat/GetMessagesUseCase";
+import { IGetChatRoomUseCase } from "../../application/interface/chat/IGetChatRoomUseCase";
+import { GetChatRoomUseCase } from "../../application/useCases/chat/GetChatRoomUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -416,6 +422,18 @@ export class UseCaseModule {
 
         container.register<IMarkAllNotificationsReadUseCase>('IMarkAllNotificationsReadUseCase', {
             useClass: MarkAllNotificationsReadUseCase
+        })
+
+        container.register<IGetMessagesUseCase>('IGetMessagesUseCase', {
+            useClass: GetMessagesUseCase
+        })
+
+        container.register<ISendMessageUseCase>('ISendMessageUseCase', {
+            useClass: SendMessageUseCase
+        })
+
+        container.register<IGetChatRoomUseCase>('IGetChatRoomUseCase', {
+            useClass: GetChatRoomUseCase
         })
     }
 }

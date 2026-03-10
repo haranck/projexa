@@ -79,5 +79,9 @@ export const ROUTES = {
         GET_ALL_NOTIFICATIONS: "/get-all-notifications",
         MARK_AS_READ: "/mark-as-read/:notificationId",
         MARK_ALL_AS_READ: "/mark-all-as-read"
+    },
+    CHAT: {
+        GET_ROOM_BY_PROJECT: "/room/:projectId",
+        GET_MESSAGES: "/messages/:roomId"
     }
 };
