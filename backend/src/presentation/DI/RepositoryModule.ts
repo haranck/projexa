@@ -23,6 +23,10 @@ import { ISprintRepository } from "../../domain/interfaces/repositories/SprintRe
 import { SprintRepository } from "../../infrastructure/database/mongo/repositories/Sprint/SprintRepository";
 import { INotificationRepository } from "../../domain/interfaces/repositories/NotificationRepo/INotificationRepository";
 import { NotificationRepository } from "../../infrastructure/database/mongo/repositories/NotificationRepo/NotificationRepository";
+import { IChatRepository } from "../../domain/interfaces/repositories/ChatRepo/IChatRepository";
+import { ChatRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/ChatRepository";
+import { IMessageRepository } from "../../domain/interfaces/repositories/ChatRepo/IMessageRepository";
+import { MessageRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/MessageRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -73,6 +77,14 @@ export class RepositoryModule {
 
         container.register<INotificationRepository>('INotificationRepository', {
             useClass: NotificationRepository
+        })
+
+        container.register<IChatRepository>('IChatRepository', {
+            useClass: ChatRepository
+        })
+
+        container.register<IMessageRepository>('IMessageRepository', {
+            useClass: MessageRepository
         })
     }
 }

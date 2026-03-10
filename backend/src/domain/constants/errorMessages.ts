@@ -218,5 +218,8 @@ export const NOTIFICATION_ERRORS = {
     NOTIFICATION_SPRINT_NOT_ACTIVE: 'Sprint is not active !',
     NOTIFICATION_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: 'Only active sprint can be completed !',
 
-
+}
+export const CHAT_ERRORS  = {
+    MESSAGE_NOT_FOUND:"Message not found after creation",
+    CHAT_NOT_FOUND:"Chat room not found after creation"
 }

@@ -2,6 +2,7 @@ import { Server, Socket } from "socket.io";
 import http from "http";
 import { socketUserStore } from "../socket.user.store";
 import { NotificationEvents } from "../events/notification.events";
+import { ChatEvents } from "../events/chat.events";
 
 let io: Server;
 
@@ -30,6 +31,7 @@ export const initSocket = (server: http.Server) => {
         }
 
         new NotificationEvents(socket, io).register();
+        new ChatEvents(socket, io).register();
 
         socket.on('disconnect', () => {
             console.log('user disconnected', socket.id);

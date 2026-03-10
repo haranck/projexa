@@ -16,6 +16,8 @@ import { StripeService } from "../../infrastructure/services/StripeService";
 import { PDFService } from "../../infrastructure/services/PDFService";
 import { INotificationService } from "../../domain/interfaces/services/INotificationService";
 import { NotificationService } from "../../infrastructure/services/NotificationService";
+import { IChatService } from "../../domain/interfaces/services/IChatService";
+import { ChatService } from "../../infrastructure/services/ChatService";
 
 export class ServiceModule {
     static registerModules(): void {
@@ -54,6 +56,10 @@ export class ServiceModule {
 
         container.register<INotificationService>('INotificationService', {
             useClass: NotificationService
+        })
+
+        container.register<IChatService>('IChatService', {
+            useClass: ChatService
         })
     }
 }
