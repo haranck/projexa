@@ -9,6 +9,7 @@ export class MessageMapper {
             senderId: doc.senderId.toString(),
             messageType: doc.messageType,
             content: doc.content,
+            isDeleted: doc.isDeleted,
             createdAt: doc.createdAt,
             updatedAt: doc.updatedAt
         };

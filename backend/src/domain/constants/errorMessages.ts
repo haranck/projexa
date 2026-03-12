@@ -217,9 +217,11 @@ export const NOTIFICATION_ERRORS = {
     NOTIFICATION_FAILED_TO_UPDATE_ISSUE: 'Failed to update issue',
     NOTIFICATION_SPRINT_NOT_ACTIVE: 'Sprint is not active !',
     NOTIFICATION_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: 'Only active sprint can be completed !',
+    NOTIFICATION_FAILED_TO_SEND_NOTIFICATIONS: 'Failed to send notifications',
 
 }
 export const CHAT_ERRORS  = {
     MESSAGE_NOT_FOUND:"Message not found after creation",
-    CHAT_NOT_FOUND:"Chat room not found after creation"
+    CHAT_NOT_FOUND:"Chat room not found after creation",
+    UNAUTHORIZED_TO_DELETE_MESSAGE: "Unauthorized to delete this message"
 }

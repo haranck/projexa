@@ -4,6 +4,7 @@ export interface IMessageEntity {
     senderId: string;
     messageType: "text" | "image" | "video";
     content: string;
+    isDeleted?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }

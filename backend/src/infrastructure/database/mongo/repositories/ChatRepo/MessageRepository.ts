@@ -24,4 +24,19 @@ export class MessageRepository extends BaseRepo<IMessageEntity> implements IMess
         const docs = await MessageModel.find({ roomId }).sort({ createdAt: 1 });
         return docs.map(doc => MessageMapper.toEntity(doc as MessageDocument));
     }
+
+    async deleteMessage(messageId: string): Promise<IMessageEntity> {
+        const doc = await MessageModel.findByIdAndUpdate(
+            messageId,
+            { isDeleted: true, content: "This message was deleted" },
+            { new: true }
+        );
+        if (!doc) throw new Error(CHAT_ERRORS.MESSAGE_NOT_FOUND);
+        return MessageMapper.toEntity(doc as MessageDocument);
+    }
+
+    async findById(messageId: string): Promise<IMessageEntity | null> {
+        const doc = await MessageModel.findById(messageId);
+        return doc ? MessageMapper.toEntity(doc as MessageDocument) : null;
+    }
 }

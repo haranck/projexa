@@ -20,6 +20,15 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         const handleReceiveMessage = (message: Message) => {
             queryClient.setQueryData(['messages', roomId], (old: { data: Message[], message: string } | undefined) => {
                 if (!old) return { data: [message], message: "" };
+                if (message.isDeleted) {
+                    const exists = (old.data || []).some(m => m._id === message._id);
+                    if (exists) {
+                        return {
+                            ...old,
+                            data: (old.data || []).map(m => m._id === message._id ? message : m)
+                        };
+                    }
+                }
                 return {
                     ...old,
                     data: [...(old.data || []), message]
@@ -55,7 +64,12 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         socket.emit(CHAT_EVENTS.SEND_MESSAGE, messageData);
     }, [roomId])
 
-    return { sendMessage }
+    const deleteMessage = useCallback((messageId: string) => {
+        if (!roomId) return;
+        socket.emit(CHAT_EVENTS.DELETE_MESSAGE, messageId);
+    }, [roomId]);
+
+    return { sendMessage, deleteMessage }
 }
 
 

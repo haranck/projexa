@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
-import { Search, Plus, Phone, Video, MoreHorizontal, Paperclip, Smile, Send, Circle, MessageSquare } from "lucide-react";
+import { Search, Plus, Phone, Video, MoreHorizontal, Paperclip, Smile, Send, Circle, MessageSquare, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetAllProjects } from "@/hooks/Project/ProjectHooks";
 import { useChatRoom, useMessages } from "@/hooks/Chat/ChatHooks";
@@ -27,6 +27,8 @@ export const ChatPage = () => {
 
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [message, setMessage] = useState("");
+    const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
+    const [deleteConfirm, setDeleteConfirm] = useState<{ messageId: string } | null>(null);
 
     const projects = (projectsData as ApiResponse<GetAllProjectsResponse>)?.data?.projects || [];
 
@@ -36,7 +38,13 @@ export const ChatPage = () => {
     const { data: messagesData, isLoading: messagesLoading } = useMessages(roomId || "");
     const messages = messagesData?.data || [];
 
-    const { sendMessage } = useChatSocket(roomId, user?.id);
+    const sortedProjects = [...projects].sort((a, b) => {
+        const timeA = a.lastMessage?.createdAt ? new Date(a.lastMessage.createdAt).getTime() : 0;
+        const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
+        return timeB - timeA;
+    });
+
+    const { sendMessage, deleteMessage } = useChatSocket(roomId, user?.id);
 
     useEffect(() => {
         if (projects.length > 0 && !selectedProject) {
@@ -56,6 +64,11 @@ export const ChatPage = () => {
         }
         sendMessage(message.trim(), user.id);
         setMessage("");
+    };
+
+    const handleDeleteMessage = (messageId: string) => {
+        deleteMessage(messageId);
+        setDeleteConfirm(null);
     };
 
     if (!currentWorkspace) {
@@ -117,9 +130,11 @@ export const ChatPage = () => {
                                 </div>
                             </div>
                         ) : (
-                            projects.map((project: Project) => {
+                            sortedProjects.map((project: Project) => {
                                 const projectId = project._id;
                                 const isSelected = selectedProject?._id === projectId;
+                                const lastMsg = project.lastMessage;
+                                const lastMsgTime = lastMsg?.createdAt ? new Date(lastMsg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }) : "";
 
                                 return (
                                     <button
@@ -146,13 +161,13 @@ export const ChatPage = () => {
                                                 <span className={`font-bold text-[15px] truncate ${isSelected ? "text-white" : "text-zinc-300 group-hover:text-white"}`}>
                                                     {project.projectName}
                                                 </span>
-                                                <span className="text-[10px] text-zinc-600">12:45</span>
+                                                <span className="text-[10px] text-zinc-600">{lastMsgTime}</span>
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <p className="text-xs text-zinc-500 truncate group-hover:text-zinc-400 max-w-[140px]">
-                                                    {isSelected ? "Active in chat" : "Last message: Hey team!..."}
+                                                    {isSelected ? "Active in chat" : (lastMsg?.content || "No messages yet")}
                                                 </p>
-                                                {!isSelected && (
+                                                {!isSelected && lastMsg && (
                                                     <div className="size-2 rounded-full bg-blue-600 shadow-lg shadow-blue-600/50 mr-1 animate-pulse" />
                                                 )}
                                             </div>
@@ -202,21 +217,22 @@ export const ChatPage = () => {
                             {/* Messages Area with Special Background */}
                             <div
                                 ref={scrollRef}
-                                className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar relative chat-background"
+                                className="flex-1 overflow-y-auto p-8 space-y-6 custom-scrollbar relative chat-container"
                             >
+                                <div className="chat-mesh-overlay" />
                                 {messagesLoading ? (
                                     <div className="flex flex-col h-full items-center justify-center space-y-4">
                                         <div className="size-10 border-4 border-blue-600/20 border-t-blue-600 rounded-full animate-spin" />
-                                        <p className="text-sm text-zinc-500 font-medium">Loading history...</p>
+                                        <p className="text-sm text-zinc-500 font-medium tracking-widest uppercase">Syncing protocol...</p>
                                     </div>
                                 ) : messages.length === 0 ? (
-                                    <div className="flex flex-col h-full items-center justify-center text-center space-y-4 p-8">
-                                        <div className="size-16 rounded-3xl bg-zinc-900/50 flex items-center justify-center border border-zinc-800">
-                                            <MessageSquare className="size-8 text-zinc-700" />
+                                    <div className="flex flex-col h-full items-center justify-center text-center space-y-6 p-8 relative z-10">
+                                        <div className="size-20 rounded-[2.5rem] bg-linear-to-br from-blue-600/20 to-purple-600/20 flex items-center justify-center border border-white/10 shadow-2xl backdrop-blur-xl animate-bounce-subtle">
+                                            <MessageSquare className="size-10 text-blue-500" />
                                         </div>
-                                        <div>
-                                            <p className="text-lg font-bold text-zinc-400">Silence is golden</p>
-                                            <p className="text-sm text-zinc-600 mt-1 max-w-[250px]">Be the first to say hello to your team in this project!</p>
+                                        <div className="space-y-2">
+                                            <p className="text-2xl font-black text-white tracking-tight">Transmission Silence</p>
+                                            <p className="text-zinc-500 text-sm max-w-[280px] mx-auto leading-relaxed">The project frequency is currently quiet. Initiate the first communication pulse.</p>
                                         </div>
                                     </div>
                                 ) : (
@@ -227,9 +243,14 @@ export const ChatPage = () => {
                                         const senderAvatar = sender?.user?.profilePicture;
 
                                         return (
-                                            <div key={msg._id} className={`flex items-end gap-3 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                                            <div
+                                                key={msg._id}
+                                                className={`flex items-end gap-4 relative z-10 ${isMe ? "flex-row-reverse" : "flex-row"}`}
+                                                onMouseEnter={() => setHoveredMessageId(msg._id)}
+                                                onMouseLeave={() => setHoveredMessageId(null)}
+                                            >
                                                 {!isMe && (
-                                                    <div className="size-10 rounded-full overflow-hidden border border-zinc-800 shrink-0 bg-zinc-900 flex items-center justify-center shadow-xl">
+                                                    <div className="size-10 rounded-2xl overflow-hidden border border-white/10 shrink-0 bg-zinc-900/50 flex items-center justify-center shadow-2xl backdrop-blur-md transition-transform hover:scale-110">
                                                         <img
                                                             src={senderAvatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(senderName)}&background=18181b&color=71717a`}
                                                             alt={senderName}
@@ -237,23 +258,63 @@ export const ChatPage = () => {
                                                         />
                                                     </div>
                                                 )}
-                                                <div className={`flex flex-col ${isMe ? "items-end" : "items-start"}`}>
+                                                <div className={`flex flex-col gap-1.5 ${isMe ? "items-end" : "items-start"}`}>
                                                     {!isMe && (
-                                                        <span className="text-[11px] font-bold text-blue-400 mb-1 ml-1 tracking-wide">
+                                                        <span className="text-[10px] font-black text-blue-500 ml-1 tracking-widest uppercase opacity-80">
                                                             {senderName}
                                                         </span>
                                                     )}
-                                                    <div className={`max-w-[450px] px-5 py-3 rounded-2xl text-[15px] leading-relaxed shadow-lg relative ${isMe
-                                                        ? "bg-blue-600 text-white rounded-br-none"
-                                                        : "bg-zinc-800 text-zinc-200 rounded-bl-none border border-white/5"
-                                                        }`}>
-                                                        {msg.content}
-                                                        <div className={`flex items-center gap-1.5 mt-1.5 justify-end opacity-60`}>
-                                                            <span className="text-[10px] font-medium font-mono lowercase">
-                                                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                            </span>
-                                                            {isMe && <span className="text-[10px] italic font-mono">✓✓</span>}
-                                                        </div>
+                                                    <div className={`flex items-center gap-2 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
+                                                        {isMe && !msg.isDeleted && (
+                                                            <div className={`transition-opacity duration-150 ${hoveredMessageId === msg._id ? "opacity-100" : "opacity-0"}`}>
+                                                                <div className="relative group/menu">
+                                                                    <button
+                                                                        className="p-1.5 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800/70 transition-all"
+                                                                        title="Message options"
+                                                                    >
+                                                                        <MoreHorizontal className="size-4" />
+                                                                    </button>
+                                                                    {/* Dropdown */}
+                                                                    <div className="absolute bottom-full right-0 mb-1 bg-zinc-900 border border-zinc-700/60 rounded-xl shadow-2xl overflow-hidden w-44 opacity-0 group-hover/menu:opacity-100 transition-opacity duration-150 pointer-events-none group-hover/menu:pointer-events-auto z-50">
+                                                                        <button
+                                                                            onClick={() => setDeleteConfirm({ messageId: msg._id })}
+                                                                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
+                                                                        >
+                                                                            <Trash2 className="size-3.5" />
+                                                                            Delete
+                                                                        </button>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        )}
+                                                        {/* Message bubble */}
+                                                        {msg.isDeleted ? (
+                                                            <div className={`max-w-[500px] px-5 py-3 rounded-[2rem] text-[13px] leading-relaxed shadow border border-dashed ${
+                                                                isMe
+                                                                    ? "bg-zinc-800/40 border-zinc-700/50 rounded-tr-none"
+                                                                    : "bg-zinc-900/40 border-zinc-700/30 rounded-tl-none"
+                                                            }`}>
+                                                                <span className="text-zinc-500 italic">This message was deleted</span>
+                                                                <div className="flex items-center gap-2 mt-1 justify-end opacity-40">
+                                                                    <span className="text-[9px] font-mono tracking-tighter text-zinc-600">
+                                                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                    </span>
+                                                                </div>
+                                                            </div>
+                                                        ) : (
+                                                            <div className={`max-w-[500px] px-6 py-4 rounded-[2rem] text-[15px] leading-relaxed shadow-2xl backdrop-blur-xl border transition-all hover:bg-opacity-90 ${isMe
+                                                                ? "bg-linear-to-br from-blue-600 to-blue-700 text-white rounded-tr-none border-blue-400/20"
+                                                                : "bg-zinc-900/80 text-zinc-100 rounded-tl-none border-white/5"
+                                                                }`}>
+                                                                {msg.content}
+                                                                <div className={`flex items-center gap-2 mt-2 justify-end opacity-50`}>
+                                                                    <span className="text-[9px] font-bold font-mono tracking-tighter">
+                                                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                    </span>
+                                                                    {isMe && <div className="flex -space-x-1"><Circle className="size-1.5 fill-blue-300 text-blue-300" /><Circle className="size-1.5 fill-blue-300 text-blue-300" /></div>}
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 </div>
                                             </div>
@@ -303,14 +364,51 @@ export const ChatPage = () => {
                 </div>
             </div>
 
+            {/* Delete Confirmation Modal */}
+            {deleteConfirm && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+                    <div className="bg-zinc-900 border border-zinc-700/60 rounded-2xl shadow-2xl p-6 w-80 flex flex-col gap-5">
+                        <div className="flex flex-col gap-1.5">
+                            <div className="flex items-center gap-3">
+                                <div className="size-9 rounded-xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
+                                    <Trash2 className="size-4 text-red-400" />
+                                </div>
+                                <h3 className="text-white font-bold text-base">Delete Message?</h3>
+                            </div>
+                            <p className="text-zinc-500 text-sm mt-1 pl-12">Everyone in the chat will see this message was deleted.</p>
+                        </div>
+                        <div className="flex flex-col gap-2">
+                            <button
+                                onClick={() => handleDeleteMessage(deleteConfirm.messageId)}
+                                className="w-full py-2.5 rounded-xl bg-red-600 hover:bg-red-500 text-white text-sm font-semibold transition-all active:scale-95 flex items-center justify-center gap-2"
+                            >
+                                <Trash2 className="size-4" />
+                                Delete for Everyone
+                            </button>
+                            <button
+                                onClick={() => setDeleteConfirm(null)}
+                                className="w-full py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-sm font-medium transition-all active:scale-95"
+                            >
+                                Cancel
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <style>{`
-                .chat-background {
-                    background-color: #0b0e14;
-                    background-image: 
-                        linear-gradient(rgba(11, 14, 20, 0.9), rgba(11, 14, 20, 0.9)),
-                        url("https://w0.peakpx.com/wallpaper/508/606/wallpaper-whatsapp-dark-mode-doodle-background.jpg");
-                    background-size: 400px;
-                    background-repeat: repeat;
+                .chat-container {
+                    background: radial-gradient(circle at 50% 50%, #1a1c2e 0%, #0b0e14 100%);
+                    position: relative;
+                    isolation: isolate;
+                }
+                .chat-mesh-overlay {
+                    position: absolute;
+                    inset: 0;
+                    background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%234169e1' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+                    opacity: 0.5;
+                    pointer-events: none;
+                    z-index: 0;
                 }
                 .custom-scrollbar::-webkit-scrollbar {
                     width: 6px;
@@ -324,6 +422,13 @@ export const ChatPage = () => {
                 }
                 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
                     background: #3f3f46;
+                }
+                @keyframes bounce-subtle {
+                    0%, 100% { transform: translateY(0); }
+                    50% { transform: translateY(-10px); }
+                }
+                .animate-bounce-subtle {
+                    animation: bounce-subtle 3s ease-in-out infinite;
                 }
             `}</style>
         </DashboardLayout>

@@ -29,4 +29,10 @@ export class ChatRepository extends BaseRepo<IChatRoomEntity> implements IChatRe
     async updateLastMessage(roomId: string, messageId: string): Promise<void> {
         await ChatRoomModel.findByIdAndUpdate(roomId, { lastMessage: messageId });
     }
+
+    async findByRoomId(roomId:string):Promise<IChatRoomEntity | null>{
+        const doc = await ChatRoomModel.findById(roomId);
+        if (!doc) return null;
+        return ChatRoomMapper.toEntity(doc as ChatDocument);
+    }
 }

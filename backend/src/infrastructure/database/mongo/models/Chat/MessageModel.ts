@@ -5,6 +5,7 @@ export interface MessageDocument extends Document {
     senderId: mongoose.Types.ObjectId;
     messageType: "text" | "image" | "video";
     content: string;
+    isDeleted: boolean;
     createdAt: Date;
     updatedAt:Date;
 }
@@ -32,6 +33,11 @@ const MessageSchema = new mongoose.Schema<MessageDocument>(
     content: {
         type: String,
         required: true
+    },
+
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 
 },

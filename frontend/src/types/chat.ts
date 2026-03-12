@@ -4,6 +4,7 @@ export interface Message {
     senderId: string;
     messageType: 'text' | 'image' | 'video';
     content: string;
+    isDeleted?: boolean;
     createdAt: string;
     updatedAt: string;
 }
@@ -23,5 +24,6 @@ export const CHAT_EVENTS = {
     RECEIVE_MESSAGE: "chat:receive",
     TYPING: "chat:typing",
     STOP_TYPING: "chat:stopTyping",
-    GET_HISTORY: "chat:getHistory"
+    GET_HISTORY: "chat:getHistory",
+    DELETE_MESSAGE: "chat:delete"
 }
