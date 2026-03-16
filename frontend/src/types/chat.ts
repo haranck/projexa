@@ -2,8 +2,9 @@ export interface Message {
     _id: string;
     roomId: string;
     senderId: string;
-    messageType: 'text' | 'image' | 'video';
+    messageType: 'text' | 'image' | 'video' | 'document';
     content: string;
+    readBy?: string[];
     isDeleted?: boolean;
     createdAt: string;
     updatedAt: string;
@@ -25,5 +26,7 @@ export const CHAT_EVENTS = {
     TYPING: "chat:typing",
     STOP_TYPING: "chat:stopTyping",
     GET_HISTORY: "chat:getHistory",
-    DELETE_MESSAGE: "chat:delete"
+    DELETE_MESSAGE: "chat:delete",
+    READ: "chat:read",
+    READ_UPDATE: "chat:readUpdate"
 }

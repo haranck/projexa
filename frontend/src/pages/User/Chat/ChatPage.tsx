@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
-import { Search, Plus, Phone, Video, MoreHorizontal, Paperclip, Smile, Send, Circle, MessageSquare, Trash2 } from "lucide-react";
+import { Search, Plus, Phone, Video, MoreHorizontal, Paperclip, Smile, Send, Circle, MessageSquare, Trash2, CheckCheck } from "lucide-react";
+import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { Button } from "@/components/ui/button";
 import { useGetAllProjects } from "@/hooks/Project/ProjectHooks";
 import { useChatRoom, useMessages } from "@/hooks/Chat/ChatHooks";
@@ -27,6 +28,7 @@ export const ChatPage = () => {
 
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [message, setMessage] = useState("");
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<{ messageId: string } | null>(null);
 
@@ -44,7 +46,17 @@ export const ChatPage = () => {
         return timeB - timeA;
     });
 
-    const { sendMessage, deleteMessage } = useChatSocket(roomId, user?.id);
+    const { sendMessage, deleteMessage, markAsRead } = useChatSocket(roomId, user?.id);
+
+    useEffect(() => {
+        if (messages.length > 0 && user?.id && roomId) {
+            messages.forEach((msg: Message) => {
+                if (!msg.readBy?.includes(user.id) && !msg.isDeleted) {
+                    markAsRead(msg._id);
+                }
+            });
+        }
+    }, [messages, user?.id, roomId, markAsRead]);
 
     useEffect(() => {
         if (projects.length > 0 && !selectedProject) {
@@ -64,6 +76,11 @@ export const ChatPage = () => {
         }
         sendMessage(message.trim(), user.id);
         setMessage("");
+        setShowEmojiPicker(false);
+    };
+
+    const handleEmojiClick = (emojiData: { emoji: string }) => {
+        setMessage(prev => prev + emojiData.emoji);
     };
 
     const handleDeleteMessage = (messageId: string) => {
@@ -311,7 +328,17 @@ export const ChatPage = () => {
                                                                     <span className="text-[9px] font-bold font-mono tracking-tighter">
                                                                         {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                                     </span>
-                                                                    {isMe && <div className="flex -space-x-1"><Circle className="size-1.5 fill-blue-300 text-blue-300" /><Circle className="size-1.5 fill-blue-300 text-blue-300" /></div>}
+                                                                    {isMe && (
+                                                                        <div className="flex -space-x-1">
+                                                                            <CheckCheck 
+                                                                                className={`size-3.5 ${
+                                                                                    (msg.readBy?.length || 0) >= (roomData?.data?.members?.length || selectedProject.members?.length || 0)
+                                                                                        ? "text-blue-900" 
+                                                                                        : "text-zinc-900"
+                                                                                }`} 
+                                                                            />
+                                                                        </div>
+                                                                    )}
                                                                 </div>
                                                             </div>
                                                         )}
@@ -324,10 +351,33 @@ export const ChatPage = () => {
                             </div>
 
                             {/* Input Area */}
-                            <div className="p-6 bg-[#0b0e14]/95 backdrop-blur-md z-10 border-t border-zinc-800/50">
+                            <div className="p-6 bg-[#0b0e14]/95 backdrop-blur-md z-10 border-t border-zinc-800/50 relative">
+                                {showEmojiPicker && (
+                                    <div className="absolute bottom-full mb-4 left-6 z-50">
+                                        <div className="relative">
+                                            <div 
+                                                className="fixed inset-0" 
+                                                onClick={() => setShowEmojiPicker(false)} 
+                                            />
+                                            <div className="relative z-10 shadow-2xl border border-zinc-800 rounded-2xl overflow-hidden">
+                                                <EmojiPicker
+                                                    onEmojiClick={handleEmojiClick}
+                                                    theme={Theme.DARK}
+                                                    width={350}
+                                                    height={400}
+                                                />
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
                                 <div className="max-w-6xl mx-auto flex items-center gap-3">
                                     <div className="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-2xl p-1.5 flex items-center gap-2 transition-all duration-300 focus-within:border-blue-600/50 focus-within:bg-zinc-900/80 focus-within:shadow-lg focus-within:shadow-blue-600/5">
-                                        <Button variant="ghost" size="icon" className="text-zinc-500 hover:text-white rounded-xl">
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className={`text-zinc-500 hover:text-white rounded-xl ${showEmojiPicker ? "text-blue-500 bg-blue-500/10" : ""}`}
+                                            onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                        >
                                             <Smile className="size-5" />
                                         </Button>
                                         <Button variant="ghost" size="icon" className="text-zinc-500 hover:text-white rounded-xl">

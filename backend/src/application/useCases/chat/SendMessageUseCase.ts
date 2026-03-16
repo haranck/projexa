@@ -26,7 +26,10 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
     async execute(data: MessageDTO): Promise<IMessageEntity> {
 
-        const messageData = MessageDTOmapper.toDomain(data);
+        const messageData = {
+            ...MessageDTOmapper.toDomain(data),
+            readBy: [data.senderId]
+        };
 
         const savedMessage = await this._messageRepository.createMessage(messageData);
 

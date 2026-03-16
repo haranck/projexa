@@ -39,4 +39,8 @@ export class MessageRepository extends BaseRepo<IMessageEntity> implements IMess
         const doc = await MessageModel.findById(messageId);
         return doc ? MessageMapper.toEntity(doc as MessageDocument) : null;
     }
+
+    async updateReadBy(messageId: string, userId: string): Promise<void> {
+        await MessageModel.findByIdAndUpdate(messageId, { $addToSet: { readBy: userId } });
+    }
 }

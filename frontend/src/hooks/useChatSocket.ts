@@ -20,7 +20,8 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         const handleReceiveMessage = (message: Message) => {
             queryClient.setQueryData(['messages', roomId], (old: { data: Message[], message: string } | undefined) => {
                 if (!old) return { data: [message], message: "" };
-                if (message.isDeleted) {
+                
+                if (message.isDeleted || message.readBy) {
                     const exists = (old.data || []).some(m => m._id === message._id);
                     if (exists) {
                         return {
@@ -29,38 +30,49 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
                         };
                     }
                 }
+
+                // Avoid duplicates for regular messages
+                const alreadyExists = (old.data || []).some(m => m._id === message._id);
+                if (alreadyExists) return old;
+
                 return {
                     ...old,
                     data: [...(old.data || []), message]
                 };
             });
         };
+
+        const handleReadUpdate = (message: Message) => {
+            queryClient.setQueryData(['messages', roomId], (old: { data: Message[], message: string } | undefined) => {
+                if (!old) return old;
+                return {
+                    ...old,
+                    data: (old.data || []).map(m => m._id === message._id ? message : m)
+                };
+            });
+        };
+
         socket.on(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)
+        socket.on(CHAT_EVENTS.READ_UPDATE, handleReadUpdate)
 
         return () => {
             socket.off(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)
+            socket.off(CHAT_EVENTS.READ_UPDATE, handleReadUpdate)
             socket.disconnect();
         }
     }, [roomId, userId, queryClient])
 
-    const sendMessage = useCallback((content: string, senderId: string) => {
-        if (!roomId) {
-            console.error('Cannot send message: roomId is missing');
-            return;
-        }
-        if (!senderId) {
-            console.error('Cannot send message: senderId is missing');
-            return;
-        }
+    const sendMessage = useCallback((content: string, senderId: string, messageType: Message['messageType'] = 'text') => {
+        if (!roomId || !senderId) return;
 
         const messageData = {
             roomId,
             senderId,
             content,
-            messageType: 'text'
+            messageType
         };
 
-        console.log('Emitting message via socket:', messageData);
+        console.log('Sending message:', messageData);
         socket.emit(CHAT_EVENTS.SEND_MESSAGE, messageData);
     }, [roomId])
 
@@ -69,9 +81,10 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         socket.emit(CHAT_EVENTS.DELETE_MESSAGE, messageId);
     }, [roomId]);
 
-    return { sendMessage, deleteMessage }
+    const markAsRead = useCallback((messageId: string) => {
+        if (!roomId) return;
+        socket.emit(CHAT_EVENTS.READ, messageId);
+    }, [roomId]);
+
+    return { sendMessage, deleteMessage, markAsRead }
 }
-
-
-
-

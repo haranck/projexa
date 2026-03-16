@@ -6,6 +6,7 @@ import { ISendMessageUseCase } from "../../../application/interface/chat/ISendMe
 import { MessageDTO } from "../../../application/dtos/chat/requestDTOs/MessageDTO";
 import { IGetMessagesUseCase } from "../../../application/interface/chat/IGetMessagesUseCase";
 import { IDeleteMessageUseCase } from "../../../application/interface/chat/IDeleteMessageUseCase";
+import { IReadMessageUseCase } from "../../../application/interface/chat/IReadMessageUseCase";
 
 @injectable()
 export class ChatHandler {
@@ -13,7 +14,8 @@ export class ChatHandler {
     constructor(
         @inject("ISendMessageUseCase") private readonly _sendMessageUseCase: ISendMessageUseCase,
         @inject("IGetMessagesUseCase") private readonly _getMessagesUseCase: IGetMessagesUseCase,
-        @inject("IDeleteMessageUseCase") private readonly _deleteMessageUseCase: IDeleteMessageUseCase
+        @inject("IDeleteMessageUseCase") private readonly _deleteMessageUseCase: IDeleteMessageUseCase,
+        @inject("IReadMessageUseCase") private readonly _readMessageUseCase: IReadMessageUseCase,
     ) { }
 
     async handleJoinRoom(socket: Socket, roomId: string) {
@@ -64,8 +66,22 @@ export class ChatHandler {
         }
     }
 
+    async handleReadMessage(socket:Socket,messageId:string) {
+        const requesterId = socket.handshake.auth?.userId;
+        if (!requesterId) {
+            socket.emit("error", "Unauthorized");
+            return;
+        }
+        await this._readMessageUseCase.execute(messageId, requesterId);
+    }
+
     static emitToRoom(io: Server, roomId: string, message: IMessageEntity) {
         const roomName = `room:${roomId}`
         io.to(roomName).emit(CHAT_EVENTS.RECEIVE_MESSAGE, message)
+    }
+
+    static emitReadUpdate(io: Server, roomId: string, message: IMessageEntity) {
+        const roomName = `room:${roomId}`
+        io.to(roomName).emit(CHAT_EVENTS.READ_UPDATE, message)
     }
 }

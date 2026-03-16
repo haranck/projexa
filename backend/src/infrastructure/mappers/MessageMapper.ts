@@ -8,6 +8,7 @@ export class MessageMapper {
             roomId: doc.roomId.toString(),
             senderId: doc.senderId.toString(),
             messageType: doc.messageType,
+            readBy: doc.readBy?.map(id => id.toString()),
             content: doc.content,
             isDeleted: doc.isDeleted,
             createdAt: doc.createdAt,

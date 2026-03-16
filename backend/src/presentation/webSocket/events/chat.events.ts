@@ -32,6 +32,10 @@ export class ChatEvents {
             this.handler.handleGetHistory(this.socket, roomId)
         })
 
+        this.socket.on(CHAT_EVENTS.READ, (messageId: string) => {
+            this.handler.handleReadMessage(this.socket, messageId)
+        })
+
         this.socket.on(CHAT_EVENTS.DELETE_MESSAGE, async (messageId: string) => {
             this.handler.handleDeleteMessage(this.socket, messageId)
         })

@@ -3,6 +3,7 @@ export interface IChatRoomEntity {
     projectId: string;
     members: string[];
     lastMessage?: string;
+    readBy?: string[];
     createdAt?: Date;
     updatedAt?: Date;
 }

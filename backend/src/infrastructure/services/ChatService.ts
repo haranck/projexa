@@ -10,4 +10,8 @@ export class ChatService implements IChatService{
     emitToRoom(roomId: string, message: IMessageEntity): void {
         ChatHandler.emitToRoom(getIO(),roomId,message)
     }
+
+    emitReadUpdate(roomId: string, message: IMessageEntity): void {
+        ChatHandler.emitReadUpdate(getIO(), roomId, message)
+    }
 }

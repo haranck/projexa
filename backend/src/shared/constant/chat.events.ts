@@ -7,4 +7,6 @@ export const CHAT_EVENTS = {
     GET_HISTORY: "chat:getHistory",
     DELETE_MESSAGE: "chat:delete",
     MESSAGE_DELETED: "chat:deleted",
+    READ: "chat:read",
+    READ_UPDATE: "chat:readUpdate",
 }

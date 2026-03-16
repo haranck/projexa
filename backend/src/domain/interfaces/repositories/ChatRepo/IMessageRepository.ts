@@ -5,4 +5,5 @@ export interface IMessageRepository {
   findByRoom(roomId: string): Promise<IMessageEntity[]>;
   deleteMessage(messageId: string): Promise<IMessageEntity>;
   findById(messageId: string): Promise<IMessageEntity | null>;
+  updateReadBy(messageId: string, userId: string): Promise<void>;
 }
