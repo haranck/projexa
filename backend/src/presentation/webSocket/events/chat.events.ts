@@ -20,12 +20,12 @@ export class ChatEvents {
             this.handler.handleSendMessage(data)
         })
 
-        this.socket.on(CHAT_EVENTS.TYPING, (roomId: string) => {
-            this.handler.handleTyping(this.socket, roomId)
+        this.socket.on(CHAT_EVENTS.TYPING, (data: unknown) => {
+            this.handler.handleTyping(this.socket, data as string | { roomId: string, projectId?: string })
         })
 
-        this.socket.on(CHAT_EVENTS.STOP_TYPING, (roomId: string) => {
-            this.handler.handleStopTyping(this.socket, roomId)
+        this.socket.on(CHAT_EVENTS.STOP_TYPING, (data: unknown) => {
+            this.handler.handleStopTyping(this.socket, data as string | { roomId: string, projectId?: string })
         })
 
         this.socket.on(CHAT_EVENTS.GET_HISTORY, (roomId: string) => {

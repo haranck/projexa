@@ -21,7 +21,8 @@ export class ChatHandler {
     async handleJoinRoom(socket: Socket, roomId: string) {
         const roomName = `room:${roomId}`;
         socket.join(roomName);
-        console.log(`User Joined Room ${roomName}`)
+        socket.join(`project:${roomId}`);
+        console.log(`User Joined Room ${roomName} and project:${roomId}`)
     }
 
     async handleSendMessage(data: MessageDTO): Promise<void> {
@@ -32,16 +33,26 @@ export class ChatHandler {
         }
     }
 
-    async handleTyping(socket: Socket, roomId: string) {
-        const roomName = `room:${roomId}`;
+    async handleTyping(socket: Socket, data: string | { roomId: string, projectId?: string }) {
+        const roomId = typeof data === 'string' ? data : data.roomId;
+        const projectId = typeof data === 'object' ? data.projectId : null;
         const userId = socket.handshake.auth?.userId;
-        socket.to(roomName).emit(CHAT_EVENTS.TYPING, { roomId, userId });
+
+        socket.to(`room:${roomId}`).emit(CHAT_EVENTS.TYPING, { roomId, userId, projectId });
+        if (projectId) {
+            socket.to(`project:${projectId}`).emit(CHAT_EVENTS.TYPING, { roomId, userId, projectId });
+        }
     }
 
-    async handleStopTyping(socket: Socket, roomId: string) {
-        const roomName = `room:${roomId}`;
+    async handleStopTyping(socket: Socket, data: string | { roomId: string, projectId?: string }) {
+        const roomId = typeof data === 'string' ? data : data.roomId;
+        const projectId = typeof data === 'object' ? data.projectId : null;
         const userId = socket.handshake.auth?.userId;
-        socket.to(roomName).emit(CHAT_EVENTS.STOP_TYPING, { roomId, userId });
+
+        socket.to(`room:${roomId}`).emit(CHAT_EVENTS.STOP_TYPING, { roomId, userId, projectId });
+        if (projectId) {
+            socket.to(`project:${projectId}`).emit(CHAT_EVENTS.STOP_TYPING, { roomId, userId, projectId });
+        }
     }
 
     async handleGetHistory(socket: Socket, roomId: string) {

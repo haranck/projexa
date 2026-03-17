@@ -144,6 +144,8 @@ import { IDeleteMessageUseCase } from "../../application/interface/chat/IDeleteM
 import { DeleteMessageUseCase } from "../../application/useCases/chat/DeleteMessageUseCase";
 import { IReadMessageUseCase } from "../../application/interface/chat/IReadMessageUseCase";
 import { ReadMessageUseCase } from "../../application/useCases/chat/ReadMessageUseCase";
+import { IGetChatMessageUploadUrlUseCase } from "../../application/interface/chat/IGetChatMessageUploadUrlUseCase";
+import { GetChatMessageUploadUrlUseCase } from "../../application/useCases/chat/GetChatMessageUploadUrlUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -446,6 +448,10 @@ export class UseCaseModule {
 
         container.register<IReadMessageUseCase>('IReadMessageUseCase', {
             useClass: ReadMessageUseCase
+        })
+
+        container.register<IGetChatMessageUploadUrlUseCase>('IGetChatMessageUploadUrlUseCase', {
+            useClass: GetChatMessageUploadUrlUseCase
         })
 
     }

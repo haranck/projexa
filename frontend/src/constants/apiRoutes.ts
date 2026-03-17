@@ -76,8 +76,9 @@ export const API_ROUTES = {
     MARK_AS_READ: "/notifications/mark-as-read/:notificationId",
     MARK_ALL_AS_READ: "/notifications/mark-all-as-read",
   },
-  CHAT: {
+    CHAT: {
     GET_ROOM_BY_PROJECT: "/chat/room/:projectId",
     GET_MESSAGES: "/chat/messages/:roomId",
+    GET_UPLOAD_URL: "/chat/attachment-upload-url/:roomId",
   }
 };

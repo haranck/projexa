@@ -104,5 +104,6 @@ export const MESSAGES = {
     CHAT: {
         ROOM_FETCHED_SUCCESSFULLY: "Chat room fetched successfully",
         MESSAGES_FETCHED_SUCCESSFULLY: "Messages fetched successfully",
+        UPLOAD_URL_GENERATED_SUCCESSFULLY: "Chat attachment upload URL generated successfully"
     }
 };

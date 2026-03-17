@@ -10,6 +10,9 @@ import { useChatRoom, useMessages } from "@/hooks/Chat/ChatHooks";
 import { useChatSocket } from "@/hooks/useChatSocket";
 import type { Project, GetAllProjectsResponse } from "@/types/project";
 import type { Message } from "@/types/chat";
+import { getChatUploadUrl } from "@/services/Chat/ChatService";
+import axios from "axios";
+import { FileIcon, Download } from "lucide-react";
 
 interface ApiResponse<T> {
     data: T;
@@ -20,6 +23,13 @@ export const ChatPage = () => {
     const currentWorkspace = useSelector((state: RootState) => state.workspace.currentWorkspace);
     const user = useSelector((state: RootState) => state.auth.user);
     const scrollRef = useRef<HTMLDivElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isUploading, setIsUploading] = useState(false);
+    const [expandedImage, setExpandedImage] = useState<string | null>(null);
+    const [downloadedFiles, setDownloadedFiles] = useState<string[]>(() => {
+        const saved = localStorage.getItem("downloaded_files");
+        return saved ? JSON.parse(saved) : [];
+    });
 
     const { data: projectsData, isLoading: projectsLoading } = useGetAllProjects({
         workspaceId: currentWorkspace?._id || currentWorkspace?.id || "",
@@ -31,11 +41,34 @@ export const ChatPage = () => {
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<{ messageId: string } | null>(null);
+    const [isTyping, setIsTyping] = useState(false);
 
     const projects = (projectsData as ApiResponse<GetAllProjectsResponse>)?.data?.projects || [];
 
     const { data: roomData, isLoading: roomLoading } = useChatRoom(selectedProject?._id || "");
     const roomId = roomData?.data?._id || (roomData as unknown as { _id?: string })?._id;
+
+    const allProjectIds = projects.map(p => p._id);
+    const { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers } = useChatSocket(roomId, user?.id, allProjectIds);
+
+    useEffect(() => {
+        if (!isTyping || !roomId) return;
+
+        startTyping(selectedProject?._id);
+        const timeout = setTimeout(() => {
+            setIsTyping(false);
+            stopTyping(selectedProject?._id);
+        }, 3000);
+
+        return () => clearTimeout(timeout);
+    }, [isTyping, roomId, selectedProject?._id, startTyping, stopTyping]);
+
+    const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setMessage(e.target.value);
+        if (!isTyping) {
+            setIsTyping(true);
+        }
+    };
 
     const { data: messagesData, isLoading: messagesLoading } = useMessages(roomId || "");
     const messages = messagesData?.data || [];
@@ -45,8 +78,6 @@ export const ChatPage = () => {
         const timeB = b.lastMessage?.createdAt ? new Date(b.lastMessage.createdAt).getTime() : 0;
         return timeB - timeA;
     });
-
-    const { sendMessage, deleteMessage, markAsRead } = useChatSocket(roomId, user?.id);
 
     useEffect(() => {
         if (messages.length > 0 && user?.id && roomId) {
@@ -81,6 +112,50 @@ export const ChatPage = () => {
 
     const handleEmojiClick = (emojiData: { emoji: string }) => {
         setMessage(prev => prev + emojiData.emoji);
+    };
+
+    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file || !roomId || !user?.id) return;
+
+        try {
+            setIsUploading(true);
+            const response = await getChatUploadUrl(roomId, file.type);
+            const { uploadUrl, fileUrl } = response.data;
+
+            await axios.put(uploadUrl, file, {
+                headers: {
+                    "Content-Type": file.type,
+                },
+            });
+
+            let messageType: Message['messageType'] = 'document';
+            if (file.type.startsWith('image/')) messageType = 'image';
+            else if (file.type.startsWith('video/')) messageType = 'video';
+
+            sendMessage(fileUrl, user.id, messageType);
+        } catch (error) {
+            console.error("File upload failed:", error);
+        } finally {
+            setIsUploading(false);
+            if (fileInputRef.current) fileInputRef.current.value = "";
+        }
+    };
+
+    const handleDownload = (url: string, filename: string) => {
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+
+        setDownloadedFiles(prev => {
+            if (prev.includes(url)) return prev;
+            const updated = [...prev, url];
+            localStorage.setItem("downloaded_files", JSON.stringify(updated));
+            return updated;
+        });
     };
 
     const handleDeleteMessage = (messageId: string) => {
@@ -184,9 +259,16 @@ export const ChatPage = () => {
                                                 <p className="text-xs text-zinc-500 truncate group-hover:text-zinc-400 max-w-[140px]">
                                                     {isSelected ? "Active in chat" : (lastMsg?.content || "No messages yet")}
                                                 </p>
-                                                {!isSelected && lastMsg && (
-                                                    <div className="size-2 rounded-full bg-blue-600 shadow-lg shadow-blue-600/50 mr-1 animate-pulse" />
-                                                )}
+                                                <div className="flex items-center gap-1">
+                                                    {typingUsers[projectId] && typingUsers[projectId].length > 0 && (
+                                                        <span className="text-[10px] text-blue-500 animate-pulse font-bold bg-blue-500/10 px-1.5 py-0.5 rounded-full truncate max-w-[80px]">
+                                                            {project.members?.find(m => m.userId === typingUsers[projectId][0])?.user?.userName || "Someone"} typing...
+                                                        </span>
+                                                    )}
+                                                    {!isSelected && lastMsg && (
+                                                        <div className="size-2 rounded-full bg-blue-600 shadow-lg shadow-blue-600/50 mr-1 animate-pulse" />
+                                                    )}
+                                                </div>
                                             </div>
                                         </div>
                                         {isSelected && (
@@ -215,7 +297,15 @@ export const ChatPage = () => {
                                             <h3 className="font-bold text-white text-lg">{selectedProject.projectName}</h3>
                                             {roomLoading && <div className="size-3 border-2 border-blue-600 border-t-transparent rounded-full animate-spin ml-1" />}
                                         </div>
-                                        <p className="text-xs text-zinc-500">{(selectedProject as Project).members?.length || 0} members • Active now</p>
+                                        <div className="flex items-center gap-2">
+                                            {selectedProject?._id && typingUsers[selectedProject._id]?.length > 0 ? (
+                                                <p className="text-xs text-blue-400 animate-pulse font-medium">
+                                                    {(selectedProject as Project).members?.find(m => m.userId === typingUsers[selectedProject._id][0])?.user?.userName || "Someone"} is typing...
+                                                </p>
+                                            ) : (
+                                                <p className="text-xs text-zinc-500">{(selectedProject as Project).members?.length || 0} members • Active now</p>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -319,28 +409,71 @@ export const ChatPage = () => {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                            <div className={`max-w-[500px] px-6 py-4 rounded-[2rem] text-[15px] leading-relaxed shadow-2xl backdrop-blur-xl border transition-all hover:bg-opacity-90 ${isMe
-                                                                ? "bg-linear-to-br from-blue-600 to-blue-700 text-white rounded-tr-none border-blue-400/20"
-                                                                : "bg-zinc-900/80 text-zinc-100 rounded-tl-none border-white/5"
-                                                                }`}>
-                                                                {msg.content}
-                                                                <div className={`flex items-center gap-2 mt-2 justify-end opacity-50`}>
-                                                                    <span className="text-[9px] font-bold font-mono tracking-tighter">
-                                                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                                    </span>
-                                                                    {isMe && (
-                                                                        <div className="flex -space-x-1">
-                                                                            <CheckCheck 
-                                                                                className={`size-3.5 ${
-                                                                                    (msg.readBy?.length || 0) >= (roomData?.data?.members?.length || selectedProject.members?.length || 0)
-                                                                                        ? "text-blue-900" 
-                                                                                        : "text-zinc-900"
-                                                                                }`} 
-                                                                            />
+                                                                    <div className={`max-w-[500px] px-6 py-4 rounded-[2rem] text-[15px] leading-relaxed shadow-2xl backdrop-blur-xl border transition-all hover:bg-opacity-90 ${isMe
+                                                                        ? "bg-linear-to-br from-blue-600 to-blue-700 text-white rounded-tr-none border-blue-400/20"
+                                                                        : "bg-zinc-900/80 text-zinc-100 rounded-tl-none border-white/5"
+                                                                        }`}>
+                                                                        {msg.messageType === 'text' && msg.content}
+                                                                        {msg.messageType === 'image' && (
+                                                                            <div className="rounded-2xl overflow-hidden border border-white/5 mb-1 group/img relative shadow-2xl">
+                                                                                <img 
+                                                                                    src={msg.content} 
+                                                                                    alt="Attachment" 
+                                                                                    className="max-w-[240px] max-h-[320px] object-cover cursor-zoom-in transition-transform duration-500 group-hover/img:scale-105" 
+                                                                                    onClick={() => setExpandedImage(msg.content)} 
+                                                                                />
+                                                                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                                                                    <Search className="size-6 text-white/70" />
+                                                                                </div>
+                                                                            </div>
+                                                                        )}
+                                                                        {msg.messageType === 'video' && (
+                                                                            <video src={msg.content} controls className="max-w-[300px] rounded-2xl mb-1 shadow-2xl border border-white/5" />
+                                                                        )}
+                                                                        {msg.messageType === 'document' && (
+                                                                            <div 
+                                                                                className="flex items-center gap-4 p-4 bg-zinc-800/50 hover:bg-zinc-800/80 rounded-2xl mb-1 cursor-pointer transition-all border border-white/5 group/file"
+                                                                                onClick={() => {
+                                                                                    if (downloadedFiles.includes(msg.content)) {
+                                                                                        window.open(msg.content, '_blank');
+                                                                                    } else {
+                                                                                        handleDownload(msg.content, msg.content.split('/').pop() || 'file');
+                                                                                    }
+                                                                                }}
+                                                                            >
+                                                                                <div className="size-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-600/20 group-hover/file:bg-blue-600/30 transition-colors">
+                                                                                    <FileIcon className="size-6 text-blue-400" />
+                                                                                </div>
+                                                                                <div className="flex-1 min-w-0">
+                                                                                    <p className="text-sm font-bold text-zinc-100 truncate">{msg.content.split('/').pop()}</p>
+                                                                                    <p className="text-[10px] text-zinc-500 font-mono mt-0.5 uppercase tracking-tighter">
+                                                                                        {downloadedFiles.includes(msg.content) ? "Click to open transmission" : "Click to download transmission"}
+                                                                                    </p>
+                                                                                </div>
+                                                                                {!downloadedFiles.includes(msg.content) && (
+                                                                                    <div className="opacity-0 group-hover/file:opacity-100 transition-opacity">
+                                                                                        <Download className="size-4 text-zinc-400" />
+                                                                                    </div>
+                                                                                )}
+                                                                            </div>
+                                                                        )}
+                                                                        <div className={`flex items-center gap-2 mt-2 justify-end opacity-50`}>
+                                                                            <span className="text-[9px] font-bold font-mono tracking-tighter">
+                                                                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                            </span>
+                                                                            {isMe && (
+                                                                                <div className="flex -space-x-1">
+                                                                                    <CheckCheck 
+                                                                                        className={`size-3.5 ${
+                                                                                            (msg.readBy?.length || 0) >= (roomData?.data?.members?.length || selectedProject.members?.length || 0)
+                                                                                                ? "text-blue-900" 
+                                                                                                : "text-zinc-900"
+                                                                                        }`} 
+                                                                                    />
+                                                                                </div>
+                                                                            )}
                                                                         </div>
-                                                                    )}
-                                                                </div>
-                                                            </div>
+                                                                    </div>
                                                         )}
                                                     </div>
                                                 </div>
@@ -352,6 +485,18 @@ export const ChatPage = () => {
 
                             {/* Input Area */}
                             <div className="p-6 bg-[#0b0e14]/95 backdrop-blur-md z-10 border-t border-zinc-800/50 relative">
+                                {selectedProject?._id && typingUsers[selectedProject._id]?.length > 0 && (
+                                    <div className="absolute -top-7 left-10 px-3 py-1 flex items-center gap-2 transition-all duration-300 animate-in fade-in slide-in-from-bottom-1">
+                                        <div className="flex gap-1">
+                                            <span className="size-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.3s]" />
+                                            <span className="size-1 bg-blue-500 rounded-full animate-bounce [animation-delay:-0.15s]" />
+                                            <span className="size-1 bg-blue-500 rounded-full animate-bounce" />
+                                        </div>
+                                        <p className="text-[11px] text-blue-400 font-medium">
+                                            {(selectedProject as Project).members?.find(m => m.userId === typingUsers[selectedProject._id][0])?.user?.userName || "Someone"} is typing
+                                        </p>
+                                    </div>
+                                )}
                                 {showEmojiPicker && (
                                     <div className="absolute bottom-full mb-4 left-6 z-50">
                                         <div className="relative">
@@ -380,16 +525,34 @@ export const ChatPage = () => {
                                         >
                                             <Smile className="size-5" />
                                         </Button>
-                                        <Button variant="ghost" size="icon" className="text-zinc-500 hover:text-white rounded-xl">
-                                            <Paperclip className="size-5" />
+                                        <Button 
+                                            variant="ghost" 
+                                            size="icon" 
+                                            className="text-zinc-500 hover:text-white rounded-xl"
+                                            onClick={() => fileInputRef.current?.click()}
+                                            disabled={isUploading}
+                                        >
+                                            {isUploading ? (
+                                                <div className="size-5 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                                            ) : (
+                                                <Paperclip className="size-5" />
+                                            )}
                                         </Button>
                                         <input
+                                            type="file"
+                                            ref={fileInputRef}
+                                            onChange={handleFileSelect}
+                                            className="hidden"
+                                        />
+                                        <input
                                             value={message}
-                                            onChange={(e) => setMessage(e.target.value)}
+                                            onChange={handleMessageChange}
                                             onKeyDown={(e) => {
                                                 if (e.key === "Enter" && !e.shiftKey) {
                                                     e.preventDefault();
                                                     handleSendMessage();
+                                                    setIsTyping(false);
+                                                    stopTyping();
                                                 }
                                             }}
                                             placeholder="Message..."
@@ -446,6 +609,40 @@ export const ChatPage = () => {
                 </div>
             )}
 
+            {/* Image Expansion Modal */}
+            {expandedImage && (
+                <div 
+                    className="fixed inset-0 z-100 flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
+                    onClick={() => setExpandedImage(null)}
+                >
+                    <button 
+                        className="absolute top-8 right-8 text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
+                        onClick={() => setExpandedImage(null)}
+                    >
+                        <Plus className="size-8 rotate-45" />
+                    </button>
+                    <img 
+                        src={expandedImage} 
+                        alt="Expanded attachment" 
+                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300" 
+                        onClick={(e) => e.stopPropagation()}
+                    />
+                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4">
+                        <Button 
+                            variant="secondary" 
+                            className="bg-white/10 hover:bg-white/20 text-white border-white/10 backdrop-blur-md rounded-xl"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                handleDownload(expandedImage, expandedImage.split('/').pop() || 'image');
+                            }}
+                        >
+                            <Download className="size-4 mr-2" />
+                            Download
+                        </Button>
+                    </div>
+                </div>
+            )}
+
             <style>{`
                 .chat-container {
                     background: radial-gradient(circle at 50% 50%, #1a1c2e 0%, #0b0e14 100%);
@@ -484,6 +681,3 @@ export const ChatPage = () => {
         </DashboardLayout>
     );
 };
-
-
-

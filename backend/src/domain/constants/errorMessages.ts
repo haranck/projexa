@@ -223,5 +223,6 @@ export const NOTIFICATION_ERRORS = {
 export const CHAT_ERRORS  = {
     MESSAGE_NOT_FOUND:"Message not found after creation",
     CHAT_NOT_FOUND:"Chat room not found after creation",
-    UNAUTHORIZED_TO_DELETE_MESSAGE: "Unauthorized to delete this message"
+    UNAUTHORIZED_TO_DELETE_MESSAGE: "Unauthorized to delete this message",
+    CONTENT_TYPE_REQUIRED: "Content Type is required",
 }

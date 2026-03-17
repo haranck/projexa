@@ -82,6 +82,7 @@ export const ROUTES = {
     },
     CHAT: {
         GET_ROOM_BY_PROJECT: "/room/:projectId",
-        GET_MESSAGES: "/messages/:roomId"
+        GET_MESSAGES: "/messages/:roomId",
+        GET_UPLOAD_URL: "/attachment-upload-url/:roomId"
     }
 };

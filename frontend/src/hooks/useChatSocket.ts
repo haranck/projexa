@@ -1,21 +1,41 @@
-import { useEffect, useCallback } from "react";
+import { useEffect, useCallback, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { socket } from "../socket/socket";
 import { CHAT_EVENTS, type Message } from "../types/chat";
 
-export const useChatSocket = (roomId: string | undefined, userId: string | undefined) => {
+export const useChatSocket = (roomId: string | undefined, userId: string | undefined, allRoomIds: string[] = []) => {
     const queryClient = useQueryClient();
+    const [typingUsers, setTypingUsers] = useState<Record<string, string[]>>({});
+
     useEffect(() => {
-        if (!roomId || !userId) return;
+        if (!userId) return;
 
         socket.auth = { userId };
         socket.connect();
 
         socket.on('connect', () => {
             console.log('Connected to chat socket server as user:', userId);
+            
+            if (roomId) {
+                socket.emit(CHAT_EVENTS.JOIN_ROOM, roomId);
+            }
+            
+            allRoomIds.forEach(id => {
+                if (id !== roomId) {
+                    socket.emit(CHAT_EVENTS.JOIN_ROOM, id);
+                }
+            });
         });
 
-        socket.emit(CHAT_EVENTS.JOIN_ROOM, roomId);
+        if (roomId) {
+            socket.emit(CHAT_EVENTS.JOIN_ROOM, roomId);
+        }
+
+        allRoomIds.forEach(id => {
+            if (id && id !== roomId) {
+                socket.emit(CHAT_EVENTS.JOIN_ROOM, id);
+            }
+        });
 
         const handleReceiveMessage = (message: Message) => {
             queryClient.setQueryData(['messages', roomId], (old: { data: Message[], message: string } | undefined) => {
@@ -31,7 +51,6 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
                     }
                 }
 
-                // Avoid duplicates for regular messages
                 const alreadyExists = (old.data || []).some(m => m._id === message._id);
                 if (alreadyExists) return old;
 
@@ -52,15 +71,36 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
             });
         };
 
+        const handleTyping = ({ roomId: typingRoomId, userId: typingUserId, projectId: typingProjectId }: { roomId: string, userId: string, projectId?: string }) => {
+            if (typingUserId === userId) return;
+            const key = typingProjectId || typingRoomId;
+            setTypingUsers(prev => ({
+                ...prev,
+                [key]: [...(new Set([...(prev[key] || []), typingUserId]))]
+            }));
+        };
+
+        const handleStopTyping = ({ roomId: typingRoomId, userId: typingUserId, projectId: typingProjectId }: { roomId: string, userId: string, projectId?: string }) => {
+            const key = typingProjectId || typingRoomId;
+            setTypingUsers(prev => ({
+                ...prev,
+                [key]: (prev[key] || []).filter(id => id !== typingUserId)
+            }));
+        };
+
         socket.on(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)
         socket.on(CHAT_EVENTS.READ_UPDATE, handleReadUpdate)
+        socket.on(CHAT_EVENTS.TYPING, handleTyping)
+        socket.on(CHAT_EVENTS.STOP_TYPING, handleStopTyping)
 
         return () => {
             socket.off(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)
             socket.off(CHAT_EVENTS.READ_UPDATE, handleReadUpdate)
+            socket.off(CHAT_EVENTS.TYPING, handleTyping)
+            socket.off(CHAT_EVENTS.STOP_TYPING, handleStopTyping)
             socket.disconnect();
         }
-    }, [roomId, userId, queryClient])
+    }, [roomId, userId, queryClient, JSON.stringify(allRoomIds)])
 
     const sendMessage = useCallback((content: string, senderId: string, messageType: Message['messageType'] = 'text') => {
         if (!roomId || !senderId) return;
@@ -86,5 +126,15 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         socket.emit(CHAT_EVENTS.READ, messageId);
     }, [roomId]);
 
-    return { sendMessage, deleteMessage, markAsRead }
+    const startTyping = useCallback((projectId?: string) => {
+        if (!roomId) return;
+        socket.emit(CHAT_EVENTS.TYPING, { roomId, projectId });
+    }, [roomId]);
+
+    const stopTyping = useCallback((projectId?: string) => {
+        if (!roomId) return;
+        socket.emit(CHAT_EVENTS.STOP_TYPING, { roomId, projectId });
+    }, [roomId]);
+
+    return { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers }
 }

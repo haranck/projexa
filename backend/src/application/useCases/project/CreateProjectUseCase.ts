@@ -28,12 +28,12 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
         const workspace = await this._workspaceRepository.getWorkspaceById(project.workspaceId)
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND)
 
+        if (workspace.ownerId?.toString() !== project.createdBy) throw new Error(PROJECT_ERRORS.UNAUTHORIZED_TO_CREATE_PROJECT)
+
         const existingProject = await this._projectRepo.getProjectByKey(project.workspaceId, project.key)
         if (existingProject) throw new Error(PROJECT_ERRORS.PROJECT_ALREADY_EXISTS)
 
         const createdProject = await this._projectRepo.createProject(project)
-
-        if (workspace.ownerId !== project.createdBy) throw new Error(PROJECT_ERRORS.UNAUTHORIZED_TO_CREATE_PROJECT)
 
         const chatMembers = [
             project.createdBy,
