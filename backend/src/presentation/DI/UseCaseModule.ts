@@ -146,6 +146,8 @@ import { IReadMessageUseCase } from "../../application/interface/chat/IReadMessa
 import { ReadMessageUseCase } from "../../application/useCases/chat/ReadMessageUseCase";
 import { IGetChatMessageUploadUrlUseCase } from "../../application/interface/chat/IGetChatMessageUploadUrlUseCase";
 import { GetChatMessageUploadUrlUseCase } from "../../application/useCases/chat/GetChatMessageUploadUrlUseCase";
+import { IGetDashboardDataUseCase } from "../../application/interface/dashboard/IGetDashboardDataUseCase";
+import { GetDashboardDataUseCase } from "../../application/useCases/dashboard/GetDashboardDataUseCase";
 
 export class UseCaseModule {
     static registerModules(): void {
@@ -454,5 +456,8 @@ export class UseCaseModule {
             useClass: GetChatMessageUploadUrlUseCase
         })
 
+        container.register<IGetDashboardDataUseCase>("IGetDashboardDataUseCase", {
+            useClass: GetDashboardDataUseCase
+        });
     }
 }

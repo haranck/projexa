@@ -47,6 +47,7 @@ export const ROUTES = {
         ADD_PROJECT_MEMBER: "/add-project-member/:projectId",
         REMOVE_PROJECT_MEMBER: "/remove-project-member/:projectId/:userId",
         UPDATE_PROJECT_MEMBER_ROLE: "/update-member-role/:projectId",
+        GET_PROJECT_DASHBOARD_DATA: "/get-project-dashboard-data/:projectId",
     },
     ISSUES: {
         CREATE_ISSUE: "/issues/create-issue/:projectId",

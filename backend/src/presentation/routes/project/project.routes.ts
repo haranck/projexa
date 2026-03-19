@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { projectController, authMiddleware, issueController } from '../../DI/resolver';
+import { projectController, authMiddleware, issueController, dashboardController } from '../../DI/resolver';
 import { ROUTES } from '../../../shared/constant/routes'
 
 const router = Router();
@@ -11,6 +11,7 @@ router.delete(ROUTES.PROJECTS.DELETE_PROJECT, authMiddleware.authenticate, proje
 router.post(ROUTES.PROJECTS.ADD_PROJECT_MEMBER, authMiddleware.authenticate, projectController.addProjectMember)
 router.delete(ROUTES.PROJECTS.REMOVE_PROJECT_MEMBER, authMiddleware.authenticate, projectController.removeProjectMember)
 router.patch(ROUTES.PROJECTS.UPDATE_PROJECT_MEMBER_ROLE, authMiddleware.authenticate, projectController.updateProjectMemberRole)
+router.get(ROUTES.PROJECTS.GET_PROJECT_DASHBOARD_DATA, authMiddleware.authenticate, dashboardController.getDashboardData)
 
 // project issues routes
 router.post(ROUTES.ISSUES.CREATE_ISSUE, authMiddleware.authenticate, issueController.createIssue)

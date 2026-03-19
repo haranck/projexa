@@ -27,6 +27,8 @@ import { IChatRepository } from "../../domain/interfaces/repositories/ChatRepo/I
 import { ChatRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/ChatRepository";
 import { IMessageRepository } from "../../domain/interfaces/repositories/ChatRepo/IMessageRepository";
 import { MessageRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/MessageRepository";
+import { IDashboardRepository } from "../../domain/interfaces/repositories/DashboardRepo/IDashboardRepository";
+import { DashboardRepository } from "../../infrastructure/database/mongo/repositories/DashboardRepo/DashboardRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -86,5 +88,9 @@ export class RepositoryModule {
         container.register<IMessageRepository>('IMessageRepository', {
             useClass: MessageRepository
         })
+
+        container.register<IDashboardRepository>("IDashboardRepository", {
+            useClass: DashboardRepository
+        });
     }
 }
