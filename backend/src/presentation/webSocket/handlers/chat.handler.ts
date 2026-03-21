@@ -7,6 +7,8 @@ import { MessageDTO } from "../../../application/dtos/chat/requestDTOs/MessageDT
 import { IGetMessagesUseCase } from "../../../application/interface/chat/IGetMessagesUseCase";
 import { IDeleteMessageUseCase } from "../../../application/interface/chat/IDeleteMessageUseCase";
 import { IReadMessageUseCase } from "../../../application/interface/chat/IReadMessageUseCase";
+import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
+import { redisClient } from "../../../infrastructure/cache/redisClient";
 
 @injectable()
 export class ChatHandler {
@@ -16,6 +18,7 @@ export class ChatHandler {
         @inject("IGetMessagesUseCase") private readonly _getMessagesUseCase: IGetMessagesUseCase,
         @inject("IDeleteMessageUseCase") private readonly _deleteMessageUseCase: IDeleteMessageUseCase,
         @inject("IReadMessageUseCase") private readonly _readMessageUseCase: IReadMessageUseCase,
+        @inject("IProjectMemberRepository") private readonly _projectMemberRepository: IProjectMemberRepository,
     ) { }
 
     async handleJoinRoom(socket: Socket, roomId: string) {
@@ -84,6 +87,24 @@ export class ChatHandler {
             return;
         }
         await this._readMessageUseCase.execute(messageId, requesterId);
+    }
+
+    async handleGetOnlineUsers(socket: Socket, projectId: string) {
+        try {
+            const members = await this._projectMemberRepository.findByProjectId(projectId);
+            const onlineUsers: string[] = [];
+
+            for (const member of members) {
+                const isOnline = await redisClient.get(`online:${member.userId}`);
+                if (isOnline) {
+                    onlineUsers.push(member.userId.toString());
+                }
+            }
+
+            socket.emit(CHAT_EVENTS.ONLINE_USERS_LIST, onlineUsers);
+        } catch (error) {
+            console.error("Error in handleGetOnlineUsers:", error);
+        }
     }
 
     static emitToRoom(io: Server, roomId: string, message: IMessageEntity) {

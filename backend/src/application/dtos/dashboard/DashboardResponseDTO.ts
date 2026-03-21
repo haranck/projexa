@@ -21,6 +21,9 @@ export interface ModuleProgressDTO {
     todoCount: number;
     inProgressCount: number;
     doneCount: number;
+    storyCount: number;
+    taskCount: number;
+    bugCount: number;
 }
 
 export interface SprintSummaryDTO {
@@ -30,9 +33,29 @@ export interface SprintSummaryDTO {
     progress: number;
 }
 
+export interface TeamActivityDTO {
+    userId: string;
+    userName: string;
+    role: string;
+    profilePicture?: string;
+    totalTime: number;
+    hoursLogged: number;
+}
+
+export interface TopPerformerDTO {
+    userId: string;
+    userName: string;
+    role: string;
+    profilePicture?: string;
+    hoursLogged: number;
+    issuesCompleted: number;
+}
+
 export interface DashboardDataResponseDTO {
     stats: DashboardStatsDTO;
     distribution: IssueDistributionDTO[];
     progress: ModuleProgressDTO | null;
     recentSprints: SprintSummaryDTO[];
+    teamActivity: TeamActivityDTO[];
+    topPerformer: TopPerformerDTO | null;
 }

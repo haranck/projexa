@@ -6,6 +6,7 @@ import { CHAT_EVENTS, type Message } from "../types/chat";
 export const useChatSocket = (roomId: string | undefined, userId: string | undefined, allRoomIds: string[] = []) => {
     const queryClient = useQueryClient();
     const [typingUsers, setTypingUsers] = useState<Record<string, string[]>>({});
+    const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
 
     useEffect(() => {
         if (!userId) return;
@@ -25,10 +26,15 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
                     socket.emit(CHAT_EVENTS.JOIN_ROOM, id);
                 }
             });
+
+            if (roomId) {
+                socket.emit(CHAT_EVENTS.GET_ONLINE_USERS, roomId);
+            }
         });
 
         if (roomId) {
             socket.emit(CHAT_EVENTS.JOIN_ROOM, roomId);
+            socket.emit(CHAT_EVENTS.GET_ONLINE_USERS, roomId);
         }
 
         allRoomIds.forEach(id => {
@@ -88,16 +94,38 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
             }));
         };
 
+        const handleUserOnline = ({ userId: onlineId }: { userId: string }) => {
+            setOnlineUsers(prev => new Set([...prev, onlineId]));
+        };
+
+        const handleUserOffline = ({ userId: offlineId }: { userId: string }) => {
+            setOnlineUsers(prev => {
+                const next = new Set(prev);
+                next.delete(offlineId);
+                return next;
+            });
+        };
+
+        const handleOnlineUsersList = (users: string[]) => {
+            setOnlineUsers(new Set(users));
+        };
+
         socket.on(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)
         socket.on(CHAT_EVENTS.READ_UPDATE, handleReadUpdate)
         socket.on(CHAT_EVENTS.TYPING, handleTyping)
         socket.on(CHAT_EVENTS.STOP_TYPING, handleStopTyping)
+        socket.on(CHAT_EVENTS.USER_ONLINE, handleUserOnline)
+        socket.on(CHAT_EVENTS.USER_OFFLINE, handleUserOffline)
+        socket.on(CHAT_EVENTS.ONLINE_USERS_LIST, handleOnlineUsersList)
 
         return () => {
             socket.off(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)
             socket.off(CHAT_EVENTS.READ_UPDATE, handleReadUpdate)
             socket.off(CHAT_EVENTS.TYPING, handleTyping)
             socket.off(CHAT_EVENTS.STOP_TYPING, handleStopTyping)
+            socket.off(CHAT_EVENTS.USER_ONLINE, handleUserOnline)
+            socket.off(CHAT_EVENTS.USER_OFFLINE, handleUserOffline)
+            socket.off(CHAT_EVENTS.ONLINE_USERS_LIST, handleOnlineUsersList)
             socket.disconnect();
         }
     }, [roomId, userId, queryClient, JSON.stringify(allRoomIds)])
@@ -136,5 +164,5 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         socket.emit(CHAT_EVENTS.STOP_TYPING, { roomId, projectId });
     }, [roomId]);
 
-    return { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers }
+    return { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers, onlineUsers }
 }

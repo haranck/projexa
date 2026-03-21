@@ -16,6 +16,7 @@ import { NotificationController } from '../controllers/notification/Notification
 import { ChatHandler } from '../webSocket/handlers/chat.handler'
 import { ChatController } from '../controllers/chat/ChatController'
 import { DashboardController } from '../controllers/dashboard/DashboardController'
+import { ActivityResetScheduler } from '../../infrastructure/scheduler/ActivityResetScheduler'
 
 
 ContainerSetup.registerAll();
@@ -35,3 +36,4 @@ export const notificationController = container.resolve(NotificationController)
 export const chatHandler = container.resolve(ChatHandler)
 export const chatController = container.resolve(ChatController)
 export const dashboardController = container.resolve(DashboardController)
+export const activityResetScheduler = container.resolve(ActivityResetScheduler)

@@ -8,6 +8,8 @@ import { ProgressLinear } from "../../../components/Dashboard/ProgressLinear";
 import { IssueDistributionChart } from "../../../components/Dashboard/IssueDistributionChart";
 import { ModuleProgressGauge } from "../../../components/Dashboard/ModuleProgressGauge";
 import { SprintStatusCard } from "../../../components/Dashboard/SprintStatusCard";
+import { TeamActivitySection } from "../../../components/Dashboard/TeamActivitySection";
+import { TopPerformerCard } from "../../../components/Dashboard/TopPerformerCard";
 import { useDashboardData } from "../../../hooks/Dashboard/DashboardHooks";
 import { socket } from "../../../socket/socket";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,14 +18,14 @@ import { useGetAllProjects } from "../../../hooks/Project/ProjectHooks";
 import { setCurrentProject } from "../../../store/slice/projectSlice";
 import { Link } from "react-router-dom";
 import { FRONTEND_ROUTES } from "../../../constants/frontendRoutes";
+import { NOTIFICATION_EVENTS } from "../../../constants/notification.events";
 
 export const HomePage = () => {
     const dispatch = useDispatch();
     const { currentProject } = useSelector((state: RootState) => state.project);
     const { currentWorkspace } = useSelector((state: RootState) => state.workspace);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
-    
-    // Fetch projects to ensure we have a selection if none exists
+
     const { data: projectsResponse } = useGetAllProjects({
         workspaceId: currentWorkspace?._id || currentWorkspace?.id || '',
         page: 1,
@@ -32,7 +34,6 @@ export const HomePage = () => {
 
     const projects = projectsResponse?.data?.projects || [];
 
-    // Auto-select first project if none is selected
     useEffect(() => {
         if (!currentProject && projects.length > 0) {
             dispatch(setCurrentProject(projects[0]));
@@ -43,15 +44,15 @@ export const HomePage = () => {
 
     useEffect(() => {
         if (!socket) return;
-        
-        socket.on("issue_updated", () => refetch());
-        socket.on("sprint_started", () => refetch());
-        socket.on("sprint_completed", () => refetch());
+
+        socket.on(NOTIFICATION_EVENTS.ISSUE_UPDATED, () => refetch());
+        socket.on(NOTIFICATION_EVENTS.SPRINT_STARTED, () => refetch());
+        socket.on(NOTIFICATION_EVENTS.SPRINT_COMPLETED, () => refetch());
 
         return () => {
-            socket.off("issue_updated");
-            socket.off("sprint_started");
-            socket.off("sprint_completed");
+            socket.off(NOTIFICATION_EVENTS.ISSUE_UPDATED);
+            socket.off(NOTIFICATION_EVENTS.SPRINT_STARTED);
+            socket.off(NOTIFICATION_EVENTS.SPRINT_COMPLETED);
         };
     }, [refetch]);
 
@@ -59,9 +60,12 @@ export const HomePage = () => {
         return (
             <DashboardLayout>
                 <div className="p-8 text-white animate-pulse flex items-center justify-center min-h-[50vh]">
-                    <div className="flex flex-col items-center gap-4">
-                        <Activity className="w-12 h-12 text-blue-500 animate-spin" />
-                        <span className="text-xl font-bold tracking-widest uppercase">Loading Projexa...</span>
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="relative">
+                            <Activity className="w-16 h-16 text-blue-500 animate-spin" />
+                            <div className="absolute inset-0 blur-2xl bg-blue-500/20 rounded-full animate-pulse" />
+                        </div>
+                        <span className="text-2xl font-black tracking-[0.3em] uppercase text-zinc-500">Synchronizing...</span>
                     </div>
                 </div>
             </DashboardLayout>
@@ -71,27 +75,31 @@ export const HomePage = () => {
     if (!currentProject && !isLoading) {
         return (
             <DashboardLayout>
-                <div className="p-8 flex flex-col items-center justify-center min-h-[60vh] text-center">
-                    <div className="w-20 h-20 bg-blue-500/10 rounded-[2.5rem] flex items-center justify-center mb-6 shadow-xl shadow-blue-500/5">
-                        <Layout className="w-10 h-10 text-blue-500" />
-                    </div>
-                    <h2 className="text-3xl font-black text-white tracking-tight mb-2">Select a Project</h2>
-                    <p className="text-zinc-500 max-w-sm mb-8 font-medium">
-                        To view dashboard insights, please select a project from the projects list or create a new one.
-                    </p>
-                    <div className="flex gap-4">
-                        <Link to={FRONTEND_ROUTES.PROJECTS}>
-                            <Button className="bg-white hover:bg-zinc-200 text-black h-12 px-8 rounded-xl font-bold transition-all">
-                                Go to Projects
+                <div className="p-8 flex flex-col items-center justify-center min-h-[70vh] text-center relative overflow-hidden">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
+
+                    <div className="relative z-10 max-w-lg">
+                        <div className="w-24 h-24 bg-blue-500/10 border border-blue-500/20 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-2xl shadow-blue-500/10 rotate-3 transition-transform hover:rotate-0 duration-500">
+                            <Layout className="w-12 h-12 text-blue-500" />
+                        </div>
+                        <h2 className="text-5xl font-black text-white tracking-tighter mb-4">Initialize Workspace</h2>
+                        <p className="text-zinc-500 text-lg mb-10 font-medium">
+                            Welcome to Projexa. To begin your journey, select an existing project or create a new mission.
+                        </p>
+                        <div className="flex gap-4 justify-center">
+                            <Link to={FRONTEND_ROUTES.PROJECTS}>
+                                <Button className="bg-[#1c222d] hover:bg-zinc-800 text-white h-14 px-10 rounded-2xl font-black transition-all border border-white/5 active:scale-95 shadow-xl">
+                                    Browse Projects
+                                </Button>
+                            </Link>
+                            <Button
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="bg-blue-600 hover:bg-blue-500 text-white h-14 px-10 rounded-2xl font-black transition-all shadow-xl shadow-blue-600/30 active:scale-95 flex items-center gap-3"
+                            >
+                                <Plus className="w-5 h-5" />
+                                Start New Project
                             </Button>
-                        </Link>
-                        <Button 
-                            onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-blue-600 hover:bg-blue-500 text-white h-12 px-8 rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20"
-                        >
-                            <Plus className="w-4 h-4 mr-2" />
-                            Create New Project
-                        </Button>
+                        </div>
                     </div>
                 </div>
                 <CreateProjectModal
@@ -102,92 +110,108 @@ export const HomePage = () => {
         );
     }
 
-    const stats = dashboardData?.stats || { 
-        totalIssues: 0, 
-        completedIssues: 0, 
-        activeSprintsCount: 0, 
-        memberCount: 0, 
-        completionRate: 0 
+    const stats = dashboardData?.stats || {
+        totalIssues: 0,
+        completedIssues: 0,
+        activeSprintsCount: 0,
+        memberCount: 0,
+        completionRate: 0
     };
 
     return (
         <DashboardLayout>
-            <div className="p-8 space-y-8 max-w-[1600px] mx-auto">
-                {/* Header Section */}
-                <div className="flex justify-between items-end">
-                    <div>
-                        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-[10px] font-black uppercase tracking-widest mb-3">
-                            Project Dashboard
+            <div className="relative min-h-screen">
+                {/* Background Decor */}
+                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/2 blur-[150px] rounded-full -mr-96 -mt-96 pointer-events-none" />
+                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-500/1 blur-[120px] rounded-full -ml-40 -mb-40 pointer-events-none" />
+
+                <div className="p-6 lg:p-10 space-y-8 max-w-screen-2xl mx-auto relative z-10 overflow-x-hidden">
+                    {/* Header Section */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shadow-sm pb-6 border-b border-white/5">
+                        <div className="space-y-2">
+                            <div className="inline-flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/3 border border-white/5 text-zinc-400 text-[8px] font-black uppercase tracking-[0.3em] shadow-inner">
+                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
+                                Project Intel Center
+                            </div>
+                            <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tighter leading-none uppercase">
+                                Projexa <span className="text-blue-500">Dashboard</span>
+                            </h1>
+                            <p className="text-zinc-500 text-[12px] font-medium max-w-lg leading-snug">
+                                High-velocity operational intelligence and mission-critical metrics for <span className="text-zinc-300 font-bold">{currentProject?.projectName}</span>.
+                            </p>
                         </div>
-                        <h1 className="text-4xl font-black text-white tracking-tight">Projexa Overview</h1>
-                        <p className="text-zinc-500 text-sm font-medium mt-1">Real-time insights and project health metrics.</p>
+                        <div className="flex gap-3">
+                            <Button
+                                onClick={() => setIsCreateModalOpen(true)}
+                                className="bg-[#1c222d] hover:bg-zinc-800 text-white h-12 px-6 rounded-xl text-[11px] font-black transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border border-white/5 shadow-2xl uppercase tracking-widest"
+                            >
+                                <Plus className="w-4 h-4 text-blue-500" />
+                                New Initiative
+                            </Button>
+                        </div>
                     </div>
-                    <div className="flex gap-4">
-                        <Button 
-                            onClick={() => refetch()}
-                            className="bg-zinc-800 hover:bg-zinc-700 text-white h-12 px-6 rounded-xl text-sm font-bold transition-all"
-                        >
-                            Refresh
-                        </Button>
-                        <Button 
-                            onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-white hover:bg-zinc-200 text-black h-12 px-6 rounded-xl text-sm font-bold transition-all hover:scale-105 active:scale-95 flex items-center gap-2"
-                        >
-                            <Plus className="w-4 h-4" />
-                            New Project
-                        </Button>
-                    </div>
-                </div>
 
-                {/* Top Stats Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <StatsCard 
-                        title="Total Issues" 
-                        value={stats.totalIssues.toString()} 
-                        icon={ListTodo} 
-                        color="blue"
-                    />
-                    <StatsCard 
-                        title="Completed" 
-                        value={stats.completedIssues.toString()} 
-                        icon={CheckCircle2} 
-                        description={`${stats.completionRate}% Completion rate`}
-                        color="green"
-                    />
-                    <StatsCard 
-                        title="Active Sprints" 
-                        value={stats.activeSprintsCount.toString().padStart(2, '0')} 
-                        icon={Activity} 
-                        color="purple"
-                    />
-                    <StatsCard 
-                        title="Total Members" 
-                        value={stats.memberCount.toString()} 
-                        icon={Layout} 
-                        description="Team members active"
-                        color="orange"
-                    />
-                </div>
-
-                {/* Main Content Grid */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    {/* Left & Middle Column (Charts & Progress) */}
-                    <div className="lg:col-span-2 space-y-8">
-                        <ProgressLinear 
-                            title="Overall Progress" 
-                            description={`${stats.completedIssues} of ${stats.totalIssues} issues completed across all sprints`} 
-                            completed={stats.completedIssues} 
-                            total={stats.totalIssues} 
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
+                        <StatsCard
+                            title="Total Issues"
+                            value={stats.totalIssues.toString()}
+                            icon={ListTodo}
+                            color="blue"
+                            description="Across all modules"
                         />
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <StatsCard
+                            title="Completed"
+                            value={stats.completedIssues.toString()}
+                            icon={CheckCircle2}
+                            description={`${stats.completionRate}% completion`}
+                            trend="+4.2%"
+                            color="green"
+                        />
+                        <StatsCard
+                            title="Active Sprints"
+                            value={stats.activeSprintsCount.toString().padStart(2, '0')}
+                            icon={Activity}
+                            color="purple"
+                            description="Operational sprints"
+                        />
+                        <StatsCard
+                            title="Team Power"
+                            value={stats.memberCount.toString()}
+                            icon={Layout}
+                            description="Active collaborators"
+                            color="orange"
+                        />
+                    </div>
+
+                    {/* Overall Progress — Full Width Compact */}
+                    <ProgressLinear
+                        title="Overall Project Velocity"
+                        percentage={stats.completionRate}
+                    />
+
+                    {/* Main Analytics Grid */}
+                    <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+                        {/* Distribution & Sprints */}
+                        <div className="xl:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
                             <IssueDistributionChart data={dashboardData?.distribution} />
                             <SprintStatusCard data={dashboardData?.recentSprints} />
                         </div>
+
+                        {/* Module Progress Focus */}
+                        <div className="xl:col-span-1 h-full">
+                            <ModuleProgressGauge data={dashboardData?.progress} />
+                        </div>
                     </div>
 
-                    {/* Right Column (Module Progress) */}
-                    <div className="lg:col-span-1">
-                        <ModuleProgressGauge data={dashboardData?.progress} />
+                    {/* Top Performer + Team Activity — Same Row */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-fr">
+                        <div className="lg:col-span-1 h-full flex flex-col">
+                            <TopPerformerCard data={dashboardData?.topPerformer || null} />
+                        </div>
+                        <div className="lg:col-span-2 h-full flex flex-col">
+                            <TeamActivitySection activities={dashboardData?.teamActivity || []} />
+                        </div>
                     </div>
                 </div>
             </div>

@@ -10,18 +10,22 @@ export class DashboardService implements IDashboardService {
     ) {}
 
     async getProjectDashboardData(projectId: string, userId?: string): Promise<DashboardDataResponseDTO> {
-        const [stats, distribution, progress, recentSprints] = await Promise.all([
+        const [stats, distribution, progress, recentSprints, teamActivity, topPerformer] = await Promise.all([
             this._dashboardRepo.getStats(projectId),
             this._dashboardRepo.getIssueDistribution(projectId),
             this._dashboardRepo.getModuleProgress(projectId, userId),
-            this._dashboardRepo.getRecentSprints(projectId)
+            this._dashboardRepo.getRecentSprints(projectId),
+            this._dashboardRepo.getTeamActivity(projectId),
+            this._dashboardRepo.getTopPerformer(projectId)
         ]);
 
         return {
             stats,
             distribution,
             progress,
-            recentSprints
+            recentSprints,
+            teamActivity,
+            topPerformer
         };
     }
 }

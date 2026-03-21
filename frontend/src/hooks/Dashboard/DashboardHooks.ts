@@ -7,7 +7,6 @@ import type { RootState } from "../../store/store";
 export const useDashboardData = () => {
     const { projectId: routeProjectId } = useParams();
     const { currentProject } = useSelector((state: RootState) => state.project);
-    
     const effectiveProjectId = routeProjectId || currentProject?._id;
 
     return useQuery({

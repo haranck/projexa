@@ -49,7 +49,7 @@ export const ChatPage = () => {
     const roomId = roomData?.data?._id || (roomData as unknown as { _id?: string })?._id;
 
     const allProjectIds = projects.map(p => p._id);
-    const { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers } = useChatSocket(roomId, user?.id, allProjectIds);
+    const { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers, onlineUsers } = useChatSocket(roomId, user?.id, allProjectIds);
 
     useEffect(() => {
         if (!isTyping || !roomId) return;
@@ -161,6 +161,20 @@ export const ChatPage = () => {
     const handleDeleteMessage = (messageId: string) => {
         deleteMessage(messageId);
         setDeleteConfirm(null);
+    };
+
+    const getOnlineStatusString = () => {
+        if (!selectedProject || !onlineUsers) return "";
+        
+        const onlineMemberNames = selectedProject.members
+            ?.filter(m => m.userId !== user?.id && onlineUsers.has(m.userId))
+            .map(m => m.user?.userName || "Team Member") || [];
+
+        if (onlineMemberNames.length === 0) return `${selectedProject.members?.length || 0} members • Offline`;
+        if (onlineMemberNames.length <= 4) {
+            return `${onlineMemberNames.join(", ")} is online`;
+        }
+        return `${onlineMemberNames.slice(0, 4).join(", ")} and ${onlineMemberNames.length - 4} others is online`;
     };
 
     if (!currentWorkspace) {
@@ -303,7 +317,12 @@ export const ChatPage = () => {
                                                     {(selectedProject as Project).members?.find(m => m.userId === typingUsers[selectedProject._id][0])?.user?.userName || "Someone"} is typing...
                                                 </p>
                                             ) : (
-                                                <p className="text-xs text-zinc-500">{(selectedProject as Project).members?.length || 0} members • Active now</p>
+                                                <div className="flex items-center gap-1.5">
+                                                    <div className={`size-1.5 rounded-full ${onlineUsers.size > 1 || (onlineUsers.size === 1 && !onlineUsers.has(user?.id || "")) ? "bg-green-500 animate-pulse" : "bg-zinc-600"}`} />
+                                                    <p className="text-xs text-zinc-500 transition-all duration-300 hover:text-zinc-400 cursor-default">
+                                                        {getOnlineStatusString()}
+                                                    </p>
+                                                </div>
                                             )}
                                         </div>
                                     </div>

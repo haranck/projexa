@@ -52,6 +52,7 @@ const envSchema = z.object({
   S3_EXPIRY_TIME: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
   REDIS_HOST: z.string().trim().default("127.0.0.1"),
   REDIS_PORT: z.string().trim().default("6379").transform(Number).refine((val) => !isNaN(val)),
+  USER_ACTIVITY_TTL: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);

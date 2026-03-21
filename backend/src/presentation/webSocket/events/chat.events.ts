@@ -39,5 +39,9 @@ export class ChatEvents {
         this.socket.on(CHAT_EVENTS.DELETE_MESSAGE, async (messageId: string) => {
             this.handler.handleDeleteMessage(this.socket, messageId)
         })
+
+        this.socket.on(CHAT_EVENTS.GET_ONLINE_USERS, (projectId: string) => {
+            this.handler.handleGetOnlineUsers(this.socket, projectId)
+        })
     }
 }

@@ -1,41 +1,40 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import { Card } from "../ui/card";
+import { Activity } from "lucide-react";
 
 interface ProgressLinearProps {
     title: string;
-    description: string;
-    completed: number;
-    total: number;
+    percentage: number;
     color?: string;
 }
 
-export const ProgressLinear = ({ title, description, completed, total, color = "bg-blue-500" }: ProgressLinearProps) => {
-    const percentage = total > 0 ? Math.round((completed / total) * 100) : 0;
+export const ProgressLinear = ({ title, percentage, color = "blue" }: ProgressLinearProps) => {
+    const barColors = {
+        blue: "from-blue-600 to-indigo-500 shadow-[0_0_10px_rgba(37,99,235,0.3)]",
+        green: "from-emerald-600 to-teal-400 shadow-[0_0_10px_rgba(16,185,129,0.3)]",
+        purple: "from-purple-600 to-pink-500 shadow-[0_0_10px_rgba(168,85,247,0.3)]",
+    };
 
     return (
-        <Card className="bg-[#141820] border-white/5 relative overflow-hidden">
-             <div className="absolute top-0 right-0 w-64 h-64 bg-blue-600/5 blur-[80px] -mr-32 -mt-32 pointer-events-none" />
-             
-            <CardHeader className="pb-2">
-                <div className="flex justify-between items-end">
-                    <CardTitle className="text-lg font-black text-white tracking-tight">{title}</CardTitle>
-                    <span className="text-zinc-400 text-xs font-bold uppercase tracking-widest">{percentage}%</span>
+        <Card className="bg-[#141820]/80 backdrop-blur-xl border-white/5 transition-all duration-500 hover:bg-white/5 group relative overflow-hidden cursor-default">
+            <div className="flex items-center gap-4 px-5 py-3.5 relative z-10">
+                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 shadow-inner group-hover:rotate-6 transition-transform duration-500 shrink-0">
+                    <Activity className="w-4 h-4" />
                 </div>
-                <p className="text-zinc-500 text-xs font-medium">{description}</p>
-            </CardHeader>
-            <CardContent>
-                <div className="space-y-4">
-                    <div className="h-3 w-full bg-[#1c222d] rounded-full overflow-hidden border border-white/5">
-                        <div 
-                            className={`h-full ${color} transition-all duration-1000 ease-out rounded-full shadow-[0_0_20px_rgba(59,130,246,0.3)]`}
-                            style={{ width: `${percentage}%` }}
-                        />
-                    </div>
-                    <div className="flex justify-between items-center text-[10px] font-bold uppercase tracking-widest text-zinc-600">
-                        <span>{completed} / {total} Issues</span>
-                        <span>{total - completed} Remaining</span>
+                <span className="text-xs font-black text-white tracking-tight uppercase whitespace-nowrap shrink-0">
+                    {title}
+                </span>
+                <div className="flex-1 h-3 bg-white/2 rounded-full overflow-hidden border border-white/5 p-0.5 shadow-inner">
+                    <div
+                        className={`h-full rounded-full bg-linear-to-r transition-all duration-1000 ease-out relative ${barColors[color as keyof typeof barColors]}`}
+                        style={{ width: `${percentage}%` }}
+                    >
+                        <div className="absolute inset-0 bg-white/10 animate-pulse" />
                     </div>
                 </div>
-            </CardContent>
+                <span className="text-lg font-black text-white tracking-tighter font-mono shrink-0">
+                    {percentage}%
+                </span>
+            </div>
         </Card>
     );
 };

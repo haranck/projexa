@@ -18,6 +18,7 @@ import chatRoutes from "./presentation/routes/chat/chat.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
 import { initSocket } from './presentation/webSocket/server/socketServer';
 import http from 'http'
+import { activityResetScheduler } from './presentation/DI/resolver';
 
 const app = express();
 
@@ -45,6 +46,7 @@ app.use(env.CHAT_API_PREFIX, chatRoutes);
 
 const startServer = async () => {
   await connectMongoDB();
+  activityResetScheduler.initialize();
   const server = http.createServer(app);
   initSocket(server)
   server.listen(env.PORT, () => {

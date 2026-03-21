@@ -28,5 +28,9 @@ export const CHAT_EVENTS = {
     GET_HISTORY: "chat:getHistory",
     DELETE_MESSAGE: "chat:delete",
     READ: "chat:read",
-    READ_UPDATE: "chat:readUpdate"
+    READ_UPDATE: "chat:readUpdate",
+    USER_ONLINE: "user:online",
+    USER_OFFLINE: "user:offline",
+    GET_ONLINE_USERS: "chat:getOnlineUsers",
+    ONLINE_USERS_LIST: "chat:onlineUsersList"
 }

@@ -29,6 +29,8 @@ import { IMessageRepository } from "../../domain/interfaces/repositories/ChatRep
 import { MessageRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/MessageRepository";
 import { IDashboardRepository } from "../../domain/interfaces/repositories/DashboardRepo/IDashboardRepository";
 import { DashboardRepository } from "../../infrastructure/database/mongo/repositories/DashboardRepo/DashboardRepository";
+import { IUserActivityRepository } from "../../domain/interfaces/repositories/UserActivity/IUserActivityRepository";
+import { UserActivityRepository } from "../../infrastructure/database/mongo/repositories/UserActivity/UserActivityRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -91,6 +93,9 @@ export class RepositoryModule {
 
         container.register<IDashboardRepository>("IDashboardRepository", {
             useClass: DashboardRepository
+        });
+        container.register<IUserActivityRepository>("IUserActivityRepository", {
+            useClass: UserActivityRepository
         });
     }
 }

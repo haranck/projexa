@@ -13,8 +13,8 @@ export class DashboardController {
     getDashboardData = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const { projectId } = req.params;
-            const user = req.user as { _id?: string };
-            const userId = user?._id?.toString();
+            const user = req.user as { userId?: string };
+            const userId = user?.userId;
             const data = await this._getDashboardDataUseCase.execute(projectId as string, userId);
             
             res.status(HTTP_STATUS.OK).json({
