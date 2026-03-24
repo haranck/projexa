@@ -13,6 +13,7 @@ import { ProjectRole } from "../../../domain/enums/ProjectRole";
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
+import { IssueDTOmapper } from "../../mappers/Issue/IssueDTOmapper";
 
 
 @injectable()
@@ -75,6 +76,6 @@ export class MoveIssueToSprintUseCase implements IMoveIssueToSprintUseCase {
             }).catch(err => console.error("Failed to send movement notification:", err));
         }
 
-        return updated
+        return IssueDTOmapper.toResponseDTO(updated)
     }
 }

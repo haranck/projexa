@@ -13,6 +13,7 @@ import { IGetPlanUseCase } from "../../../application/interface/admin/IGetPlanUs
 import { IUpdatePlanUseCase } from "../../../application/interface/admin/IUpdatePlanUseCase";
 import { IGetAdminPaymentsUseCase } from "../../../application/interface/admin/IGetAdminPaymentsUseCase";
 import { IExportAdminPaymentsPDFUseCase } from "../../../application/interface/admin/IExportAdminPaymentsPDFUseCase";
+import { env } from "../../../config/envValidation";
 
 @injectable()
 export class AdminController {
@@ -38,7 +39,7 @@ export class AdminController {
                 httpOnly: true,
                 secure: process.env.NODE_ENV === "production",
                 sameSite: "strict",
-                maxAge: 7 * 24 * 60 * 60 * 1000
+                maxAge: env.REFRESH_TOKEN_MAX_AGE
             });
 
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ADMIN.LOGIN_SUCCESS, data: response });

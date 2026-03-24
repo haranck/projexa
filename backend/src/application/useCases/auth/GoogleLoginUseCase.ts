@@ -8,6 +8,8 @@ import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { GoogleLoginResponseDTO } from "../../dtos/auth/responseDTOs/GoogleLoginResponseDTO";
 
+import { AuthDTOmapper } from "../../mappers/Auth/AuthDTOmapper";
+
 @injectable()
 export class GoogleLoginUseCase implements IGoogleLoginUseCase {
   constructor(
@@ -46,29 +48,9 @@ export class GoogleLoginUseCase implements IGoogleLoginUseCase {
     };
 
     const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user._id.toString());
-    const workspaceMap = workspaces.map(workspace => ({
-      id: workspace._id!.toString(),
-      name: workspace.name,
-      ownerId: workspace.ownerId!
-    }))
+    const accessToken = this._jwtService.signAccessToken(payload);
+    const refreshToken = this._jwtService.signRefreshToken(payload);
 
-    const defaultWorkspace = workspaceMap.length > 0 ? workspaceMap[0] : null;
-
-    return {
-      accessToken: this._jwtService.signAccessToken(payload),
-      refreshToken: this._jwtService.signRefreshToken(payload),
-      hasWorkspace: workspaces.length > 0,
-      workspaces: workspaceMap,
-      defaultWorkspace,
-      user: {
-        id: user._id,
-        firstName: user.firstName!,
-        lastName: user.lastName!,
-        phone: user.phone || "",
-        email: user.email,
-        isEmailVerified: user.isEmailVerified!,
-        avatarUrl: user.avatarUrl,
-      },
-    };
+    return AuthDTOmapper.toGoogleLoginResponseDTO(user, accessToken, refreshToken, workspaces);
   }
 }

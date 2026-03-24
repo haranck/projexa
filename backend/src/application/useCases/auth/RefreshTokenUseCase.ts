@@ -5,6 +5,7 @@ import { LoginResponseDTO } from "../../dtos/auth/responseDTOs/LoginResponseDTO"
 import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { IRefreshTokenUseCase } from "../../interface/auth/IRefreshTokenUseCase";
+import { AuthDTOmapper } from "../../mappers/Auth/AuthDTOmapper";
 
 @injectable()
 export class RefreshTokenUseCase implements IRefreshTokenUseCase {
@@ -24,17 +25,17 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
             const newAccessToken = this._jwtService.signAccessToken(newPayload);
             const newRefreshToken = this._jwtService.signRefreshToken(newPayload);
 
-            return {
-                accessToken: newAccessToken,
-                refreshToken: newRefreshToken,
-                user: {
+            return AuthDTOmapper.toRefreshTokenResponseDTO(
+                {
                     id: 'ADMIN',
                     firstName: 'Admin',
                     lastName: 'User',
                     email: payload.email,
                     isEmailVerified: true
-                }
-            };
+                },
+                newAccessToken,
+                newRefreshToken
+            );
         }
 
         const user = await this._userRepo.findById(payload.userId);
@@ -45,16 +46,6 @@ export class RefreshTokenUseCase implements IRefreshTokenUseCase {
         const newPayload = { userId: user._id!, email: user.email };
         const newAccessToken = this._jwtService.signAccessToken(newPayload);
 
-        return {
-            accessToken: newAccessToken,
-            refreshToken: refreshToken,
-            user: {
-                id: user._id!,
-                firstName: user.firstName!,
-                lastName: user.lastName!,
-                email: user.email,
-                isEmailVerified: user.isEmailVerified!
-            }
-        }
+        return AuthDTOmapper.toRefreshTokenResponseDTO(user, newAccessToken, refreshToken);
     }
 }

@@ -23,9 +23,9 @@ export class ForgotPasswordUseCase implements IForgotPasswordUseCase {
 
     const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
     const otp: IOtpEntity = {
-      userId: user.email, // Using email as userId for OTP matching logic
+      userId: user.email,
       code: otpCode,
-      expiresAt: new Date(Date.now() + 10 * 60 * 1000), // 10 minutes
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
       isUsed: false,
       createdAt: new Date(),
     };

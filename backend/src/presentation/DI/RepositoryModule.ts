@@ -2,7 +2,7 @@ import { container } from "tsyringe";
 import { IUserRepository } from "../../domain/interfaces/repositories/IUserRepository";
 import { UserRepository } from "../../infrastructure/database/mongo/repositories/UserRepository";
 import { IOtpRepository } from "../../domain/interfaces/repositories/IOtpRepository";
-import { OtpRepository } from "../../infrastructure/database/mongo/repositories/OtpRepository";
+import { OtpRedisRepository } from "../../infrastructure/database/mongo/repositories/OtpRedisRepository";
 import { ITokenBlacklistRepository } from "../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { RedisTokenBlacklistRepository } from "../../infrastructure/database/mongo/repositories/RedisTokenBlacklistRepository";
 import { IPlanRepository } from "../../domain/interfaces/repositories/IPlanRepository";
@@ -40,7 +40,7 @@ export class RepositoryModule {
         });
 
         container.register<IOtpRepository>('IOtpRepository', {
-            useClass: OtpRepository
+            useClass: OtpRedisRepository
         })
 
         container.register<ITokenBlacklistRepository>('ITokenBlacklistRepository', {

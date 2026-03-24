@@ -4,6 +4,7 @@ export interface AcceptInviteResponseDTO {
     workspaceId: string;
     user: {
         id: string;
+        _id: string;
         email: string;
         firstName?: string;
         lastName?: string;

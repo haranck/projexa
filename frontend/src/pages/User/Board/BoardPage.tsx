@@ -126,6 +126,13 @@ export const BoardPage = () => {
                 count: boardIssues.filter(i => i.status === IssueStatus.DONE).length,
                 borderColor: "border-emerald-400",
                 issues: boardIssues.filter(i => i.status === IssueStatus.DONE)
+            },
+            {
+                title: "HOLD",
+                status: IssueStatus.HOLD,
+                count: boardIssues.filter(i => i.status === IssueStatus.HOLD).length,
+                borderColor: "border-orange-400",
+                issues: boardIssues.filter(i => i.status === IssueStatus.HOLD)
             }
         ];
     }, [filteredIssues]);

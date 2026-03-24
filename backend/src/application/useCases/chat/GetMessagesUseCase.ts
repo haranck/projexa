@@ -2,6 +2,7 @@ import { injectable, inject } from "tsyringe";
 import { IMessageEntity } from "../../../domain/entities/Chat/IMessageEntity";
 import { IMessageRepository } from "../../../domain/interfaces/repositories/ChatRepo/IMessageRepository";
 import { IGetMessagesUseCase } from "../../interface/chat/IGetMessagesUseCase";
+import { MessageDTOmapper } from "../../mappers/MessageDTOmapper";
 
 @injectable()
 export class GetMessagesUseCase implements IGetMessagesUseCase {
@@ -10,6 +11,7 @@ export class GetMessagesUseCase implements IGetMessagesUseCase {
     ) { }
 
     async execute(roomId: string): Promise<IMessageEntity[]> {
-        return await this._messageRepository.findByRoom(roomId);
+        const messages = await this._messageRepository.findByRoom(roomId);
+        return MessageDTOmapper.toResponseDTOs(messages);
     }
 }

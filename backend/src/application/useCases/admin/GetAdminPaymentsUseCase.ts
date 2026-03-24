@@ -6,6 +6,7 @@ import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IW
 import { IStripeService } from "../../../domain/interfaces/services/IStripeService";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { ISubscriptionRepository } from "../../../domain/interfaces/repositories/ISubscriptionRepository";
+import { AdminDTOmapper } from "../../mappers/Admin/AdminDTOmapper";
 
 @injectable()
 export class GetAdminPaymentsUseCase implements IGetAdminPaymentsUseCase {
@@ -39,7 +40,6 @@ export class GetAdminPaymentsUseCase implements IGetAdminPaymentsUseCase {
             return invoice;
         }));
 
-        // Apply search filter if search parameter is provided
         let filteredInvoices = enrichedInvoices;
         if (params.search && params.search.trim() !== "" && params.search !== "undefined") {
             const searchTerm = params.search.toLowerCase();
@@ -59,15 +59,7 @@ export class GetAdminPaymentsUseCase implements IGetAdminPaymentsUseCase {
         const startIndex = (page - 1) * limit;
         const paginatedData = filteredInvoices.slice(startIndex, startIndex + limit);
 
-        return {
-            data: paginatedData,
-            meta: {
-                totalDocs,
-                totalPages,
-                page,
-                limit
-            }
-        };
+        return AdminDTOmapper.toGetAdminPaymentsResponseDTO(paginatedData, { totalDocs, totalPages, page, limit });
     }
 }
 

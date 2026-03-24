@@ -5,6 +5,7 @@ import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRe
 import { inject, injectable } from "tsyringe";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { MESSAGES } from "../../../domain/constants/messages";
+import { UserDTOmapper } from "../../mappers/User/UserDTOmapper";
 
 @injectable()
 export class UpdateProfileImageUseCase implements IUpdateProfileImageUseCase {
@@ -17,9 +18,10 @@ export class UpdateProfileImageUseCase implements IUpdateProfileImageUseCase {
         if (!user) throw new Error(USER_ERRORS.USER_NOT_FOUND)
         user.avatarUrl = profileImage
         await this._userRepository.update({ avatarUrl: profileImage }, userId)
-        return {
-            message: MESSAGES.USERS.PROFILE_IMAGE_UPDATED_SUCCESSFULLY,
-            avatarUrl: profileImage
-        }
+        
+        return UserDTOmapper.toUpdateProfileImageResponseDTO(
+            MESSAGES.USERS.PROFILE_IMAGE_UPDATED_SUCCESSFULLY,
+            profileImage
+        );
     }
 }

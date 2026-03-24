@@ -12,6 +12,8 @@ const envSchema = z.object({
 
   JWT_ACCESS_SECRET: z.string().trim().min(20),
   JWT_REFRESH_SECRET: z.string().trim().min(20),
+  JWT_REFRESH_EXPIRATION: z.string().trim().default("7d"),
+  REFRESH_TOKEN_MAX_AGE: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
 
   GOOGLE_CLIENT_ID: z.string().trim().min(10),
 

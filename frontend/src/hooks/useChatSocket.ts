@@ -3,10 +3,10 @@ import { useQueryClient } from "@tanstack/react-query";
 import { socket } from "../socket/socket";
 import { CHAT_EVENTS, type Message } from "../types/chat";
 
-export const useChatSocket = (roomId: string | undefined, userId: string | undefined, allRoomIds: string[] = []) => {
+export const useChatSocket = (roomId: string | undefined, userId: string | undefined, allRoomIds: string[] = [], projectId?: string) => {
     const queryClient = useQueryClient();
     const [typingUsers, setTypingUsers] = useState<Record<string, string[]>>({});
-    const [onlineUsers, setOnlineUsers] = useState<Set<string>>(new Set());
+    const [onlineUsers, setOnlineUsers] = useState<Set<string>>(() => userId ? new Set([userId]) : new Set());
 
     useEffect(() => {
         if (!userId) return;
@@ -16,25 +16,28 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
 
         socket.on('connect', () => {
             console.log('Connected to chat socket server as user:', userId);
-            
+
             if (roomId) {
                 socket.emit(CHAT_EVENTS.JOIN_ROOM, roomId);
             }
-            
+
             allRoomIds.forEach(id => {
                 if (id !== roomId) {
                     socket.emit(CHAT_EVENTS.JOIN_ROOM, id);
                 }
             });
 
-            if (roomId) {
-                socket.emit(CHAT_EVENTS.GET_ONLINE_USERS, roomId);
+            if (projectId || roomId) {
+                socket.emit(CHAT_EVENTS.GET_ONLINE_USERS, projectId || roomId);
             }
         });
 
         if (roomId) {
             socket.emit(CHAT_EVENTS.JOIN_ROOM, roomId);
-            socket.emit(CHAT_EVENTS.GET_ONLINE_USERS, roomId);
+        }
+
+        if (projectId || roomId) {
+            socket.emit(CHAT_EVENTS.GET_ONLINE_USERS, projectId || roomId);
         }
 
         allRoomIds.forEach(id => {
@@ -46,7 +49,7 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         const handleReceiveMessage = (message: Message) => {
             queryClient.setQueryData(['messages', roomId], (old: { data: Message[], message: string } | undefined) => {
                 if (!old) return { data: [message], message: "" };
-                
+
                 if (message.isDeleted || message.readBy) {
                     const exists = (old.data || []).some(m => m._id === message._id);
                     if (exists) {
@@ -107,7 +110,9 @@ export const useChatSocket = (roomId: string | undefined, userId: string | undef
         };
 
         const handleOnlineUsersList = (users: string[]) => {
-            setOnlineUsers(new Set(users));
+            const set = new Set(users);
+            if (userId) set.add(userId);
+            setOnlineUsers(set);
         };
 
         socket.on(CHAT_EVENTS.RECEIVE_MESSAGE, handleReceiveMessage)

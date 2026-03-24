@@ -66,6 +66,6 @@ export class SendMessageUseCase implements ISendMessageUseCase {
 
         this._chatService.emitToRoom(savedMessage.roomId, savedMessage);
 
-        return savedMessage;
+        return MessageDTOmapper.toResponseDTO(savedMessage);
     }
 }

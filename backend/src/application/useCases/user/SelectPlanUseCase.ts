@@ -2,10 +2,11 @@ import { ISelectPlanUseCase } from "../../interface/user/ISelectPlanUseCase";
 import { IWorkspaceRedisRepository } from "../../../domain/interfaces/repositories/IWorkspaceRedisRepository";
 import { injectable, inject } from "tsyringe";
 import { SelectPlanDTO } from "../../dtos/user/requestDTOs/SelectPlanDTO";
-import { IWorkspaceEntity } from "../../../domain/entities/IWorkspaceEntity";
+import { WorkspaceResponseDTO } from "../../dtos/user/responseDTOs/WorkspaceResponseDTO";
 import { IPlanRepository } from "../../../domain/interfaces/repositories/IPlanRepository";
 import { SUBSCRIPTION_ERRORS, WORKSPACE_ERRORS } from "../../../domain/constants/errorMessages";
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
+import { UserDTOmapper } from "../../mappers/User/UserDTOmapper";
 
 @injectable()
 export class SelectPlanUseCase implements ISelectPlanUseCase {
@@ -15,7 +16,7 @@ export class SelectPlanUseCase implements ISelectPlanUseCase {
         @inject("IWorkspaceRepository") private _workspaceRepository: IWorkspaceRepository
     ) { }
 
-    async execute(dto: SelectPlanDTO): Promise<IWorkspaceEntity> {
+    async execute(dto: SelectPlanDTO): Promise<WorkspaceResponseDTO> {
         const { workspaceName, planId, userId } = dto
 
         const plan = await this._planRepository.getPlanById(planId);
@@ -37,6 +38,7 @@ export class SelectPlanUseCase implements ISelectPlanUseCase {
 
         workspace.planId = planId;
 
-        return await this._workspaceRedisRepository.save(workspace);
+        const saved = await this._workspaceRedisRepository.save(workspace);
+        return UserDTOmapper.toWorkspaceResponseDTO(saved);
     }
 }

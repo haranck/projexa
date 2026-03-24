@@ -12,6 +12,7 @@ import { ISendNotificationUseCase } from "../../interface/notification/ISendNoti
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { WORKSPACE_ERRORS } from "../../../domain/constants/errorMessages";
 import { IChatRepository } from "../../../domain/interfaces/repositories/ChatRepo/IChatRepository";
+import { ProjectDTOmapper } from "../../mappers/Project/ProjectDTOmapper";
 
 @injectable()
 export class CreateProjectUseCase implements ICreateProjectUseCase {
@@ -37,12 +38,12 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 
         const chatMembers = [
             project.createdBy,
-            ...(project.members?.map(m=>m.userId)||[])
+            ...(project.members?.map(m => m.userId) || [])
         ]
 
         await this._chatRepository.createRoom({
-            projectId:createdProject._id!,
-            members:chatMembers
+            projectId: createdProject._id!,
+            members: chatMembers
         })
 
         const projectManager = await this._roleRepo.getRoleByName(ProjectRole.PROJECT_MANAGER)
@@ -73,6 +74,6 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
             }
         }
 
-        return createdProject
+        return ProjectDTOmapper.toProjectResponseDTO(createdProject);
     }
 }

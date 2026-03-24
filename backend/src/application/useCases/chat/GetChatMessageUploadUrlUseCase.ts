@@ -6,6 +6,7 @@ import { IS3Service } from "../../../domain/interfaces/services/IS3Service";
 import { env } from "../../../config/envValidation";
 import { CHAT_ERRORS } from "../../../domain/constants/errorMessages";
 import crypto from 'crypto'
+import { ChatDTOmapper } from "../../mappers/Chat/ChatDTOmapper";
 
 @injectable()
 export class GetChatMessageUploadUrlUseCase implements IGetChatMessageUploadUrlUseCase {
@@ -20,6 +21,6 @@ export class GetChatMessageUploadUrlUseCase implements IGetChatMessageUploadUrlU
         const key = `chat/attachments/${roomId}/${userId}/${tempId}.${extension}`
         const uploadUrl = await this._s3Service.getUploadUrl(key, data.contentType)
         const fileUrl = `https://${env.CLOUDFRONT_URL}/${key}`
-        return { uploadUrl, fileUrl }
+        return ChatDTOmapper.toUploadUrlResponseDTO(uploadUrl, fileUrl)
     }
 }

@@ -15,10 +15,8 @@ export class ReadMessageUseCase implements IReadMessageUseCase {
         const message = await this._messageRepository.findById(messageId);
         if (!message) return;
 
-        // Add user to readBy list
         await this._messageRepository.updateReadBy(messageId, userId);
 
-        // Emit update to the room
         this._chatService.emitReadUpdate(message.roomId, {
             ...message,
             readBy: [...(message.readBy || []), userId]

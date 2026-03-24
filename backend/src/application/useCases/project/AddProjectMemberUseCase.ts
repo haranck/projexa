@@ -10,6 +10,8 @@ import { ProjectRole } from "../../../domain/enums/ProjectRole";
 import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 
+import { ProjectDTOmapper } from "../../mappers/Project/ProjectDTOmapper";
+
 @injectable()
 export class AddProjectMemberUseCase implements IAddProjectMemberUseCase {
     constructor(
@@ -58,6 +60,6 @@ export class AddProjectMemberUseCase implements IAddProjectMemberUseCase {
             resourceType: "project"
         }).catch(err => console.error("Failed to send project member addition notification:", err));
 
-        return createdMember;
+        return ProjectDTOmapper.toProjectMemberResponseDTO(createdMember);
     }
 }

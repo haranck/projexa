@@ -10,18 +10,6 @@ export class DeleteRoleUseCase implements IDeleteRoleUseCase {
     async execute(roleId: string): Promise<void> {
         const role = await this._roleRepository.getRoleById(roleId);
         if (!role) throw new Error(USER_ERRORS.ROLE_NOT_FOUND);
-
-        /*
-        if role is assigned to any project member
-
-        const assigned = await this.projectMemberRepo.existsByRoleId(roleId);
-
-        if (assigned) {
-            throw new Error(
-                "Cannot delete role. It is assigned to project members."
-            );
-        }
-        */
         
         const deleted = await this._roleRepository.deleteRole(roleId)
         if(!deleted) throw new Error(USER_ERRORS.ROLE_NOT_FOUND)

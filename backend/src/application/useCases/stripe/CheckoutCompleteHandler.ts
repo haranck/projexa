@@ -86,6 +86,7 @@ export class CheckoutCompleteHandler implements IStripeWebhookHandler {
             startDate,
             endDate,
         });
+        console.log('subsctioptoin',subscription)
 
         await this._workspaceRepository.updateWorkspace(savedWorkspace._id!.toString(), {
             ...savedWorkspace,

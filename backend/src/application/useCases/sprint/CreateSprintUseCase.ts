@@ -5,10 +5,10 @@ import { CreateSprintDTO } from "../../dtos/issue/requestDTOs/CreateSprintDTO";
 import { ISprintEntity } from "../../../domain/entities/Sprint/ISprintEntity";
 import { PROJECT_ERRORS } from "../../../domain/constants/errorMessages";
 import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
-import { SprintMapper } from "../../mappers/SprintMapper";
 import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
 import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRepository";
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
+import { SprintDTOmapper } from "../../mappers/Sprint/SprintDTOmapper";
 
 @injectable()
 export class CreateSprintUseCase implements ICreateSprintUseCase {
@@ -37,9 +37,9 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
         const nextNumber = sprintCount + 1
         const sprintName = `${project.key}-Sprint-${nextNumber}`
 
-        const sprintData = SprintMapper.toDomain(dto, sprintName);
+        const sprintData = SprintDTOmapper.toDomain(dto, sprintName);
 
         const sprint = await this._sprintRepository.createSprint(sprintData)
-        return sprint;
+        return SprintDTOmapper.toResponseDTO(sprint);
     }
 }

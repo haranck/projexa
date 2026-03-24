@@ -10,4 +10,12 @@ export class MessageDTOmapper {
             content: data.content
         };
     }
+
+    static toResponseDTO(message: IMessageEntity): IMessageEntity {
+        return message;
+    }
+
+    static toResponseDTOs(messages: IMessageEntity[]): IMessageEntity[] {
+        return messages;
+    }
 }

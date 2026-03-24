@@ -22,7 +22,8 @@ import type { ProjectMember } from '@/types/project';
 
 
 interface Role {
-    _id: string;
+    id?: string;
+    _id?: string;
     name: string;
 }
 
@@ -54,15 +55,18 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
     const roles: Role[] = rolesResponse?.data || [];
 
     const projectMemberIds = project.members.map(m => m.userId);
-    const currentProjectMembers = workspaceMembers.filter(member => member._id && projectMemberIds.includes(member._id));
+    const currentProjectMembers = workspaceMembers.filter(member => {
+        const memberId = member._id || member.id;
+        return memberId && projectMemberIds.includes(memberId);
+    });
 
-    // Members who can be added (workspace members not in project)
-    const availableMembers = workspaceMembers.filter(m =>
-        m._id &&
-        !projectMemberIds.includes(m._id) &&
-        (m.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            m.email.toLowerCase().includes(searchQuery.toLowerCase()))
-    );
+    const availableMembers = workspaceMembers.filter(m => {
+        const memberId = m._id || m.id;
+        return memberId &&
+            !projectMemberIds.includes(memberId) &&
+            (m.firstName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                m.email.toLowerCase().includes(searchQuery.toLowerCase()));
+    });
 
     const handleUpdateRole = (userId: string, roleId: string) => {
         updateRoleMutation.mutate({
@@ -123,21 +127,22 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
     };
 
     const handleAddMember = () => {
-        if (!preparingMember?._id || !preparingRoleId) {
+        const memberId = preparingMember?._id || preparingMember?.id;
+        if (!memberId || !preparingRoleId) {
             toast.error("Please select a member and role");
             return;
         }
 
         addMemberMutation.mutate({
             projectId: project._id,
-            userId: preparingMember._id,
+            userId: memberId,
             roleId: preparingRoleId
         }, {
             onSuccess: () => {
                 toast.success("Member added to project");
 
                 const newMember: ProjectMember = {
-                    userId: preparingMember._id as string,
+                    userId: memberId as string,
                     roleId: preparingRoleId,
                     joinedAt: new Date(),
                     user: {
@@ -225,7 +230,7 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
                                                     className="w-full bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-xs font-bold text-white focus:outline-none focus:ring-1 focus:ring-blue-500/40"
                                                 >
                                                     {roles.map((role) => (
-                                                        <option key={role._id} value={role._id}>
+                                                        <option key={role._id || role.id} value={role._id || role.id}>
                                                             {role.name.toUpperCase()}
                                                         </option>
                                                     ))}
@@ -270,7 +275,7 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
                                                 ) : availableMembers.length > 0 ? (
                                                     availableMembers.map((member: User) => (
                                                         <button
-                                                            key={member._id}
+                                                            key={member._id || member.id}
                                                             onClick={() => handlePrepareAdd(member)}
                                                             className="w-full flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 text-left transition-all group"
                                                         >
@@ -325,10 +330,11 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
                     ) : (
                         <div className="space-y-2">
                             {currentProjectMembers.map((member: User) => {
-                                const projectMemberData = project.members.find(m => m.userId === member._id);
+                                const memberId = member._id || member.id;
+                                const projectMemberData = project.members.find(m => m.userId === memberId);
                                 return (
                                     <div
-                                        key={member._id}
+                                        key={memberId}
                                         className="group flex items-center justify-between p-4 rounded-2xl bg-zinc-900/40 hover:bg-zinc-900/60 border border-white/5 transition-all"
                                     >
                                         <div className="flex items-center gap-4">
@@ -352,11 +358,11 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
                                             <div className="relative group/select">
                                                 <select
                                                     value={projectMemberData?.roleId}
-                                                    onChange={(e) => member._id && handleUpdateRole(member._id, e.target.value)}
+                                                    onChange={(e) => memberId && handleUpdateRole(memberId, e.target.value)}
                                                     className="appearance-none bg-zinc-950 border border-white/10 rounded-xl px-4 py-2.5 text-[11px] font-bold text-zinc-400 focus:outline-none focus:ring-1 focus:ring-blue-500/40 hover:border-white/20 transition-all cursor-pointer pr-10 min-w-[130px] shadow-lg shadow-black/20"
                                                 >
                                                     {roles.map((role) => (
-                                                        <option key={role._id} value={role._id}>
+                                                        <option key={role._id || role.id} value={role._id || role.id}>
                                                             {role.name.toUpperCase()}
                                                         </option>
                                                     ))}
@@ -369,7 +375,7 @@ export const ProjectMembersModal: React.FC<ProjectMembersModalProps> = ({ open, 
 
                                             {/* Delete Button */}
                                             <button
-                                                onClick={() => member._id && handleRemoveMember(member._id)}
+                                                onClick={() => memberId && handleRemoveMember(memberId)}
                                                 disabled={removeMemberMutation.isPending}
                                                 className="p-2.5 rounded-xl bg-zinc-950 hover:bg-red-500/10 text-zinc-600 hover:text-red-500 border border-white/5 hover:border-red-500/20 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-black/20"
                                                 title="Remove from project"

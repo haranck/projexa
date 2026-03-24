@@ -6,6 +6,7 @@ import { IUserRepository } from '../../../domain/interfaces/repositories/IUserRe
 import { USER_ERRORS } from '../../../domain/constants/errorMessages';
 import { AcceptInviteResponseDTO } from '../../dtos/user/responseDTOs/AcceptInviteResponseDTO';
 import { IJwtService } from '../../../domain/interfaces/services/IJwtService';
+import { UserDTOmapper } from '../../mappers/User/UserDTOmapper';
 
 @injectable()
 export class AcceptInviteUseCase implements IAcceptInviteUseCase {
@@ -43,17 +44,6 @@ export class AcceptInviteUseCase implements IAcceptInviteUseCase {
         const acccessToken = this._tokenService.signAccessToken({ userId: user!._id!, email: user!.email })
         const refreshToken = this._tokenService.signRefreshToken({ userId: user!._id!, email: user!.email })
 
-        return {
-            accessToken: acccessToken,
-            refreshToken: refreshToken,
-            workspaceId: invite.workspaceId,
-            user: {
-                id: user!._id!,
-                email: user!.email,
-                firstName: user!.firstName,
-                lastName: user!.lastName,
-                avatarUrl: user!.avatarUrl
-            }
-        }
+        return UserDTOmapper.toAcceptInviteResponseDTO(user!, acccessToken, refreshToken, invite.workspaceId);
     }
 }

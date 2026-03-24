@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
-import { Search, Plus, Phone, Video, MoreHorizontal, Paperclip, Smile, Send, Circle, MessageSquare, Trash2, CheckCheck } from "lucide-react";
+import { Search, Plus, MoreHorizontal, Paperclip, Smile, Send, Circle, MessageSquare, Trash2, CheckCheck } from "lucide-react";
 import EmojiPicker, { Theme } from 'emoji-picker-react';
 import { Button } from "@/components/ui/button";
 import { useGetAllProjects } from "@/hooks/Project/ProjectHooks";
@@ -24,6 +24,7 @@ export const ChatPage = () => {
     const user = useSelector((state: RootState) => state.auth.user);
     const scrollRef = useRef<HTMLDivElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
     const [isUploading, setIsUploading] = useState(false);
     const [expandedImage, setExpandedImage] = useState<string | null>(null);
     const [downloadedFiles, setDownloadedFiles] = useState<string[]>(() => {
@@ -39,7 +40,6 @@ export const ChatPage = () => {
     const [selectedProject, setSelectedProject] = useState<Project | null>(null);
     const [message, setMessage] = useState("");
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
-    const [hoveredMessageId, setHoveredMessageId] = useState<string | null>(null);
     const [deleteConfirm, setDeleteConfirm] = useState<{ messageId: string } | null>(null);
     const [isTyping, setIsTyping] = useState(false);
 
@@ -49,24 +49,41 @@ export const ChatPage = () => {
     const roomId = roomData?.data?._id || (roomData as unknown as { _id?: string })?._id;
 
     const allProjectIds = projects.map(p => p._id);
-    const { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers, onlineUsers } = useChatSocket(roomId, user?.id, allProjectIds);
+    const { sendMessage, deleteMessage, markAsRead, startTyping, stopTyping, typingUsers, onlineUsers } = useChatSocket(roomId, user?.id, allProjectIds, selectedProject?._id);
 
     useEffect(() => {
-        if (!isTyping || !roomId) return;
-
-        startTyping(selectedProject?._id);
-        const timeout = setTimeout(() => {
-            setIsTyping(false);
-            stopTyping(selectedProject?._id);
-        }, 3000);
-
-        return () => clearTimeout(timeout);
-    }, [isTyping, roomId, selectedProject?._id, startTyping, stopTyping]);
+        return () => {
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
+        };
+    }, []);
 
     const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setMessage(e.target.value);
+
         if (!isTyping) {
             setIsTyping(true);
+            startTyping(selectedProject?._id);
+        }
+
+        if (typingTimeoutRef.current) {
+            clearTimeout(typingTimeoutRef.current);
+        }
+
+        typingTimeoutRef.current = setTimeout(() => {
+            setIsTyping(false);
+            stopTyping(selectedProject?._id);
+        }, 3000);
+    };
+
+    const handleBlur = () => {
+        if (isTyping) {
+            setIsTyping(false);
+            stopTyping(selectedProject?._id);
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+            }
         }
     };
 
@@ -165,16 +182,23 @@ export const ChatPage = () => {
 
     const getOnlineStatusString = () => {
         if (!selectedProject || !onlineUsers) return "";
-        
+
         const onlineMemberNames = selectedProject.members
             ?.filter(m => m.userId !== user?.id && onlineUsers.has(m.userId))
             .map(m => m.user?.userName || "Team Member") || [];
 
-        if (onlineMemberNames.length === 0) return `${selectedProject.members?.length || 0} members • Offline`;
-        if (onlineMemberNames.length <= 4) {
-            return `${onlineMemberNames.join(", ")} is online`;
+        if (onlineMemberNames.length === 0) {
+            return "all are offline";
         }
-        return `${onlineMemberNames.slice(0, 4).join(", ")} and ${onlineMemberNames.length - 4} others is online`;
+
+        if (onlineMemberNames.length <= 4) {
+            const names = onlineMemberNames.join(", ");
+            return `${names} is online`;
+        }
+
+        const firstFour = onlineMemberNames.slice(0, 4).join(", ");
+        const restCount = onlineMemberNames.length - 4;
+        return `${firstFour} and ${restCount} others is online`;
     };
 
     if (!currentWorkspace) {
@@ -314,11 +338,11 @@ export const ChatPage = () => {
                                         <div className="flex items-center gap-2">
                                             {selectedProject?._id && typingUsers[selectedProject._id]?.length > 0 ? (
                                                 <p className="text-xs text-blue-400 animate-pulse font-medium">
-                                                    {(selectedProject as Project).members?.find(m => m.userId === typingUsers[selectedProject._id][0])?.user?.userName || "Someone"} is typing...
+                                                    {(selectedProject as Project).members?.find(m => String(m.userId) === String(typingUsers[selectedProject._id][0]))?.user?.userName || "Someone"} is typing...
                                                 </p>
                                             ) : (
                                                 <div className="flex items-center gap-1.5">
-                                                    <div className={`size-1.5 rounded-full ${onlineUsers.size > 1 || (onlineUsers.size === 1 && !onlineUsers.has(user?.id || "")) ? "bg-green-500 animate-pulse" : "bg-zinc-600"}`} />
+                                                    <div className={`size-1.5 rounded-full ${onlineUsers.size > 1 || (onlineUsers.size === 1 && onlineUsers.has(String(user?.id || ""))) ? "bg-green-500 animate-pulse" : "bg-zinc-600"}`} />
                                                     <p className="text-xs text-zinc-500 transition-all duration-300 hover:text-zinc-400 cursor-default">
                                                         {getOnlineStatusString()}
                                                     </p>
@@ -328,12 +352,12 @@ export const ChatPage = () => {
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2">
-                                    <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-zinc-800/50">
+                                    {/* <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-zinc-800/50">
                                         <Phone className="size-5" />
                                     </Button>
                                     <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-zinc-800/50">
                                         <Video className="size-5" />
-                                    </Button>
+                                    </Button> */}
                                     <Button variant="ghost" size="icon" className="text-zinc-400 hover:text-white hover:bg-zinc-800/50">
                                         <MoreHorizontal className="size-5" />
                                     </Button>
@@ -371,9 +395,7 @@ export const ChatPage = () => {
                                         return (
                                             <div
                                                 key={msg._id}
-                                                className={`flex items-end gap-4 relative z-10 ${isMe ? "flex-row-reverse" : "flex-row"}`}
-                                                onMouseEnter={() => setHoveredMessageId(msg._id)}
-                                                onMouseLeave={() => setHoveredMessageId(null)}
+                                                className={`flex items-end gap-4 relative z-10 ${isMe ? "flex-row-reverse" : "flex-row"} group`}
                                             >
                                                 {!isMe && (
                                                     <div className="size-10 rounded-2xl overflow-hidden border border-white/10 shrink-0 bg-zinc-900/50 flex items-center justify-center shadow-2xl backdrop-blur-md transition-transform hover:scale-110">
@@ -392,34 +414,22 @@ export const ChatPage = () => {
                                                     )}
                                                     <div className={`flex items-center gap-2 ${isMe ? "flex-row-reverse" : "flex-row"}`}>
                                                         {isMe && !msg.isDeleted && (
-                                                            <div className={`transition-opacity duration-150 ${hoveredMessageId === msg._id ? "opacity-100" : "opacity-0"}`}>
-                                                                <div className="relative group/menu">
-                                                                    <button
-                                                                        className="p-1.5 rounded-full text-zinc-500 hover:text-white hover:bg-zinc-800/70 transition-all"
-                                                                        title="Message options"
-                                                                    >
-                                                                        <MoreHorizontal className="size-4" />
-                                                                    </button>
-                                                                    {/* Dropdown */}
-                                                                    <div className="absolute bottom-full right-0 mb-1 bg-zinc-900 border border-zinc-700/60 rounded-xl shadow-2xl overflow-hidden w-44 opacity-0 group-hover/menu:opacity-100 transition-opacity duration-150 pointer-events-none group-hover/menu:pointer-events-auto z-50">
-                                                                        <button
-                                                                            onClick={() => setDeleteConfirm({ messageId: msg._id })}
-                                                                            className="w-full flex items-center gap-2.5 px-4 py-2.5 text-sm text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-colors"
-                                                                        >
-                                                                            <Trash2 className="size-3.5" />
-                                                                            Delete
-                                                                        </button>
-                                                                    </div>
-                                                                </div>
+                                                            <div className="opacity-0 group-hover:opacity-100 transition-all duration-200">
+                                                                <button
+                                                                    onClick={() => setDeleteConfirm({ messageId: msg._id })}
+                                                                    className="p-2 rounded-full text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all border border-white/5 bg-zinc-900/50 backdrop-blur-sm shadow-xl"
+                                                                    title="Delete message"
+                                                                >
+                                                                    <Trash2 className="size-4" />
+                                                                </button>
                                                             </div>
                                                         )}
                                                         {/* Message bubble */}
                                                         {msg.isDeleted ? (
-                                                            <div className={`max-w-[500px] px-5 py-3 rounded-[2rem] text-[13px] leading-relaxed shadow border border-dashed ${
-                                                                isMe
-                                                                    ? "bg-zinc-800/40 border-zinc-700/50 rounded-tr-none"
-                                                                    : "bg-zinc-900/40 border-zinc-700/30 rounded-tl-none"
-                                                            }`}>
+                                                            <div className={`max-w-[500px] px-5 py-3 rounded-[2rem] text-[13px] leading-relaxed shadow border border-dashed ${isMe
+                                                                ? "bg-zinc-800/40 border-zinc-700/50 rounded-tr-none"
+                                                                : "bg-zinc-900/40 border-zinc-700/30 rounded-tl-none"
+                                                                }`}>
                                                                 <span className="text-zinc-500 italic">This message was deleted</span>
                                                                 <div className="flex items-center gap-2 mt-1 justify-end opacity-40">
                                                                     <span className="text-[9px] font-mono tracking-tighter text-zinc-600">
@@ -428,71 +438,70 @@ export const ChatPage = () => {
                                                                 </div>
                                                             </div>
                                                         ) : (
-                                                                    <div className={`max-w-[500px] px-6 py-4 rounded-[2rem] text-[15px] leading-relaxed shadow-2xl backdrop-blur-xl border transition-all hover:bg-opacity-90 ${isMe
-                                                                        ? "bg-linear-to-br from-blue-600 to-blue-700 text-white rounded-tr-none border-blue-400/20"
-                                                                        : "bg-zinc-900/80 text-zinc-100 rounded-tl-none border-white/5"
-                                                                        }`}>
-                                                                        {msg.messageType === 'text' && msg.content}
-                                                                        {msg.messageType === 'image' && (
-                                                                            <div className="rounded-2xl overflow-hidden border border-white/5 mb-1 group/img relative shadow-2xl">
-                                                                                <img 
-                                                                                    src={msg.content} 
-                                                                                    alt="Attachment" 
-                                                                                    className="max-w-[240px] max-h-[320px] object-cover cursor-zoom-in transition-transform duration-500 group-hover/img:scale-105" 
-                                                                                    onClick={() => setExpandedImage(msg.content)} 
-                                                                                />
-                                                                                <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
-                                                                                    <Search className="size-6 text-white/70" />
-                                                                                </div>
-                                                                            </div>
-                                                                        )}
-                                                                        {msg.messageType === 'video' && (
-                                                                            <video src={msg.content} controls className="max-w-[300px] rounded-2xl mb-1 shadow-2xl border border-white/5" />
-                                                                        )}
-                                                                        {msg.messageType === 'document' && (
-                                                                            <div 
-                                                                                className="flex items-center gap-4 p-4 bg-zinc-800/50 hover:bg-zinc-800/80 rounded-2xl mb-1 cursor-pointer transition-all border border-white/5 group/file"
-                                                                                onClick={() => {
-                                                                                    if (downloadedFiles.includes(msg.content)) {
-                                                                                        window.open(msg.content, '_blank');
-                                                                                    } else {
-                                                                                        handleDownload(msg.content, msg.content.split('/').pop() || 'file');
-                                                                                    }
-                                                                                }}
-                                                                            >
-                                                                                <div className="size-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-600/20 group-hover/file:bg-blue-600/30 transition-colors">
-                                                                                    <FileIcon className="size-6 text-blue-400" />
-                                                                                </div>
-                                                                                <div className="flex-1 min-w-0">
-                                                                                    <p className="text-sm font-bold text-zinc-100 truncate">{msg.content.split('/').pop()}</p>
-                                                                                    <p className="text-[10px] text-zinc-500 font-mono mt-0.5 uppercase tracking-tighter">
-                                                                                        {downloadedFiles.includes(msg.content) ? "Click to open transmission" : "Click to download transmission"}
-                                                                                    </p>
-                                                                                </div>
-                                                                                {!downloadedFiles.includes(msg.content) && (
-                                                                                    <div className="opacity-0 group-hover/file:opacity-100 transition-opacity">
-                                                                                        <Download className="size-4 text-zinc-400" />
-                                                                                    </div>
-                                                                                )}
-                                                                            </div>
-                                                                        )}
-                                                                        <div className={`flex items-center gap-2 mt-2 justify-end opacity-50`}>
-                                                                            <span className="text-[9px] font-bold font-mono tracking-tighter">
-                                                                                {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                                            </span>
-                                                                            {isMe && (
-                                                                                <div className="flex -space-x-1">
-                                                                                    <CheckCheck 
-                                                                                        className={`size-3.5 ${
-                                                                                            (msg.readBy?.length || 0) >= (roomData?.data?.members?.length || selectedProject.members?.length || 0)
-                                                                                                ? "text-blue-900" 
-                                                                                                : "text-zinc-900"
-                                                                                        }`} 
-                                                                                    />
-                                                                                </div>
-                                                                            )}
+                                                            <div className={`max-w-[500px] px-6 py-4 rounded-[2rem] text-[15px] leading-relaxed shadow-2xl backdrop-blur-xl border transition-all hover:bg-opacity-90 ${isMe
+                                                                ? "bg-linear-to-br from-blue-600 to-blue-700 text-white rounded-tr-none border-blue-400/20"
+                                                                : "bg-zinc-900/80 text-zinc-100 rounded-tl-none border-white/5"
+                                                                }`}>
+                                                                {msg.messageType === 'text' && msg.content}
+                                                                {msg.messageType === 'image' && (
+                                                                    <div className="rounded-2xl overflow-hidden border border-white/5 mb-1 group/img relative shadow-2xl">
+                                                                        <img
+                                                                            src={msg.content}
+                                                                            alt="Attachment"
+                                                                            className="max-w-[240px] max-h-[320px] object-cover cursor-zoom-in transition-transform duration-500 group-hover/img:scale-105"
+                                                                            onClick={() => setExpandedImage(msg.content)}
+                                                                        />
+                                                                        <div className="absolute inset-0 bg-black/20 opacity-0 group-hover/img:opacity-100 transition-opacity flex items-center justify-center pointer-events-none">
+                                                                            <Search className="size-6 text-white/70" />
                                                                         </div>
                                                                     </div>
+                                                                )}
+                                                                {msg.messageType === 'video' && (
+                                                                    <video src={msg.content} controls className="max-w-[300px] rounded-2xl mb-1 shadow-2xl border border-white/5" />
+                                                                )}
+                                                                {msg.messageType === 'document' && (
+                                                                    <div
+                                                                        className="flex items-center gap-4 p-4 bg-zinc-800/50 hover:bg-zinc-800/80 rounded-2xl mb-1 cursor-pointer transition-all border border-white/5 group/file"
+                                                                        onClick={() => {
+                                                                            if (downloadedFiles.includes(msg.content)) {
+                                                                                window.open(msg.content, '_blank');
+                                                                            } else {
+                                                                                handleDownload(msg.content, msg.content.split('/').pop() || 'file');
+                                                                            }
+                                                                        }}
+                                                                    >
+                                                                        <div className="size-12 rounded-xl bg-blue-600/20 flex items-center justify-center border border-blue-600/20 group-hover/file:bg-blue-600/30 transition-colors">
+                                                                            <FileIcon className="size-6 text-blue-400" />
+                                                                        </div>
+                                                                        <div className="flex-1 min-w-0">
+                                                                            <p className="text-sm font-bold text-zinc-100 truncate">{msg.content.split('/').pop()}</p>
+                                                                            <p className="text-[10px] text-zinc-500 font-mono mt-0.5 uppercase tracking-tighter">
+                                                                                {downloadedFiles.includes(msg.content) ? "Click to open transmission" : "Click to download transmission"}
+                                                                            </p>
+                                                                        </div>
+                                                                        {!downloadedFiles.includes(msg.content) && (
+                                                                            <div className="opacity-0 group-hover/file:opacity-100 transition-opacity">
+                                                                                <Download className="size-4 text-zinc-400" />
+                                                                            </div>
+                                                                        )}
+                                                                    </div>
+                                                                )}
+                                                                <div className={`flex items-center gap-2 mt-2 justify-end opacity-50`}>
+                                                                    <span className="text-[9px] font-bold font-mono tracking-tighter">
+                                                                        {new Date(msg.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                                                    </span>
+                                                                    {isMe && (
+                                                                        <div className="flex -space-x-1">
+                                                                            <CheckCheck
+                                                                                className={`size-3.5 ${(msg.readBy?.length || 0) >= (roomData?.data?.members?.length || selectedProject.members?.length || 0)
+                                                                                    ? "text-blue-900"
+                                                                                    : "text-zinc-900"
+                                                                                    }`}
+                                                                            />
+                                                                        </div>
+                                                                    )}
+                                                                </div>
+                                                            </div>
                                                         )}
                                                     </div>
                                                 </div>
@@ -519,9 +528,9 @@ export const ChatPage = () => {
                                 {showEmojiPicker && (
                                     <div className="absolute bottom-full mb-4 left-6 z-50">
                                         <div className="relative">
-                                            <div 
-                                                className="fixed inset-0" 
-                                                onClick={() => setShowEmojiPicker(false)} 
+                                            <div
+                                                className="fixed inset-0"
+                                                onClick={() => setShowEmojiPicker(false)}
                                             />
                                             <div className="relative z-10 shadow-2xl border border-zinc-800 rounded-2xl overflow-hidden">
                                                 <EmojiPicker
@@ -536,17 +545,17 @@ export const ChatPage = () => {
                                 )}
                                 <div className="max-w-6xl mx-auto flex items-center gap-3">
                                     <div className="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-2xl p-1.5 flex items-center gap-2 transition-all duration-300 focus-within:border-blue-600/50 focus-within:bg-zinc-900/80 focus-within:shadow-lg focus-within:shadow-blue-600/5">
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
                                             className={`text-zinc-500 hover:text-white rounded-xl ${showEmojiPicker ? "text-blue-500 bg-blue-500/10" : ""}`}
                                             onClick={() => setShowEmojiPicker(!showEmojiPicker)}
                                         >
                                             <Smile className="size-5" />
                                         </Button>
-                                        <Button 
-                                            variant="ghost" 
-                                            size="icon" 
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
                                             className="text-zinc-500 hover:text-white rounded-xl"
                                             onClick={() => fileInputRef.current?.click()}
                                             disabled={isUploading}
@@ -561,6 +570,7 @@ export const ChatPage = () => {
                                             type="file"
                                             ref={fileInputRef}
                                             onChange={handleFileSelect}
+                                            placeholder="."
                                             className="hidden"
                                         />
                                         <input
@@ -571,9 +581,13 @@ export const ChatPage = () => {
                                                     e.preventDefault();
                                                     handleSendMessage();
                                                     setIsTyping(false);
-                                                    stopTyping();
+                                                    stopTyping(selectedProject?._id);
+                                                    if (typingTimeoutRef.current) {
+                                                        clearTimeout(typingTimeoutRef.current);
+                                                    }
                                                 }
                                             }}
+                                            onBlur={handleBlur}
                                             placeholder="Message..."
                                             className="flex-1 bg-transparent border-none focus:ring-0 text-white text-[15px] px-2 placeholder:text-zinc-600 h-10"
                                         />
@@ -630,25 +644,25 @@ export const ChatPage = () => {
 
             {/* Image Expansion Modal */}
             {expandedImage && (
-                <div 
+                <div
                     className="fixed inset-0 z-100 flex items-center justify-center bg-black/95 backdrop-blur-xl transition-all duration-300 animate-in fade-in"
                     onClick={() => setExpandedImage(null)}
                 >
-                    <button 
+                    <button
                         className="absolute top-8 right-8 text-zinc-400 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full"
                         onClick={() => setExpandedImage(null)}
                     >
                         <Plus className="size-8 rotate-45" />
                     </button>
-                    <img 
-                        src={expandedImage} 
-                        alt="Expanded attachment" 
-                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300" 
+                    <img
+                        src={expandedImage}
+                        alt="Expanded attachment"
+                        className="max-w-[90vw] max-h-[90vh] object-contain rounded-lg shadow-2xl animate-in zoom-in-95 duration-300"
                         onClick={(e) => e.stopPropagation()}
                     />
                     <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-4">
-                        <Button 
-                            variant="secondary" 
+                        <Button
+                            variant="secondary"
                             className="bg-white/10 hover:bg-white/20 text-white border-white/10 backdrop-blur-md rounded-xl"
                             onClick={(e) => {
                                 e.stopPropagation();
