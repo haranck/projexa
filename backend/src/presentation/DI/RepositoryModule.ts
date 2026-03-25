@@ -31,6 +31,8 @@ import { IDashboardRepository } from "../../domain/interfaces/repositories/Dashb
 import { DashboardRepository } from "../../infrastructure/database/mongo/repositories/DashboardRepo/DashboardRepository";
 import { IUserActivityRepository } from "../../domain/interfaces/repositories/UserActivity/IUserActivityRepository";
 import { UserActivityRepository } from "../../infrastructure/database/mongo/repositories/UserActivity/UserActivityRepository";
+import { IMeetingRepository } from "../../domain/interfaces/repositories/MeetingRepo/IMeetingRepository";
+import { MeetingRepository } from "../../infrastructure/database/mongo/repositories/MeetingRepo/MeetingRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -96,6 +98,9 @@ export class RepositoryModule {
         });
         container.register<IUserActivityRepository>("IUserActivityRepository", {
             useClass: UserActivityRepository
+        });
+        container.register<IMeetingRepository>("IMeetingRepository", {
+            useClass: MeetingRepository
         });
     }
 }

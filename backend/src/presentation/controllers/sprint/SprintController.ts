@@ -95,7 +95,11 @@ export class SprintController {
         try {
             const { sprintId } = req.params
             const { moveIncompleteIssuesToSprintId } = req.body
-            const result = await this._completeSprintUseCase.execute({ sprintId: sprintId as string, moveIncompleteIssuesToSprintId })
+            const userId = req.user?.userId
+            if (!userId) {
+                throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
+            }
+            const result = await this._completeSprintUseCase.execute({ sprintId: sprintId as string, moveIncompleteIssuesToSprintId, requesterId: userId })
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.SPRINT.SPRINT_COMPLETED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string }

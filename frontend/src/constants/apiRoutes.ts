@@ -56,6 +56,10 @@ export const API_ROUTES = {
     REMOVE_PROJECT_MEMBER: "/project/remove-project-member/:projectId/:userId",
     UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId",
     GET_PROJECT_DASHBOARD_DATA: "/project/get-project-dashboard-data/:projectId",
+    SCHEDULE_MEETING: "/project/meetings/schedule",
+    GET_PROJECT_MEETINGS: "/project/meetings/project/:projectId",
+    JOIN_MEETING: "/project/meetings/:meetingId/join",
+    LEAVE_MEETING: "/project/meetings/:meetingId/leave",
   },
   ISSUE: {
     CREATE_ISSUE: "/project/issues/create-issue/:projectId",

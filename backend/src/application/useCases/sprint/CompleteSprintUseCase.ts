@@ -9,18 +9,28 @@ import { IssueStatus } from '../../../domain/enums/IssueEnums'
 import { ISendNotificationUseCase } from '../../interface/notification/ISendNotificationUseCase'
 import { NotificationEventType } from '../../../domain/enums/NotificationEventType'
 
+import { IProjectRepository } from '../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository'
+
 @injectable()
 export class CompleteSprintUseCase implements ICompleteSprintUseCase {
     constructor(
         @inject('ISprintRepository') private readonly _sprintRepo: ISprintRepository,
         @inject('IIssueRepository') private readonly _issueRepo: IIssueRepository,
-        @inject("ISendNotificationUseCase") private readonly _sendNotification: ISendNotificationUseCase
+        @inject("ISendNotificationUseCase") private readonly _sendNotification: ISendNotificationUseCase,
+        @inject('IProjectRepository') private readonly _projectRepo: IProjectRepository
     ) { }
 
     async execute(data: CompleteSprintDTO): Promise<void> {
-        const { sprintId, moveIncompleteIssuesToSprintId } = data
+        const { sprintId, moveIncompleteIssuesToSprintId, requesterId } = data
         const sprint = await this._sprintRepo.getSprintById(sprintId)
         if (!sprint) throw new Error(SPRINT_ERRORS.SPRINT_NOT_FOUND)
+
+        const project = await this._projectRepo.getProjectById(sprint.projectId)
+        if (!project) throw new Error(SPRINT_ERRORS.SPRINT_NOT_FOUND)
+
+        if (project.createdBy.toString() !== requesterId.toString()) {
+            throw new Error(SPRINT_ERRORS.ONLY_PROJECT_MANAGER_CAN_COMPLETE_SPRINT)
+        }
 
         if (sprint.status !== SprintStatus.ACTIVE) throw new Error(SPRINT_ERRORS.ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED)
 

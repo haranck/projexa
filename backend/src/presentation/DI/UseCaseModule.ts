@@ -148,8 +148,16 @@ import { IGetChatMessageUploadUrlUseCase } from "../../application/interface/cha
 import { GetChatMessageUploadUrlUseCase } from "../../application/useCases/chat/GetChatMessageUploadUrlUseCase";
 import { IGetDashboardDataUseCase } from "../../application/interface/dashboard/IGetDashboardDataUseCase";
 import { GetDashboardDataUseCase } from "../../application/useCases/dashboard/GetDashboardDataUseCase";
+import { IScheduleMeetingUseCase } from "../../application/interface/meeting/IScheduleMeetingUseCase";
+import { ScheduleMeetingUseCase } from "../../application/useCases/meeting/ScheduleMeetingUseCase";
+import { IJoinMeetingUseCase } from "../../application/interface/meeting/IJoinMeetingUseCase";
+import { JoinMeetingUseCase } from "../../application/useCases/meeting/JoinMeetingUseCase";
+import { ILeaveMeetingUseCase } from "../../application/interface/meeting/ILeaveMeetingUseCase";
+import { LeaveMeetingUseCase } from "../../application/useCases/meeting/LeaveMeetingUseCase";
+import { IGetProjectMeetingsUseCase } from "../../application/interface/meeting/IGetProjectMeetingsUseCase";
+import { GetProjectMeetingsUseCase } from "../../application/useCases/meeting/GetProjectMeetingsUseCase";
 
-export class UseCaseModule {
+export class UseCaseModule {    
     static registerModules(): void {
 
         container.register<IRegisterUserUseCase>('IRegisterUserUseCase', {
@@ -458,6 +466,22 @@ export class UseCaseModule {
 
         container.register<IGetDashboardDataUseCase>("IGetDashboardDataUseCase", {
             useClass: GetDashboardDataUseCase
+        });
+
+        container.register<IScheduleMeetingUseCase>("IScheduleMeetingUseCase", {
+            useClass: ScheduleMeetingUseCase
+        });
+
+        container.register<IJoinMeetingUseCase>("IJoinMeetingUseCase", {
+            useClass: JoinMeetingUseCase
+        });
+
+        container.register<ILeaveMeetingUseCase>("ILeaveMeetingUseCase", {
+            useClass: LeaveMeetingUseCase
+        });
+
+        container.register<IGetProjectMeetingsUseCase>("IGetProjectMeetingsUseCase", {
+            useClass: GetProjectMeetingsUseCase
         });
     }
 }

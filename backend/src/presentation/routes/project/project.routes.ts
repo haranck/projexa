@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { projectController, authMiddleware, issueController, dashboardController } from '../../DI/resolver';
+import { projectController, authMiddleware, issueController, dashboardController, meetingController } from '../../DI/resolver';
 import { ROUTES } from '../../../shared/constant/routes'
 
 const router = Router();
@@ -20,6 +20,10 @@ router.patch(ROUTES.ISSUES.UPDATE_ISSUE, authMiddleware.authenticate, issueContr
 router.delete(ROUTES.ISSUES.DELETE_ISSUE, authMiddleware.authenticate, issueController.deleteIssue)
 router.get(ROUTES.ISSUES.GET_ALL_ISSUES, authMiddleware.authenticate, issueController.getAllIssues)
 
-
+// project meetings routes
+router.post(ROUTES.MEETINGS.SCHEDULE, authMiddleware.authenticate, meetingController.scheduleMeeting.bind(meetingController))
+router.get(ROUTES.MEETINGS.GET_PROJECT_MEETINGS, authMiddleware.authenticate, meetingController.getProjectMeetings.bind(meetingController))
+router.patch(ROUTES.MEETINGS.JOIN_MEETING, authMiddleware.authenticate, meetingController.joinMeeting.bind(meetingController))
+router.patch(ROUTES.MEETINGS.LEAVE_MEETING, authMiddleware.authenticate, meetingController.leaveMeeting.bind(meetingController))
 
 export default router;

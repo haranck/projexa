@@ -85,5 +85,11 @@ export const ROUTES = {
         GET_ROOM_BY_PROJECT: "/room/:projectId",
         GET_MESSAGES: "/messages/:roomId",
         GET_UPLOAD_URL: "/attachment-upload-url/:roomId"
+    },
+    MEETINGS: {
+        SCHEDULE: "/meetings/schedule",
+        GET_PROJECT_MEETINGS: "/meetings/project/:projectId",
+        JOIN_MEETING: "/meetings/:meetingId/join",
+        LEAVE_MEETING: "/meetings/:meetingId/leave"
     }
 };
