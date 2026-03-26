@@ -22,6 +22,7 @@ export class IssueDTOmapper {
             assigneeId: dto.assigneeId ?? null,
             startDate: dto.startDate ?? null,
             endDate: dto.endDate ?? null,
+            comments: [],
             createdBy: userId
         }
     }

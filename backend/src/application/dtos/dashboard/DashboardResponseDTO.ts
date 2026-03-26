@@ -51,6 +51,23 @@ export interface TopPerformerDTO {
     issuesCompleted: number;
 }
 
+export interface OverdueTaskDTO {
+    id: string;
+    title: string;
+    endDate: Date;
+    key: string;
+}
+
+export interface TodayMeetingDTO {
+    id: string;
+    title: string;
+    startTime: Date;
+    endTime: Date;
+    roomName: string;
+    hostName: string;
+    hostAvatar: string;
+}
+
 export interface DashboardDataResponseDTO {
     stats: DashboardStatsDTO;
     distribution: IssueDistributionDTO[];
@@ -58,4 +75,6 @@ export interface DashboardDataResponseDTO {
     recentSprints: SprintSummaryDTO[];
     teamActivity: TeamActivityDTO[];
     topPerformer: TopPerformerDTO | null;
+    overdueTasks: OverdueTaskDTO[];
+    todayMeetings: TodayMeetingDTO[];
 }

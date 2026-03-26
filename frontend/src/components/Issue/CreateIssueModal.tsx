@@ -4,6 +4,7 @@ import { toast } from "react-hot-toast";
 import { getAttachmentUploadUrl, uploadFileToS3, IssueStatus, IssueType } from "@/services/Issue/IssueService";
 import type { IAttachement, CreateIssueProps } from "@/services/Issue/IssueService";
 import type { ProjectMember } from "@/types/project";
+import { issueSchema } from "@/lib/validations/issue.schema";
 
 interface CreateIssueModalProps {
     isOpen: boolean;
@@ -59,6 +60,22 @@ export const CreateIssueModal = ({
     const [linkName, setLinkName] = useState("");
 
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setTitle("");
+            setDescription("");
+            setIssueType(initialIssueType);
+            setStatus(IssueStatus.TODO);
+            setAssigneeId("");
+            setStartDate("");
+            setEndDate("");
+            setAttachments([]);
+            setIsAddingLink(false);
+            setLinkUrl("");
+            setLinkName("");
+        }
+    }, [isOpen, initialIssueType]);
 
     useEffect(() => {
         if (isOpen) {
@@ -146,10 +163,20 @@ export const CreateIssueModal = ({
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title.trim()) {
-            toast.error("Issue title is required");
+        
+        const result = issueSchema.safeParse({
+            title,
+            description,
+            startDate: startDate || null,
+            endDate: endDate || null
+        });
+
+        if (!result.success) {
+            const error = result.error.issues[0];
+            toast.error(error.message);
             return;
         }
+
         onSubmit({
             workspaceId,
             projectId,
@@ -163,20 +190,11 @@ export const CreateIssueModal = ({
             endDate: endDate ? new Date(endDate) : null,
             attachments
         });
+
+        handleClose();
     };
 
     const handleClose = () => {
-        setTitle("");
-        setDescription("");
-        setIssueType(initialIssueType);
-        setStatus(IssueStatus.TODO);
-        setAssigneeId("");
-        setStartDate("");
-        setEndDate("");
-        setAttachments([]);
-        setIsAddingLink(false);
-        setLinkUrl("");
-        setLinkName("");
         onClose();
     };
 

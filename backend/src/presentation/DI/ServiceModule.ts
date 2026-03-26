@@ -20,6 +20,8 @@ import { IChatService } from "../../domain/interfaces/services/IChatService";
 import { ChatService } from "../../infrastructure/services/ChatService";
 import { IDashboardService } from "../../domain/interfaces/services/IDashboardService";
 import { DashboardService } from "../../infrastructure/services/DashboardService";
+import { IRedisLockService } from "../../domain/interfaces/services/IRedisLockService";
+import { RedisLockService } from "../../infrastructure/services/RedisLockService";
 
 export class ServiceModule {
     static registerModules(): void {
@@ -66,6 +68,10 @@ export class ServiceModule {
 
         container.register<IDashboardService>("IDashboardService", {
             useClass: DashboardService
+        });
+
+        container.register<IRedisLockService>("IRedisLockService", {
+            useClass: RedisLockService
         });
     }
 }

@@ -68,6 +68,7 @@ import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/Upgr
 import { IGetWorkspaceInvoicesUseCase } from "../../application/interface/user/IGetWorkspaceInvoicesUseCase";
 import { GetWorkspaceInvoicesUseCase } from "../../application/useCases/user/GetWorkspaceInvoicesUseCase";
 import { InvoiceSucceededHandler } from "../../application/useCases/stripe/InvoiceSucceededHandler";
+import { CheckoutExpiredHandler } from "../../application/useCases/stripe/CheckoutExpiredHandler";
 import { IInviteMemberUseCase } from "../../application/interface/user/IInviteMemberUseCase";
 import { InviteMemberUseCase } from "../../application/useCases/user/InviteMemberUseCase";
 import { ICompleteProfileUseCase } from "../../application/interface/user/ICompleteProfileUseCase";
@@ -302,6 +303,10 @@ export class UseCaseModule {
 
         container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
             useClass: InvoiceSucceededHandler
+        })
+
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: CheckoutExpiredHandler
         })
 
         container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase', {

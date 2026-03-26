@@ -89,7 +89,8 @@ export const SUBSCRIPTION_ERRORS = {
     PLAN_NOT_FOUND: "Plan not found !",
     STRIPE_PRICE_ID_MISSING: "Stripe price not configured for this plan",
     STRIPE_CUSTOMER_NOT_FOUND: "Stripe customer not found !",
-    NO_BILLING_CUSTOMER_FOUND: "No billing customer found !"
+    NO_BILLING_CUSTOMER_FOUND: "No billing customer found !",
+    PAYMENT_ALREADY_IN_PROGRESS: "Payment already in progress. Please complete your current session or try again later."
 };
 
 export const WORKSPACE_ERRORS = {

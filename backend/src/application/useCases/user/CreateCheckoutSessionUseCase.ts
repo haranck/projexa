@@ -6,6 +6,7 @@ import { IPlanRepository } from "../../../domain/interfaces/repositories/IPlanRe
 import { IWorkspaceRedisRepository } from "../../../domain/interfaces/repositories/IWorkspaceRedisRepository";
 import { WORKSPACE_ERRORS, SUBSCRIPTION_ERRORS } from "../../../domain/constants/errorMessages";
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
+import { IRedisLockService } from "../../../domain/interfaces/services/IRedisLockService";
 
 @injectable()
 export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCase {
@@ -13,10 +14,18 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
         @inject('IStripeService') private _stripeService: IStripeService,
         @inject('IPlanRepository') private _planRepository: IPlanRepository,
         @inject('IWorkspaceRedisRepository') private _workspaceRedisRepository: IWorkspaceRedisRepository,
-        @inject('IWorkspaceRepository') private _workspaceRepository: IWorkspaceRepository
+        @inject('IWorkspaceRepository') private _workspaceRepository: IWorkspaceRepository,
+        @inject('IRedisLockService') private _redisLockService: IRedisLockService
     ) { }
 
     async execute(dto: CreateCheckoutSessionUseCaseDTO): Promise<string> {
+        const lockKey = `payment_lock:${dto.userId}`;
+        const lockAcquired = await this._redisLockService.acquireLock(lockKey, 1800);
+
+        if (!lockAcquired) {
+            throw new Error(SUBSCRIPTION_ERRORS.PAYMENT_ALREADY_IN_PROGRESS);
+        }
+
         let workspace = await this._workspaceRedisRepository.findByName(dto.workspaceName)
 
         if (!workspace) {

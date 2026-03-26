@@ -1,4 +1,4 @@
-import { DashboardStatsDTO, IssueDistributionDTO, ModuleProgressDTO, SprintSummaryDTO, TeamActivityDTO, TopPerformerDTO } from "../../../../application/dtos/dashboard/DashboardResponseDTO";
+import { DashboardStatsDTO, IssueDistributionDTO, ModuleProgressDTO, OverdueTaskDTO, SprintSummaryDTO, TeamActivityDTO, TodayMeetingDTO, TopPerformerDTO } from "../../../../application/dtos/dashboard/DashboardResponseDTO";
 
 export interface IDashboardRepository {
     getStats(projectId: string): Promise<DashboardStatsDTO>;
@@ -7,4 +7,6 @@ export interface IDashboardRepository {
     getRecentSprints(projectId: string): Promise<SprintSummaryDTO[]>;
     getTeamActivity(projectId: string): Promise<TeamActivityDTO[]>;
     getTopPerformer(projectId: string): Promise<TopPerformerDTO | null>;
+    getOverdueTasks(projectId: string, userId?: string): Promise<OverdueTaskDTO[]>;
+    getTodayMeetings(projectId: string, userId?: string): Promise<TodayMeetingDTO[]>;
 }

@@ -1,10 +1,11 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { X, Upload, Loader2, FileText, Link as LinkIcon, Globe, User, ArrowLeft } from "lucide-react";
 import { toast } from "react-hot-toast";
 import { useSelector } from "react-redux";
 import { getAttachmentUploadUrl, uploadFileToS3, IssueStatus } from "@/services/Issue/IssueService";
 import type { IAttachement } from "@/services/Issue/IssueService";
 import type { RootState } from "@/store/store";
+import { epicSchema } from "@/lib/validations/issue.schema";
 
 interface CreateEpicModalProps {
     isOpen: boolean;
@@ -47,6 +48,20 @@ export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoad
 
     const [selectedColor] = useState(EPIC_COLORS[0]);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    useEffect(() => {
+        if (!isOpen) {
+            setTitle("");
+            setDescription("");
+            setStatus(IssueStatus.TODO);
+            setStartDate("");
+            setEndDate("");
+            setAttachments([]);
+            setIsAddingLink(false);
+            setLinkUrl("");
+            setLinkName("");
+        }
+    }, [isOpen]);
 
     if (!isOpen) return null;
 
@@ -105,33 +120,25 @@ export const CreateEpicModal = ({ isOpen, projectName, onClose, onSubmit, isLoad
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!title.trim()) {
-            toast.error("Epic name is required");
+        
+        const result = epicSchema.safeParse({
+            title,
+            description,
+            startDate: startDate || null,
+            endDate: endDate || null
+        });
+
+        if (!result.success) {
+            const error = result.error.issues[0];
+            toast.error(error.message);
             return;
         }
+
         await onSubmit({ title, description, status, startDate, endDate, attachments });
-        setTitle("");
-        setDescription("");
-        setStatus(IssueStatus.TODO);
-        setStartDate("");
-        setEndDate("");
-        setAttachments([]);
-        setIsAddingLink(false);
-        setLinkUrl("");
-        setLinkName("");
-        onClose();
+        handleClose();
     };
 
     const handleClose = () => {
-        setTitle("");
-        setDescription("");
-        setStatus(IssueStatus.TODO);
-        setStartDate("");
-        setEndDate("");
-        setAttachments([]);
-        setIsAddingLink(false);
-        setLinkUrl("");
-        setLinkName("");
         onClose();
     };
     console.log('key name', projectKey)

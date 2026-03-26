@@ -48,6 +48,8 @@ export interface UpdateEpicProps {
   attachments?: IAttachement[];
   startDate?: Date | null;
   endDate?: Date | null;
+  comment?: string;
+  projectId: string;
 }
 
 export interface GetAllIssuesFilterProps {

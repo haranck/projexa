@@ -4,10 +4,21 @@ import { IDashboardRepository } from "../../../../../domain/interfaces/repositor
 import { SprintModel } from "../../models/Sprint/SprintModel";
 import { IssueStatus, IssueType } from "../../../../../domain/enums/IssueEnums";
 import { SprintStatus } from "../../../../../domain/enums/SprintStatus";
-import { DashboardStatsDTO, IssueDistributionDTO, ModuleProgressDTO, SprintSummaryDTO, TeamActivityDTO, TopPerformerDTO } from "../../../../../application/dtos/dashboard/DashboardResponseDTO";
+import { 
+    DashboardStatsDTO, 
+    IssueDistributionDTO, 
+    ModuleProgressDTO, 
+    SprintSummaryDTO, 
+    TeamActivityDTO, 
+    TopPerformerDTO, 
+    OverdueTaskDTO, 
+    TodayMeetingDTO 
+} from "../../../../../application/dtos/dashboard/DashboardResponseDTO";
 import { ProjectMemberModel } from "../../models/Project/ProjectMemberModel";
 import { UserActivityModel } from "../../models/UserActivity/UserActivityModel";
 import { Types } from "mongoose";
+import { MeetingModel, IMeetingDocument } from "../../models/Meeting/MeetingModel";
+import { UserModel } from "../../models/UserModel";
 
 interface PopulatedMember {
     userId: {
@@ -123,7 +134,7 @@ export class DashboardRepository implements IDashboardRepository {
                 role: member.roleId.name,
                 profilePicture: member.userId.avatarUrl,
                 totalTime,
-                hoursLogged: Math.round((totalTime / 3600000) * 10) / 10 // 1 decimal place
+                hoursLogged: Math.round((totalTime / 3600000) * 10) / 10
             };
         }));
 
@@ -158,5 +169,58 @@ export class DashboardRepository implements IDashboardRepository {
             hoursLogged: top.hoursLogged,
             issuesCompleted: top.issuesCompleted
         };
+    }
+
+    async getOverdueTasks(projectId: string, userId?: string): Promise<OverdueTaskDTO[]> {
+        if (!userId) return [];
+        
+        const now = new Date();
+        const overdueTasks = await IssueModel.find({
+            projectId,
+            assigneeId: userId,
+            status: { $ne: IssueStatus.DONE },
+            endDate: { $lt: now, $ne: null }
+        }).sort({ endDate: 1 });
+
+        return overdueTasks.map(task => ({
+            id: task._id.toString(),
+            title: task.title,
+            endDate: task.endDate!,
+            key: task.key
+        }));
+    }
+
+    async getTodayMeetings(projectId: string, userId?: string): Promise<TodayMeetingDTO[]> {
+        const now = new Date();
+        const startOfDay = new Date();
+        startOfDay.setHours(0, 0, 0, 0);
+        
+        const endOfDay = new Date();
+        endOfDay.setHours(23, 59, 59, 999);
+
+        const meetings = await MeetingModel.find({
+            projectId,
+            startTime: { $gte: startOfDay, $lte: endOfDay },
+            endTime: { $gt: now }, 
+            status: 'upcoming'
+        }).sort({ startTime: 1 });
+
+        const filteredMeetings = userId ? meetings.filter(meeting => {
+            const participant = meeting.participants.find(p => p.userId.toString() === userId.toString());
+            return participant?.status !== 'left';
+        }) : meetings;
+
+        return await Promise.all(filteredMeetings.map(async (meeting: IMeetingDocument) => {
+            const host = await UserModel.findById(meeting.hostId);
+            return {
+                id: meeting._id.toString(),
+                title: meeting.title,
+                startTime: meeting.startTime,
+                endTime: meeting.endTime,
+                roomName: meeting.roomName,
+                hostName: host ? `${host.firstName} ${host.lastName}` : "Unknown",
+                hostAvatar: host?.avatarUrl || ""
+            };
+        }));
     }
 }

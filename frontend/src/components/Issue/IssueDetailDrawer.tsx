@@ -30,6 +30,7 @@ import type {
 import type { ProjectMember } from "@/types/project";
 import { toast } from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
+import { issueSchema } from "@/lib/validations/issue.schema";
 
 export interface ChildTask {
   _id: string;
@@ -56,6 +57,12 @@ export interface IssueData {
   issueType: string;
   assigneeId?: string | null;
   parentIssueId?: string | null;
+  comments?: Array<{
+    userId: string;
+    userName: string;
+    text: string;
+    createdAt: string | Date;
+  }>;
 }
 
 interface IssueDetailDrawerProps {
@@ -137,6 +144,7 @@ export const IssueDetailDrawer = ({
   const [isAddingLink, setIsAddingLink] = useState(false);
   const [linkUrl, setLinkUrl] = useState("");
   const [linkName, setLinkName] = useState("");
+  const [commentText, setCommentText] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { mutate: updateIssue, isPending: isUpdatingIssue } = useUpdateEpic();
@@ -144,9 +152,21 @@ export const IssueDetailDrawer = ({
     useDeleteIssue();
   const { mutate: createIssue, isPending: isCreatingIssue } = useCreateIssue();
 
-  const handleUpdateIssue = (newStatus?: string) => {
+const handleUpdateIssue = (newStatus?: string) => {
     if (!issue?._id) return;
     const statusToUpdate = newStatus || status;
+
+    const validation = issueSchema.safeParse({
+      title,
+      description,
+      startDate: startDate || null,
+      endDate: endDate || null
+    });
+
+    if (!validation.success) {
+      toast.error(validation.error.issues[0].message);
+      return;
+    }
 
     if (statusToUpdate.toUpperCase() === "DONE") {
       const hasIncompleteSubtasks = childTasks.some(
@@ -172,11 +192,13 @@ export const IssueDetailDrawer = ({
         startDate: startDate ? new Date(startDate) : null,
         endDate: endDate ? new Date(endDate) : null,
         attachments,
+        comment: commentText.trim() || undefined,
         projectId,
       },
       {
         onSuccess: () => {
           toast.success("Issue updated successfully");
+          setCommentText(""); // Clear comment after success
         },
         onError: (err: unknown) => {
           toast.error(getErrorMessage(err) || "Failed to update issue");
@@ -941,6 +963,73 @@ export const IssueDetailDrawer = ({
                   ))}
                 </div>
               )}
+            </div>
+
+            {/* ── Divider ── */}
+            <div className="border-t border-white/5" />
+
+            {/* ── Comments Section ── */}
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <h3 className="text-xs font-bold text-white tracking-tight">
+                  Comments
+                </h3>
+                <span className="text-[10px] font-bold text-zinc-600">
+                  {issue?.comments?.length || 0}
+                </span>
+              </div>
+
+              {/* Add Comment Input */}
+              <div className="space-y-2">
+                <textarea
+                  value={commentText}
+                  onChange={(e) => setCommentText(e.target.value)}
+                  placeholder="Add a comment..."
+                  rows={2}
+                  className="w-full bg-white/4 border border-white/10 rounded-xl px-4 py-2 text-[11px] text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500/50 transition-all resize-none"
+                />
+                {commentText.trim() && (
+                  <div className="flex justify-end">
+                    <button
+                      onClick={() => handleUpdateIssue()}
+                      disabled={isUpdatingIssue}
+                      className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition-all"
+                    >
+                      Post Comment
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Comments List */}
+              <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+                {issue?.comments?.length ? (
+                  [...issue.comments].reverse().map((comment, i) => (
+                    <div key={i} className="bg-white/3 rounded-xl p-3 border border-white/5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center text-[8px] font-bold text-blue-400 capitalize">
+                            {comment.userName.charAt(0)}
+                          </div>
+                          <span className="text-[10px] font-bold text-zinc-300">
+                            {comment.userName}
+                          </span>
+                        </div>
+                        <span className="text-[8px] text-zinc-600 font-medium">
+                          {new Date(comment.createdAt).toLocaleString()}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-zinc-400 leading-relaxed break-words">
+                        {comment.text}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-[10px] text-zinc-600 italic text-center py-4">
+                    No comments yet.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
         </div>

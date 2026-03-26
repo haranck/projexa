@@ -12,4 +12,4 @@ export interface INotificationEntity {
     createdAt?: Date;
 }
 
-export type NotificationType = 'issue' | 'sprint' | 'project' | 'chat';
+export type NotificationType = 'issue' | 'sprint' | 'project' | 'chat' | 'meeting';

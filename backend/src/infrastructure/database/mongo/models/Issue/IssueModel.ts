@@ -16,6 +16,12 @@ export interface IssueDocument extends Document {
     assigneeId?: string | null;
     startDate?: Date | null;
     endDate?: Date | null;
+    comments?: {
+        userId: string;
+        userName: string;
+        text: string;
+        createdAt: Date;
+    }[];
     createdBy: string;
     createdAt: Date;
     updatedAt: Date;
@@ -25,6 +31,13 @@ const attachmentSchema = new mongoose.Schema<IAttachement>({
     type: { type: String, enum: ['link', 'file'], required: true },
     url: { type: String, required: true },
     fileName: { type: String }
+}, { _id: false });
+
+const commentSchema = new mongoose.Schema({
+    userId: { type: String, required: true },
+    userName: { type: String, required: true },
+    text: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
 }, { _id: false });
 
 const issueSchema = new mongoose.Schema({
@@ -79,6 +92,10 @@ const issueSchema = new mongoose.Schema({
     },
     attachments: {
         type: [attachmentSchema],
+        default: []
+    },
+    comments: {
+        type: [commentSchema],
         default: []
     },
     assigneeId:{

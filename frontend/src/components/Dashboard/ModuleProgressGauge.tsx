@@ -1,8 +1,10 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { CheckCircle2, Clock, ListChecks } from "lucide-react";
+import { CheckCircle2, Clock, Activity } from "lucide-react";
 import { Button } from "../ui/button";
 import type { ModuleProgress } from "../../types/dashboard";
+import { Link } from "react-router-dom";
+import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
 interface ModuleProgressGaugeProps {
     data?: ModuleProgress | null;
@@ -23,17 +25,17 @@ export const ModuleProgressGauge = ({ data }: ModuleProgressGaugeProps) => {
             {/* Subtle Gradient background matching the image style */}
             <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] -mr-32 -mt-32 pointer-events-none group-hover:opacity-20 transition-opacity duration-500" />
 
-            <CardHeader className="flex flex-row items-center gap-3 pb-0 pt-4 px-4 relative z-10 shrink-0">
-                <div className="p-2 rounded-xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 shadow-inner">
-                    <ListChecks className="w-4 h-4" />
-                </div>
-                <div>
-                    <CardTitle className="text-sm font-black text-white tracking-tight leading-none uppercase">
-                        Module Analysis
+            <CardHeader className="flex flex-row items-center justify-between pb-0 pt-4 px-4 relative z-10 shrink-0">
+                <div className="flex flex-col">
+                    <CardTitle className="text-lg font-black text-white tracking-tighter uppercase leading-none">
+                        Task Analysis
                     </CardTitle>
-                    <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em] mt-0.5">
+                    <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em] mt-1.5">
                         {data?.sprintName || "No Module Active"}
                     </p>
+                </div>
+                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 shadow-inner">
+                    <Activity className="w-4 h-4" />
                 </div>
             </CardHeader>
 
@@ -107,9 +109,11 @@ export const ModuleProgressGauge = ({ data }: ModuleProgressGaugeProps) => {
                     </div>
                 </div>
 
-                <Button className="w-full bg-[#10b981] hover:bg-[#059669] text-white font-black h-8 rounded-lg transition-all shadow-xl shadow-emerald-500/20 active:scale-[0.98] border border-white/5 uppercase tracking-widest text-[9px] shrink-0">
-                    Access Operations
-                </Button>
+                <Link to={FRONTEND_ROUTES.BOARD} className="w-full">
+                    <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black h-8 rounded-lg transition-all shadow-xl shadow-blue-500/20 active:scale-[0.98] border border-white/5 uppercase tracking-widest text-[9px] shrink-0">
+                        Access Operations
+                    </Button>
+                </Link>
             </CardContent>
         </Card>
     );
