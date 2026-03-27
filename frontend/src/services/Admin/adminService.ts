@@ -1,6 +1,7 @@
 import { AxiosInstance } from "../../axios/axios";
 import { API_ROUTES } from "../../constants/apiRoutes";
 import type { UserResponse } from "../../types/user";
+import type { AdminDashboardStats } from "../../types/dashboard";
 
 interface adminLoginPayload {
   email: string
@@ -89,5 +90,10 @@ export const exportAdminPaymentsPDF = async (params: Omit<GetAdminPaymentsParams
     params,
     responseType: 'blob'
   });
+  return response.data;
+}
+
+export const getAdminDashboardStats = async (): Promise<{ data: AdminDashboardStats }> => {
+  const response = await AxiosInstance.get(API_ROUTES.ADMIN.DASHBOARD_STATS);
   return response.data;
 }

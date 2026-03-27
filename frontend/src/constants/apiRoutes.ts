@@ -21,7 +21,8 @@ export const API_ROUTES = {
     GET_ALL_PLANS: "/admin/get-plans",
     UPDATE_PLAN: "/admin/update-plan/:planId",
     GET_ADMIN_PAYMENTS: "/admin/payments",
-    EXPORT_ADMIN_PAYMENTS_PDF: "/admin/payments/export-pdf"
+    EXPORT_ADMIN_PAYMENTS_PDF: "/admin/payments/export-pdf",
+    DASHBOARD_STATS: "/admin/dashboard-stats"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",

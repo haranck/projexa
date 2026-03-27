@@ -9,6 +9,7 @@ import type { RootState } from "@/store/store";
 import { useGetWorkspaceMembers } from "@/hooks/Workspace/WorkspaceHooks";
 import { useScheduleMeeting } from "@/hooks/Meeting/MeetingHooks";
 import toast from "react-hot-toast";
+import { getErrorMessage } from "@/utils/errorHandler";
 
 const scheduleMeetingSchema = z.object({
     title: z.string().min(3, "Title must be at least 3 characters"),
@@ -70,7 +71,8 @@ const ScheduleMeeting = () => {
                 reset();
             },
             onError: (error: Error) => {
-                toast.error(error.message || "Failed to schedule meeting");
+                const err = getErrorMessage(error)
+                toast.error(err || "Failed to schedule meeting");
             }
         });
     };

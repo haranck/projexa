@@ -15,7 +15,7 @@ export class MeetingController {
         @inject("IGetProjectMeetingsUseCase") private getProjectMeetingsUseCase: IGetProjectMeetingsUseCase,
         @inject("IJoinMeetingUseCase") private joinMeetingUseCase: IJoinMeetingUseCase,
         @inject("ILeaveMeetingUseCase") private leaveMeetingUseCase: ILeaveMeetingUseCase
-    ) {}
+    ) { }
 
     async scheduleMeeting(req: AuthRequest, res: Response): Promise<void> {
         try {
@@ -24,19 +24,17 @@ export class MeetingController {
                 throw new Error("User not found");
             }
             dto.hostId = req.user.userId;
-            
+
             const meeting = await this.scheduleMeetingUseCase.execute(dto);
+            console.log('meeting ', meeting)
             res.status(HTTP_STATUS.CREATED).json({
                 success: true,
                 message: "Meeting scheduled successfully",
                 data: meeting
             });
         } catch (error: unknown) {
-            const err = error as Error;
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: err.message || "Failed to schedule meeting"
-            });
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
 
@@ -47,7 +45,7 @@ export class MeetingController {
                 throw new Error("User not found");
             }
             const currentUserId = req.user.userId;
-            
+
             const meetings = await this.getProjectMeetingsUseCase.execute(projectId as string, currentUserId);
             res.status(HTTP_STATUS.OK).json({
                 success: true,
@@ -55,11 +53,8 @@ export class MeetingController {
                 data: meetings
             });
         } catch (error: unknown) {
-            const err = error as Error;
-            res.status(HTTP_STATUS.INTERNAL_SERVER_ERROR).json({
-                success: false,
-                message: err.message || "Failed to fetch meetings"
-            });
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
 
@@ -67,7 +62,7 @@ export class MeetingController {
         try {
             const { meetingId } = req.params;
             if (!req.user || !req.user.userId) throw new Error("User not found");
-            
+
             const meeting = await this.joinMeetingUseCase.execute(meetingId as string, req.user.userId);
             res.status(HTTP_STATUS.OK).json({
                 success: true,
@@ -75,11 +70,8 @@ export class MeetingController {
                 data: meeting
             });
         } catch (error: unknown) {
-            const err = error as Error;
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: err.message || "Failed to join meeting"
-            });
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
 
@@ -87,7 +79,7 @@ export class MeetingController {
         try {
             const { meetingId } = req.params;
             if (!req.user || !req.user.userId) throw new Error("User not found");
-            
+
             const meeting = await this.leaveMeetingUseCase.execute(meetingId as string, req.user.userId);
             res.status(HTTP_STATUS.OK).json({
                 success: true,
@@ -95,11 +87,8 @@ export class MeetingController {
                 data: meeting
             });
         } catch (error: unknown) {
-            const err = error as Error;
-            res.status(HTTP_STATUS.BAD_REQUEST).json({
-                success: false,
-                message: err.message || "Failed to leave meeting"
-            });
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
 }

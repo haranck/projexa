@@ -71,8 +71,8 @@ export class UserDTOmapper {
 
     static toWorkspaceResponseDTO(workspace: IWorkspaceEntity): WorkspaceResponseDTO {
         return {
-            id: workspace._id!,
-            _id: workspace._id!.toString(),
+            id: workspace._id ? workspace._id.toString() : "",
+            _id: workspace._id ? workspace._id.toString() : "",
             name: workspace.name,
             description: workspace.description,
             ownerId: workspace.ownerId,

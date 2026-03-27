@@ -23,7 +23,7 @@ export interface IssueFilters {
     assigneeId?: string | null;
     issueType?: string | null;
     parentIssueId?: string | null;
-    sprintId?: string | null;
+    sprintId?: string | string[] | null;
     searchQuery?: string;
     dateFilter?: "RECENT" | "DUE_SOON" | null;
 }
@@ -45,8 +45,17 @@ export const filterIssues = (
         if (filters.parentIssueId && issue.parentIssueId !== filters.parentIssueId)
             return false;
 
-        if (filters.sprintId && issue.sprintId !== filters.sprintId)
-            return false;
+        if (filters.sprintId) {
+            if (Array.isArray(filters.sprintId)) {
+                if (filters.sprintId.length > 0 && (!issue.sprintId || !filters.sprintId.includes(issue.sprintId))) {
+                    return false;
+                }
+            } else {
+                if (issue.sprintId !== filters.sprintId) {
+                    return false;
+                }
+            }
+        }
 
         if (filters.dateFilter === "RECENT") {
             const sevenDaysAgo = new Date();

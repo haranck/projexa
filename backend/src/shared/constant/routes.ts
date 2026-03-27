@@ -74,7 +74,8 @@ export const ROUTES = {
         GET_ALL_PLAN: "/get-plans",
         UPDATE_PLAN: "/update-plan/:planId",
         GET_PAYMENTS: '/payments',
-        GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf'
+        GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf',
+        DASHBOARD_STATS: '/dashboard-stats'
     },
     NOTIFICATION: {
         GET_ALL_NOTIFICATIONS: "/get-all-notifications",

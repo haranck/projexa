@@ -243,12 +243,12 @@ export const MEETING_ERRORS = {
     MEETING_NON_EPIC_ISSUE_WITHOUT_PARENT: "Non epic issues must have a parent issue",
     MEETING_CONTENT_TYPE_REQUIRED: "Content Type is required",
     MEETING_INVALID_ISSUE_TYPE: "Invalid issue type",
-    MEETING_INVALID_DATES: "Invalid dates",
-    MEETING_NOT_AUTHORIZED: "You are not authorized to delete this issue !",
+    MEETING_INVALID_DATES: "Meeting start time must be in the future",
+    MEETING_NOT_AUTHORIZED: "Only project managers can schedule meetings",
     MEETING_HAS_CHILDREN: "Cannot delete issue with child issues",
     MEETING_CANNOT_REMOVE_MEMBER_HAS_ISSUES: "Cannot remove member who has assigned issues in this project",
     MEETING_FAILED_TO_UPDATE_ISSUE: "Failed to update issue",
     MEETING_SPRINT_NOT_ACTIVE: "Sprint is not active !",
     MEETING_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: "Only active sprint can be completed !",
     MEETING_FAILED_TO_SEND_NOTIFICATIONS: "Failed to send notifications",
-}
+}

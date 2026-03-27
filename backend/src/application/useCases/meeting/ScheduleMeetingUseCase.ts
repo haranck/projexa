@@ -3,9 +3,10 @@ import { IMeetingRepository } from "../../../domain/interfaces/repositories/Meet
 import { ScheduleMeetingDTO } from "../../dtos/project/requestDTOs/ScheduleMeetingDTO";
 import { IMeetingEntity } from "../../../domain/entities/Meeting/IMeetingEntity";
 import { IMeetingParticipantEntity } from "../../../domain/entities/Meeting/IMeetingParticipantEntity";
-import { MEETING_ERRORS } from "../../../domain/constants/errorMessages";
+import { MEETING_ERRORS, PROJECT_ERRORS } from "../../../domain/constants/errorMessages";
 import { IScheduleMeetingUseCase } from "../../interface/meeting/IScheduleMeetingUseCase";
 import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
+import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
 import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 
@@ -14,17 +15,19 @@ export class ScheduleMeetingUseCase implements IScheduleMeetingUseCase {
     constructor(
         @inject("IMeetingRepository") private meetingRepo: IMeetingRepository,
         @inject("IProjectRepository") private projectRepo: IProjectRepository,
+        @inject("IProjectMemberRepository") private projectMemberRepo: IProjectMemberRepository,
         @inject("ISendNotificationUseCase") private sendNotification: ISendNotificationUseCase
     ) { }
 
     async execute(dto: ScheduleMeetingDTO): Promise<IMeetingEntity> {
         const project = await this.projectRepo.getProjectById(dto.projectId);
         if (!project) {
-            throw new Error("Project not found");
+            throw new Error(PROJECT_ERRORS.PROJECT_NOT_FOUND);
         }
 
-        if (project.createdBy.toString() !== dto.hostId.toString()) {
-            throw new Error(MEETING_ERRORS.MEETING_NOT_AUTHORIZED);
+        const projectMember = await this.projectMemberRepo.findProjectAndUser(dto.projectId, dto.hostId);
+        if (!projectMember) {
+            throw new Error(PROJECT_ERRORS.PROJECT_MEMBER_NOT_FOUND);
         }
 
         if (new Date(dto.startTime) <= new Date()) {

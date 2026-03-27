@@ -10,7 +10,9 @@ interface IssueDistributionChartProps {
 const TYPE_COLORS: Record<string, string> = {
     STORY: "#3b82f6",
     TASK: "#10b981",
-    BUG: "#f43f5e",
+    BUG: "#ff0000",
+    EPIC: "#e24ec7",
+    SUBTASK:"#e1e568"
 };
 
 export const IssueDistributionChart = ({ data }: IssueDistributionChartProps) => {

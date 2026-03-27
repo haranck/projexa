@@ -10,7 +10,8 @@ import {
     getPlans,
     updatePlan,
     getAdminPayments,
-    exportAdminPaymentsPDF
+    exportAdminPaymentsPDF,
+    getAdminDashboardStats
 } from "../../services/Admin/adminService";
 import type { GetAdminPaymentsParams } from "../../services/Admin/adminService";
 import type { UserResponse } from "../../types/user";
@@ -126,5 +127,13 @@ export const useGetAdminPayments = (params?: GetAdminPaymentsParams) => {
 export const useExportAdminPaymentsPDF = () => {
     return useMutation({
         mutationFn: exportAdminPaymentsPDF
+    })
+}
+
+export const useGetAdminDashboardStats = () => {
+    return useQuery({
+        queryKey: ['admin-dashboard-stats'],
+        queryFn: getAdminDashboardStats,
+        staleTime: 5 * 60 * 1000,
     })
 }

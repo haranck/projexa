@@ -157,6 +157,8 @@ import { ILeaveMeetingUseCase } from "../../application/interface/meeting/ILeave
 import { LeaveMeetingUseCase } from "../../application/useCases/meeting/LeaveMeetingUseCase";
 import { IGetProjectMeetingsUseCase } from "../../application/interface/meeting/IGetProjectMeetingsUseCase";
 import { GetProjectMeetingsUseCase } from "../../application/useCases/meeting/GetProjectMeetingsUseCase";
+import { IGetAdminDashboardStatsUseCase } from "../../application/interface/admin/IGetAdminDashboardStatsUseCase";
+import { GetAdminDashboardStatsUseCase } from "../../application/useCases/admin/GetAdminDashboardStatsUseCase";
 
 export class UseCaseModule {    
     static registerModules(): void {
@@ -246,6 +248,10 @@ export class UseCaseModule {
         container.register<IExportAdminPaymentsPDFUseCase>('IExportAdminPaymentsPDFUseCase', {
             useClass: ExportAdminPaymentsPDFUseCase
         })
+
+        container.register<IGetAdminDashboardStatsUseCase>("IGetAdminDashboardStatsUseCase", {
+            useClass: GetAdminDashboardStatsUseCase
+        });
 
         /*--------------------- User UseCases ---------------------*/
 
@@ -488,5 +494,6 @@ export class UseCaseModule {
         container.register<IGetProjectMeetingsUseCase>("IGetProjectMeetingsUseCase", {
             useClass: GetProjectMeetingsUseCase
         });
+
     }
 }
