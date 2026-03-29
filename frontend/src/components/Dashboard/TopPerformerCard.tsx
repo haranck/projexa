@@ -1,5 +1,5 @@
 import type { TopPerformer } from "../../types/dashboard";
-import { Trophy, Clock, CheckCircle, Star } from "lucide-react";
+import { Trophy, Clock, CheckCircle, Flame } from "lucide-react";
 import { Card, CardContent } from "../ui/card";
 
 interface TopPerformerCardProps {
@@ -8,93 +8,77 @@ interface TopPerformerCardProps {
 
 export const TopPerformerCard = ({ data }: TopPerformerCardProps) => {
     if (!data) return (
-        <Card className="bg-[#141820]/80 backdrop-blur-xl border-white/5 h-full relative group overflow-hidden">
+        <Card className="bg-[#0f1117] border border-white/6 h-full rounded-2xl">
             <CardContent className="h-full flex flex-col items-center justify-center p-8 opacity-40">
-                <Trophy className="w-12 h-12 text-zinc-700 mb-4" />
-                <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">No MVP identified yet</p>
+                <Trophy className="w-8 h-8 text-zinc-600 mb-3" />
+                <p className="text-sm text-zinc-500 text-center">No performer data yet</p>
             </CardContent>
         </Card>
     );
 
+    const initials = data.userName.slice(0, 2).toUpperCase();
+
     return (
-        <Card className="bg-[#141820]/80 backdrop-blur-xl border-white/5 h-full py-0 gap-0 relative group overflow-hidden">
-            {/* Main Card with Premium Gradient & Glassmorphism */}
-            <div className="h-full p-8 text-white flex flex-col justify-between transition-all duration-500 group relative">
+        <Card className="bg-[#0f1117] border border-white/6 h-full rounded-2xl hover:border-white/1 transition-all duration-300 overflow-hidden group">
+            <div className="absolute inset-0 bg-linear-to-br from-amber-500/3 via-transparent to-blue-500/3 pointer-events-none" />
 
-                {/* Decorative Premium Glows */}
-                <div className="absolute -top-10 -right-10 w-48 h-48 bg-blue-600/5 rounded-full blur-[80px] pointer-events-none group-hover:opacity-20 transition-opacity" />
-                <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-purple-600/5 rounded-full blur-[80px] pointer-events-none group-hover:opacity-20 transition-opacity" />
-
-                {/* Header */}
-                <div className="relative flex items-center justify-between mb-8 z-10">
-                    <div className="flex items-center gap-4">
-                        <div className="p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-2xl shadow-inner group-hover:rotate-12 transition-transform duration-500">
-                            <Trophy className="w-5 h-5 text-yellow-500" />
+            <CardContent className="relative z-10 p-6 flex flex-col h-full">
+                <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20">
+                            <Trophy className="w-4 h-4 text-amber-400" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-black tracking-tight leading-none uppercase text-white">MVP</h3>
-                            <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em] mt-2">Project Champion</p>
+                            <p className="text-sm font-semibold text-white">Top Performer</p>
+                            <p className="text-xs text-zinc-500">This sprint</p>
                         </div>
                     </div>
-                    <div className="flex gap-1">
-                        {[1, 2, 3].map(i => (
-                            <Star key={i} className="w-3 h-3 text-yellow-500/40 fill-yellow-500/20" />
-                        ))}
-                    </div>
-                </div>
-
-                {/* Profile Section */}
-                <div className="relative flex flex-col items-center mb-10 z-10">
-                    <div className="relative mb-6 group-hover:scale-110 transition-transform duration-700 ease-out">
-                        <div className="absolute -inset-4 bg-linear-to-r from-blue-600/20 to-purple-600/20 rounded-full blur-2xl opacity-0 group-hover:opacity-100 transition duration-700" />
-                        <div className="relative w-28 h-28 rounded-[2.5rem] border-2 border-white/5 overflow-hidden bg-white/5 backdrop-blur-xl p-1 shadow-2xl">
-                            <div className="w-full h-full rounded-[2.2rem] overflow-hidden bg-black/40">
-                                {data.profilePicture ? (
-                                    <img src={data.profilePicture} alt={data.userName} className="w-full h-full object-cover" />
-                                ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-4xl font-black bg-linear-to-br from-blue-500/20 to-purple-500/20 text-white leading-none">
-                                        {data.userName.charAt(0)}
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                        {/* Elite Badge */}
-                        <div className="absolute -bottom-2 -right-2 bg-blue-600 text-white p-2 rounded-xl shadow-xl border border-white/20">
-                            <CheckCircle className="w-4 h-4" />
-                        </div>
-                    </div>
-                    <div className="text-center">
-                        <h4 className="text-3xl font-black text-white tracking-tighter leading-none group-hover/item:text-blue-400 transition-colors uppercase">{data.userName}</h4>
-                        <div className="mt-3 flex items-center justify-center gap-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse" />
-                            <p className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.25em]">{data.role || 'Contributor'}</p>
-                        </div>
+                    <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-rose-500/10 border border-rose-500/20">
+                        <Flame className="w-3 h-3 text-rose-400" />
+                        <span className="text-xs font-semibold text-rose-400">MVP</span>
                     </div>
                 </div>
 
-                {/* Stats Grid */}
-                <div className="relative grid grid-cols-1 gap-3 z-10">
-                    <div className="flex items-center justify-between p-5 bg-white/2 rounded-2xl border border-white/5 group/stat hover:bg-white/5 hover:border-white/10 transition-all duration-300 shadow-inner">
-                        <div className="flex items-center gap-4">
-                            <div className="p-2 bg-blue-500/10 rounded-xl text-blue-400 group-hover/stat:rotate-12 transition-transform">
-                                <Clock className="w-4 h-4" />
-                            </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Utilization</span>
+                {/* Profile */}
+                <div className="flex flex-col items-center mb-6 flex-1 justify-center">
+                    <div className="relative mb-4 group-hover:scale-105 transition-transform duration-500">
+                        <div className="w-20 h-20 rounded-2xl border border-white/10 overflow-hidden bg-zinc-800 flex items-center justify-center shadow-xl">
+                            {data.profilePicture ? (
+                                <img src={data.profilePicture} alt={data.userName} className="w-full h-full object-cover" />
+                            ) : (
+                                <span className="text-2xl font-bold text-zinc-200">{initials}</span>
+                            )}
                         </div>
-                        <span className="text-xl font-black text-white tracking-tighter font-mono">{data.hoursLogged}h</span>
+                        <div className="absolute -bottom-2 -right-2 p-1.5 bg-blue-600 rounded-lg border-2 border-[#0f1117] shadow-lg">
+                            <CheckCircle className="w-3 h-3 text-white" />
+                        </div>
                     </div>
+                    <h4 className="text-lg font-bold text-white text-center">{data.userName}</h4>
+                    <p className="text-xs text-zinc-500 mt-1">{data.role || 'Contributor'}</p>
+                </div>
 
-                    <div className="flex items-center justify-between p-5 bg-white/2 rounded-2xl border border-white/5 group/stat hover:bg-white/5 hover:border-white/10 transition-all duration-300 shadow-inner">
-                        <div className="flex items-center gap-4">
-                            <div className="p-2 bg-emerald-500/10 rounded-xl text-emerald-400 group-hover/stat:rotate-12 transition-transform">
-                                <CheckCircle className="w-4 h-4" />
+                {/* Stats */}
+                <div className="space-y-2.5">
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/6">
+                        <div className="flex items-center gap-2.5">
+                            <div className="p-1.5 bg-blue-500/10 rounded-lg border border-blue-500/20">
+                                <Clock className="w-3.5 h-3.5 text-blue-400" />
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Resolved</span>
+                            <span className="text-xs text-zinc-400">Hours Logged</span>
                         </div>
-                        <span className="text-xl font-black text-white tracking-tighter font-mono">{data.issuesCompleted}</span>
+                        <span className="text-sm font-bold text-white tabular-nums">{data.hoursLogged}h</span>
+                    </div>
+                    <div className="flex items-center justify-between p-3 rounded-xl bg-white/3 border border-white/6">
+                        <div className="flex items-center gap-2.5">
+                            <div className="p-1.5 bg-emerald-500/10 rounded-lg border border-emerald-500/20">
+                                <CheckCircle className="w-3.5 h-3.5 text-emerald-400" />
+                            </div>
+                            <span className="text-xs text-zinc-400">Issues Closed</span>
+                        </div>
+                        <span className="text-sm font-bold text-white tabular-nums">{data.issuesCompleted}</span>
                     </div>
                 </div>
-            </div>
+            </CardContent>
         </Card>
     );
 };

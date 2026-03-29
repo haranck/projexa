@@ -1,6 +1,6 @@
 import { injectable, inject } from "tsyringe";
 import { GetAdminPaymentsDTO } from "../../dtos/admin/requestDTOs/GetAdminPaymentsDTO";
-import { GetAdminPaymentsResponseDTO } from "../../dtos/admin/responseDTOs/AdminPaymentResponseDTO";
+import { GetAdminPaymentsResponseDTO, AdminPaymentResponseDTO } from "../../dtos/admin/responseDTOs/AdminPaymentResponseDTO";
 import { IGetAdminPaymentsUseCase } from "../../interface/admin/IGetAdminPaymentsUseCase";
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { IStripeService } from "../../../domain/interfaces/services/IStripeService";
@@ -23,7 +23,11 @@ export class GetAdminPaymentsUseCase implements IGetAdminPaymentsUseCase {
 
         const invoices = await this.stripeService.getPaidInvoices(start, end);
 
-        const enrichedInvoices = await Promise.all(invoices.map(async (invoice) => {
+        const page = params.page || 1;
+        const limit = params.limit || 5;
+        const startIndex = (page - 1) * limit;
+
+        const enrichInvoice = async (invoice: AdminPaymentResponseDTO) => {
             if (invoice.stripeCustomerId) {
                 try {
                     const subscription = await this.subscriptionRepo.findByStripeCustomerId(invoice.stripeCustomerId);
@@ -38,28 +42,31 @@ export class GetAdminPaymentsUseCase implements IGetAdminPaymentsUseCase {
                 }
             }
             return invoice;
-        }));
+        };
 
-        let filteredInvoices = enrichedInvoices;
+        let filteredInvoices;
+        let totalDocs;
+
         if (params.search && params.search.trim() !== "" && params.search !== "undefined") {
+
+            const enrichedInvoices = await Promise.all(invoices.map(enrichInvoice));
             const searchTerm = params.search.toLowerCase();
-            filteredInvoices = enrichedInvoices.filter(invoice =>
+            filteredInvoices = enrichedInvoices.filter((invoice: AdminPaymentResponseDTO) =>
                 invoice.userName.toLowerCase().includes(searchTerm) ||
-                invoice.workspaceName.toLowerCase().includes(searchTerm) ||
+                (invoice.workspaceName && invoice.workspaceName.toLowerCase().includes(searchTerm)) ||
                 invoice.invoiceId.toLowerCase().includes(searchTerm)
             );
+            totalDocs = filteredInvoices.length;
+            filteredInvoices.sort((a: AdminPaymentResponseDTO, b: AdminPaymentResponseDTO) => b.paidAt.getTime() - a.paidAt.getTime());
+            filteredInvoices = filteredInvoices.slice(startIndex, startIndex + limit);
+        } else {
+            totalDocs = invoices.length;
+            const paginatedSlice = invoices.slice(startIndex, startIndex + limit);
+            filteredInvoices = await Promise.all(paginatedSlice.map(enrichInvoice));
         }
 
-        filteredInvoices.sort((a, b) => b.paidAt.getTime() - a.paidAt.getTime());
-        
-        const page = params.page || 1;
-        const limit = params.limit || 5;
-        const totalDocs = filteredInvoices.length;
         const totalPages = Math.ceil(totalDocs / limit);
-        const startIndex = (page - 1) * limit;
-        const paginatedData = filteredInvoices.slice(startIndex, startIndex + limit);
-
-        return AdminDTOmapper.toGetAdminPaymentsResponseDTO(paginatedData, { totalDocs, totalPages, page, limit });
+        return AdminDTOmapper.toGetAdminPaymentsResponseDTO(filteredInvoices, { totalDocs, totalPages, page, limit });
     }
 }
 

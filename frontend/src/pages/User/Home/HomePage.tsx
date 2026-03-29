@@ -1,15 +1,16 @@
 import { useState, useEffect } from "react";
-import { 
-    Plus, 
-    Layout, 
-    CheckCircle2, 
-    ListTodo, 
-    Activity, 
-    Video, 
-    Clock, 
+import {
+    Plus,
+    Layout,
+    CheckCircle2,
+    ListTodo,
+    Activity,
+    Video,
+    Clock,
     ArrowRight,
     AlertTriangle,
-    AlertCircle
+    AlertCircle,
+    Folder
 } from "lucide-react";
 import { Button } from "../../../components/ui/button";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
@@ -73,11 +74,9 @@ export const HomePage = () => {
 
     useEffect(() => {
         if (!socket) return;
-
         socket.on(NOTIFICATION_EVENTS.ISSUE_UPDATED, () => refetch());
         socket.on(NOTIFICATION_EVENTS.SPRINT_STARTED, () => refetch());
         socket.on(NOTIFICATION_EVENTS.SPRINT_COMPLETED, () => refetch());
-
         return () => {
             socket.off(NOTIFICATION_EVENTS.ISSUE_UPDATED);
             socket.off(NOTIFICATION_EVENTS.SPRINT_STARTED);
@@ -87,9 +86,7 @@ export const HomePage = () => {
 
     useEffect(() => {
         if (dashboardData?.overdueTasks?.length > 0) {
-            // Ensure task state is set correctly for the popup
             setOverdueTasks(dashboardData.overdueTasks);
-            
             const hasShown = sessionStorage.getItem(`overdue_shown_${currentProject?._id}`);
             if (!hasShown) {
                 setShowOverduePopup(true);
@@ -101,13 +98,10 @@ export const HomePage = () => {
     if (isLoading) {
         return (
             <DashboardLayout>
-                <div className="p-8 text-white animate-pulse flex items-center justify-center min-h-[50vh]">
-                    <div className="flex flex-col items-center gap-6">
-                        <div className="relative">
-                            <Activity className="w-16 h-16 text-blue-500 animate-spin" />
-                            <div className="absolute inset-0 blur-2xl bg-blue-500/20 rounded-full animate-pulse" />
-                        </div>
-                        <span className="text-2xl font-black tracking-[0.3em] uppercase text-zinc-500">Synchronizing...</span>
+                <div className="flex items-center justify-center min-h-[60vh]">
+                    <div className="flex flex-col items-center gap-4">
+                        <div className="w-10 h-10 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+                        <p className="text-sm text-zinc-500">Loading dashboard...</p>
                     </div>
                 </div>
             </DashboardLayout>
@@ -117,37 +111,30 @@ export const HomePage = () => {
     if (!currentProject && !isLoading) {
         return (
             <DashboardLayout>
-                <div className="p-8 flex flex-col items-center justify-center min-h-[70vh] text-center relative overflow-hidden">
-                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 blur-[120px] rounded-full pointer-events-none" />
-
-                    <div className="relative z-10 max-w-lg">
-                        <div className="w-24 h-24 bg-blue-500/10 border border-blue-500/20 rounded-[2.5rem] flex items-center justify-center mb-8 mx-auto shadow-2xl shadow-blue-500/10 rotate-3 transition-transform hover:rotate-0 duration-500">
-                            <Layout className="w-12 h-12 text-blue-500" />
-                        </div>
-                        <h2 className="text-5xl font-black text-white tracking-tighter mb-4">Initialize Workspace</h2>
-                        <p className="text-zinc-500 text-lg mb-10 font-medium">
-                            Welcome to Projexa. To begin your journey, select an existing project or create a new mission.
-                        </p>
-                        <div className="flex gap-4 justify-center">
-                            <Link to={FRONTEND_ROUTES.PROJECTS}>
-                                <Button className="bg-[#1c222d] hover:bg-zinc-800 text-white h-14 px-10 rounded-2xl font-black transition-all border border-white/5 active:scale-95 shadow-xl">
-                                    Browse Projects
-                                </Button>
-                            </Link>
-                            <Button
-                                onClick={() => setIsCreateModalOpen(true)}
-                                className="bg-blue-600 hover:bg-blue-500 text-white h-14 px-10 rounded-2xl font-black transition-all shadow-xl shadow-blue-600/30 active:scale-95 flex items-center gap-3"
-                            >
-                                <Plus className="w-5 h-5" />
-                                Start New Project
+                <div className="flex flex-col items-center justify-center min-h-[70vh] text-center px-4">
+                    <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-blue-500/10">
+                        <Folder className="w-7 h-7 text-blue-400" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-white mb-2">No project selected</h2>
+                    <p className="text-zinc-500 text-sm mb-8 max-w-sm">
+                        Select an existing project or create a new one to view your dashboard.
+                    </p>
+                    <div className="flex gap-3">
+                        <Link to={FRONTEND_ROUTES.PROJECTS}>
+                            <Button variant="outline" className="border-white/10 bg-white/3 hover:bg-white/6 text-white h-10 px-6 rounded-xl text-sm font-medium">
+                                Browse Projects
                             </Button>
-                        </div>
+                        </Link>
+                        <Button
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="bg-blue-600 hover:bg-blue-500 text-white h-10 px-6 rounded-xl text-sm font-medium shadow-lg shadow-blue-600/20 flex items-center gap-2"
+                        >
+                            <Plus className="w-4 h-4" />
+                            New Project
+                        </Button>
                     </div>
                 </div>
-                <CreateProjectModal
-                    open={isCreateModalOpen}
-                    onClose={() => setIsCreateModalOpen(false)}
-                />
+                <CreateProjectModal open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
             </DashboardLayout>
         );
     }
@@ -163,134 +150,81 @@ export const HomePage = () => {
     return (
         <DashboardLayout>
             <div className="relative min-h-screen">
-                {/* Overdue Tasks Popup */}
                 {showOverduePopup && (
-                    <OverdueTasksPopup 
-                        tasks={overdueTasks} 
-                        onClose={() => setShowOverduePopup(false)} 
-                    />
+                    <OverdueTasksPopup tasks={overdueTasks} onClose={() => setShowOverduePopup(false)} />
                 )}
 
-                {/* Background Decor */}
-                <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-blue-500/2 blur-[150px] rounded-full -mr-96 -mt-96 pointer-events-none" />
-                <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-emerald-500/1 blur-[120px] rounded-full -ml-40 -mb-40 pointer-events-none" />
-
-                <div className="p-6 lg:p-10 space-y-8 max-w-screen-2xl mx-auto relative z-10 overflow-x-hidden">
-                    {/* Header Section */}
-                    <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 shadow-sm pb-6 border-b border-white/5">
-                        <div className="space-y-2">
-                            <div className="inline-flex items-center gap-3 px-3 py-1.5 rounded-xl bg-white/3 border border-white/5 text-zinc-400 text-[8px] font-black uppercase tracking-[0.3em] shadow-inner">
-                                <span className="w-1.5 h-1.5 rounded-full bg-blue-500 animate-pulse shadow-[0_0_8px_rgba(59,130,246,0.5)]" />
-                                Project Intel Center
+                <div className="p-6 lg:p-8 space-y-6 max-w-screen-2xl mx-auto">
+                    {/* Page Header */}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 pb-6 border-b border-white/5">
+                        <div>
+                            <div className="flex items-center gap-2 mb-1">
+                                <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                <span className="text-xs font-medium text-emerald-500">Live</span>
+                                <span className="text-xs text-zinc-600">·</span>
+                                <span className="text-xs text-zinc-500">{currentProject?.projectName}</span>
                             </div>
-                            <h1 className="text-2xl lg:text-3xl font-black text-white tracking-tighter leading-none uppercase">
-                                Projexa <span className="text-blue-500">Dashboard</span>
-                            </h1>
-                            <p className="text-zinc-500 text-[12px] font-medium max-w-lg leading-snug">
-                                High-velocity operational intelligence and mission-critical metrics for <span className="text-zinc-300 font-bold">{currentProject?.projectName}</span>.
-                            </p>
+                            <h1 className="text-xl font-semibold text-white">Dashboard</h1>
+                            <p className="text-sm text-zinc-500 mt-0.5">Track your projects performance and team activity.</p>
                         </div>
-                        <div className="flex gap-3">
-                            <Button
-                                onClick={() => setIsCreateModalOpen(true)}
-                                className="bg-[#1c222d] hover:bg-zinc-800 text-white h-12 px-6 rounded-xl text-[11px] font-black transition-all hover:scale-105 active:scale-95 flex items-center gap-2 border border-white/5 shadow-2xl uppercase tracking-widest"
-                            >
-                                <Plus className="w-4 h-4 text-blue-500" />
-                                New Initiative
-                            </Button>
-                        </div>
+                        <Button
+                            onClick={() => setIsCreateModalOpen(true)}
+                            className="bg-blue-600 hover:bg-blue-500 text-white h-9 px-4 rounded-xl text-sm font-medium shadow-lg shadow-blue-600/20 flex items-center gap-2 shrink-0"
+                        >
+                            <Plus className="w-4 h-4" />
+                            New Project
+                        </Button>
                     </div>
 
                     {/* Stats Grid */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6">
-                        <StatsCard
-                            title="Total Issues"
-                            value={stats.totalIssues.toString()}
-                            icon={ListTodo}
-                            color="blue"
-                            description="Across all modules"
-                        />
-                        <StatsCard
-                            title="Completed"
-                            value={stats.completedIssues.toString()}
-                            icon={CheckCircle2}
-                            description={`${stats.completionRate}% completion`}
-                            trend="+4.2%"
-                            color="green"
-                        />
-                        <StatsCard
-                            title="Active Sprints"
-                            value={stats.activeSprintsCount.toString().padStart(2, '0')}
-                            icon={Activity}
-                            color="purple"
-                            description="Operational sprints"
-                        />
-                        <StatsCard
-                            title="Team Power"
-                            value={stats.memberCount.toString()}
-                            icon={Layout}
-                            description="Active collaborators"
-                            color="orange"
-                        />
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+                        <StatsCard title="Total Issues" value={stats.totalIssues} icon={ListTodo} color="blue" description="Across all modules" />
+                        <StatsCard title="Completed" value={stats.completedIssues} icon={CheckCircle2} color="green" description={`${stats.completionRate}% done`} trend="+4.2%" />
+                        <StatsCard title="Active Sprints" value={stats.activeSprintsCount} icon={Activity} color="purple" description="Running cycles" />
+                        <StatsCard title="Team Size" value={stats.memberCount} icon={Layout} color="orange" description="Collaborators" />
                     </div>
 
-                    {/* Operational Row: Overdue + Meetings */}
+                    {/* Progress Bar */}
+                    <ProgressLinear title="Overall Completion Rate" percentage={stats.completionRate} />
+
+                    {/* Alerts: Overdue + Meetings */}
                     {(dashboardData?.overdueTasks?.length > 0 || dashboardData?.todayMeetings?.length > 0) && (
-                        <div className={`grid grid-cols-1 ${
-                            dashboardData?.overdueTasks?.length > 0 && dashboardData?.todayMeetings?.length > 0 
-                            ? "lg:grid-cols-2" 
-                            : ""
-                        } gap-10 items-start`}>
-                            {/* Critical Overdue Alerts Section */}
+                        <div className={`grid grid-cols-1 gap-4 ${
+                            dashboardData?.overdueTasks?.length > 0 && dashboardData?.todayMeetings?.length > 0
+                                ? "lg:grid-cols-2"
+                                : ""
+                        }`}>
+
+                            {/* Overdue Tasks */}
                             {dashboardData?.overdueTasks?.length > 0 && (
-                                <div className="space-y-6 pt-4 animate-in fade-in slide-in-from-top-4 duration-1000">
-                                    <div className="flex items-center justify-between">
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-red-500/10 flex items-center justify-center border border-red-500/20 shadow-[0_0_15px_rgba(239,68,68,0.1)]">
-                                                    <AlertTriangle className="w-4 h-4 text-red-500 animate-pulse" />
-                                                </div>
-                                                <h2 className="text-xl font-black text-white uppercase tracking-tight italic">Overdue Operations</h2>
-                                            </div>
-                                            <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest ml-11">Critical Deployment Delays Detected</p>
+                                <div>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <AlertTriangle className="w-4 h-4 text-rose-400" />
+                                            <h2 className="text-sm font-semibold text-white">Overdue Tasks</h2>
+                                            <span className="px-1.5 py-0.5 rounded-md bg-rose-500/10 text-rose-400 text-xs font-medium border border-rose-500/20">
+                                                {dashboardData.overdueTasks.length}
+                                            </span>
                                         </div>
                                         <Link to={FRONTEND_ROUTES.BOARD}>
-                                            <Button variant="ghost" className="text-red-500/70 hover:text-red-500 hover:bg-red-500/5 text-[10px] font-black uppercase tracking-widest gap-2">
-                                                Resolve All <ArrowRight className="w-3 h-3" />
-                                            </Button>
+                                            <button className="text-xs text-zinc-500 hover:text-white flex items-center gap-1 transition-colors">
+                                                View all <ArrowRight className="w-3 h-3" />
+                                            </button>
                                         </Link>
                                     </div>
-                                    <div className={`grid grid-cols-1 ${
-                                        dashboardData?.todayMeetings?.length > 0 
-                                        ? "xl:grid-cols-1" 
-                                        : "md:grid-cols-2 lg:grid-cols-3"
-                                    } gap-6`}>
+                                    <div className="space-y-2">
                                         {dashboardData.overdueTasks.map((task: OverdueTask) => (
-                                            <div key={task.id} className="group p-6 rounded-[2.5rem] bg-[#1a1414] border border-red-500/10 hover:border-red-500/40 transition-all shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[160px]">
-                                                <div className="absolute top-0 right-0 w-32 h-32 bg-red-500/5 blur-2xl -mr-16 -mt-16 pointer-events-none group-hover:bg-red-500/10 transition-colors" />
-                                                
-                                                <div className="relative z-10">
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-red-500/10 border border-red-500/20">
-                                                            <AlertCircle className="w-3 h-3 text-red-500" />
-                                                            <span className="text-[10px] font-black text-red-500 tracking-widest uppercase animate-pulse">
-                                                                Overdue
-                                                            </span>
-                                                        </div>
-                                                        <span className="text-[9px] font-black text-zinc-600 uppercase tracking-widest">
-                                                            {task.key}
-                                                        </span>
+                                            <div key={task.id} className="flex items-center justify-between p-3.5 rounded-xl bg-rose-500/4 border border-rose-500/10 hover:border-rose-500/20 transition-colors group cursor-default">
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <AlertCircle className="w-3.5 h-3.5 text-rose-400 shrink-0" />
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-medium text-white truncate group-hover:text-rose-300 transition-colors">{task.title}</p>
+                                                        <p className="text-xs text-zinc-600 mt-0.5">{task.key} · Due {new Date(task.endDate).toLocaleDateString()}</p>
                                                     </div>
-                                                    <h4 className="text-lg font-black text-white tracking-tight mb-1 group-hover:text-red-400 transition-colors line-clamp-1">{task.title}</h4>
-                                                    <p className="text-zinc-500 text-[10px] font-medium uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-red-900" />
-                                                        Due: <span className="text-red-400/80">{new Date(task.endDate).toLocaleDateString()}</span>
-                                                    </p>
                                                 </div>
-
-                                                <Link to={FRONTEND_ROUTES.BOARD} className="relative z-10 mt-auto">
-                                                    <Button className="w-full bg-red-600/10 hover:bg-red-600 text-white border border-red-500/20 h-10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all active:scale-95">
-                                                        Execute Resolution
+                                                <Link to={FRONTEND_ROUTES.BOARD}>
+                                                    <Button className="shrink-0 ml-3 h-7 px-3 text-xs bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 rounded-lg transition-colors">
+                                                        Resolve
                                                     </Button>
                                                 </Link>
                                             </div>
@@ -299,61 +233,45 @@ export const HomePage = () => {
                                 </div>
                             )}
 
+                            {/* Today's Meetings */}
                             {dashboardData?.todayMeetings?.length > 0 && (
-                                <div className="space-y-6 pt-4 animate-in slide-in-from-bottom-4 duration-700">
-                                    <div className="flex items-center justify-between">
-                                        <div className="space-y-1">
-                                            <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-lg bg-blue-500/10 flex items-center justify-center border border-blue-500/20">
-                                                    <Video className="w-4 h-4 text-blue-500" />
-                                                </div>
-                                                <h2 className="text-xl font-black text-white uppercase tracking-tight italic">Today&apos;s Missions</h2>
-                                            </div>
-                                            <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest ml-11">Synchronized Operational Briefings</p>
+                                <div>
+                                    <div className="flex items-center justify-between mb-3">
+                                        <div className="flex items-center gap-2">
+                                            <Video className="w-4 h-4 text-blue-400" />
+                                            <h2 className="text-sm font-semibold text-white">Todays Meetings</h2>
+                                            <span className="px-1.5 py-0.5 rounded-md bg-blue-500/10 text-blue-400 text-xs font-medium border border-blue-500/20">
+                                                {dashboardData.todayMeetings.length}
+                                            </span>
                                         </div>
                                         <Link to={FRONTEND_ROUTES.MEETINGS}>
-                                            <Button variant="ghost" className="text-zinc-500 hover:text-white text-[10px] font-black uppercase tracking-widest gap-2">
-                                                View Schedule <ArrowRight className="w-3 h-3" />
-                                            </Button>
+                                            <button className="text-xs text-zinc-500 hover:text-white flex items-center gap-1 transition-colors">
+                                                Schedule <ArrowRight className="w-3 h-3" />
+                                            </button>
                                         </Link>
                                     </div>
-                                    <div className={`grid grid-cols-1 ${
-                                        dashboardData?.overdueTasks?.length > 0 
-                                        ? "xl:grid-cols-1" 
-                                        : "md:grid-cols-2 lg:grid-cols-3"
-                                    } gap-6`}>
+                                    <div className="space-y-2">
                                         {dashboardData.todayMeetings.map((meeting: TodayMeeting) => (
-                                            <div key={meeting.id} className="group p-6 rounded-[2.5rem] bg-[#1c222d] border border-white/5 hover:border-blue-500/30 transition-all shadow-2xl relative overflow-hidden flex flex-col justify-between min-h-[160px]">
-                                                <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/5 blur-2xl -mr-16 -mt-16 pointer-events-none group-hover:bg-blue-500/10 transition-colors" />
-                                                
-                                                <div className="relative z-10">
-                                                    <div className="flex justify-between items-start mb-4">
-                                                        <div className="flex items-center gap-2 px-2.5 py-1 rounded-full bg-blue-500/10 border border-blue-500/20">
-                                                            <Clock className="w-3 h-3 text-blue-500" />
-                                                            <span className="text-[10px] font-black text-white tracking-widest uppercase">
-                                                                {new Date(meeting.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                            </span>
-                                                        </div>
-                                                        <div className="flex -space-x-2">
-                                                            <div className="w-8 h-8 rounded-full border-2 border-[#1c222d] bg-zinc-800 overflow-hidden shadow-xl group-hover:scale-110 transition-transform">
-                                                                {meeting.hostAvatar ? (
-                                                                    <img src={meeting.hostAvatar} alt={meeting.hostName} className="w-full h-10 object-cover" />
-                                                                ) : (
-                                                                    <div className="w-full h-full flex items-center justify-center text-[10px] font-bold text-zinc-500 uppercase">{meeting.hostName[0]}</div>
-                                                                )}
-                                                            </div>
-                                                        </div>
+                                            <div key={meeting.id} className="flex items-center justify-between p-3.5 rounded-xl bg-white/3 border border-white/6 hover:border-white/10 transition-colors group cursor-default">
+                                                <div className="flex items-center gap-3 min-w-0">
+                                                    <div className="w-9 h-9 rounded-full border border-white/10 bg-zinc-800 overflow-hidden flex items-center justify-center shrink-0">
+                                                        {meeting.hostAvatar ? (
+                                                            <img src={meeting.hostAvatar} alt={meeting.hostName} className="w-full h-full object-cover" />
+                                                        ) : (
+                                                            <span className="text-xs font-semibold text-zinc-300">{meeting.hostName[0]}</span>
+                                                        )}
                                                     </div>
-                                                    <h4 className="text-lg font-black text-white tracking-tight mb-1 group-hover:text-blue-400 transition-colors">{meeting.title}</h4>
-                                                    <p className="text-zinc-500 text-[10px] font-medium uppercase tracking-widest mb-4 flex items-center gap-2">
-                                                        <span className="w-1.5 h-1.5 rounded-full bg-zinc-700" />
-                                                        Host: <span className="text-zinc-300">{meeting.hostName}</span>
-                                                    </p>
+                                                    <div className="min-w-0">
+                                                        <p className="text-sm font-medium text-white truncate group-hover:text-blue-300 transition-colors">{meeting.title}</p>
+                                                        <p className="text-xs text-zinc-500 mt-0.5 flex items-center gap-1">
+                                                            <Clock className="w-3 h-3" />
+                                                            {new Date(meeting.startTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} · {meeting.hostName}
+                                                        </p>
+                                                    </div>
                                                 </div>
-
-                                                <Link to={FRONTEND_ROUTES.MEETINGS} className="relative z-10 mt-auto">
-                                                    <Button className="w-full bg-white/5 hover:bg-white/10 text-white border border-white/5 h-10 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all group-hover:bg-blue-600 group-hover:border-blue-500 group-hover:shadow-lg group-hover:shadow-blue-600/20 active:scale-95">
-                                                        Join Tactical Room
+                                                <Link to={FRONTEND_ROUTES.MEETINGS}>
+                                                    <Button className="shrink-0 ml-3 h-7 px-3 text-xs bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 border border-blue-500/20 rounded-lg transition-colors">
+                                                        Join
                                                     </Button>
                                                 </Link>
                                             </div>
@@ -364,33 +282,26 @@ export const HomePage = () => {
                         </div>
                     )}
 
-                    <ProgressLinear
-                        title="Overall Project Velocity"
-                        percentage={stats.completionRate}
-                    />
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 h-full items-stretch">
+                    {/* Charts Row */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                         <IssueDistributionChart data={dashboardData?.distribution} />
                         <SprintStatusCard data={dashboardData?.recentSprints} />
                         <ModuleProgressGauge data={dashboardData?.progress} />
                     </div>
 
-
-                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-fr">
-                        <div className="lg:col-span-1 h-full flex flex-col">
+                    {/* Team Row */}
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+                        <div className="lg:col-span-1">
                             <TopPerformerCard data={dashboardData?.topPerformer || null} />
                         </div>
-                        <div className="lg:col-span-2 h-full flex flex-col">
+                        <div className="lg:col-span-2">
                             <TeamActivitySection activities={dashboardData?.teamActivity || []} />
                         </div>
                     </div>
                 </div>
             </div>
 
-            <CreateProjectModal
-                open={isCreateModalOpen}
-                onClose={() => setIsCreateModalOpen(false)}
-            />
+            <CreateProjectModal open={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} />
         </DashboardLayout>
     );
 };

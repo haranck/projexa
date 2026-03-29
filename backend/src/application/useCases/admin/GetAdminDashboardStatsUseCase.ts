@@ -20,27 +20,89 @@ function getLast6Months(): { label: string; year: number; month: number }[] {
 
 @injectable()
 export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUseCase {
+    private static cache: { data: AdminDashboardStatsDTO; timestamp: number } | null = null;
+    private static CACHE_TTL = 5 * 60 * 1000;
+
     constructor(
         @inject('IStripeService') private readonly stripeService: IStripeService,
     ) { }
 
     async execute(): Promise<AdminDashboardStatsDTO> {
+    
+        const nowTime = Date.now();
+        if (GetAdminDashboardStatsUseCase.cache && (nowTime - GetAdminDashboardStatsUseCase.cache.timestamp < GetAdminDashboardStatsUseCase.CACHE_TTL)) {
+            return GetAdminDashboardStatsUseCase.cache.data;
+        }
+
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
+        const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
         const last6Months = getLast6Months();
+        const stripeStartTimestamp = Math.floor(sixMonthsAgo.getTime() / 1000);
 
-        const [totalUsers, newUsersThisMonth] = await Promise.all([
-            UserModel.countDocuments(),
-            UserModel.countDocuments({ createdAt: { $gte: startOfMonth } })
+        const [userStats, workspaceStats, activeSubscriptions, allInvoices, subscriptionsWithPlan] = await Promise.all([
+            UserModel.aggregate([
+                {
+                    $facet: {
+                        totalUsers: [{ $count: "count" }],
+                        newUsersThisMonth: [
+                            { $match: { createdAt: { $gte: startOfMonth } } },
+                            { $count: "count" }
+                        ],
+                        growth: [
+                            { $match: { createdAt: { $gte: sixMonthsAgo } } },
+                            {
+                                $group: {
+                                    _id: { 
+                                        month: { $month: "$createdAt" }, 
+                                        year: { $year: "$createdAt" } 
+                                    },
+                                    users: { $sum: 1 }
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]),
+            WorkspaceModel.aggregate([
+                {
+                    $facet: {
+                        totalWorkspaces: [{ $count: "count" }],
+                        newWorkspacesThisMonth: [
+                            { $match: { createdAt: { $gte: startOfMonth } } },
+                            { $count: "count" }
+                        ],
+                        topWorkspaces: [
+                            { $addFields: { memberCount: { $size: { $ifNull: ["$members", []] } } } },
+                            { $sort: { memberCount: -1 } },
+                            { $limit: 5 },
+                            { $project: { name: 1, members: { $size: { $ifNull: ["$members", []] } }, plan: { $literal: "Active" } } }
+                        ]
+                    }
+                }
+            ]),
+            SubscriptionModel.countDocuments({ status: 'active' }),
+            this.stripeService.getPaidInvoices(stripeStartTimestamp),
+            SubscriptionModel.find({ stripeCustomerId: { $exists: true } })
+                .select('stripeCustomerId planId status')
+                .populate<{ planId: { name?: string } | null }>('planId', 'name')
+                .sort({ updatedAt: -1 })
+                .lean()
         ]);
 
-        const [totalWorkspaces, newWorkspacesThisMonth] = await Promise.all([
-            WorkspaceModel.countDocuments(),
-            WorkspaceModel.countDocuments({ createdAt: { $gte: startOfMonth } })
-        ]);
-        const activeSubscriptions = await SubscriptionModel.countDocuments({ status: 'active' });
+        const totalUsers = userStats[0].totalUsers[0]?.count || 0;
+        const newUsersThisMonth = userStats[0].newUsersThisMonth[0]?.count || 0;
+        const totalWorkspaces = workspaceStats[0].totalWorkspaces[0]?.count || 0;
+        const newWorkspacesThisMonth = workspaceStats[0].newWorkspacesThisMonth[0]?.count || 0;
+        const topWorkspaces = workspaceStats[0].topWorkspaces;
 
-        const allInvoices = await this.stripeService.getPaidInvoices();
+        const userGrowthByMonth = last6Months.map(({ label, year, month }) => {
+            const match = userStats[0].growth.find((g: { _id: { month: number; year: number }; users: number }) => 
+                g._id.month === (month + 1) && g._id.year === year
+            );
+            return { month: label, users: match?.users || 0 };
+        });
+
         const totalRevenue = allInvoices.reduce((sum, inv) => sum + (inv.amount || 0), 0);
         const revenueThisMonth = allInvoices
             .filter(inv => new Date(inv.paidAt) >= startOfMonth)
@@ -58,29 +120,14 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
             return { month: label, revenue };
         });
 
-        const userGrowthByMonth = await Promise.all(
-            last6Months.map(async ({ label, year, month }) => {
-                const monthStart = new Date(year, month, 1);
-                const monthEnd = new Date(year, month + 1, 1);
-                const users = await UserModel.countDocuments({
-                    createdAt: { $gte: monthStart, $lt: monthEnd }
-                });
-                return { month: label, users };
-            })
-        );
-
-        interface SubscriptionWithPlan {
-            planId: { name?: string } | null;
-            stripeCustomerId?: string;
-        }
-        const subscriptionsWithPlan = await SubscriptionModel.find()
-            .populate<{ planId: { name?: string } | null }>('planId', 'name')
-            .lean<SubscriptionWithPlan[]>();
-
         const customerPlanMap: Record<string, string> = {};
-        for (const sub of subscriptionsWithPlan) {
-            if (sub.stripeCustomerId) {
-                customerPlanMap[sub.stripeCustomerId] = sub.planId?.name || "Unknown";
+        for (const sub of (subscriptionsWithPlan as unknown as { stripeCustomerId: string; status: string; planId: { name?: string } }[])) {
+            if (sub.stripeCustomerId && sub.planId?.name) {
+                // If we already have an active plan for this customer, don't overwrite it with a cancelled one
+                if (customerPlanMap[sub.stripeCustomerId] && sub.status !== 'active') {
+                    continue;
+                }
+                customerPlanMap[sub.stripeCustomerId] = sub.planId.name;
             }
         }
 
@@ -92,6 +139,16 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
                     planRevenueMap[planName] = { revenue: 0, subscriptions: 0 };
                 }
                 planRevenueMap[planName].revenue += inv.amount || 0;
+            }
+        }
+
+        // Count active subscriptions per plan separately for accuracy
+        for (const sub of (subscriptionsWithPlan as unknown as { stripeCustomerId: string; status: string; planId: { name?: string } }[])) {
+            if (sub.status === 'active' && sub.planId?.name) {
+                const planName = sub.planId.name;
+                if (!planRevenueMap[planName]) {
+                    planRevenueMap[planName] = { revenue: 0, subscriptions: 0 };
+                }
                 planRevenueMap[planName].subscriptions += 1;
             }
         }
@@ -100,19 +157,9 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
             plan,
             revenue: data.revenue,
             subscriptions: data.subscriptions
-        }));
+        })).filter(p => p.revenue > 0 || p.subscriptions > 0);
 
-        const workspaces = await WorkspaceModel.find().lean().limit(20);
-        const topWorkspaces = workspaces
-            .sort((a, b) => (b.members?.length || 0) - (a.members?.length || 0))
-            .slice(0, 5)
-            .map(ws => ({
-                name: ws.name,
-                members: ws.members?.length || 0,
-                plan: "Active"
-            }));
-
-        return {
+        const result = {
             totalUsers,
             newUsersThisMonth,
             totalWorkspaces,
@@ -125,5 +172,9 @@ export class GetAdminDashboardStatsUseCase implements IGetAdminDashboardStatsUse
             revenueByPlan,
             topWorkspaces
         };
+
+        GetAdminDashboardStatsUseCase.cache = { data: result, timestamp: Date.now() };
+
+        return result;
     }
 }

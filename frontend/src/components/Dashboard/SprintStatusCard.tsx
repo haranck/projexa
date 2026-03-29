@@ -1,5 +1,5 @@
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { Layers, PlayCircle, CheckCircle2 } from "lucide-react";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import { Layers, PlayCircle, CheckCircle2, Clock } from "lucide-react";
 import type { SprintSummary } from "../../types/dashboard";
 
 interface SprintStatusCardProps {
@@ -10,63 +10,57 @@ export const SprintStatusCard = ({ data }: SprintStatusCardProps) => {
     if (!data) return null;
 
     return (
-        <Card className="bg-[#141820]/80 backdrop-blur-xl border-white/5 h-[450px] flex flex-col py-0 gap-0 relative group overflow-hidden">
-            <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/5 blur-[100px] -mr-32 -mt-32 pointer-events-none group-hover:opacity-20 transition-opacity duration-500" />
-
-            <CardHeader className="flex flex-row items-center gap-4 pb-4 relative z-10">
-                <div className="p-3 rounded-2xl bg-purple-500/10 text-purple-500 border border-purple-500/20 shadow-inner">
-                    <Layers className="w-5 h-5" />
+        <Card className="bg-[#0f1117] border border-white/6 h-[440px] flex flex-col py-0 gap-0 relative rounded-2xl hover:border-white/1 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center gap-3 px-5 pt-5 pb-4 border-b border-white/5">
+                <div className="p-2 rounded-xl bg-violet-500/10 border border-violet-500/20">
+                    <Layers className="w-4 h-4 text-violet-400" />
                 </div>
                 <div>
-                    <CardTitle className="text-xl font-black text-white tracking-tight leading-none uppercase">
-                        Sprint Ledger
-                    </CardTitle>
-                    <p className="text-zinc-600 text-[10px] font-black uppercase tracking-[0.2em] mt-2">Active Cycles</p>
+                    <p className="text-sm font-semibold text-white">Sprint Tracker</p>
+                    <p className="text-xs text-zinc-500 mt-0.5">{data.length} cycle{data.length !== 1 ? 's' : ''} tracked</p>
                 </div>
             </CardHeader>
 
-            <CardContent className="flex-1 overflow-y-auto custom-scrollbar relative z-10 space-y-4 px-6">
+            <CardContent className="flex-1 overflow-y-auto custom-scrollbar px-5 pb-5 pt-4 space-y-3">
                 {data.map((sprint, index) => {
                     const isActive = sprint.status === 'ACTIVE';
-                    const StatusIcon = isActive ? PlayCircle : CheckCircle2;
-
                     return (
                         <div
                             key={sprint.id}
-                            className="p-5 rounded-2xl bg-white/2 border border-white/5 hover:bg-white/5 hover:border-white/10 transition-all duration-300 group/item cursor-default"
+                            className="p-4 rounded-xl bg-white/3 border border-white/6 hover:bg-white/5 hover:border-white/1 transition-all duration-200 cursor-default"
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="space-y-1">
-                                    <h4 className="text-sm font-black text-white group-hover/item:text-blue-400 transition-colors uppercase tracking-tight">{sprint.name}</h4>
-                                    <div className="flex items-center gap-2">
-                                        <div className={`p-1 rounded-md bg-black/20 ${isActive ? 'text-blue-400' : 'text-emerald-400'}`}>
-                                            <StatusIcon className="w-3 h-3" />
-                                        </div>
-                                        <span className="text-[9px] font-black text-zinc-500 uppercase tracking-widest">{sprint.status}</span>
+                            <div className="flex justify-between items-start mb-3">
+                                <div>
+                                    <h4 className="text-sm font-semibold text-white truncate max-w-[160px]">{sprint.name}</h4>
+                                    <div className="flex items-center gap-1.5 mt-1">
+                                        {isActive ? (
+                                            <PlayCircle className="w-3 h-3 text-emerald-400" />
+                                        ) : (
+                                            <CheckCircle2 className="w-3 h-3 text-zinc-500" />
+                                        )}
+                                        <span className={`text-[11px] font-medium ${isActive ? 'text-emerald-400' : 'text-zinc-500'}`}>
+                                            {isActive ? 'Active' : 'Completed'}
+                                        </span>
                                     </div>
                                 </div>
-                                <span className="text-[10px] font-black text-purple-400 bg-purple-500/10 px-2.5 py-1 rounded-lg border border-purple-500/20 uppercase tracking-widest shadow-inner">
+                                <span className={`text-xs font-bold px-2 py-1 rounded-lg ${isActive ? 'bg-violet-500/10 text-violet-400 border border-violet-500/20' : 'bg-white/4 text-zinc-400 border border-white/6'}`}>
                                     {sprint.progress}%
                                 </span>
                             </div>
-                            <div className="h-2 w-full bg-black/40 rounded-full overflow-hidden border border-white/5 p-px">
+                            <div className="h-1.5 w-full bg-white/4 rounded-full overflow-hidden">
                                 <div
-                                    className="h-full bg-linear-to-r from-purple-600 to-blue-500 rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(168,85,247,0.3)] relative"
-                                    style={{ width: `${sprint.progress}%`, transitionDelay: `${index * 100}ms` }}
-                                >
-                                    <div className="absolute inset-0 bg-linear-to-r from-white/20 to-transparent" />
-                                </div>
+                                    className={`h-full rounded-full transition-all duration-700 ease-out ${isActive ? 'bg-linear-to-r from-violet-500 to-blue-400' : 'bg-linear-to-r from-zinc-600 to-zinc-500'}`}
+                                    style={{ width: `${sprint.progress}%`, transitionDelay: `${index * 80}ms` }}
+                                />
                             </div>
                         </div>
                     );
                 })}
 
                 {data.length === 0 && (
-                    <div className="h-full flex flex-col items-center justify-center py-10 opacity-40">
-                        <div className="w-16 h-16 rounded-[2rem] bg-white/2 border border-white/5 flex items-center justify-center mb-4">
-                            <Layers className="w-8 h-8 text-zinc-700" />
-                        </div>
-                        <p className="text-zinc-500 text-[10px] font-black uppercase tracking-widest">No active sprints identified</p>
+                    <div className="h-full flex flex-col items-center justify-center py-16 opacity-50">
+                        <Clock className="w-8 h-8 text-zinc-600 mb-3" />
+                        <p className="text-sm text-zinc-500">No sprints yet</p>
                     </div>
                 )}
             </CardContent>

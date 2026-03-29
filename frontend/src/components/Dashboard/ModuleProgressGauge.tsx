@@ -1,6 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { CheckCircle2, Clock, Activity } from "lucide-react";
+import { Card, CardContent, CardHeader } from "../ui/card";
+import { CheckCircle2, Clock, GitBranch } from "lucide-react";
 import { Button } from "../ui/button";
 import type { ModuleProgress } from "../../types/dashboard";
 import { Link } from "react-router-dom";
@@ -14,43 +14,41 @@ export const ModuleProgressGauge = ({ data }: ModuleProgressGaugeProps) => {
     const total = data?.totalPoints || 0;
     const completed = data?.doneCount || 0;
     const pending = (data?.todoCount || 0) + (data?.inProgressCount || 0);
+    const completionPct = total > 0 ? Math.round((completed / total) * 100) : 0;
 
     const chartData = [
-        { name: "Completed", value: completed, color: "#10b981" },
-        { name: "Remaining", value: Math.max(total - completed, total === 0 ? 1 : 0), color: "rgba(255,255,255,0.03)" },
+        { name: "Completed", value: completed || 0, color: "#10b981" },
+        { name: "Remaining", value: Math.max(total - completed, total === 0 ? 1 : 0), color: "rgba(255,255,255,0.04)" },
     ];
 
     return (
-        <Card className="bg-[#141820]/80 backdrop-blur-xl border-white/5 h-[450px] flex flex-col py-0 gap-0 overflow-hidden relative group">
-            {/* Subtle Gradient background matching the image style */}
-            <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 blur-[100px] -mr-32 -mt-32 pointer-events-none group-hover:opacity-20 transition-opacity duration-500" />
-
-            <CardHeader className="flex flex-row items-center justify-between pb-0 pt-4 px-4 relative z-10 shrink-0">
-                <div className="flex flex-col">
-                    <CardTitle className="text-lg font-black text-white tracking-tighter uppercase leading-none">
-                        Task Analysis
-                    </CardTitle>
-                    <p className="text-zinc-600 text-[9px] font-black uppercase tracking-[0.2em] mt-1.5">
-                        {data?.sprintName || "No Module Active"}
-                    </p>
+        <Card className="bg-[#0f1117] border border-white/  6 h-[440px] flex flex-col py-0 gap-0 overflow-hidden relative rounded-2xl hover:border-white/1 transition-all duration-300">
+            <CardHeader className="flex flex-row items-center justify-between px-5 pt-5 pb-4 border-b border-white/5">
+                <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                        <GitBranch className="w-4 h-4 text-emerald-400" />
+                    </div>
+                    <div>
+                        <p className="text-sm font-semibold text-white">Task Overview</p>
+                        <p className="text-xs text-zinc-500 mt-0.5 truncate max-w-[120px]">{data?.sprintName || "No active sprint"}</p>
+                    </div>
                 </div>
-                <div className="p-2 rounded-xl bg-blue-500/10 text-blue-500 border border-blue-500/20 shadow-inner">
-                    <Activity className="w-4 h-4" />
-                </div>
+                <span className="text-2xl font-bold text-emerald-400 tabular-nums">{completionPct}%</span>
             </CardHeader>
 
-            <CardContent className="flex flex-col gap-3 pt-0 px-5 pb-5 relative z-10 overflow-y-auto custom-scrollbar">
+            <CardContent className="flex flex-col gap-2 px-5 pb-5 pt-3 flex-1">
+                {/* Gauge */}
                 <div className="relative h-[120px] w-full flex items-center justify-center shrink-0">
                     <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                             <Pie
                                 data={chartData}
                                 cx="50%"
-                                cy="75%"
-                                startAngle={210}
-                                endAngle={-30}
-                                innerRadius={45}
-                                outerRadius={65}
+                                cy="100%"
+                                startAngle={180}
+                                endAngle={0}
+                                innerRadius={75}
+                                outerRadius={100}
                                 stroke="none"
                                 dataKey="value"
                             >
@@ -58,60 +56,56 @@ export const ModuleProgressGauge = ({ data }: ModuleProgressGaugeProps) => {
                                     <Cell
                                         key={`cell-${index}`}
                                         fill={entry.color}
-                                        className={index === 0 ? "drop-shadow-[0_0_15px_rgba(16,185,129,0.3)]" : ""}
                                     />
                                 ))}
                             </Pie>
                         </PieChart>
                     </ResponsiveContainer>
-                    <div className="absolute top-[48%] left-1/2 -translate-x-1/2 -translate-y-1/4 text-center">
-                        <span className="text-xl font-black text-white tracking-tighter block leading-none font-mono">{completed}</span>
-                        <p className="text-[8px] font-black uppercase tracking-[0.2em] text-emerald-500/80 mt-0.5">of {total} Done</p>
+                    <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center pb-1">
+                        <span className="text-3xl font-bold text-white tabular-nums leading-none block">{completed}</span>
+                        <span className="text-[10px] text-zinc-500 block leading-tight mt-1">of {total} done</span>
                     </div>
                 </div>
 
-                <div className="grid grid-cols-2 gap-2 shrink-0">
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-white/2 border border-white/5 group/item cursor-default hover:bg-white/5 transition-colors">
-                        <div className="text-amber-500 p-1 bg-amber-500/10 rounded-md border border-amber-500/20 group-hover/item:scale-110 transition-transform">
-                            <Clock className="w-3 h-3" />
+                {/* Stats row */}
+                <div className="grid grid-cols-2 gap-2 mt-auto shrink-0">
+                    <div className="flex items-center gap-2 p-1.5 rounded-lg justify-center bg-white/3 border border-white/6">
+                        <div className="p-1 bg-amber-500/10 rounded-md border border-amber-500/20">
+                            <Clock className="w-3 h-3 text-amber-400" />
                         </div>
-                        <div>
-                            <span className="text-sm font-black text-white block leading-none">{pending}</span>
-                            <span className="text-[7px] font-black uppercase tracking-widest text-zinc-600">Pending</span>
+                        <div className="flex flex-col">
+                            <span className="text-sm font-bold text-white leading-none mb-0.5">{pending}</span>
+                            <span className="text-[9px] text-zinc-500 leading-none">Pending</span>
                         </div>
                     </div>
-
-                    <div className="flex items-center gap-2 p-2 rounded-lg bg-white/2 border border-white/5 group/item cursor-default hover:bg-white/5 transition-colors">
-                        <div className="text-emerald-500 p-1 bg-emerald-500/10 rounded-md border border-emerald-500/20 group-hover/item:scale-110 transition-transform">
-                            <CheckCircle2 className="w-3 h-3" />
+                    <div className="flex items-center gap-2 p-1.5 rounded-lg justify-center bg-white/3 border border-white/6">
+                        <div className="p-1 bg-emerald-500/10 rounded-md border border-emerald-500/20">
+                            <CheckCircle2 className="w-3 h-3 text-emerald-400" />
                         </div>
-                        <div>
-                            <span className="text-sm font-black text-white block leading-none">{completed}</span>
-                            <span className="text-[7px] font-black uppercase tracking-widest text-zinc-600">Done</span>
+                        <div className="flex flex-col">
+                            <span className="text-sm font-bold text-white leading-none mb-0.5">{completed}</span>
+                            <span className="text-[9px] text-zinc-500 leading-none">Done</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="flex justify-around items-center py-2 px-2 rounded-lg bg-black/20 border border-white/5 shadow-inner shrink-0">
-                    <div className="text-center group/sub">
-                        <span className="text-xs font-black text-white block group-hover/sub:text-blue-400 transition-colors uppercase tracking-tight">{data?.storyCount || 0}</span>
-                        <span className="text-[7px] font-black uppercase tracking-widest text-zinc-600">Stories</span>
-                    </div>
-                    <div className="w-px h-5 bg-white/5" />
-                    <div className="text-center group/sub">
-                        <span className="text-xs font-black text-white block group-hover/sub:text-emerald-400 transition-colors uppercase tracking-tight">{data?.taskCount || 0}</span>
-                        <span className="text-[7px] font-black uppercase tracking-widest text-zinc-600">Tasks</span>
-                    </div>
-                    <div className="w-px h-5 bg-white/5" />
-                    <div className="text-center group/sub">
-                        <span className="text-xs font-black text-white block group-hover/sub:text-rose-400 transition-colors uppercase tracking-tight">{data?.bugCount || 0}</span>
-                        <span className="text-[7px] font-black uppercase tracking-widest text-zinc-600">Bugs</span>
-                    </div>
+                {/* Type breakdown */}
+                <div className="flex items-center justify-around p-1.5 rounded-lg bg-white/3 border border-white/6 shrink-0">
+                    {[
+                        { label: "Stories", count: data?.storyCount || 0, color: "text-indigo-400" },
+                        { label: "Tasks", count: data?.taskCount || 0, color: "text-emerald-400" },
+                        { label: "Bugs", count: data?.bugCount || 0, color: "text-rose-400" },
+                    ].map((item) => (
+                        <div key={item.label} className="flex items-center gap-1.5">
+                            <span className={`text-xs font-bold ${item.color} leading-none`}>{item.count}</span>
+                            <span className="text-[9px] text-zinc-500 leading-none">{item.label}</span>
+                        </div>
+                    ))}
                 </div>
 
-                <Link to={FRONTEND_ROUTES.BOARD} className="w-full">
-                    <Button className="w-full bg-blue-600 hover:bg-blue-500 text-white font-black h-8 rounded-lg transition-all shadow-xl shadow-blue-500/20 active:scale-[0.98] border border-white/5 uppercase tracking-widest text-[9px] shrink-0">
-                        Access Operations
+                <Link to={FRONTEND_ROUTES.BOARD} className="w-full mt-auto">
+                    <Button className="w-full bg-emerald-600/10 hover:bg-emerald-600 text-emerald-400 hover:text-white border border-emerald-600/20 hover:border-emerald-600 h-9 rounded-xl text-xs font-semibold transition-all duration-200 shadow-none hover:shadow-lg hover:shadow-emerald-500/20">
+                        View Board
                     </Button>
                 </Link>
             </CardContent>

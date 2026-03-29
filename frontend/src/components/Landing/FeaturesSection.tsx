@@ -1,222 +1,153 @@
-import { Link } from "react-router-dom";
-import { ArrowRight, Target, MessageSquare, TrendingUp, Video, Shield, MessageCircle, Sparkles, BarChart, Zap, Users, Bell, Layout } from "lucide-react";
-import { Button } from "../ui/button";
+import { Target, MessageSquare, TrendingUp, Video, Shield, MessageCircle, Sparkles, BarChart, Zap, Users, Bell, Layout } from "lucide-react";
 import { Card } from "../ui/card";
-import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
 const FeaturesSection = () => {
   const features = [
     {
       icon: Target,
-      title: "Issue Tracking",
-      description: "Create, assign, and track tasks with ease",
-      color: "text-blue-500",
+      title: "Advanced Issue Tracking",
+      description: "Create, assign, and track tasks with precision using custom workflows and automated status updates.",
+      color: "text-indigo-400",
+      bg: "bg-indigo-500/10",
     },
     {
       icon: MessageSquare,
-      title: "Team Collaboration",
-      description: "Real-time chat, voice & video meetings",
-      color: "text-purple-500",
+      title: "Unified Collaboration",
+      description: "Keep your team in sync with real-time chat, structured threads, and seamless file sharing.",
+      color: "text-cyan-400",
+      bg: "bg-cyan-500/10",
     },
     {
       icon: TrendingUp,
-      title: "Progress Tracking",
-      description: "Sprints, epics, and performance insights",
-      color: "text-green-500",
+      title: "Inteligent Metrics",
+      description: "Gain deep insights with automated sprint reports, velocity charts, and burndown tracking.",
+      color: "text-purple-400",
+      bg: "bg-purple-500/10",
     },
     {
       icon: Video,
-      title: "Video Conferencing",
-      description: "Built-in video calls for seamless collaboration",
-      color: "text-red-500",
+      title: "Crystal Clear Meetings",
+      description: "High-definition video conferencing integrated directly into your workspace for instant alignment.",
+      color: "text-rose-400",
+      bg: "bg-rose-500/10",
     },
     {
       icon: Shield,
-      title: "Role Management",
-      description: "Granular permissions and access control",
-      color: "text-yellow-500",
+      title: "Security & Governance",
+      description: "Enterprise-grade permissions and audit logs ensure your data stays secure and compliant.",
+      color: "text-emerald-400",
+      bg: "bg-emerald-500/10",
     },
     {
       icon: MessageCircle,
-      title: "Real-Time Chat",
-      description: "Instant messaging with file sharing",
-      color: "text-cyan-500",
+      title: "Interactive Hub",
+      description: "A centralized command center for all team activities, notifications, and cross-project updates.",
+      color: "text-amber-400",
+      bg: "bg-amber-500/10",
     },
   ];
 
   const benefits = [
     {
       icon: Layout,
-      title: "Beautiful and intuitive UI",
-      description: "Clean, modern interface designed for productivity",
+      title: "Immersive UI/UX",
+      description: "A meticulously crafted interface that prioritizes focus and minimizes cognitive load.",
     },
     {
       icon: BarChart,
-      title: "Powerful analytics dashboard",
-      description: "Deep insights into team performance and metrics",
+      title: "Custom Dashboards",
+      description: "Visualise exactly what matters to you with drag-and-drop widgets and live data.",
     },
     {
       icon: Zap,
-      title: "Sprint and roadmap automation",
-      description: "Automate repetitive tasks and workflows",
+      title: "Seamless Automation",
+      description: "Eliminate repetitive tasks with powerful triggers and custom logic engines.",
     },
     {
       icon: Users,
-      title: "Deep customization of rules & permissions",
-      description: "Tailor the platform to your team's needs",
+      title: "Team Harmony",
+      description: "Foster a culture of transparency and accountability with shared goals and visibility.",
     },
     {
       icon: Sparkles,
-      title: "Blazing fast performance",
-      description: "Optimized for speed and reliability",
+      title: "Ultra-Low Latency",
+      description: "Real-time updates delivered in milliseconds using modern websocket technology.",
     },
     {
       icon: Bell,
-      title: "Real-time updates and notifications",
-      description: "Stay informed with instant alerts",
+      title: "Smart Notifications",
+      description: "Stay informed without being overwhelmed by intelligent, filtered alerting.",
     },
   ];
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-[#0a0a0a] via-[#0f0f23] to-[#0a0a0a]">
-      {/* Hero Section */}
-      <section className="pt-32 pb-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div className="space-y-8">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white leading-tight">
-                Transform the Way Your{" "}
-                <span className="text-[#3b82f6] bg-linear-to-br from-blue-500 to-purple-600 bg-clip-text">
-                  Team
-                </span>{" "}
-                Works
-              </h1>
-              <p className="text-lg text-zinc-400 max-w-xl">
-                Powerful project management with real-time{" "}
-                <span className="text-[#10b981]">collaboration</span>, issue tracking, sprint planning, analytics, and team communication — all in one beautifully designed platform.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link to={FRONTEND_ROUTES.SIGNUP}>
-                  <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white h-12 px-8 text-base group">
-                    Start Your Project
-                    <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
-                  </Button>
-                </Link>
-                <Button variant="outline" className="h-12 px-8 text-base border-zinc-700 hover:bg-white/5">
-                  Join ProJexa
-                </Button>
-              </div>
-            </div>
+    <div className="bg-[#030303] py-24 relative overflow-hidden">
+      {/* Decorative Glow */}
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-64 h-64 bg-indigo-600/10 blur-[100px] rounded-full" />
+      <div className="absolute bottom-0 right-0 w-96 h-96 bg-cyan-600/5 blur-[120px] rounded-full" />
 
-            {/* Right Content - Dashboard Mockup */}
-            <div className="relative">
-              <div className="relative bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-6 border border-white/10 shadow-2xl">
-                {/* Browser Chrome */}
-                <div className="flex items-center gap-2 mb-4">
-                  <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                  <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                </div>
-
-                {/* Dashboard Cards */}
-                <div className="grid grid-cols-3 gap-3 mb-4">
-                  {[1, 2, 3].map((i) => (
-                    <div key={i} className="bg-[#2a2a4e] rounded-lg p-4 border border-blue-500/20">
-                      <div className="w-8 h-8 bg-blue-500/20 rounded-lg mb-2"></div>
-                      <div className="h-2 bg-white/10 rounded w-3/4"></div>
-                    </div>
-                  ))}
-                </div>
-
-                {/* Progress Bar */}
-                <div className="bg-[#2a2a4e] rounded-lg p-4 border border-green-500/20">
-                  <div className="h-2 bg-green-500 rounded-full w-2/3"></div>
-                </div>
-
-                {/* Glow Effect */}
-                <div className="absolute -inset-1 bg-linear-to-r from-blue-500 to-purple-600 rounded-2xl opacity-20 blur-xl -z-10"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Grid */}
-      <section id="features" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Everything You Need for Success
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Features Section */}
+        <section id="features" className="mb-32">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
+              Powerful Tools for <span className="text-indigo-400">Exceptional</span> Teams
             </h2>
             <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-              The ultimate toolkit for modern teams — collaborate, track progress, and deliver results.
+              ProJexa provides a comprehensive suite of features designed to scale with your team&apos;s ambition.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {features.map((feature, index) => (
               <Card
                 key={index}
-                className="bg-[#1a1a2e] border-white/10 p-6 hover:bg-[#1f1f3a] transition-all duration-300 hover:scale-105 hover:border-blue-500/30 group"
+                className="bg-zinc-900/40 border-white/5 p-8 hover:bg-zinc-900/60 transition-all duration-300 hover:border-indigo-500/20 group hover:-translate-y-1 backdrop-blur-sm"
               >
-                <div className={`w-12 h-12 rounded-lg bg-linear-to-br from-blue-500/10 to-purple-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform`}>
-                  <feature.icon className={`h-6 w-6 ${feature.color}`} />
+                <div className={`w-14 h-14 rounded-2xl ${feature.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  <feature.icon className={`h-7 w-7 ${feature.color}`} />
                 </div>
-                <h3 className="text-xl font-semibold text-white mb-2">
+                <h3 className="text-xl font-bold text-white mb-3 tracking-tight">
                   {feature.title}
                 </h3>
-                <p className="text-zinc-400 text-sm">{feature.description}</p>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  {feature.description}
+                </p>
               </Card>
             ))}
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Stats Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
-          <div className="bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-8 md:p-12 border border-white/10">
-            <h2 className="text-3xl md:text-4xl font-bold text-white text-center mb-4">
-              Built for Modern Teams
-            </h2>
-            <p className="text-zinc-400 text-center mb-12 max-w-2xl mx-auto">
-              Trusted by thousands of teams worldwide managing their most important career and personal needs.
-            </p>
-
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-transparent mb-2 bg-linear-to-r from-blue-500 to-purple-600 bg-clip-text">
-                  10K+
-                </div>
-                <div className="text-zinc-400">Teams managed</div>
+        {/* Stats / Proof Section */}
+        <section className="mb-32">
+          <div className="bg-linear-to-br from-zinc-900/50 via-zinc-900/20 to-zinc-900/50 rounded-[32px] p-8 md:p-16 border border-white/5 relative overflow-hidden">
+            <div className="absolute inset-0 bg-indigo-500/5 blur-3xl" />
+            
+            <div className="relative z-10 grid md:grid-cols-3 gap-12 text-center">
+              <div className="space-y-2">
+                <div className="text-5xl font-bold text-white tracking-tighter">10k+</div>
+                <p className="text-zinc-500 font-medium uppercase text-xs tracking-[0.2em]">Active Teams</p>
               </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-transparent mb-2 bg-linear-to-r from-green-500 to-cyan-600 bg-clip-text">
-                  50K+
-                </div>
-                <div className="text-zinc-400">Hours saved</div>
+              <div className="space-y-2">
+                <div className="text-5xl font-bold text-white tracking-tighter">50M+</div>
+                <p className="text-zinc-500 font-medium uppercase text-xs tracking-[0.2em]">Tasks Completed</p>
               </div>
-              <div className="text-center">
-                <div className="text-4xl md:text-5xl font-bold text-transparent mb-2 bg-linear-to-r from-yellow-500 to-red-600 bg-clip-text">
-                  99.9%
-                </div>
-                <div className="text-zinc-400">Uptime</div>
+              <div className="space-y-2">
+                <div className="text-5xl font-bold text-white tracking-tighter">99.9%</div>
+                <p className="text-zinc-500 font-medium uppercase text-xs tracking-[0.2em]">SLA Uptime</p>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* Benefits Section */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
-              Why Choose ProJexa
+        {/* Benefits Grid (Bento Style) */}
+        <section id="about" className="mb-24">
+          <div className="text-center mb-16 space-y-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-white tracking-tight">
+              Engineered for <span className="text-cyan-400">Excellence</span>
             </h2>
             <p className="text-zinc-400 text-lg max-w-2xl mx-auto">
-              Experience the difference with our powerful features and intuitive design.
+              We focus on the details so you can focus on building what matters.
             </p>
           </div>
 
@@ -224,44 +155,22 @@ const FeaturesSection = () => {
             {benefits.map((benefit, index) => (
               <div
                 key={index}
-                className="bg-[#1a1a2e] border border-white/10 rounded-xl p-6 hover:bg-[#1f1f3a] transition-all duration-300 hover:border-blue-500/30"
+                className="bg-zinc-900/20 border border-white/5 rounded-2xl p-8 hover:bg-zinc-900/40 transition-all duration-300 hover:border-cyan-500/20"
               >
-                <div className="w-12 h-12 rounded-lg bg-blue-500/10 flex items-center justify-center mb-4">
-                  <benefit.icon className="h-6 w-6 text-blue-500" />
+                <div className="w-12 h-12 rounded-xl bg-cyan-500/5 flex items-center justify-center mb-6">
+                  <benefit.icon className="h-6 w-6 text-cyan-400" />
                 </div>
-                <h3 className="text-lg font-semibold text-white mb-2">
+                <h3 className="text-lg font-bold text-white mb-3">
                   {benefit.title}
                 </h3>
-                <p className="text-zinc-400 text-sm">{benefit.description}</p>
+                <p className="text-zinc-400 text-sm leading-relaxed">
+                  {benefit.description}
+                </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-linear-to-br from-[#1a1a2e] to-[#16213e] rounded-2xl p-12 text-center border border-white/10 relative overflow-hidden">
-            {/* Background Glow */}
-            <div className="absolute inset-0 bg-linear-to-r from-blue-500/10 to-purple-500/10 blur-3xl"></div>
-
-            <div className="relative z-10">
-              <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
-                Start Managing Your Projects Smarter
-              </h2>
-              <p className="text-zinc-400 mb-8 max-w-2xl mx-auto">
-                Join thousands of teams already using TeamSync to collaborate better and deliver faster.
-              </p>
-              <Link to={FRONTEND_ROUTES.SIGNUP}>
-                <Button className="bg-[#3b82f6] hover:bg-[#2563eb] text-white h-12 px-8 text-base">
-                  Get Started Free
-                </Button>
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </div>
   );
 };
