@@ -6,13 +6,14 @@ import { IJwtService } from "../../../domain/interfaces/services/IJwtService";
 import { inject, injectable } from "tsyringe";
 import { AdminLoginResponseDTO } from "../../dtos/admin/responseDTOs/AdminLoginResponseDTO";
 import { env } from "../../../config/envValidation";
+import { AdminDTOmapper } from "../../mappers/Admin/AdminDTOmapper";
 
 @injectable()
 export class AdminLoginUseCase implements IAdminLoginUseCase {
     constructor(
         @inject('IJwtService') private _jwtService: IJwtService
     ) { }
-    
+
     async execute(dto: AdminLoginDTO): Promise<AdminLoginResponseDTO> {
         const { email, password } = dto;
         if (email !== env.ADMIN_EMAIL || password !== env.ADMIN_PASSWORD) {
@@ -26,13 +27,7 @@ export class AdminLoginUseCase implements IAdminLoginUseCase {
 
         const accessToken = this._jwtService.signAccessToken(payload);
         const refreshToken = this._jwtService.signRefreshToken(payload)
-        return {
-            accessToken,
-            refreshToken,
-            admin: {
-                id: 'ADMIN',
-                email: env.ADMIN_EMAIL,
-            },
-        };
+
+        return AdminDTOmapper.toLoginResponseDTO(accessToken, refreshToken, env.ADMIN_EMAIL);
     }
 }

@@ -1,29 +1,13 @@
-# version: '3.8'
-
 services:
   backend:
     build: .
     ports:
       - "4000:4000"
-    env_file:
-      - .env
     environment:
-      - MONGODB_URI=mongodb://mongodb:27017/projexa
+      - DOPPLER_TOKEN=${DOPPLER_TOKEN}
       - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - NODE_ENV=production
     depends_on:
-      - mongodb
       - redis
-    networks:
-      - app-network
-
-  mongodb:
-    image: mongo:latest
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongodb_data:/data/db
     networks:
       - app-network
 
@@ -37,6 +21,3 @@ services:
 networks:
   app-network:
     driver: bridge
-
-volumes:
-  mongodb_data:

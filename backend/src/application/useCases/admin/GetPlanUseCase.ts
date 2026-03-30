@@ -2,6 +2,7 @@ import { injectable, inject } from "tsyringe";
 import { GetPlanResponseDTO } from "../../dtos/admin/responseDTOs/GetPlanResponseDTO";
 import { IPlanRepository } from "../../../domain/interfaces/repositories/IPlanRepository";
 import { IGetPlanUseCase } from "../../interface/admin/IGetPlanUseCase";
+import { AdminDTOmapper } from "../../mappers/Admin/AdminDTOmapper";
 
 @injectable()
 export class GetPlanUseCase implements IGetPlanUseCase {
@@ -10,16 +11,6 @@ export class GetPlanUseCase implements IGetPlanUseCase {
     ) { }
     async execute(): Promise<{ data: GetPlanResponseDTO[] }> {
         const plans = await this._planRepo.getAllPlans();
-        const mappedPlans = plans.map(plan => ({
-            id: plan._id?.toString(),
-            name: plan.name,
-            price: plan.price,
-            maxMembers: plan.maxMembers,
-            maxProjects: plan.maxProjects,
-            interval: plan.interval,
-            features: plan.features,
-            isActive: plan.isActive
-        }));
-        return { data: mappedPlans };
+        return { data: AdminDTOmapper.toGetPlanResponseDTO(plans) };
     }
-}   
+}

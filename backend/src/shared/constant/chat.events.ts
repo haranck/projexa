@@ -1,0 +1,16 @@
+export const CHAT_EVENTS = {
+    JOIN_ROOM: "chat:join",
+    SEND_MESSAGE: "chat:send",
+    RECEIVE_MESSAGE: "chat:receive",
+    TYPING: "chat:typing",
+    STOP_TYPING: "chat:stopTyping",
+    GET_HISTORY: "chat:getHistory",
+    DELETE_MESSAGE: "chat:delete",
+    MESSAGE_DELETED: "chat:deleted",
+    READ: "chat:read",
+    READ_UPDATE: "chat:readUpdate",
+    USER_ONLINE: "user:online",
+    USER_OFFLINE: "user:offline",
+    GET_ONLINE_USERS: "chat:getOnlineUsers",
+    ONLINE_USERS_LIST: "chat:onlineUsersList",
+}

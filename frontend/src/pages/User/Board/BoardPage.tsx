@@ -6,7 +6,8 @@ import { useGetAllIssues } from "@/hooks/Issues/IssueHooks";
 import { useSelector } from "react-redux";
 import type { RootState } from "@/store/store";
 import { useMemo, useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { FRONTEND_ROUTES } from "@/constants/frontendRoutes";
 import { filterIssues, type IssueItem } from "@/utils/filterIssues";
 import { IssueStatus, IssueType } from "@/services/Issue/IssueService";
 import { useCompleteSprint, useGetSprints } from "@/hooks/sprint/SprintHooks";
@@ -41,6 +42,7 @@ export const BoardPage = () => {
     const [selectedDrawerIssueId, setSelectedDrawerIssueId] = useState<string | null>(null);
     const queryClient = useQueryClient();
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
         const state = location.state as { selectedIssueId?: string };
@@ -67,7 +69,10 @@ export const BoardPage = () => {
     });
     const { data: sprintResponse, isLoading: isLoadingSprints } = useGetSprints(currentProject?._id || '');
     const sprints = (sprintResponse?.data || []) as ISprintEntity[];
-    const activeSprint = sprints.find(s => s.status === SprintStatus.ACTIVE);
+    
+    const activeSprints = useMemo(() => sprints.filter(s => s.status === SprintStatus.ACTIVE), [sprints]);
+    const activeSprint = activeSprints[0];
+    const hasActiveSprints = activeSprints.length > 0;
 
     const { mutate: executeCompleteSprint, isPending: isCompletingSpring } = useCompleteSprint(currentProject?._id || '');
 
@@ -93,15 +98,16 @@ export const BoardPage = () => {
     const epics = allIssues.filter(i => i.issueType === IssueType.EPIC);
 
     const filteredIssues = useMemo(() => {
+        const effectiveSprintId = selectedSprintId !== null ? selectedSprintId : activeSprints.map(s => s._id);
         const result = filterIssues(allIssues, {
             assigneeId: selectedAssignee,
             issueType: selectedIssueType,
             parentIssueId: selectedEpicId,
-            sprintId: selectedSprintId,
+            sprintId: effectiveSprintId,
             searchQuery: searchQuery
         });
         return result;
-    }, [allIssues, selectedAssignee, selectedIssueType, selectedEpicId, selectedSprintId, searchQuery]);
+    }, [allIssues, selectedAssignee, selectedIssueType, selectedEpicId, selectedSprintId, searchQuery, activeSprints]);
 
     const columns = useMemo(() => {
         const boardIssues = filteredIssues.filter(i => i.issueType !== IssueType.EPIC);
@@ -126,6 +132,13 @@ export const BoardPage = () => {
                 count: boardIssues.filter(i => i.status === IssueStatus.DONE).length,
                 borderColor: "border-emerald-400",
                 issues: boardIssues.filter(i => i.status === IssueStatus.DONE)
+            },
+            {
+                title: "HOLD",
+                status: IssueStatus.HOLD,
+                count: boardIssues.filter(i => i.status === IssueStatus.HOLD).length,
+                borderColor: "border-orange-400",
+                issues: boardIssues.filter(i => i.status === IssueStatus.HOLD)
             }
         ];
     }, [filteredIssues]);
@@ -163,7 +176,6 @@ export const BoardPage = () => {
         const issueId = active.id as string;
         let newStatus: IssueStatus;
 
-        // Check if dropped over a column (status id) or another issue
         if (Object.values(IssueStatus).includes(over.id as IssueStatus)) {
             newStatus = over.id as IssueStatus;
         } else {
@@ -371,38 +383,56 @@ export const BoardPage = () => {
                 </div>
 
                 {/* Board Columns */}
-                <DndContext
-                    sensors={sensors}
-                    onDragStart={handleDragStart}
-                    onDragEnd={handleDragEnd}
-                >
-                    <div className="flex gap-6 flex-1 min-h-[500px] overflow-x-auto pb-4">
-                        {columns.map((column) => (
-                            <BoardColumn
-                                key={column.title}
-                                title={column.title}
-                                status={column.status}
-                                count={column.count}
-                                borderColor={column.borderColor}
-                                issues={column.issues}
-                                allIssues={allIssues}
-                                currentProject={currentProject}
-                                onIssueClick={handleIssueClick}
-                            />
-                        ))}
+                {!hasActiveSprints && selectedSprintId === null ? (
+                    <div className="flex flex-col items-center justify-center flex-1 w-full border-2 border-dashed border-zinc-800 rounded-xl bg-[#0d1117]/50 mt-8 mb-8" style={{ minHeight: '500px' }}>
+                        <div className="w-16 h-16 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4">
+                            <AlertCircle className="w-8 h-8 text-zinc-500" />
+                        </div>
+                        <h2 className="text-xl font-bold text-white mb-2">No Active Sprint</h2>
+                        <p className="text-zinc-500 max-w-md text-center mb-6">
+                            Start a sprint in the Backlog to view your teams tasks on the board.
+                        </p>
+                        <button 
+                            onClick={() => navigate(FRONTEND_ROUTES.BACKLOG)}
+                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                        >
+                            Go to Backlog
+                        </button>
                     </div>
+                ) : (
+                    <DndContext
+                        sensors={sensors}
+                        onDragStart={handleDragStart}
+                        onDragEnd={handleDragEnd}
+                    >
+                        <div className="flex gap-6 flex-1 min-h-[500px] overflow-x-auto pb-4">
+                            {columns.map((column) => (
+                                <BoardColumn
+                                    key={column.title}
+                                    title={column.title}
+                                    status={column.status}
+                                    count={column.count}
+                                    borderColor={column.borderColor}
+                                    issues={column.issues}
+                                    allIssues={allIssues}
+                                    currentProject={currentProject}
+                                    onIssueClick={handleIssueClick}
+                                />
+                            ))}
+                        </div>
 
-                    <DragOverlay dropAnimation={dropAnimation}>
-                        {activeIssue ? (
-                            <BoardCard
-                                issue={activeIssue}
-                                allIssues={allIssues}
-                                currentProject={currentProject}
-                                onIssueClick={handleIssueClick}
-                            />
-                        ) : null}
-                    </DragOverlay>
-                </DndContext>
+                        <DragOverlay dropAnimation={dropAnimation}>
+                            {activeIssue ? (
+                                <BoardCard
+                                    issue={activeIssue}
+                                    allIssues={allIssues}
+                                    currentProject={currentProject}
+                                    onIssueClick={handleIssueClick}
+                                />
+                            ) : null}
+                        </DragOverlay>
+                    </DndContext>
+                )}
             </div>
 
             {activeSprint && (

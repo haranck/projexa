@@ -18,6 +18,12 @@ export class IssueMapper {
             assigneeId: doc.assigneeId?.toString() || null,
             startDate: doc.startDate || null,
             endDate: doc.endDate || null,
+            comments: (doc.comments || []).map(c => ({
+                userId: c.userId,
+                userName: c.userName,
+                text: c.text,
+                createdAt: c.createdAt
+            })),
             createdBy: doc.createdBy.toString(),
             createdAt: doc.createdAt,
             updatedAt: doc.updatedAt

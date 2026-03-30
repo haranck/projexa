@@ -13,6 +13,12 @@ import { IssueController } from '../controllers/Issue/IssueController'
 import { SprintController } from '../controllers/sprint/SprintController'
 import { NotificationHandler } from '../webSocket/handlers/notification.handler'
 import { NotificationController } from '../controllers/notification/NotificationController'
+import { ChatHandler } from '../webSocket/handlers/chat.handler'
+import { ChatController } from '../controllers/chat/ChatController'
+import { DashboardController } from '../controllers/dashboard/DashboardController'
+import { ActivityResetScheduler } from '../../infrastructure/scheduler/ActivityResetScheduler'
+import { MeetingController } from '../controllers/meeting/MeetingController'
+
 
 ContainerSetup.registerAll();
 
@@ -28,3 +34,8 @@ export const issueController = container.resolve(IssueController)
 export const sprintController = container.resolve(SprintController)
 export const notificationHandler = container.resolve(NotificationHandler)
 export const notificationController = container.resolve(NotificationController)
+export const chatHandler = container.resolve(ChatHandler)
+export const chatController = container.resolve(ChatController)
+export const dashboardController = container.resolve(DashboardController)
+export const activityResetScheduler = container.resolve(ActivityResetScheduler)
+export const meetingController = container.resolve(MeetingController)

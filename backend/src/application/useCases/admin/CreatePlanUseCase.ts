@@ -6,6 +6,7 @@ import { ICreatePlanUseCase } from "../../interface/admin/ICreatePlanUseCase";
 import { CreatePlanResponseDTO } from "../../dtos/admin/responseDTOs/CreatePlanResponseDTO";
 import { SUBSCRIPTION_ERRORS } from "../../../domain/constants/errorMessages";
 import { IStripeService } from "../../../domain/interfaces/services/IStripeService";
+import { AdminDTOmapper } from "../../mappers/Admin/AdminDTOmapper";
 
 @injectable()
 export class CreatePlanUseCase implements ICreatePlanUseCase {
@@ -38,17 +39,6 @@ export class CreatePlanUseCase implements ICreatePlanUseCase {
         }
         const createdPlan = await this._planRepo.createPlan(plan);
 
-        return {
-            id: createdPlan._id!,
-            name: createdPlan.name,
-            price: createdPlan.price,
-            maxMembers: createdPlan.maxMembers,
-            maxProjects: createdPlan.maxProjects,
-            interval: createdPlan.interval,
-            features: createdPlan.features,
-            isActive: createdPlan.isActive,
-            createdAt: createdPlan.createdAt!,
-            updatedAt: createdPlan.updatedAt!
-        };
+        return AdminDTOmapper.toCreatePlanResponseDTO(createdPlan);
     }
 }

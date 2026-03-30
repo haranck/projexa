@@ -3,6 +3,8 @@ import { IGetSprintsByProjectIdUseCase } from "../../interface/sprint/IGetSprint
 import { ISprintRepository } from "../../../domain/interfaces/repositories/SprintRepo/ISprintRepository";
 import { ISprintEntity } from "../../../domain/entities/Sprint/ISprintEntity";
 
+import { SprintDTOmapper } from "../../mappers/Sprint/SprintDTOmapper";
+
 @injectable()
 export class GetSprintsByProjectIdUseCase implements IGetSprintsByProjectIdUseCase {
     constructor(
@@ -10,6 +12,7 @@ export class GetSprintsByProjectIdUseCase implements IGetSprintsByProjectIdUseCa
     ) { }
 
     async execute(projectId: string): Promise<ISprintEntity[]> {
-        return await this._sprintRepository.getSprintsByProjectId(projectId);
+        const sprints = await this._sprintRepository.getSprintsByProjectId(projectId);
+        return SprintDTOmapper.toResponseDTOs(sprints);
     }
 }

@@ -9,4 +9,5 @@ export interface UpdateEpicDTO {
     attachments?: IAttachement[];
     startDate?: Date | null;
     endDate?: Date | null;
+    comment?: string;
 }

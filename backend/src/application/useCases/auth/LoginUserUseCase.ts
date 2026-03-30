@@ -9,6 +9,7 @@ import { ILoginUserUseCase } from "../../interface/auth/ILoginUserUseCase";
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { injectable, inject } from "tsyringe";
 import { env } from "../../../config/envValidation";
+import { AuthDTOmapper } from "../../mappers/Auth/AuthDTOmapper";
 
 @injectable()
 export class LoginUserUseCase implements ILoginUserUseCase {
@@ -39,14 +40,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
 
     const workspaces = await this._workspaceRepository.getWorkspacesByUserId(user._id.toString());
 
-    const workspaceMap = workspaces.map(workspace => ({
-      id: workspace._id!.toString(),
-      name: workspace.name,
-      ownerId: workspace.ownerId!
-    }))
-
-    const defaultWorkspace = workspaceMap.length > 0 ? workspaceMap[0] : null;
-
     const payload = {
       userId: user._id,
       email: user.email,
@@ -55,21 +48,6 @@ export class LoginUserUseCase implements ILoginUserUseCase {
     const accessToken = this._jwtService.signAccessToken(payload);
     const refreshToken = this._jwtService.signRefreshToken(payload);
 
-    return {
-      accessToken,
-      refreshToken,
-      hasWorkspace: workspaces.length > 0,
-      workspaces: workspaceMap,
-      defaultWorkspace,
-      user: {
-        id: user._id,
-        firstName: user.firstName!,
-        lastName: user.lastName!,
-        email: user.email,
-        phone: user.phone || "",
-        isEmailVerified: user.isEmailVerified,
-        avatarUrl: user.avatarUrl,
-      },
-    };
+    return AuthDTOmapper.toLoginResponseDTO(user, accessToken, refreshToken, workspaces);
   }
 }

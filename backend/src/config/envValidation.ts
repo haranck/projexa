@@ -12,6 +12,8 @@ const envSchema = z.object({
 
   JWT_ACCESS_SECRET: z.string().trim().min(20),
   JWT_REFRESH_SECRET: z.string().trim().min(20),
+  JWT_REFRESH_EXPIRATION: z.string().trim().default("7d"),
+  REFRESH_TOKEN_MAX_AGE: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
 
   GOOGLE_CLIENT_ID: z.string().trim().min(10),
 
@@ -38,6 +40,7 @@ const envSchema = z.object({
   PROJECT_API_PREFIX: z.string().trim().min(1),
   SPRINT_API_PREFIX: z.string().trim().min(1),
   NOTIFICATION_API_PREFIX: z.string().trim().min(1),
+  CHAT_API_PREFIX: z.string().trim().min(1),
 
   AWS_REGION: z.string().trim(),
   AWS_ACCESS_KEY: z.string().trim(),
@@ -51,6 +54,7 @@ const envSchema = z.object({
   S3_EXPIRY_TIME: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
   REDIS_HOST: z.string().trim().default("127.0.0.1"),
   REDIS_PORT: z.string().trim().default("6379").transform(Number).refine((val) => !isNaN(val)),
+  USER_ACTIVITY_TTL: z.string().trim().transform(Number).refine((val) => !isNaN(val)),
 });
 
 const parsedEnv = envSchema.safeParse(process.env);
@@ -61,5 +65,6 @@ if (!parsedEnv.success) {
   process.exit(1);
 }
 
+console.log("✅ Environment variables validated successfully");
 
 export const env = parsedEnv.data;

@@ -9,6 +9,8 @@ import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRe
 
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
 
+import { ProjectDTOmapper } from "../../mappers/Project/ProjectDTOmapper";
+
 @injectable()
 export class UpdateProjectMemberRoleUseCase implements IUpdateProjectMemberRoleUseCase {
     constructor(
@@ -39,6 +41,7 @@ export class UpdateProjectMemberRoleUseCase implements IUpdateProjectMemberRoleU
             throw new Error(PROJECT_ERRORS.ROLE_NOT_FOUND);
         }
 
-        return await this._projectMemberRepository.updateProjectMemberRole(data);
+        const updatedMember = await this._projectMemberRepository.updateProjectMemberRole(data);
+        return ProjectDTOmapper.toProjectMemberResponseDTO(updatedMember);
     }
 }

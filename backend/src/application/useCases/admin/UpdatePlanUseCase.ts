@@ -3,6 +3,7 @@ import { UpdatePlanResponseDTO } from "../../dtos/admin/responseDTOs/UpdatePlanR
 import { IUpdatePlanUseCase } from "../../interface/admin/IUpdatePlanUseCase";
 import { inject, injectable } from "tsyringe";
 import { IPlanRepository } from "../../../domain/interfaces/repositories/IPlanRepository";
+import { AdminDTOmapper } from "../../mappers/Admin/AdminDTOmapper";
 
 @injectable()
 export class UpdatePlanUseCase implements IUpdatePlanUseCase {
@@ -11,7 +12,7 @@ export class UpdatePlanUseCase implements IUpdatePlanUseCase {
     ) { }
     async execute(planId: string, dto: UpdatePlanDTO): Promise<UpdatePlanResponseDTO> {
         const updatedPlan = await this._planRepo.updatePlan(planId, dto)
-        return updatedPlan
+        return AdminDTOmapper.toUpdatePlanResponseDTO(updatedPlan);
     }
 }
 

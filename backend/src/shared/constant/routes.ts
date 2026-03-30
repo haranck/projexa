@@ -47,6 +47,7 @@ export const ROUTES = {
         ADD_PROJECT_MEMBER: "/add-project-member/:projectId",
         REMOVE_PROJECT_MEMBER: "/remove-project-member/:projectId/:userId",
         UPDATE_PROJECT_MEMBER_ROLE: "/update-member-role/:projectId",
+        GET_PROJECT_DASHBOARD_DATA: "/get-project-dashboard-data/:projectId",
     },
     ISSUES: {
         CREATE_ISSUE: "/issues/create-issue/:projectId",
@@ -73,11 +74,23 @@ export const ROUTES = {
         GET_ALL_PLAN: "/get-plans",
         UPDATE_PLAN: "/update-plan/:planId",
         GET_PAYMENTS: '/payments',
-        GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf'
+        GET_PAYMENTS_EXPORT_PDF: '/payments/export-pdf',
+        DASHBOARD_STATS: '/dashboard-stats'
     },
     NOTIFICATION: {
         GET_ALL_NOTIFICATIONS: "/get-all-notifications",
         MARK_AS_READ: "/mark-as-read/:notificationId",
         MARK_ALL_AS_READ: "/mark-all-as-read"
+    },
+    CHAT: {
+        GET_ROOM_BY_PROJECT: "/room/:projectId",
+        GET_MESSAGES: "/messages/:roomId",
+        GET_UPLOAD_URL: "/attachment-upload-url/:roomId"
+    },
+    MEETINGS: {
+        SCHEDULE: "/meetings/schedule",
+        GET_PROJECT_MEETINGS: "/meetings/project/:projectId",
+        JOIN_MEETING: "/meetings/:meetingId/join",
+        LEAVE_MEETING: "/meetings/:meetingId/leave"
     }
 };

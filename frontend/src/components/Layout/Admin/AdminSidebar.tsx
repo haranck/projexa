@@ -2,9 +2,7 @@ import {
     LayoutDashboard,
     LineChart,
     CreditCard,
-    Briefcase,
     Users,
-    DollarSign,
     UserCircle
 } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
@@ -28,19 +26,9 @@ const sidebarLinks = [
         href: FRONTEND_ROUTES.ADMIN_SUBSCRIPTIONS,
     },
     {
-        icon: Briefcase,
-        label: "Manage Workspace",
-        href: FRONTEND_ROUTES.ADMIN_WORKSPACES,
-    },
-    {
         icon: Users,
         label: "Manage Users",
         href: FRONTEND_ROUTES.ADMIN_USERS,
-    },
-    {
-        icon: DollarSign,
-        label: "Payment Details",
-        href: FRONTEND_ROUTES.ADMIN_PAYMENTS_DETAILS,
     },
 ];
 

@@ -68,6 +68,7 @@ import { UpgradeSubscriptionUseCase } from "../../application/useCases/user/Upgr
 import { IGetWorkspaceInvoicesUseCase } from "../../application/interface/user/IGetWorkspaceInvoicesUseCase";
 import { GetWorkspaceInvoicesUseCase } from "../../application/useCases/user/GetWorkspaceInvoicesUseCase";
 import { InvoiceSucceededHandler } from "../../application/useCases/stripe/InvoiceSucceededHandler";
+import { CheckoutExpiredHandler } from "../../application/useCases/stripe/CheckoutExpiredHandler";
 import { IInviteMemberUseCase } from "../../application/interface/user/IInviteMemberUseCase";
 import { InviteMemberUseCase } from "../../application/useCases/user/InviteMemberUseCase";
 import { ICompleteProfileUseCase } from "../../application/interface/user/ICompleteProfileUseCase";
@@ -134,8 +135,32 @@ import { IMarkNotificationReadUseCase } from "../../application/interface/notifi
 import { MarkNotificationReadUseCase } from "../../application/useCases/notification/MarkNotificationReadUseCase";
 import { IMarkAllNotificationsReadUseCase } from "../../application/interface/notification/IMarkAllNotificationsReadUseCase";
 import { MarkAllNotificationsReadUseCase } from "../../application/useCases/notification/MarkAllNotificationsReadUseCase";
+import { ISendMessageUseCase } from "../../application/interface/chat/ISendMessageUseCase";
+import { SendMessageUseCase } from "../../application/useCases/chat/SendMessageUseCase";
+import { IGetMessagesUseCase } from "../../application/interface/chat/IGetMessagesUseCase";
+import { GetMessagesUseCase } from "../../application/useCases/chat/GetMessagesUseCase";
+import { IGetChatRoomUseCase } from "../../application/interface/chat/IGetChatRoomUseCase";
+import { GetChatRoomUseCase } from "../../application/useCases/chat/GetChatRoomUseCase";
+import { IDeleteMessageUseCase } from "../../application/interface/chat/IDeleteMessageUseCase";
+import { DeleteMessageUseCase } from "../../application/useCases/chat/DeleteMessageUseCase";
+import { IReadMessageUseCase } from "../../application/interface/chat/IReadMessageUseCase";
+import { ReadMessageUseCase } from "../../application/useCases/chat/ReadMessageUseCase";
+import { IGetChatMessageUploadUrlUseCase } from "../../application/interface/chat/IGetChatMessageUploadUrlUseCase";
+import { GetChatMessageUploadUrlUseCase } from "../../application/useCases/chat/GetChatMessageUploadUrlUseCase";
+import { IGetDashboardDataUseCase } from "../../application/interface/dashboard/IGetDashboardDataUseCase";
+import { GetDashboardDataUseCase } from "../../application/useCases/dashboard/GetDashboardDataUseCase";
+import { IScheduleMeetingUseCase } from "../../application/interface/meeting/IScheduleMeetingUseCase";
+import { ScheduleMeetingUseCase } from "../../application/useCases/meeting/ScheduleMeetingUseCase";
+import { IJoinMeetingUseCase } from "../../application/interface/meeting/IJoinMeetingUseCase";
+import { JoinMeetingUseCase } from "../../application/useCases/meeting/JoinMeetingUseCase";
+import { ILeaveMeetingUseCase } from "../../application/interface/meeting/ILeaveMeetingUseCase";
+import { LeaveMeetingUseCase } from "../../application/useCases/meeting/LeaveMeetingUseCase";
+import { IGetProjectMeetingsUseCase } from "../../application/interface/meeting/IGetProjectMeetingsUseCase";
+import { GetProjectMeetingsUseCase } from "../../application/useCases/meeting/GetProjectMeetingsUseCase";
+import { IGetAdminDashboardStatsUseCase } from "../../application/interface/admin/IGetAdminDashboardStatsUseCase";
+import { GetAdminDashboardStatsUseCase } from "../../application/useCases/admin/GetAdminDashboardStatsUseCase";
 
-export class UseCaseModule {
+export class UseCaseModule {    
     static registerModules(): void {
 
         container.register<IRegisterUserUseCase>('IRegisterUserUseCase', {
@@ -224,6 +249,10 @@ export class UseCaseModule {
             useClass: ExportAdminPaymentsPDFUseCase
         })
 
+        container.register<IGetAdminDashboardStatsUseCase>("IGetAdminDashboardStatsUseCase", {
+            useClass: GetAdminDashboardStatsUseCase
+        });
+
         /*--------------------- User UseCases ---------------------*/
 
         container.register<IVerifyPasswordUseCase>('IVerifyPasswordUseCase', {
@@ -280,6 +309,10 @@ export class UseCaseModule {
 
         container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
             useClass: InvoiceSucceededHandler
+        })
+
+        container.register<IStripeWebhookHandler>('IStripeWebhookHandler', {
+            useClass: CheckoutExpiredHandler
         })
 
         container.register<IUpgradeSubscriptionUseCase>('IUpgradeSubscriptionUseCase', {
@@ -417,5 +450,50 @@ export class UseCaseModule {
         container.register<IMarkAllNotificationsReadUseCase>('IMarkAllNotificationsReadUseCase', {
             useClass: MarkAllNotificationsReadUseCase
         })
+
+        container.register<IGetMessagesUseCase>('IGetMessagesUseCase', {
+            useClass: GetMessagesUseCase
+        })
+
+        container.register<ISendMessageUseCase>('ISendMessageUseCase', {
+            useClass: SendMessageUseCase
+        })
+
+        container.register<IGetChatRoomUseCase>('IGetChatRoomUseCase', {
+            useClass: GetChatRoomUseCase
+        })
+
+        container.register<IDeleteMessageUseCase>('IDeleteMessageUseCase', {
+            useClass: DeleteMessageUseCase
+        })
+
+        container.register<IReadMessageUseCase>('IReadMessageUseCase', {
+            useClass: ReadMessageUseCase
+        })
+
+        container.register<IGetChatMessageUploadUrlUseCase>('IGetChatMessageUploadUrlUseCase', {
+            useClass: GetChatMessageUploadUrlUseCase
+        })
+
+        container.register<IGetDashboardDataUseCase>("IGetDashboardDataUseCase", {
+            useClass: GetDashboardDataUseCase
+        });
+
+        container.register<IScheduleMeetingUseCase>("IScheduleMeetingUseCase", {
+            useClass: ScheduleMeetingUseCase
+        });
+
+        container.register<IJoinMeetingUseCase>("IJoinMeetingUseCase", {
+            useClass: JoinMeetingUseCase
+        });
+
+        container.register<ILeaveMeetingUseCase>("ILeaveMeetingUseCase", {
+            useClass: LeaveMeetingUseCase
+        });
+
+        container.register<IGetProjectMeetingsUseCase>("IGetProjectMeetingsUseCase", {
+            useClass: GetProjectMeetingsUseCase
+        });
+
     }
 }

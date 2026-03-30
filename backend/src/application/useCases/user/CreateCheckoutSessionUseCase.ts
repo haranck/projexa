@@ -6,6 +6,7 @@ import { IPlanRepository } from "../../../domain/interfaces/repositories/IPlanRe
 import { IWorkspaceRedisRepository } from "../../../domain/interfaces/repositories/IWorkspaceRedisRepository";
 import { WORKSPACE_ERRORS, SUBSCRIPTION_ERRORS } from "../../../domain/constants/errorMessages";
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
+import { IRedisLockService } from "../../../domain/interfaces/services/IRedisLockService";
 
 @injectable()
 export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCase {
@@ -13,43 +14,57 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
         @inject('IStripeService') private _stripeService: IStripeService,
         @inject('IPlanRepository') private _planRepository: IPlanRepository,
         @inject('IWorkspaceRedisRepository') private _workspaceRedisRepository: IWorkspaceRedisRepository,
-        @inject('IWorkspaceRepository') private _workspaceRepository: IWorkspaceRepository
+        @inject('IWorkspaceRepository') private _workspaceRepository: IWorkspaceRepository,
+        @inject('IRedisLockService') private _redisLockService: IRedisLockService
     ) { }
 
     async execute(dto: CreateCheckoutSessionUseCaseDTO): Promise<string> {
-        let workspace = await this._workspaceRedisRepository.findByName(dto.workspaceName)
+        const lockKey = `payment_lock:${dto.userId}`;
+        const lockAcquired = await this._redisLockService.acquireLock(lockKey, 600);
 
-        if (!workspace) {
-            workspace = await this._workspaceRepository.getWorkspaceByName(dto.workspaceName);
+        if (!lockAcquired) {
+            throw new Error(SUBSCRIPTION_ERRORS.PAYMENT_ALREADY_IN_PROGRESS);
         }
 
-        if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
+        try {
+            const trimmedWorkspaceName = dto.workspaceName.trim();
+            let workspace = await this._workspaceRedisRepository.findByName(trimmedWorkspaceName)
 
-        const planId = dto.planId || workspace.planId;
-
-        if (!planId) {
-            throw new Error("Plan not selected and no price available");
-        }
-
-        const plan = planId ? await this._planRepository.getPlanById(planId) : null;
-        const priceId = plan?.stripePriceId;
-
-        if (!priceId) {
-            throw new Error(SUBSCRIPTION_ERRORS.STRIPE_PRICE_ID_MISSING);
-        }
-
-        const session = await this._stripeService.createCheckoutSession({
-            priceId: priceId,
-            customerEmail: dto.userEmail,
-            successUrl: dto.successUrl,
-            cancelUrl: dto.cancelUrl,
-            metadata: {
-                workspaceName: workspace.name,
-                userId: dto.userId,
-                planId: planId || ""
+            if (!workspace) {
+                workspace = await this._workspaceRepository.getWorkspaceByName(trimmedWorkspaceName);
             }
-        })
 
-        return session;
+            if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
+
+            const planId = dto.planId || workspace.planId;
+
+            if (!planId) {
+                throw new Error("Plan not selected and no price available");
+            }
+
+            const plan = planId ? await this._planRepository.getPlanById(planId) : null;
+            const priceId = plan?.stripePriceId;
+
+            if (!priceId) {
+                throw new Error(SUBSCRIPTION_ERRORS.STRIPE_PRICE_ID_MISSING);
+            }
+
+            const session = await this._stripeService.createCheckoutSession({
+                priceId: priceId,
+                customerEmail: dto.userEmail,
+                successUrl: dto.successUrl,
+                cancelUrl: dto.cancelUrl,
+                metadata: {
+                    workspaceName: workspace.name,
+                    userId: dto.userId,
+                    planId: planId || ""
+                }
+            })
+
+            return session;
+        } catch (error) {
+            await this._redisLockService.releaseLock(lockKey);
+            throw error;
+        }
     }
 }

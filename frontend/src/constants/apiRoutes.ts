@@ -21,7 +21,8 @@ export const API_ROUTES = {
     GET_ALL_PLANS: "/admin/get-plans",
     UPDATE_PLAN: "/admin/update-plan/:planId",
     GET_ADMIN_PAYMENTS: "/admin/payments",
-    EXPORT_ADMIN_PAYMENTS_PDF: "/admin/payments/export-pdf"
+    EXPORT_ADMIN_PAYMENTS_PDF: "/admin/payments/export-pdf",
+    DASHBOARD_STATS: "/admin/dashboard-stats"
   },
   USER: {
     VERIFY_PASSWORD: "/user/verify-password",
@@ -54,7 +55,12 @@ export const API_ROUTES = {
     DELETE_PROJECT: "/project/delete-project/:projectId",
     ADD_PROJECT_MEMBER: "/project/add-project-member/:projectId",
     REMOVE_PROJECT_MEMBER: "/project/remove-project-member/:projectId/:userId",
-    UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId"
+    UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId",
+    GET_PROJECT_DASHBOARD_DATA: "/project/get-project-dashboard-data/:projectId",
+    SCHEDULE_MEETING: "/project/meetings/schedule",
+    GET_PROJECT_MEETINGS: "/project/meetings/project/:projectId",
+    JOIN_MEETING: "/project/meetings/:meetingId/join",
+    LEAVE_MEETING: "/project/meetings/:meetingId/leave",
   },
   ISSUE: {
     CREATE_ISSUE: "/project/issues/create-issue/:projectId",
@@ -75,5 +81,10 @@ export const API_ROUTES = {
     GET_ALL_NOTIFICATIONS: "/notifications/get-all-notifications",
     MARK_AS_READ: "/notifications/mark-as-read/:notificationId",
     MARK_ALL_AS_READ: "/notifications/mark-all-as-read",
+  },
+    CHAT: {
+    GET_ROOM_BY_PROJECT: "/chat/room/:projectId",
+    GET_MESSAGES: "/chat/messages/:roomId",
+    GET_UPLOAD_URL: "/chat/attachment-upload-url/:roomId",
   }
 };

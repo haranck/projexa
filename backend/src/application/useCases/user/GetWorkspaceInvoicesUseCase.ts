@@ -5,6 +5,7 @@ import { WorkspaceInvoicesResponseDTO } from '../../dtos/user/responseDTOs/Works
 import { WORKSPACE_ERRORS } from '../../../domain/constants/errorMessages'
 import { ISubscriptionRepository } from '../../../domain/interfaces/repositories/ISubscriptionRepository'
 import { IGetWorkspaceInvoicesUseCase } from '../../../application/interface/user/IGetWorkspaceInvoicesUseCase'
+import { UserDTOmapper } from '../../mappers/User/UserDTOmapper'
 
 @injectable()
 export class GetWorkspaceInvoicesUseCase implements IGetWorkspaceInvoicesUseCase {
@@ -21,16 +22,10 @@ export class GetWorkspaceInvoicesUseCase implements IGetWorkspaceInvoicesUseCase
         const subscription = await this._subscriptionRepository.findByWorkspaceId(workspaceId)
 
         if (!subscription || !subscription.stripeCustomerId) {
-            return {
-                workspaceId,
-                invoices: []
-            }
+            return UserDTOmapper.toWorkspaceInvoicesResponseDTO(workspaceId, []);
         }
         const invoices = await this._stripeService.getInvoicesByCustomer(subscription.stripeCustomerId)
         
-        return {
-            workspaceId,
-            invoices
-        }
+        return UserDTOmapper.toWorkspaceInvoicesResponseDTO(workspaceId, invoices);
     }
 }

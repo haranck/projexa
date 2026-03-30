@@ -4,6 +4,7 @@ import { IProfileImageUploadUrlUseCase } from "../../interface/user/IProfileImag
 import { injectable, inject } from "tsyringe";
 import { IS3Service } from "../../../domain/interfaces/services/IS3Service";
 import { env } from "../../../config/envValidation";
+import { UserDTOmapper } from "../../mappers/User/UserDTOmapper";
 
 @injectable()
 export class ProfileImageUploadUrlUseCase implements IProfileImageUploadUrlUseCase {
@@ -15,6 +16,6 @@ export class ProfileImageUploadUrlUseCase implements IProfileImageUploadUrlUseCa
         const key = `profile-images/${userId}/${Date.now()}.jpg`
         const uploadUrl = await this._s3Service.getUploadUrl(key, contentType || 'image/jpeg')
         const imageUrl = `https://${env.CLOUDFRONT_URL}/${key}`
-        return { uploadUrl, imageUrl }
+        return UserDTOmapper.toProfileImageUploadUrlResponseDTO(uploadUrl, imageUrl);
     }
 }

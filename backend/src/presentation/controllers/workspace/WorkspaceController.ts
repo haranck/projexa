@@ -6,7 +6,7 @@ import { MESSAGES } from "../../../domain/constants/messages";
 import { Request, Response } from "express";
 import { ISelectPlanUseCase } from "../../../application/interface/user/ISelectPlanUseCase";
 import { IGetAllPlansForUserUseCase } from "../../../application/interface/user/IGetAllPlansForUserUseCase";
-import { ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
+import { ERROR_MESSAGES, WORKSPACE_ERRORS, SUBSCRIPTION_ERRORS } from "../../../domain/constants/errorMessages";
 import { ICreateCheckoutSessionUseCase } from "../../../application/interface/user/ICreateCheckoutSessionUseCase";
 import { IGetUserWorkspaceUseCase } from "../../../application/interface/user/IGetUserWorkspaceUseCase";
 import { IUpgradeSubscriptionUseCase } from "../../../application/interface/user/IUpgradeSubscriptionUseCase";
@@ -84,7 +84,13 @@ export class WorkspaceController {
             })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
-            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+            let status = err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR;
+            
+            if (err.message === WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND || err.message === SUBSCRIPTION_ERRORS.PLAN_NOT_FOUND) {
+                status = HTTP_STATUS.NOT_FOUND;
+            }
+            
+            res.status(status).json({ message: err.message });
         }
     }
     createCheckoutSession = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -107,7 +113,15 @@ export class WorkspaceController {
             })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
-            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+            let status = err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR;
+            
+            if (err.message === WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND) {
+                status = HTTP_STATUS.NOT_FOUND;
+            } else if (err.message === SUBSCRIPTION_ERRORS.PAYMENT_ALREADY_IN_PROGRESS) {
+                status = HTTP_STATUS.CONFLICT;
+            }
+            
+            res.status(status).json({ message: err.message });
         }
     }
     getUserWorkspaces = async (req: AuthRequest, res: Response): Promise<void> => {

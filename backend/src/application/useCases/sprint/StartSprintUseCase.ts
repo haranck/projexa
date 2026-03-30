@@ -15,6 +15,8 @@ import { ProjectRole } from "../../../domain/enums/ProjectRole";
 import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 
+import { SprintDTOmapper } from "../../mappers/Sprint/SprintDTOmapper";
+
 @injectable()
 export class StartSprintUseCase implements IStartSprintUseCase {
   constructor(
@@ -67,6 +69,6 @@ export class StartSprintUseCase implements IStartSprintUseCase {
       resourceType: "sprint"
     })
 
-    return updatedSprint;
+    return SprintDTOmapper.toResponseDTO(updatedSprint);
   }
 }

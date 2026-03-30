@@ -89,7 +89,8 @@ export const SUBSCRIPTION_ERRORS = {
     PLAN_NOT_FOUND: "Plan not found !",
     STRIPE_PRICE_ID_MISSING: "Stripe price not configured for this plan",
     STRIPE_CUSTOMER_NOT_FOUND: "Stripe customer not found !",
-    NO_BILLING_CUSTOMER_FOUND: "No billing customer found !"
+    NO_BILLING_CUSTOMER_FOUND: "No billing customer found !",
+    PAYMENT_ALREADY_IN_PROGRESS: "Payment already in progress. Please complete your current session or try again later."
 };
 
 export const WORKSPACE_ERRORS = {
@@ -192,6 +193,7 @@ export const SPRINT_ERRORS = {
     FAILED_TO_UPDATE_ISSUE: 'Failed to update issue',
     SPRINT_NOT_ACTIVE: 'Sprint is not active !',
     ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: 'Only active sprint can be completed !',
+    ONLY_PROJECT_MANAGER_CAN_COMPLETE_SPRINT: "Only project manager can complete sprint",
 
 
 }
@@ -217,6 +219,36 @@ export const NOTIFICATION_ERRORS = {
     NOTIFICATION_FAILED_TO_UPDATE_ISSUE: 'Failed to update issue',
     NOTIFICATION_SPRINT_NOT_ACTIVE: 'Sprint is not active !',
     NOTIFICATION_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: 'Only active sprint can be completed !',
-
+    NOTIFICATION_FAILED_TO_SEND_NOTIFICATIONS: 'Failed to send notifications',
 
 }
+export const CHAT_ERRORS  = {
+    MESSAGE_NOT_FOUND:"Message not found after creation",
+    CHAT_NOT_FOUND:"Chat room not found after creation",
+    UNAUTHORIZED_TO_DELETE_MESSAGE: "Unauthorized to delete this message",
+    CONTENT_TYPE_REQUIRED: "Content Type is required",
+}
+
+export const MEETING_ERRORS = {
+    MEETING_NOT_FOUND: "Meeting not found !",
+    MEETING_CREATION_FAILED: "Meeting creation failed",
+    MEETING_INVALIDATION: "Error while validating meeting !",
+    NO_MEETINGS_FOUND: "No meetings found",
+    MEETING_ALREADY_EXISTS: "Meeting Already Exists",
+    MEETING_FETCHING_FAILED: "Failed to fetch meetings !",
+    MEETING_MEMBER_ALREADY_EXISTS: "Meeting member already exists !",
+    MEETING_ROLE_REQUIRED: "Meeting role is required !",
+    MEETING_UPDATE_FAILED: "Meeting update failed !",
+    MEETING_MEMBER_NOT_FOUND: "Meeting member not found !",
+    MEETING_NON_EPIC_ISSUE_WITHOUT_PARENT: "Non epic issues must have a parent issue",
+    MEETING_CONTENT_TYPE_REQUIRED: "Content Type is required",
+    MEETING_INVALID_ISSUE_TYPE: "Invalid issue type",
+    MEETING_INVALID_DATES: "Meeting start time must be in the future",
+    MEETING_NOT_AUTHORIZED: "Only project managers can schedule meetings",
+    MEETING_HAS_CHILDREN: "Cannot delete issue with child issues",
+    MEETING_CANNOT_REMOVE_MEMBER_HAS_ISSUES: "Cannot remove member who has assigned issues in this project",
+    MEETING_FAILED_TO_UPDATE_ISSUE: "Failed to update issue",
+    MEETING_SPRINT_NOT_ACTIVE: "Sprint is not active !",
+    MEETING_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: "Only active sprint can be completed !",
+    MEETING_FAILED_TO_SEND_NOTIFICATIONS: "Failed to send notifications",
+}

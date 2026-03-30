@@ -16,6 +16,10 @@ export interface Project {
     workspaceId: string;
     members: ProjectMember[];
     createdBy: string;
+    lastMessage?: {
+        content: string;
+        createdAt: string | Date;
+    };
     createdAt: string | Date;
     updatedAt: string | Date;
 }

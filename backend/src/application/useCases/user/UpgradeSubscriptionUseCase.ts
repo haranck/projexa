@@ -4,8 +4,9 @@ import { UpgradeSubscriptionInputDTO } from '../../dtos/user/requestDTOs/Upgrade
 import { ISubscriptionRepository } from '../../../domain/interfaces/repositories/ISubscriptionRepository'
 import { IStripeService } from '../../../domain/interfaces/services/IStripeService'
 import { IWorkspaceRepository } from '../../../domain/interfaces/repositories/IWorkspaceRepository'
-import { SUBSCRIPTION_ERRORS, WORKSPACE_ERRORS } from '../../../domain/constants/errorMessages'
 import { IPlanRepository } from '../../../domain/interfaces/repositories/IPlanRepository'
+import { IRedisLockService } from '../../../domain/interfaces/services/IRedisLockService'
+import { SUBSCRIPTION_ERRORS, WORKSPACE_ERRORS } from '../../../domain/constants/errorMessages'
 
 @injectable()
 export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
@@ -14,11 +15,18 @@ export class UpgradeSubscriptionUseCase implements IUpgradeSubscriptionUseCase {
         @inject('IStripeService') private _stripeService: IStripeService,
         @inject('IWorkspaceRepository') private _workspaceRepository: IWorkspaceRepository,
         @inject('IPlanRepository') private _planRepository: IPlanRepository,
+        @inject('IRedisLockService') private _redisLockService: IRedisLockService
     ) { }
 
     async execute(dto: UpgradeSubscriptionInputDTO): Promise<string> {
-        
         const { workspaceId, userId, newPriceId } = dto
+
+        const lockKey = `payment_lock:${userId}`;
+        const lockAcquired = await this._redisLockService.acquireLock(lockKey, 1800);
+
+        if (!lockAcquired) {
+            throw new Error(SUBSCRIPTION_ERRORS.PAYMENT_ALREADY_IN_PROGRESS);
+        }
 
         const plan = await this._planRepository.getPlanById(newPriceId)
         if (!plan) throw new Error(SUBSCRIPTION_ERRORS.PLAN_NOT_FOUND)

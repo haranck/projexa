@@ -84,18 +84,47 @@ export class ProjectRepository extends BaseRepo<IProjectEntity> implements IProj
 
         const skip = (pageNumber - 1) * limitNumber;
 
-        const [projects, total] = await Promise.all([
-            ProjectModel.find(query)
-                .sort({ createdAt: -1 })
-                .skip(skip)
-                .limit(limitNumber)
-                .lean<ProjectDocument[]>(),
+        const [results, total] = await Promise.all([
+            ProjectModel.aggregate([
+                { $match: query },
+                {
+                    $lookup: {
+                        from: "chatrooms",
+                        localField: "_id",
+                        foreignField: "projectId",
+                        as: "chatRoom"
+                    }
+                },
+                { $unwind: { path: "$chatRoom", preserveNullAndEmptyArrays: true } },
+                {
+                    $lookup: {
+                        from: "messages",
+                        localField: "chatRoom.lastMessage",
+                        foreignField: "_id",
+                        as: "lastMsg"
+                    }
+                },
+                { $unwind: { path: "$lastMsg", preserveNullAndEmptyArrays: true } },
+                {
+                    $addFields: {
+                        lastMessage: {
+                            content: "$lastMsg.content",
+                            createdAt: "$lastMsg.createdAt"
+                        }
+                    }
+                },
+                { $sort: { "lastMessage.createdAt": -1, createdAt: -1 } },
+                { $skip: skip },
+                { $limit: limitNumber }
+            ]),
             ProjectModel.countDocuments(query)
         ]);
 
-        const projectsWithMembers = await Promise.all(projects.map(async (project) => {
+        const projectsWithMembers = await Promise.all(results.map(async (project) => {
             const members = await this._getPopulatedMembers(project._id);
-            return ProjectMapper.toEntity(project, members);
+            const entity = ProjectMapper.toEntity(project as unknown as ProjectDocument, members);
+            entity.lastMessage = project.lastMessage;
+            return entity;
         }));
 
         return {

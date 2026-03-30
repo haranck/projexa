@@ -17,12 +17,11 @@ export class VerifyResetOtpUseCase implements IVerifyResetOtpUseCase {
   async execute(dto: VerifyResetOtpDTO): Promise<void> {
 
     const user = await this._userRepo.findByEmail(dto.email);
-    // user._id is now string, so we just check user and user._id
     if (!user || !user._id) {
       throw new Error(USER_ERRORS.USER_NOT_FOUND);
     }
     const otp = await this._otpRepo.findValidOtp(user.email, dto.otp);
     if (!otp || !otp._id) throw new Error(ERROR_MESSAGES.INVALID_OTP);
-    await this._otpRepo.markAsUsed(otp._id.toString());
+    await this._otpRepo.deleteByEmail(user.email);
   }
 }

@@ -5,6 +5,7 @@ import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
 import { USER_ERRORS } from "../../../domain/constants/errorMessages";
 import { MESSAGES } from "../../../domain/constants/messages";
+import { UserDTOmapper } from "../../mappers/User/UserDTOmapper";
 
 @injectable()
 export class UpdateProfileUseCase implements IUpdateProfileUseCase {
@@ -15,14 +16,13 @@ export class UpdateProfileUseCase implements IUpdateProfileUseCase {
         const user = await this._userRepository.findById(dto.userId)
         if (!user) throw new Error(USER_ERRORS.USER_NOT_FOUND)
         await this._userRepository.update({ firstName: dto.firstName, lastName: dto.lastName, phone: dto.phoneNumber }, dto.userId)
-        return {
-            message: MESSAGES.USERS.PROFILE_UPDATED_SUCCESSFULLY,
-            data: {
-                userId: dto.userId,
-                firstName: dto.firstName,
-                lastName: dto.lastName,
-                phone: dto.phoneNumber,
-            }
-        }  
+        
+        return UserDTOmapper.toUpdateProfileResponseDTO(
+            MESSAGES.USERS.PROFILE_UPDATED_SUCCESSFULLY,
+            dto.userId,
+            dto.firstName,
+            dto.lastName,
+            dto.phoneNumber
+        );
     }
 }

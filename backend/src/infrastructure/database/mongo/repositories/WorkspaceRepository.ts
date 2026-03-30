@@ -80,6 +80,13 @@ export class WorkspaceRepository extends BaseRepo<IWorkspaceEntity> implements I
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND);
 
         const members = workspace.members as unknown as IUserEntity[];
+        const owner = workspace.ownerId as unknown as IUserEntity;
+
+        const isOwnerInMembers = members.some(m => m._id?.toString() === owner._id?.toString());
+        
+        if (!isOwnerInMembers) {
+            return [owner, ...members];
+        }
 
         return members;
     }

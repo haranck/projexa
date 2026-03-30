@@ -6,6 +6,13 @@ export interface IAttachement {
     fileName?: string;
 }
 
+export interface IComment {
+    userId: string;
+    userName: string;
+    text: string;
+    createdAt: Date;
+}
+
 export interface IIssueEntity {
     _id: string;
     workspaceId: string;
@@ -21,6 +28,7 @@ export interface IIssueEntity {
     assigneeId?: string | null;
     startDate?: Date | null;
     endDate?: Date | null;
+    comments?: IComment[];
     createdBy: string;
     createdAt: Date;
     updatedAt: Date;

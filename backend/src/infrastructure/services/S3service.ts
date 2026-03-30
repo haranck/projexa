@@ -10,10 +10,8 @@ const s3 = new S3Client({
         secretAccessKey: env.AWS_SECRET_KEY!
     },
 })
-
 export class S3Service implements IS3Service {
     async getUploadUrl(key: string, contentType: string): Promise<string> {
-        
         const command = new PutObjectCommand({
             Bucket: env.AWS_BUCKET_NAME!,
             Key: key,

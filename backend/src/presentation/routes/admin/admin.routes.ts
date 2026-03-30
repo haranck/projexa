@@ -17,5 +17,6 @@ router.get(ROUTES.ADMIN.GET_ALL_PLAN, authMiddleware.authenticate, adminControll
 router.patch(ROUTES.ADMIN.UPDATE_PLAN, authMiddleware.authenticate, adminController.updatePlan)
 router.get(ROUTES.ADMIN.GET_PAYMENTS, authMiddleware.authenticate, adminController.getAdminPayments)
 router.get(ROUTES.ADMIN.GET_PAYMENTS_EXPORT_PDF, authMiddleware.authenticate, adminController.exportAdminPaymentsPDF)
+router.get(ROUTES.ADMIN.DASHBOARD_STATS, authMiddleware.authenticate, adminController.getAdminDashboardStats)
 
 export default router

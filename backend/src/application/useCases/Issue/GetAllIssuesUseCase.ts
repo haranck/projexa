@@ -4,6 +4,8 @@ import { IIssueRepository } from "../../../domain/interfaces/repositories/IssueR
 import { IIssueEntity } from "../../../domain/entities/Issue/IIssueEntity";
 import { GetAllIssuesFilterDTO } from "../../dtos/issue/requestDTOs/GetAllIssuesFilterDTO";
 
+import { IssueDTOmapper } from "../../mappers/Issue/IssueDTOmapper";
+
 @injectable()
 export class GetAllIssuesUseCase implements IGetAllIssuesUseCase {
     constructor(
@@ -11,6 +13,7 @@ export class GetAllIssuesUseCase implements IGetAllIssuesUseCase {
     ) { }
 
     async execute(filter :GetAllIssuesFilterDTO): Promise<IIssueEntity[]> {
-        return await this._issueRepository.getFilteredIssues(filter);
+        const issues = await this._issueRepository.getFilteredIssues(filter);
+        return IssueDTOmapper.toResponseDTOs(issues);
     }
 }

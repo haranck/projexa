@@ -15,6 +15,10 @@ export interface IProjectEntity {
     }[];
     createdBy: string;
     issueCounter?: number;
+    lastMessage?: {
+        content: string;
+        createdAt: Date;
+    };
     createdAt?: Date;
     updatedAt?: Date;
 }

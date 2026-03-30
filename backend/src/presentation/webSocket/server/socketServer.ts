@@ -2,6 +2,11 @@ import { Server, Socket } from "socket.io";
 import http from "http";
 import { socketUserStore } from "../socket.user.store";
 import { NotificationEvents } from "../events/notification.events";
+import { ChatEvents } from "../events/chat.events";
+import { redisClient } from "../../../infrastructure/cache/redisClient";
+import { container } from "tsyringe";
+import { IUserActivityRepository } from "../../../domain/interfaces/repositories/UserActivity/IUserActivityRepository";
+import { CHAT_EVENTS } from "../../../shared/constant/chat.events";
 
 let io: Server;
 
@@ -15,9 +20,9 @@ export const initSocket = (server: http.Server) => {
 
     console.log("socket server initialized")
 
-    io.on('connection', (socket: Socket) => {
+    io.on('connection', async (socket: Socket) => {
 
-        const userId = socket.handshake.auth?.userId;
+        const userId = await socket.handshake.auth?.userId;
         if (!userId) {
             console.log('User not authenticated');
             return;
@@ -27,14 +32,25 @@ export const initSocket = (server: http.Server) => {
             console.log(`User ${userId} connected with socket ${socket.id}`);
             socket.join(`user:${userId}`);
             socketUserStore.addUser(userId, socket.id);
+            await redisClient.set(`online:${userId}`, "true");
+            socket.broadcast.emit(CHAT_EVENTS.USER_ONLINE, { userId });
         }
 
         new NotificationEvents(socket, io).register();
+        new ChatEvents(socket, io).register();
 
-        socket.on('disconnect', () => {
+        socket.on('disconnect', async () => {
             console.log('user disconnected', socket.id);
             socket.leave(`user:${userId}`);
-            socketUserStore.removeUser(userId);
+            const user = socketUserStore.removeUser(userId);
+
+            if (user) {
+                const duration = Date.now() - user.connectedAt;
+                const userActivityRepo = container.resolve<IUserActivityRepository>("IUserActivityRepository");
+                await userActivityRepo.updateUserActivity(userId, duration);
+                await redisClient.del(`online:${userId}`);
+                socket.broadcast.emit(CHAT_EVENTS.USER_OFFLINE, { userId });
+            }
         })
 
     })

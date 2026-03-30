@@ -132,32 +132,6 @@ export const SalesReport = () => {
         }
     };
 
-    if (isLoading) {
-        return (
-            <div className="flex h-[60vh] flex-col items-center justify-center space-y-4">
-                <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
-                <p className="text-zinc-400 font-medium animate-pulse">Fetching platform sales data...</p>
-            </div>
-        );
-    }
-
-    if (isError) {
-        const axiosError = error as AxiosError<{ message: string }>;
-        return (
-            <div className="flex h-[60vh] flex-col items-center justify-center space-y-4 px-4 text-center">
-                <div className="bg-red-500/10 p-4 rounded-full">
-                    <AlertCircle className="h-10 w-10 text-red-500" />
-                </div>
-                <h3 className="text-xl font-bold text-zinc-100 italic">Data Access Error</h3>
-                <p className="text-zinc-400 max-w-md">
-                    {axiosError.response?.status === 401
-                        ? "Your session has expired. Please log in again to continue."
-                        : axiosError.response?.data?.message || axiosError.message}
-                </p>
-            </div>
-        );
-    }
-
     const payments: AdminPayment[] = paymentsResponse?.data?.data || [];
     const meta = paymentsResponse?.data?.meta || { totalDocs: 0, totalPages: 0, page: 1, limit: 5 };
 
@@ -184,7 +158,7 @@ export const SalesReport = () => {
         }).format(amount);
     };
 
-    const columns = [
+    const columns = useMemo(() => [
         {
             key: 'date',
             header: 'Date',
@@ -261,7 +235,7 @@ export const SalesReport = () => {
                 </div>
             )
         }
-    ];
+    ], []);
 
     return (
         <div className="p-6 space-y-6 animate-in fade-in duration-700">
@@ -387,13 +361,26 @@ export const SalesReport = () => {
                         <Table<AdminPayment>
                             columns={columns}
                             data={payments}
+                            isLoading={isLoading}
+                            rowCount={limit}
                             emptyText="No transaction records found in the database."
                         />
                     </div>
                 </CardContent>
             </Card>
 
-            {meta.totalPages > 1 && (
+            {isError && (
+                <div className="flex flex-col items-center justify-center py-10 space-y-4 px-4 text-center">
+                    <div className="bg-red-500/10 p-3 rounded-full">
+                        <AlertCircle className="h-6 w-6 text-red-500" />
+                    </div>
+                    <p className="text-zinc-400 text-sm max-w-md">
+                        {(error as AxiosError<{ message: string }>)?.response?.data?.message || "Failed to load payment data"}
+                    </p>
+                </div>
+            )}
+
+            {!isError && meta.totalPages > 1 && (
                 <Pagination
                     page={page}
                     totalPages={meta.totalPages}

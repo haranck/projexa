@@ -4,7 +4,7 @@ import { injectable, inject } from "tsyringe";
 import { ICreateIssueUseCase } from "../../interface/Issue/ICreateIssueUseCase";
 import { IIssueRepository } from "../../../domain/interfaces/repositories/IssueRepo/IIssueRepository";
 import { PROJECT_ERRORS, ERROR_MESSAGES } from "../../../domain/constants/errorMessages";
-import { IssueDTOmapper } from "../../mappers/IssueDTOmapper";
+import { IssueDTOmapper } from "../../mappers/Issue/IssueDTOmapper";
 import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
 import { IssueType } from "../../../domain/enums/IssueEnums";
 import { IProjectMemberRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectMemberRepository";
@@ -66,6 +66,6 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
             })
         }
 
-        return createdIssue
+        return IssueDTOmapper.toResponseDTO(createdIssue)
     }
 }

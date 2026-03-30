@@ -11,7 +11,8 @@ import { toast } from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
 
 interface Members {
-    _id: string;
+    _id?: string;
+    id?: string;
     email: string;
     role: string;
     firstName: string;
@@ -24,6 +25,7 @@ export const TeamsPage = () => {
 
     const [email, setEmail] = useState<string>("")
     const currentWorkspace = useSelector((state: RootState) => state.workspace.currentWorkspace)
+    const currentUser = useSelector((state: RootState) => state.auth.user)
     const { data: workspacesData } = useGetUserWorkspaces();
     const workspaceId = currentWorkspace?._id || currentWorkspace?.id || '';
     const selectedWorkspace = workspacesData?.data?.find((ws: Workspace) =>
@@ -36,10 +38,16 @@ export const TeamsPage = () => {
     const [isRemoveModalOpen, setIsRemoveModalOpen] = useState(false);
     const [memberToRemove, setMemberToRemove] = useState<string | null>(null);
 
+    const currentUserId = (currentUser as { _id?: string })?._id || currentUser?.id;
+    const isCurrentUserOwner = selectedWorkspace?.ownerId === currentUserId;
+
     const handleInvite = () => {
         if (!email) return toast.error("Please enter an email");
+        const actWorkspaceId = selectedWorkspace?._id || selectedWorkspace?.id || currentWorkspace?._id || currentWorkspace?.id || '';
+        if (!actWorkspaceId) return toast.error("Workspace ID not found");
+
         inviteMember({
-            workspaceId: selectedWorkspace?._id || '',
+            workspaceId: actWorkspaceId,
             email: email,
         }, {
             onSuccess: () => {
@@ -61,9 +69,11 @@ export const TeamsPage = () => {
 
     const confirmRemoveMember = () => {
         if (!memberToRemove) return;
+        const actWorkspaceId = selectedWorkspace?._id || selectedWorkspace?.id || currentWorkspace?._id || currentWorkspace?.id || '';
+        if (!actWorkspaceId) return toast.error("Workspace ID not found");
 
         removeMember({
-            workspaceId: selectedWorkspace?._id || '',
+            workspaceId: actWorkspaceId,
             memberId: memberToRemove,
         }, {
             onSuccess: () => {
@@ -90,43 +100,45 @@ export const TeamsPage = () => {
                 </div>
 
                 {/* Invite Members Section */}
-                <div className="bg-[#0A0A0A] border border-zinc-800/50 rounded-2xl p-6 md:p-8">
-                    <div className="mb-6">
-                        <h2 className="text-lg font-semibold text-white mb-1">Invite Members</h2>
-                        <p className="text-sm text-zinc-400">
-                            Add up to 5 members to your team.
-                        </p>
-                    </div>
+                {isCurrentUserOwner && (
+                    <div className="bg-[#0A0A0A] border border-zinc-800/50 rounded-2xl p-6 md:p-8">
+                        <div className="mb-6">
+                            <h2 className="text-lg font-semibold text-white mb-1">Invite Members</h2>
+                            <p className="text-sm text-zinc-400">
+                                Add up to 5 members to your team.
+                            </p>
+                        </div>
 
-                    <div className="space-y-4">
-                        <div className="flex flex-col gap-2">
-                            <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
-                                Email
-                            </label>
-                            <div className="flex flex-col md:flex-row gap-4">
-                                <div className="flex-1 bg-[#050505] border border-zinc-800 rounded-lg flex items-center px-4 py-3 transition-colors focus-within:border-zinc-700">
-                                    <Mail className="w-5 h-5 text-zinc-500 mr-3" />
-                                    <input
-                                        type="email"
-                                        placeholder="member@company.com"
-                                        className="bg-transparent border-none outline-none text-zinc-300 w-full placeholder:text-zinc-600"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                    />
-                                </div>
-                                <div className="flex gap-3">
-                                    <button
-                                        onClick={handleInvite}
-                                        disabled={isInviting}
-                                        className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20 transition-all font-medium text-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                    >
-                                        {isInviting ? 'Sending...' : 'Send Invitation'}
-                                    </button>
+                        <div className="space-y-4">
+                            <div className="flex flex-col gap-2">
+                                <label className="text-xs font-medium text-zinc-500 uppercase tracking-wider">
+                                    Email
+                                </label>
+                                <div className="flex flex-col md:flex-row gap-4">
+                                    <div className="flex-1 bg-[#050505] border border-zinc-800 rounded-lg flex items-center px-4 py-3 transition-colors focus-within:border-zinc-700">
+                                        <Mail className="w-5 h-5 text-zinc-500 mr-3" />
+                                        <input
+                                            type="email"
+                                            placeholder="member@company.com"
+                                            className="bg-transparent border-none outline-none text-zinc-300 w-full placeholder:text-zinc-600"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="flex gap-3">
+                                        <button
+                                            onClick={handleInvite}
+                                            disabled={isInviting}
+                                            className="px-6 py-3 rounded-lg bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-900/20 transition-all font-medium text-sm whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                                        >
+                                            {isInviting ? 'Sending...' : 'Send Invitation'}
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                )}
 
                 {/* Existing Members Section */}
                 <div className="bg-[#0A0A0A] border border-zinc-800/50 rounded-2xl overflow-hidden">
@@ -141,10 +153,11 @@ export const TeamsPage = () => {
                             <div className="p-8 text-center text-zinc-500">No members found</div>
                         ) : (
                             membersData?.data?.map((member: Members) => {
-                                const isOwner = selectedWorkspace?.ownerId === member._id;
+                                const memberId = member._id || member.id;
+                                const isOwner = selectedWorkspace?.ownerId === memberId;
                                 return (
                                     <div
-                                        key={member._id}
+                                        key={memberId}
                                         className="p-4 md:p-6 flex flex-col md:flex-row items-center justify-between gap-4 hover:bg-zinc-900/30 transition-colors group"
                                     >
                                         <div className="flex items-center gap-4 w-full md:w-auto">
@@ -171,13 +184,15 @@ export const TeamsPage = () => {
 
                                             <div className="flex items-center gap-2 text-zinc-500 text-sm">
                                                 <Calendar className="w-4 h-4" />
-                                                <span>{new Date(member.createdAt).toLocaleDateString()}</span>
+                                                <span>{new Date(member.createdAt || Date.now()).toLocaleDateString()}</span>
                                             </div>
 
-                                            <button className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-all"
-                                                onClick={() => handleRemoveMember(member._id)}>
-                                                <TrashIcon className="w-5 h-5" />
-                                            </button>
+                                            {isCurrentUserOwner && !isOwner && (
+                                                <button className="p-2 text-zinc-500 hover:text-white hover:bg-zinc-800 rounded-lg transition-all"
+                                                    onClick={() => handleRemoveMember(memberId!)}>
+                                                    <TrashIcon className="w-5 h-5" />
+                                                </button>
+                                            )}
                                         </div>
                                     </div>
                                 )

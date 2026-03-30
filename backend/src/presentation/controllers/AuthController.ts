@@ -16,6 +16,7 @@ import { HTTP_STATUS } from "../../domain/constants/httpStatus";
 import { ERROR_MESSAGES } from "../../domain/constants/errorMessages";
 import { MESSAGES } from "../../domain/constants/messages";
 import logger from "../../config/logger";
+import { env } from "../../config/envValidation";
 
 @injectable()
 export class AuthController {
@@ -75,7 +76,7 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: env.REFRESH_TOKEN_MAX_AGE
       });
       logger.info("Login successful", response);
 
@@ -105,7 +106,7 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000
+        maxAge: env.REFRESH_TOKEN_MAX_AGE
       });
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.REFRESH_TOKEN.REFRESH_SUCCESSFUL, data: response });
@@ -146,7 +147,7 @@ export class AuthController {
         httpOnly: true,
         secure: process.env.NODE_ENV === "production",
         sameSite: "strict",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        maxAge: env.REFRESH_TOKEN_MAX_AGE,
       });
 
       res.status(HTTP_STATUS.OK).json({ message: MESSAGES.USERS.GOOGLE_LOGIN_SUCCESS, data: response });

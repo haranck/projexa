@@ -18,7 +18,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase {
         if (!tempUser) {
             throw new Error(USER_ERRORS.USER_NOT_FOUND)
         }
-        await this._otpRepository.invalidateAll(email)
+        await this._otpRepository.deleteByEmail(email)
 
         const otpCode = Math.floor(100000 + Math.random() * 900000).toString()
 

@@ -9,6 +9,10 @@ import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRe
 import { ProjectRole } from "../../../domain/enums/ProjectRole";
 import { ISendNotificationUseCase } from "../../interface/notification/ISendNotificationUseCase";
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
+import { IUserRepository } from "../../../domain/interfaces/repositories/IUserRepository";
+import { IComment } from "../../../domain/entities/Issue/IIssueEntity";
+
+import { IssueDTOmapper } from "../../mappers/Issue/IssueDTOmapper";
 
 @injectable()
 export class UpdateEpicUseCase implements IUpdateEpicUseCase {
@@ -16,7 +20,8 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
         @inject('IIssueRepository') private _issueRepository: IIssueRepository,
         @inject('IProjectMemberRepository') private _projectMemberRepo: IProjectMemberRepository,
         @inject('IRoleRepository') private _roleRepo: IRoleRepository,
-        @inject("ISendNotificationUseCase") private _sendNotification: ISendNotificationUseCase
+        @inject("ISendNotificationUseCase") private _sendNotification: ISendNotificationUseCase,
+        @inject('IUserRepository') private _userRepo: IUserRepository
     ) { }
 
     async execute(issueId: string, dto: UpdateEpicDTO, userId: string): Promise<IIssueEntity> {
@@ -48,7 +53,23 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }
         }
 
-        const updatedIssue = await this._issueRepository.updateIssue(issueId, dto)
+        const { comment, ...updateData } = dto;
+        const finalUpdateData: Partial<IIssueEntity> = { ...updateData };
+
+        if (comment) {
+            const user = await this._userRepo.findById(userId);
+            const newComment: IComment = {
+                userId: userId,
+                userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
+                text: comment,
+                createdAt: new Date()
+            };
+            
+            const existingComments = issue.comments || [];
+            finalUpdateData.comments = [...existingComments, newComment];
+        }
+
+        const updatedIssue = await this._issueRepository.updateIssue(issueId, finalUpdateData)
 
         if (dto.assigneeId && dto.assigneeId !== issue.assigneeId) {
             await this._sendNotification.execute({
@@ -60,7 +81,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }).catch(err => console.error("Failed to send assignment notification:", err));
         }
 
-        return updatedIssue
+        return IssueDTOmapper.toResponseDTO(updatedIssue);
     }
 
 }

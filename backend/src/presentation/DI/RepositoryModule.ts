@@ -2,7 +2,7 @@ import { container } from "tsyringe";
 import { IUserRepository } from "../../domain/interfaces/repositories/IUserRepository";
 import { UserRepository } from "../../infrastructure/database/mongo/repositories/UserRepository";
 import { IOtpRepository } from "../../domain/interfaces/repositories/IOtpRepository";
-import { OtpRepository } from "../../infrastructure/database/mongo/repositories/OtpRepository";
+import { OtpRedisRepository } from "../../infrastructure/database/mongo/repositories/OtpRedisRepository";
 import { ITokenBlacklistRepository } from "../../domain/interfaces/repositories/ITokenBlacklistRepository";
 import { RedisTokenBlacklistRepository } from "../../infrastructure/database/mongo/repositories/RedisTokenBlacklistRepository";
 import { IPlanRepository } from "../../domain/interfaces/repositories/IPlanRepository";
@@ -23,6 +23,16 @@ import { ISprintRepository } from "../../domain/interfaces/repositories/SprintRe
 import { SprintRepository } from "../../infrastructure/database/mongo/repositories/Sprint/SprintRepository";
 import { INotificationRepository } from "../../domain/interfaces/repositories/NotificationRepo/INotificationRepository";
 import { NotificationRepository } from "../../infrastructure/database/mongo/repositories/NotificationRepo/NotificationRepository";
+import { IChatRepository } from "../../domain/interfaces/repositories/ChatRepo/IChatRepository";
+import { ChatRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/ChatRepository";
+import { IMessageRepository } from "../../domain/interfaces/repositories/ChatRepo/IMessageRepository";
+import { MessageRepository } from "../../infrastructure/database/mongo/repositories/ChatRepo/MessageRepository";
+import { IDashboardRepository } from "../../domain/interfaces/repositories/DashboardRepo/IDashboardRepository";
+import { DashboardRepository } from "../../infrastructure/database/mongo/repositories/DashboardRepo/DashboardRepository";
+import { IUserActivityRepository } from "../../domain/interfaces/repositories/UserActivity/IUserActivityRepository";
+import { UserActivityRepository } from "../../infrastructure/database/mongo/repositories/UserActivity/UserActivityRepository";
+import { IMeetingRepository } from "../../domain/interfaces/repositories/MeetingRepo/IMeetingRepository";
+import { MeetingRepository } from "../../infrastructure/database/mongo/repositories/MeetingRepo/MeetingRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -32,7 +42,7 @@ export class RepositoryModule {
         });
 
         container.register<IOtpRepository>('IOtpRepository', {
-            useClass: OtpRepository
+            useClass: OtpRedisRepository
         })
 
         container.register<ITokenBlacklistRepository>('ITokenBlacklistRepository', {
@@ -74,5 +84,23 @@ export class RepositoryModule {
         container.register<INotificationRepository>('INotificationRepository', {
             useClass: NotificationRepository
         })
+
+        container.register<IChatRepository>('IChatRepository', {
+            useClass: ChatRepository
+        })
+
+        container.register<IMessageRepository>('IMessageRepository', {
+            useClass: MessageRepository
+        })
+
+        container.register<IDashboardRepository>("IDashboardRepository", {
+            useClass: DashboardRepository
+        });
+        container.register<IUserActivityRepository>("IUserActivityRepository", {
+            useClass: UserActivityRepository
+        });
+        container.register<IMeetingRepository>("IMeetingRepository", {
+            useClass: MeetingRepository
+        });
     }
 }

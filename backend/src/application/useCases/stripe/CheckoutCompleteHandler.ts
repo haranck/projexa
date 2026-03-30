@@ -5,6 +5,7 @@ import { IWorkspaceRedisRepository } from "../../../domain/interfaces/repositori
 import { IWorkspaceRepository } from "../../../domain/interfaces/repositories/IWorkspaceRepository";
 import { ISubscriptionRepository } from "../../../domain/interfaces/repositories/ISubscriptionRepository";
 import { IStripeService } from "../../../domain/interfaces/services/IStripeService";
+import { IRedisLockService } from "../../../domain/interfaces/services/IRedisLockService";
 import { WORKSPACE_ERRORS } from "../../../domain/constants/errorMessages";
 import { SubscriptionStatus } from "../../../domain/enums/SubscriptionStatus";
 
@@ -15,6 +16,7 @@ export class CheckoutCompleteHandler implements IStripeWebhookHandler {
         @inject("IWorkspaceRepository") private _workspaceRepository: IWorkspaceRepository,
         @inject("ISubscriptionRepository") private _subscriptionRepository: ISubscriptionRepository,
         @inject("IStripeService") private _stripeService: IStripeService,
+        @inject("IRedisLockService") private _redisLockService: IRedisLockService
     ) { }
 
     supports(eventType: string): boolean {
@@ -86,6 +88,7 @@ export class CheckoutCompleteHandler implements IStripeWebhookHandler {
             startDate,
             endDate,
         });
+        console.log('subsctioptoin',subscription)
 
         await this._workspaceRepository.updateWorkspace(savedWorkspace._id!.toString(), {
             ...savedWorkspace,
@@ -93,6 +96,9 @@ export class CheckoutCompleteHandler implements IStripeWebhookHandler {
         });
 
         await this._workspaceRedisRepository.delete(workspaceName);
-        console.log("Redis key deleted. Flow complete.");
+        const lockKey = `payment_lock:${userId}`;
+        await this._redisLockService.releaseLock(lockKey);
+
+        console.log("Redis key and payment lock deleted. Flow complete.");
     }
 }
