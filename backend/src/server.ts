@@ -1,6 +1,4 @@
 import 'reflect-metadata'
-import dotenv from "dotenv";
-dotenv.config();
 
 import { env } from './config/envValidation'
 import express from "express";

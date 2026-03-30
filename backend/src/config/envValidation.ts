@@ -65,5 +65,6 @@ if (!parsedEnv.success) {
   process.exit(1);
 }
 
+console.log("✅ Environment variables validated successfully");
 
 export const env = parsedEnv.data;

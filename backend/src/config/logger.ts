@@ -27,7 +27,7 @@ const logger = winston.createLogger({
             filename: "logs/combined.log",
         }),
     ], 
-});
+}); 
 
 
 export default logger;

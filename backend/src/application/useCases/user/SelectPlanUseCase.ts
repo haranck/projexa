@@ -26,10 +26,11 @@ export class SelectPlanUseCase implements ISelectPlanUseCase {
             console.error(`Plan ${planId} is missing stripePriceId`);
             throw new Error(SUBSCRIPTION_ERRORS.STRIPE_PRICE_ID_MISSING);
         }
-        let workspace = await this._workspaceRedisRepository.findByName(workspaceName);
+        const trimmedWorkspaceName = workspaceName.trim();
+        let workspace = await this._workspaceRedisRepository.findByName(trimmedWorkspaceName);
 
         if (!workspace) {
-            workspace = await this._workspaceRepository.getWorkspaceByName(workspaceName);
+            workspace = await this._workspaceRepository.getWorkspaceByName(trimmedWorkspaceName);
         }
 
         if (!workspace) throw new Error(WORKSPACE_ERRORS.WORKSPACE_NOT_FOUND)
