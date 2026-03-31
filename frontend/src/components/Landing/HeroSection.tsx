@@ -72,7 +72,7 @@ const HeroSection = () => {
           <FeatureCard 
             title="Agile Scrum" 
             icon={Layout}
-            className="lg:absolute lg:top-[15%] lg:left-1/2 lg:-translate-x-1/2 w-full lg:max-w-[650px] z-10 shadow-indigo-500/5 order-2 lg:order-none"
+            className="lg:absolute lg:top-[15%] lg:left-1/2 lg:-translate-x-1/2 w-full lg:max-w-[650px] z-10 shadow-indigo-500/5 order-2 lg:order-0"
           >
             <div className="space-y-4">
               <div className="flex gap-3">
@@ -103,7 +103,7 @@ const HeroSection = () => {
           <FeatureCard 
             title="AI Meetings" 
             icon={Video}
-            className="lg:absolute lg:top-0 lg:right-0 w-full lg:w-[340px] z-20 shadow-2xl lg:animate-float order-1 lg:order-none"
+            className="lg:absolute lg:top-0 lg:right-0 w-full lg:w-[340px] z-20 shadow-2xl lg:animate-float order-1 lg:order-0"
           >
             <div className="bg-linear-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-4 border border-indigo-500/20 relative overflow-hidden">
                <div className="flex items-center gap-2.5 mb-3">
@@ -131,7 +131,7 @@ const HeroSection = () => {
           <FeatureCard 
             title="Team Flow" 
             icon={MessageSquare}
-            className="lg:absolute lg:bottom-0 lg:left-0 w-full lg:w-[340px] z-20 shadow-2xl lg:animate-float-delayed order-3 lg:order-none"
+            className="lg:absolute lg:bottom-0 lg:left-0 w-full lg:w-[340px] z-20 shadow-2xl lg:animate-float-delayed order-3 lg:order-0"
           >
             <div className="space-y-4">
               {[
@@ -139,7 +139,7 @@ const HeroSection = () => {
                 { name: "Alex K.", msg: "Reviewing the PR now. Looks good!", time: "Just now" }
               ].map((chat, i) => (
                 <div key={i} className="flex gap-4 items-start">
-                  <div className="w-8 h-8 rounded-xl bg-linear-to-tr from-indigo-500 to-cyan-500 flex-shrink-0 shadow-lg shadow-indigo-500/20"></div>
+                  <div className="w-8 h-8 rounded-xl bg-linear-to-tr from-indigo-500 to-cyan-500 shrink-0 shadow-lg shadow-indigo-500/20"></div>
                   <div className="flex-1">
                     <div className="flex justify-between items-center mb-1">
                       <span className="text-xs font-black text-white">{chat.name}</span>
