@@ -22,17 +22,9 @@ const app = express();
 
 app.use(cookieParser());
 
-// app.use(
-//   cors({
-//     origin: process.env.FRONTEND_URL,
-//     credentials: true,
-//   })
-// );
-
 const allowedOrigins = [
-  "http://localhost:5173",
-  "https://haranck.online",
-  "https://xxxxx.amplifyapp.com",
+  "https://www.projexa.haranck.online",
+  "https://projexa.haranck.online"
 ];
 
 app.use(
