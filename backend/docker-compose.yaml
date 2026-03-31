@@ -4,7 +4,7 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - DOPPLER_TOKEN=${DOPPLER_TOKEN}
+      # - DOPPLER_TOKEN=${DOPPLER_TOKEN}
       - REDIS_HOST=redis
     depends_on:
       - redis
