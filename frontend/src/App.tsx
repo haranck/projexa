@@ -3,6 +3,7 @@ import AdminRoutes from './routes/admin/AdminRoutes'
 import { Toaster } from 'react-hot-toast'
 import { CheckCircle2, XCircle } from 'lucide-react'
 import { useNotificationSocket } from './hooks/useNotificationSocket'
+import { Routes, Route } from "react-router-dom";
 
 export const App = () => {
   useNotificationSocket();
@@ -41,8 +42,13 @@ export const App = () => {
           },
         }}
       />
-      <UserRoutes />
-      <AdminRoutes />
+      <Routes>
+        {/* User routes */}
+        <Route path="/*" element={<UserRoutes />} />
+
+        {/* Admin routes */}
+        <Route path="/admin/*" element={<AdminRoutes />} />
+      </Routes>
     </>
   )
 }
