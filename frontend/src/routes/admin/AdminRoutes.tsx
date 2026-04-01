@@ -38,18 +38,20 @@ import { Subscription } from "../../pages/Admin/Subscriptions/Subscription";
 import { Workspace } from "../../pages/Admin/Workspace/Workspace";
 import { PaymentDetails } from "../../pages/Admin/PaymentDetails/PaymentDetails";
 
+const toRelative = (path: string) => path.replace(/^\/admin\//, '');
+
 const AdminRoutes = () => {
   return (
     <Routes>
-      <Route path={FRONTEND_ROUTES.ADMIN_LOGIN} element={<AdminLoginPage />} />
+      <Route path={toRelative(FRONTEND_ROUTES.ADMIN_LOGIN)} element={<AdminLoginPage />} />
 
       <Route element={<AdminDashboardLayout />}>
-        <Route path={FRONTEND_ROUTES.ADMIN_DASHBOARD} element={<Dashboard />} />
-        <Route path={FRONTEND_ROUTES.ADMIN_USERS} element={<UsersPage />} />
-        <Route path={FRONTEND_ROUTES.ADMIN_SALES_REPORT} element={<SalesReport />} />
-        <Route path={FRONTEND_ROUTES.ADMIN_SUBSCRIPTIONS} element={<Subscription />} />
-        <Route path={FRONTEND_ROUTES.ADMIN_WORKSPACES} element={<Workspace />} />
-        <Route path={FRONTEND_ROUTES.ADMIN_PAYMENTS_DETAILS} element={<PaymentDetails />} />
+        <Route path={toRelative(FRONTEND_ROUTES.ADMIN_DASHBOARD)} element={<Dashboard />} />
+        <Route path={toRelative(FRONTEND_ROUTES.ADMIN_USERS)} element={<UsersPage />} />
+        <Route path={toRelative(FRONTEND_ROUTES.ADMIN_SALES_REPORT)} element={<SalesReport />} />
+        <Route path={toRelative(FRONTEND_ROUTES.ADMIN_SUBSCRIPTIONS)} element={<Subscription />} />
+        <Route path={toRelative(FRONTEND_ROUTES.ADMIN_WORKSPACES)} element={<Workspace />} />
+        <Route path={toRelative(FRONTEND_ROUTES.ADMIN_PAYMENTS_DETAILS)} element={<PaymentDetails />} />
       </Route>
     </Routes>
   );
