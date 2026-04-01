@@ -115,7 +115,7 @@ export const HomePage = () => {
                     <div className="w-16 h-16 bg-blue-500/10 border border-blue-500/20 rounded-2xl flex items-center justify-center mb-6 shadow-xl shadow-blue-500/10">
                         <Folder className="w-7 h-7 text-blue-400" />
                     </div>
-                    <h2 className="text-2xl font-bold text-white mb-2">No project selected</h2>
+                    <h2 className="text-2xl font-bold text-white mb-2">No project selecteddddd</h2>
                     <p className="text-zinc-500 text-sm mb-8 max-w-sm">
                         Select an existing project or create a new one to view your dashboard.
                     </p>
