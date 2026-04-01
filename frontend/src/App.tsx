@@ -43,10 +43,8 @@ export const App = () => {
         }}
       />
       <Routes>
-        {/* User routes */}
         <Route path="/*" element={<UserRoutes />} />
 
-        {/* Admin routes */}
         <Route path="/admin/*" element={<AdminRoutes />} />
       </Routes>
     </>

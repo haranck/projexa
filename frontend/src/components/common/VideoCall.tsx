@@ -28,7 +28,7 @@ const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, onClose }
     const JAAS_APP_ID = "vpaas-magic-cookie-ef558a1b4a5d43e6bcf8bb62ffff89b4";
 
     return (
-        <div className="fixed inset-0 z-[100] bg-[#0b0e14] flex flex-col animate-in fade-in duration-500 overflow-hidden">
+        <div className="fixed inset-0 z-50 bg-[#0b0e14] flex flex-col animate-in fade-in duration-500 overflow-hidden">
             {/* Call Header */}
             <div className="h-14 sm:h-16 border-b border-zinc-800/50 flex items-center justify-between px-4 sm:px-8 bg-[#0b0e14]/95 backdrop-blur-md z-10 shrink-0">
                 <div className="flex items-center gap-2 sm:gap-3 min-w-0">

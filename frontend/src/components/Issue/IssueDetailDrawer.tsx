@@ -1019,7 +1019,7 @@ const handleUpdateIssue = (newStatus?: string) => {
                           {new Date(comment.createdAt).toLocaleString()}
                         </span>
                       </div>
-                      <p className="text-[11px] text-zinc-400 leading-relaxed break-words">
+                      <p className="text-[11px] text-zinc-400 leading-relaxed wrap-break-word">
                         {comment.text}
                       </p>
                     </div>

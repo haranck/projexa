@@ -139,7 +139,7 @@ export const DraggableIssueItem = ({
                     </button>
 
                     {activeStatusDropdownId === issue._id && (
-                        <div className="absolute top-full right-0 mt-2 z-[100] bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-1.5 min-w-[130px] animate-in fade-in slide-in-from-top-1">
+                        <div className="absolute top-full right-0 mt-2 z-50 bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-1.5 min-w-[130px] animate-in fade-in slide-in-from-top-1">
                             {["TODO", "IN_PROGRESS", "HOLD", "DONE"].map((s) => (
                                 <button
                                     key={s}

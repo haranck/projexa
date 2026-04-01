@@ -566,7 +566,7 @@ export const ChatPage = () => {
 
             {/* Modals & Overlays */}
             {deleteConfirm && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
                     <div className="bg-[#14171f] border border-white/10 rounded-3xl p-6 w-full max-w-sm flex flex-col gap-6 shadow-[0_32px_64px_-16px_rgba(0,0,0,0.5)]">
                         <div className="flex flex-col items-center gap-4 text-center">
                             <div className="size-14 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20">
@@ -586,7 +586,7 @@ export const ChatPage = () => {
             )}
 
             {expandedImage && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4" onClick={() => setExpandedImage(null)}>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/95 backdrop-blur-2xl p-4" onClick={() => setExpandedImage(null)}>
                     <img src={expandedImage} alt="Expanded" className="max-w-full max-h-full object-contain rounded-xl shadow-2xl animate-in zoom-in-95 duration-500" />
                     <button className="absolute top-6 right-6 p-3 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/10 text-white"><X className="size-6" /></button>
                 </div>

@@ -127,7 +127,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
 
     return (
         <>
-            <nav className="fixed top-0 left-0 right-0 lg:left-64 z-30 h-16 lg:h-[4.5rem] bg-[#0b0e14]/90 backdrop-blur-xl border-b border-white/[0.06]">
+            <nav className="fixed top-0 left-0 right-0 lg:left-64 z-30 h-16 lg:h-18 bg-[#0b0e14]/90 backdrop-blur-xl border-b border-white/60">
                 <div className="flex items-center justify-between h-full px-3 sm:px-5 lg:px-8 gap-2">
 
                     {/* ── Left: hamburger + selectors ── */}
@@ -155,14 +155,14 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                     flex items-center gap-2 h-9 pl-2 pr-3 rounded-xl border transition-all duration-200 group
                                     ${isWorkspaceDropdownOpen
                                         ? "bg-blue-500/10 border-blue-500/30 text-white"
-                                        : "bg-white/[0.04] border-white/[0.06] text-zinc-300 hover:bg-white/[0.08] hover:border-white/10 hover:text-white"
+                                        : "bg-white/4 border-white/6 text-zinc-300 hover:bg-white/8 hover:border-white/10 hover:text-white"
                                     }
                                 `}
 
                                 
                             >
                                 {/* Avatar */}
-                                <div className="w-5 h-5 shrink-0 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-[9px] font-black text-white shadow-lg shadow-blue-500/25">
+                                <div className="w-5 h-5 shrink-0 rounded-md bg-linear-to-br from-blue-500 to-blue-600 flex items-center justify-center text-[9px] font-black text-white shadow-lg shadow-blue-500/25">
                                     {currentWorkspace?.name ? currentWorkspace.name.charAt(0).toUpperCase() : <Building2 className="w-3 h-3" />}
                                 </div>
                                 {/* Label -- hidden on xs, visible sm+ */}
@@ -197,10 +197,10 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                             </button>
                                         ))}
                                     </div>
-                                    <div className="p-1.5 pt-0 border-t border-white/[0.06] mt-1">
+                                    <div className="p-1.5 pt-0 border-t border-white/60 mt-1">
                                         <button
                                             onClick={() => { navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE); setIsWorkspaceDropdownOpen(false); }}
-                                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all border border-dashed border-white/[0.08] hover:border-white/20"
+                                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all border border-dashed border-white/8 hover:border-white/20"
                                         >
                                             <Plus className="h-3.5 w-3.5" />
                                             New Workspace
@@ -211,7 +211,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         </div>
 
                         {/* Divider */}
-                        <div className="hidden sm:block h-5 w-px bg-white/[0.08] shrink-0" />
+                        <div className="hidden sm:block h-5 w-px bg-white/8 shrink-0" />
 
                         {/* ── Project Selector ── */}
                         <div className="relative" ref={projectDropdownRef}>
@@ -221,7 +221,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                     flex items-center gap-2 h-9 pl-2 pr-3 rounded-xl border transition-all duration-200 group
                                     ${isProjectDropdownOpen
                                         ? "bg-emerald-500/10 border-emerald-500/30 text-white"
-                                        : "bg-white/[0.04] border-white/[0.06] text-zinc-300 hover:bg-white/[0.08] hover:border-white/10 hover:text-white"
+                                        : "bg-white/4 border-white/6 text-zinc-300 hover:bg-white/8 hover:border-white/10 hover:text-white"
                                     }
                                 `}
                             >
@@ -262,10 +262,10 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                             ))
                                         )}
                                     </div>
-                                    <div className="p-1.5 pt-0 border-t border-white/[0.06] mt-1">
+                                    <div className="p-1.5 pt-0 border-t border-white/60 mt-1">
                                         <button
                                             onClick={() => { setIsCreateModalOpen(true); setIsProjectDropdownOpen(false); }}
-                                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all border border-dashed border-white/[0.08] hover:border-white/20"
+                                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white/4 hover:bg-white/8 text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all border border-dashed border-white/8 hover:border-white/20"
                                         >
                                             <Plus className="h-3.5 w-3.5" />
                                             New Project
@@ -310,7 +310,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         </button>
 
                         {/* Divider */}
-                        <div className="hidden sm:block h-5 w-px bg-white/[0.08] mx-1" />
+                        <div className="hidden sm:block h-5 w-px bg-white/8 mx-1" />
 
                         {/* User area */}
                         <div className="relative flex items-center gap-1" ref={userMenuRef}>
@@ -321,7 +321,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                     isUserMenuOpen
                                         ? "border-blue-500/60 ring-2 ring-blue-500/20 scale-105"
                                         : "border-zinc-700/60 hover:border-zinc-500 hover:scale-105"
-                                } bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-500/10 shrink-0`}
+                                } bg-linear-to-br from-blue-600 to-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-500/10 shrink-0`}
                                 aria-label="User menu"
                             >
                                 {user?.avatarUrl ? (
@@ -345,10 +345,10 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
 
                             {/* User dropdown */}
                             {isUserMenuOpen && (
-                                <div className="absolute right-0 top-full mt-2 w-64 bg-[#14171f] border border-white/[0.07] rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                                <div className="absolute right-0 top-full mt-2 w-64 bg-[#14171f] border border-white/7 rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
                                     {/* Profile header */}
-                                    <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-3">
-                                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shrink-0 shadow-lg">
+                                    <div className="px-5 py-4 border-b border-white/60 flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-linear-to-br from-blue-600 to-blue-700 flex items-center justify-center shrink-0 shadow-lg">
                                             {user?.avatarUrl ? (
                                                 <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
                                             ) : (
@@ -379,7 +379,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                         </button>
                                     </div>
 
-                                    <div className="p-1.5 pt-0 border-t border-white/[0.06] mt-0.5">
+                                    <div className="p-1.5 pt-0 border-t border-white/60 mt-0.5">
                                         <button
                                             onClick={handleLogout}
                                             className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all"
