@@ -35,10 +35,19 @@ export const CreateWorkspaceForm = () => {
 
   return (
 
-    <div className="w-full max-w-md mx-auto" >
+    <div className="w-full max-w-md mx-auto">
+
+      {/* Back button — always visible on all screen sizes */}
+      <button
+        type="button"
+        onClick={() => navigate(FRONTEND_ROUTES.HOME)}
+        className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors mb-6 group"
+      >
+        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+        <span className="text-sm font-medium">Back</span>
+      </button>
 
       <div className="flex flex-col items-center mb-8">
-        <ArrowLeft className="w-5 h-5 group-hover:translate-x-1 transition-transform absolute top-[-50px] left-[-350px]" onClick={() => navigate(FRONTEND_ROUTES.HOME)} />
         <div className="w-16 h-16 bg-[#00ff88] rounded-full flex items-center justify-center mb-4 shadow-[0_0_20px_rgba(0,255,136,0.3)]">
           <div className="w-8 h-8 bg-black/20 rounded-full" />
         </div>
