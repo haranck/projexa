@@ -54,14 +54,11 @@ const HeroSection = () => {
             <Link to={FRONTEND_ROUTES.SIGNUP}>
               <Button className="h-14 px-10 text-lg font-bold bg-white text-black hover:bg-zinc-200 rounded-2xl shadow-xl shadow-white/5 transition-all hover:scale-105 active:scale-95 group overflow-hidden relative">
                 <span className="relative z-10 flex items-center">
-                  Get Started Free
+                  Get Started
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 </span>
               </Button>
             </Link>
-            <Button variant="ghost" className="h-14 px-8 text-lg font-semibold text-white hover:bg-white/5 border border-white/10 rounded-2xl transition-all">
-              Watch Demo
-            </Button>
           </div>
         </div>
 

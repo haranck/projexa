@@ -114,7 +114,7 @@ const Navbar = () => {
               </Link>
               <Link to={FRONTEND_ROUTES.SIGNUP} onClick={() => setIsMenuOpen(false)} className="block">
                 <Button className="w-full bg-indigo-600 hover:bg-indigo-500 text-white">
-                  Get Started Free
+                  Get Started
                 </Button>
               </Link>
             </div>
