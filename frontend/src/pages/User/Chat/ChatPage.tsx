@@ -392,7 +392,7 @@ export const ChatPage = () => {
                                         </div>
                                         <div className="space-y-2">
                                             <p className="text-xl font-bold text-white tracking-tight">No messages yet</p>
-                                            <p className="text-zinc-500 text-[11px] lg:text-sm max-w-[240px] mx-auto leading-relaxed">Let's coordinate on <span className="text-blue-400 font-bold">{selectedProject.projectName}</span> here.</p>
+                                            <p className="text-zinc-500 text-[11px] lg:text-sm max-w-[240px] mx-auto leading-relaxed">Lets coordinate on <span className="text-blue-400 font-bold">{selectedProject.projectName}</span> here.</p>
                                         </div>
                                     </div>
                                 ) : (

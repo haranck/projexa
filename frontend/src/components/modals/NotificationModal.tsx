@@ -75,11 +75,19 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
     };
 
     return (
-        <div
-            ref={modalRef}
-            className="absolute top-full right-0 mt-3 w-96 bg-[#14171f] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50 flex flex-col"
-            style={{ maxHeight: '80vh' }}
-        >
+        <>
+            {/* Mobile Backdrop */}
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 sm:hidden" onClick={onClose} />
+            
+            <div
+                ref={modalRef}
+                className="fixed bottom-0 left-0 right-0 sm:absolute sm:top-full sm:bottom-auto sm:left-auto sm:right-0 sm:mt-3 w-full sm:w-[400px] bg-[#14171f]/95 backdrop-blur-xl border-t sm:border border-white/10 rounded-t-[2.5rem] sm:rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-full sm:slide-in-from-top-2 sm:fade-in z-50 flex flex-col"
+                style={{ maxHeight: '85vh' }}
+            >
+                {/* Mobile Handle */}
+                <div className="w-full h-8 flex items-center justify-center sm:hidden shrink-0" onClick={onClose}>
+                    <div className="w-12 h-1.5 bg-zinc-700/50 rounded-full" />
+                </div>
             {/* Header */}
             <div className="px-5 py-4 border-b border-white/5 flex items-center justify-between bg-white/2">
                 <div className="flex items-center gap-2.5">
@@ -171,5 +179,6 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
                 </button>
             </div>
         </div>
+        </>
     );
 };

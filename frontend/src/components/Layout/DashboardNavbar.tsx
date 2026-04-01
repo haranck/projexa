@@ -131,7 +131,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                 <div className="flex items-center justify-between h-full px-3 sm:px-5 lg:px-8 gap-2">
 
                     {/* ── Left: hamburger + selectors ── */}
-                    <div className="flex items-center gap-2 min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5 sm:gap-2 min-w-0 flex-1">
 
                         {/* Hamburger (mobile only) */}
                         <button
@@ -141,6 +141,13 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         >
                             <Menu className="h-5 w-5" />
                         </button>
+
+                        {/* Mobile Branding */}
+                        <div className="lg:hidden flex items-center shrink-0 mr-1 sm:mr-3">
+                            <span className="font-bold text-lg tracking-tight bg-linear-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent hidden sm:block">Projexa</span>
+                            <img src="/logo.png" alt="P" className="h-6 w-auto sm:hidden object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} />
+                            <span className="font-bold text-[17px] tracking-tight text-white sm:hidden hidden">Projexa</span>
+                        </div>
 
                         {/* ── Workspace Selector ── */}
                         <div className="relative" ref={workspaceDropdownRef}>
@@ -306,7 +313,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         <div className="hidden sm:block h-5 w-px bg-white/[0.08] mx-1" />
 
                         {/* User area */}
-                        <div className="relative flex items-center" ref={userMenuRef}>
+                        <div className="relative flex items-center gap-1" ref={userMenuRef}>
                             {/* Avatar button (opens menu) */}
                             <button
                                 onClick={() => setIsUserMenuOpen((v) => !v)}
@@ -314,7 +321,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                     isUserMenuOpen
                                         ? "border-blue-500/60 ring-2 ring-blue-500/20 scale-105"
                                         : "border-zinc-700/60 hover:border-zinc-500 hover:scale-105"
-                                } bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-500/10`}
+                                } bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-500/10 shrink-0`}
                                 aria-label="User menu"
                             >
                                 {user?.avatarUrl ? (
@@ -329,7 +336,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                             {/* Logout shortcut */}
                             <button
                                 onClick={handleLogout}
-                                className="flex items-center justify-center w-9 h-9 rounded-xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200"
+                                className="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200 shrink-0"
                                 title="Sign out"
                                 aria-label="Sign out"
                             >

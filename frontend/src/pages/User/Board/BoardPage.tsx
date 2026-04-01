@@ -19,6 +19,7 @@ import { useUpdateEpic } from "@/hooks/Issues/IssueHooks";
 import {
     DndContext,
     PointerSensor,
+    TouchSensor,
     useSensor,
     useSensors,
     DragOverlay,
@@ -58,6 +59,12 @@ export const BoardPage = () => {
         useSensor(PointerSensor, {
             activationConstraint: {
                 distance: 8,
+            },
+        }),
+        useSensor(TouchSensor, {
+            activationConstraint: {
+                delay: 250,
+                tolerance: 5,
             },
         })
     );
@@ -384,17 +391,18 @@ export const BoardPage = () => {
 
                 {/* Board Columns */}
                 {!hasActiveSprints && selectedSprintId === null ? (
-                    <div className="flex flex-col items-center justify-center flex-1 w-full border-2 border-dashed border-zinc-800 rounded-xl bg-[#0d1117]/50 mt-8 mb-8" style={{ minHeight: '500px' }}>
-                        <div className="w-16 h-16 bg-zinc-800/50 rounded-full flex items-center justify-center mb-4">
-                            <AlertCircle className="w-8 h-8 text-zinc-500" />
+                    <div className="flex flex-col items-center justify-center flex-1 w-full border border-white/5 rounded-[2.5rem] bg-linear-to-b from-[#14171f] to-[#0b0e14] mt-4 lg:mt-8 mb-8 relative overflow-hidden shadow-2xl shadow-black/50" style={{ minHeight: '60vh' }}>
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,var(--tw-gradient-stops))] from-blue-900/10 via-[#0b0e14]/0 to-[#0b0e14]/0 pointer-events-none" />
+                        <div className="w-20 h-20 lg:w-24 lg:h-24 bg-linear-to-br from-zinc-800 to-zinc-900 rounded-[2rem] flex items-center justify-center mb-6 border border-white/5 shadow-inner relative z-10">
+                            <AlertCircle className="w-10 h-10 lg:w-12 lg:h-12 text-zinc-600" />
                         </div>
-                        <h2 className="text-xl font-bold text-white mb-2">No Active Sprint</h2>
-                        <p className="text-zinc-500 max-w-md text-center mb-6">
-                            Start a sprint in the Backlog to view your teams tasks on the board.
+                        <h2 className="text-2xl lg:text-3xl font-black text-white mb-3 tracking-tight relative z-10">No Active Sprint</h2>
+                        <p className="text-zinc-500 text-sm max-w-sm text-center mb-8 px-6 leading-relaxed relative z-10">
+                            Start a sprint in the Backlog to view and manage your team&apos;s tasks on this board.
                         </p>
                         <button 
                             onClick={() => navigate(FRONTEND_ROUTES.BACKLOG)}
-                            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition-colors"
+                            className="bg-zinc-100 hover:bg-white text-zinc-900 px-8 py-3 rounded-2xl font-bold transition-all hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(255,255,255,0.1)] relative z-10"
                         >
                             Go to Backlog
                         </button>
@@ -405,7 +413,7 @@ export const BoardPage = () => {
                         onDragStart={handleDragStart}
                         onDragEnd={handleDragEnd}
                     >
-                        <div className="flex gap-6 flex-1 min-h-[500px] overflow-x-auto pb-4">
+                        <div className="flex gap-4 lg:gap-6 flex-1 min-h-[500px] overflow-x-auto pb-4 custom-scrollbar">
                             {columns.map((column) => (
                                 <BoardColumn
                                     key={column.title}
