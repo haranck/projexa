@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Sparkles, Zap, Video, MessageSquare, Layout, CheckCircle2,type LucideIcon } from "lucide-react";
+import { ArrowRight, Sparkles, Zap, Video, MessageSquare, Layout, CheckCircle2, type LucideIcon } from "lucide-react";
 import { Button } from "../ui/button";
 import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
@@ -45,7 +45,7 @@ const HeroSection = () => {
 
           {/* Subheading */}
           <p className="max-w-2xl mx-auto text-lg md:text-xl text-zinc-400 leading-relaxed animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-200">
-            The world&apos;s most intelligent platform for engineering teams to plan, 
+            The world&apos;s most intelligent platform for engineering teams to plan,
             track, and accelerate cycles with real-time AI insights.
           </p>
 
@@ -67,10 +67,10 @@ const HeroSection = () => {
 
         {/* Feature Mosaic Reveal (Mobile: Stacked | Desktop: Professional Mosaic) */}
         <div className="relative mt-24 max-w-6xl mx-auto flex flex-col lg:block gap-8 lg:h-[650px] animate-in fade-in zoom-in duration-1000 delay-500">
-          
+
           {/* 1. Scrum Board (Anchor) */}
-          <FeatureCard 
-            title="Agile Scrum" 
+          <FeatureCard
+            title="Agile Scrum"
             icon={Layout}
             className="lg:absolute lg:top-[15%] lg:left-1/2 lg:-translate-x-1/2 w-full lg:max-w-[650px] z-10 shadow-indigo-500/5 order-2 lg:order-0"
           >
@@ -100,36 +100,36 @@ const HeroSection = () => {
           </FeatureCard>
 
           {/* 2. AI Video Summary (Top Right) */}
-          <FeatureCard 
-            title="AI Meetings" 
+          <FeatureCard
+            title="AI Meetings"
             icon={Video}
             className="lg:absolute lg:top-0 lg:right-0 w-full lg:w-[340px] z-20 shadow-2xl lg:animate-float order-1 lg:order-0"
           >
             <div className="bg-linear-to-br from-indigo-500/10 to-purple-500/10 rounded-2xl p-4 border border-indigo-500/20 relative overflow-hidden">
-               <div className="flex items-center gap-2.5 mb-3">
-                 <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-sm shadow-red-500/50"></div>
-                 <span className="text-xs text-white/50 font-bold">Session Recording...</span>
-               </div>
-               <div className="text-xs text-white font-black mb-3 uppercase tracking-tight">AI Summary Intelligence:</div>
-               <div className="space-y-3">
-                 <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5" />
-                    <div className="text-[11px] text-zinc-400 leading-normal font-medium">Sprint goals finalized for Q3 release.</div>
-                 </div>
-                 <div className="flex items-start gap-3">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5" />
-                    <div className="text-[11px] text-zinc-400 leading-normal font-medium">Assigned DB schema to <span className="text-indigo-300">@Liam</span>.</div>
-                 </div>
-               </div>
-               <div className="mt-4 pt-3 border-t border-white/5 flex justify-end">
-                  <div className="px-2.5 py-1 rounded-full bg-indigo-500 text-[9px] font-black text-white uppercase tracking-tighter">AI AGENT ACTIVE</div>
-               </div>
+              <div className="flex items-center gap-2.5 mb-3">
+                <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-sm shadow-red-500/50"></div>
+                <span className="text-xs text-white/50 font-bold">Session Recording...</span>
+              </div>
+              <div className="text-xs text-white font-black mb-3 uppercase tracking-tight">AI Summary Intelligence:</div>
+              <div className="space-y-3">
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5" />
+                  <div className="text-[11px] text-zinc-400 leading-normal font-medium">Sprint goals finalized for Q3 release.</div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <CheckCircle2 className="w-4 h-4 text-emerald-400 mt-0.5" />
+                  <div className="text-[11px] text-zinc-400 leading-normal font-medium">Assigned DB schema to <span className="text-indigo-300">@Liam</span>.</div>
+                </div>
+              </div>
+              <div className="mt-4 pt-3 border-t border-white/5 flex justify-end">
+                <div className="px-2.5 py-1 rounded-full bg-indigo-500 text-[9px] font-black text-white uppercase tracking-tighter">AI AGENT ACTIVE</div>
+              </div>
             </div>
           </FeatureCard>
 
           {/* 3. Group Collaboration (Bottom Left) */}
-          <FeatureCard 
-            title="Team Flow" 
+          <FeatureCard
+            title="Team Flow"
             icon={MessageSquare}
             className="lg:absolute lg:bottom-0 lg:left-0 w-full lg:w-[340px] z-20 shadow-2xl lg:animate-float-delayed order-3 lg:order-0"
           >
@@ -151,8 +151,8 @@ const HeroSection = () => {
               ))}
               <div className="pt-3 border-t border-white/5">
                 <div className="bg-white/5 rounded-xl px-3 py-2.5 flex items-center justify-between border border-white/5">
-                   <div className="text-[11px] text-zinc-600 italic font-medium">Type a message...</div>
-                   <Zap className="w-4 h-4 text-indigo-400" />
+                  <div className="text-[11px] text-zinc-600 italic font-medium">Type a message...</div>
+                  <Zap className="w-4 h-4 text-indigo-400" />
                 </div>
               </div>
             </div>

@@ -4,6 +4,19 @@ import { Menu, X, ArrowUpRight } from "lucide-react";
 import { Button } from "../ui/button";
 import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
+const navItems = [
+  { label: "Features", id: "features" },
+  { label: "Pricing", id: "pricing" },
+  { label: "About", id: "about" },
+];
+
+const scrollToSection = (id: string) => {
+  const el = document.getElementById(id);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+};
+
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -17,10 +30,10 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav 
+    <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
-        scrolled 
-          ? "bg-[#0a0a0a]/70 backdrop-blur-xl border-white/5 py-4" 
+        scrolled
+          ? "bg-[#0a0a0a]/70 backdrop-blur-xl border-white/5 py-4"
           : "bg-transparent border-transparent py-6"
       }`}
     >
@@ -40,15 +53,15 @@ const Navbar = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-10">
-            {["Features", "Pricing", "About"].map((item) => (
-              <a 
-                key={item}
-                href={`#${item.toLowerCase()}`} 
-                className="text-zinc-400 hover:text-white transition-all text-sm font-medium tracking-wide relative group"
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => scrollToSection(item.id)}
+                className="text-zinc-400 hover:text-white transition-all text-sm font-medium tracking-wide relative group cursor-pointer bg-transparent border-none outline-none"
               >
-                {item}
+                {item.label}
                 <span className="absolute -bottom-1 left-0 w-0 h-[2px] bg-indigo-500 transition-all group-hover:w-full" />
-              </a>
+              </button>
             ))}
           </div>
 
@@ -81,15 +94,17 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden absolute top-full left-0 right-0 bg-[#0a0a0a] border-b border-white/5 animate-in slide-in-from-top-4 duration-300">
           <div className="px-4 py-8 space-y-6">
-            {["Features", "Pricing", "About"].map((item) => (
-              <a
-                key={item}
-                href={`#${item.toLowerCase()}`}
-                className="block text-zinc-400 hover:text-white transition-colors text-lg font-medium"
-                onClick={() => setIsMenuOpen(false)}
+            {navItems.map((item) => (
+              <button
+                key={item.label}
+                onClick={() => {
+                  scrollToSection(item.id);
+                  setIsMenuOpen(false);
+                }}
+                className="block w-full text-left text-zinc-400 hover:text-white transition-colors text-lg font-medium bg-transparent border-none outline-none cursor-pointer"
               >
-                {item}
-              </a>
+                {item.label}
+              </button>
             ))}
             <div className="pt-6 space-y-4 border-t border-white/5">
               <Link to={FRONTEND_ROUTES.LOGIN} onClick={() => setIsMenuOpen(false)} className="block">
