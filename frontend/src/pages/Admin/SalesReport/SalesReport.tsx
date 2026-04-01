@@ -115,7 +115,6 @@ export const SalesReport = () => {
                 endDate
             });
 
-            // Create download link
             const url = window.URL.createObjectURL(new Blob([blob]));
             const link = document.createElement('a');
             link.href = url;
