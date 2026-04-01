@@ -10,6 +10,7 @@ import {
     FolderKanban,
     ChevronRight,
     CreditCard,
+    X,
 } from "lucide-react";
 import { cn } from "../../lib/utils";
 import { useSelector } from "react-redux";
@@ -18,10 +19,12 @@ import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 
 interface SidebarProps {
     className?: string;
+    isOpen?: boolean;
+    onClose?: () => void;
 }
 
-const Sidebar = ({ className }: SidebarProps) => {
-    const navigate = useNavigate()
+const Sidebar = ({ className, isOpen = false, onClose }: SidebarProps) => {
+    const navigate = useNavigate();
     const location = useLocation();
     const user = useSelector((state: RootState) => state.auth.user);
     const { currentWorkspace } = useSelector((state: RootState) => state.workspace);
@@ -52,7 +55,6 @@ const Sidebar = ({ className }: SidebarProps) => {
         {
             label: "System",
             items: [
-                // { name: "Settings", icon: Settings, path: FRONTEND_ROUTES.SETTINGS },
                 { name: "Payment Details", icon: CreditCard, path: FRONTEND_ROUTES.PAYMENTS },
             ],
         },
@@ -60,23 +62,49 @@ const Sidebar = ({ className }: SidebarProps) => {
 
     const isActive = (path: string) => location.pathname === path;
 
+    const handleNavClick = () => {
+        // Close sidebar on mobile after navigation
+        if (onClose) onClose();
+    };
+
     return (
         <aside
             className={cn(
+                // Base: fixed, full height, dark bg, border
                 "fixed left-0 top-0 z-40 h-screen w-64 bg-[#0b0e14] border-r border-white/5 flex flex-col",
+                // Mobile: slide out by default, slide in when open
+                "-translate-x-full lg:translate-x-0",
+                isOpen && "translate-x-0",
+                "transition-transform duration-300 ease-in-out",
                 className
             )}
         >
-            <div className="flex h-20 items-center px-6">
-                <Link to={FRONTEND_ROUTES.LANDING} className="flex items-center">
+            {/* Header: Logo + mobile close button */}
+            <div className="flex h-20 items-center justify-between px-6">
+                <Link
+                    to={FRONTEND_ROUTES.LANDING}
+                    className="flex items-center"
+                    onClick={handleNavClick}
+                >
                     <img
                         src="/logo.png"
                         alt="ProJexa Logo"
                         className="h-30 w-31 ml-6 mt-5 mb-2 object-contain"
                     />
                 </Link>
+
+                {/* Close button — only visible on mobile */}
+                <button
+                    onClick={onClose}
+                    className="lg:hidden p-2 rounded-xl text-zinc-500 hover:text-white hover:bg-white/5 transition-all"
+                    aria-label="Close sidebar"
+                >
+                    <X className="h-5 w-5" />
+                </button>
             </div>
-            <nav className="flex-1 px-3 py-4 space-y-7">
+
+            {/* Navigation */}
+            <nav className="flex-1 px-3 py-4 space-y-7 overflow-y-auto">
                 {menuSections.map((section, sectionIndex) => (
                     <div key={sectionIndex}>
                         <h3 className="px-4 mb-3 text-[10px] font-bold text-blue-400/80 uppercase tracking-[0.2em] opacity-80">
@@ -91,6 +119,7 @@ const Sidebar = ({ className }: SidebarProps) => {
                                     <Link
                                         key={itemIndex}
                                         to={item.path}
+                                        onClick={handleNavClick}
                                         className={cn(
                                             "group relative flex items-center gap-3.5 px-4 py-2.5 rounded-xl text-sm transition-all duration-200",
                                             active
@@ -101,7 +130,12 @@ const Sidebar = ({ className }: SidebarProps) => {
                                         {active && (
                                             <div className="absolute left-0 w-1 h-5 bg-blue-500 rounded-r-full shadow-[0_0_12px_rgba(59,130,246,0.5)]" />
                                         )}
-                                        <Icon className={cn("h-4.5 w-4.5 transition-colors", active ? "text-blue-500" : "group-hover:text-white")} />
+                                        <Icon
+                                            className={cn(
+                                                "h-4.5 w-4.5 transition-colors",
+                                                active ? "text-blue-500" : "group-hover:text-white"
+                                            )}
+                                        />
                                         <span className="font-medium tracking-wide">{item.name}</span>
                                     </Link>
                                 );
@@ -113,15 +147,21 @@ const Sidebar = ({ className }: SidebarProps) => {
 
             {/* User Profile Footer */}
             <div className="p-3 mt-auto border-t border-white/5">
-                <button className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 group"
-                    onClick={() => navigate(FRONTEND_ROUTES.PROFILE)}>
-                    <div className="relative">
+                <button
+                    className="flex items-center gap-3 w-full px-3 py-2 rounded-xl hover:bg-white/5 transition-all duration-200 group"
+                    onClick={() => {
+                        navigate(FRONTEND_ROUTES.PROFILE);
+                        handleNavClick();
+                    }}
+                >
+                    <div className="relative shrink-0">
                         <div className="w-9 h-9 rounded-full border border-zinc-800 overflow-hidden bg-linear-to-br from-zinc-700 to-zinc-800 flex items-center justify-center">
                             {user?.avatarUrl ? (
                                 <img src={user.avatarUrl} alt="User" className="w-full h-full object-cover" />
                             ) : (
                                 <span className="text-white text-xs font-bold leading-none">
-                                    {user?.firstName?.[0] || 'A'}{user?.lastName?.[0] || 'M'}
+                                    {user?.firstName?.[0] || "A"}
+                                    {user?.lastName?.[0] || "M"}
                                 </span>
                             )}
                         </div>
@@ -129,7 +169,9 @@ const Sidebar = ({ className }: SidebarProps) => {
                     </div>
                     <div className="flex-1 text-left min-w-0">
                         <p className="text-sm font-bold text-white truncate leading-tight">
-                            {user?.firstName && user?.lastName ? `${user.firstName} ${user.lastName}` : (user?.firstName || "Unknown User")}
+                            {user?.firstName && user?.lastName
+                                ? `${user.firstName} ${user.lastName}`
+                                : user?.firstName || "Unknown User"}
                         </p>
                         <p className="text-[10px] font-bold text-zinc-600 uppercase tracking-widest truncate mt-0.5">
                             {user?.id === currentWorkspace?.ownerId ? "Owner" : "Member"}
