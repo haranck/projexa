@@ -8,6 +8,8 @@ import {
     Plus,
     Check,
     Menu,
+    Building2,
+    FolderOpen,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -85,22 +87,13 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (
-                workspaceDropdownRef.current &&
-                !workspaceDropdownRef.current.contains(event.target as Node)
-            ) {
+            if (workspaceDropdownRef.current && !workspaceDropdownRef.current.contains(event.target as Node)) {
                 setIsWorkspaceDropdownOpen(false);
             }
-            if (
-                projectDropdownRef.current &&
-                !projectDropdownRef.current.contains(event.target as Node)
-            ) {
+            if (projectDropdownRef.current && !projectDropdownRef.current.contains(event.target as Node)) {
                 setIsProjectDropdownOpen(false);
             }
-            if (
-                userMenuRef.current &&
-                !userMenuRef.current.contains(event.target as Node)
-            ) {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
                 setIsUserMenuOpen(false);
             }
         };
@@ -134,170 +127,141 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
 
     return (
         <>
-            {/*
-             * On mobile:  left-0 (full width)
-             * On desktop: left-64 (offset by sidebar)
-             */}
-            <nav className="fixed top-0 left-0 right-0 lg:left-64 z-30 h-16 lg:h-20 bg-[#0b0e14]/80 backdrop-blur-md border-b border-white/5">
-                <div className="flex items-center justify-between h-full px-4 lg:px-8 gap-3">
+            <nav className="fixed top-0 left-0 right-0 lg:left-64 z-30 h-16 lg:h-[4.5rem] bg-[#0b0e14]/90 backdrop-blur-xl border-b border-white/[0.06]">
+                <div className="flex items-center justify-between h-full px-3 sm:px-5 lg:px-8 gap-2">
 
-                    {/* ── Left side ── */}
-                    <div className="flex items-center gap-2 lg:gap-6 min-w-0">
+                    {/* ── Left: hamburger + selectors ── */}
+                    <div className="flex items-center gap-2 min-w-0 flex-1">
 
-                        {/* Hamburger – visible only on mobile */}
+                        {/* Hamburger (mobile only) */}
                         <button
                             onClick={onMenuToggle}
-                            className="lg:hidden p-2 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all shrink-0"
+                            className="lg:hidden flex items-center justify-center w-9 h-9 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 active:bg-white/10 transition-all shrink-0"
                             aria-label="Open menu"
                         >
                             <Menu className="h-5 w-5" />
                         </button>
 
-                        {/* Workspace selector */}
-                        <div
-                            className="flex flex-col gap-0.5 mt-1 relative min-w-0"
-                            ref={workspaceDropdownRef}
-                        >
-                            <div className="hidden sm:flex items-center gap-1 text-[9px] font-bold text-zinc-500 uppercase tracking-widest pl-0.5">
-                                <div className="w-2.5 h-[1.5px] bg-zinc-700 rounded-full" />
-                                Workspace
-                            </div>
+                        {/* ── Workspace Selector ── */}
+                        <div className="relative" ref={workspaceDropdownRef}>
                             <button
                                 onClick={() => setIsWorkspaceDropdownOpen((v) => !v)}
-                                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group max-w-[140px] sm:max-w-[180px]"
+                                className={`
+                                    flex items-center gap-2 h-9 pl-2 pr-3 rounded-xl border transition-all duration-200 group
+                                    ${isWorkspaceDropdownOpen
+                                        ? "bg-blue-500/10 border-blue-500/30 text-white"
+                                        : "bg-white/[0.04] border-white/[0.06] text-zinc-300 hover:bg-white/[0.08] hover:border-white/10 hover:text-white"
+                                    }
+                                `}
                             >
-                                <div className="w-5 h-5 shrink-0 rounded-md bg-blue-500 flex items-center justify-center text-[9px] font-black text-white shadow-[0_0_10px_rgba(59,130,246,0.3)]">
-                                    {currentWorkspace?.name
-                                        ? currentWorkspace.name.charAt(0).toUpperCase()
-                                        : "W"}
+                                {/* Avatar */}
+                                <div className="w-5 h-5 shrink-0 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-[9px] font-black text-white shadow-lg shadow-blue-500/25">
+                                    {currentWorkspace?.name ? currentWorkspace.name.charAt(0).toUpperCase() : <Building2 className="w-3 h-3" />}
                                 </div>
-                                <span className="text-xs font-semibold text-white truncate">
-                                    {currentWorkspace?.name ||
-                                        (isWorkspacesLoading ? "Loading…" : "Workspace")}
+                                {/* Label -- hidden on xs, visible sm+ */}
+                                <span className="hidden sm:block text-xs font-semibold truncate max-w-[100px] md:max-w-[140px]">
+                                    {currentWorkspace?.name || (isWorkspacesLoading ? "Loading…" : "Workspace")}
                                 </span>
-                                <ChevronDown
-                                    className={`h-3.5 w-3.5 shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-transform ${isWorkspaceDropdownOpen ? "rotate-180" : ""}`}
-                                />
+                                <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 text-zinc-500 group-hover:text-zinc-300 ${isWorkspaceDropdownOpen ? "rotate-180 text-blue-400" : ""}`} />
                             </button>
 
+                            {/* Workspace Dropdown */}
                             {isWorkspaceDropdownOpen && (
-                                <div className="absolute top-full left-0 mt-2 w-64 bg-[#14171f] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
-                                    <div className="p-2 max-h-60 overflow-y-auto">
-                                        <div className="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                                            My Workspaces
-                                        </div>
+                                <div className="absolute top-full left-0 mt-2 w-64 bg-[#14171f] border border-white/[0.07] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                                    <div className="px-4 pt-3 pb-1.5">
+                                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">My Workspaces</p>
+                                    </div>
+                                    <div className="p-1.5 max-h-56 overflow-y-auto">
                                         {workspaces?.map((workspace) => (
                                             <button
                                                 key={workspace.id}
                                                 onClick={() => handleSwitchWorkspace(workspace)}
-                                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all ${
+                                                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                                                     currentWorkspace?.id === workspace.id
                                                         ? "bg-blue-500/10 text-blue-400"
                                                         : "text-zinc-400 hover:text-white hover:bg-white/5"
                                                 }`}
                                             >
-                                                <div
-                                                    className={`w-2 h-2 rounded-full ${
-                                                        currentWorkspace?.id === workspace.id
-                                                            ? "bg-blue-500"
-                                                            : "bg-zinc-700"
-                                                    }`}
-                                                />
-                                                <span className="flex-1 text-left truncate font-medium">
-                                                    {workspace.name}
-                                                </span>
-                                                {currentWorkspace?.id === workspace.id && (
-                                                    <Check className="h-3.5 w-3.5 shrink-0" />
-                                                )}
+                                                <div className={`w-6 h-6 rounded-lg flex items-center justify-center text-[10px] font-black text-white shrink-0 ${currentWorkspace?.id === workspace.id ? "bg-blue-500" : "bg-zinc-700"}`}>
+                                                    {workspace.name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <span className="flex-1 text-left truncate font-medium">{workspace.name}</span>
+                                                {currentWorkspace?.id === workspace.id && <Check className="h-3.5 w-3.5 shrink-0 text-blue-400" />}
                                             </button>
                                         ))}
                                     </div>
-                                    <div className="p-2 border-t border-white/5 bg-[#14171f]">
+                                    <div className="p-1.5 pt-0 border-t border-white/[0.06] mt-1">
                                         <button
-                                            onClick={() =>
-                                                navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE)
-                                            }
-                                            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold rounded-xl transition-all border border-white/5 hover:border-white/10"
+                                            onClick={() => { navigate(FRONTEND_ROUTES.WORKSPACE.CREATE_WORKSPACE); setIsWorkspaceDropdownOpen(false); }}
+                                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all border border-dashed border-white/[0.08] hover:border-white/20"
                                         >
                                             <Plus className="h-3.5 w-3.5" />
-                                            Create New Workspace
+                                            New Workspace
                                         </button>
                                     </div>
                                 </div>
                             )}
                         </div>
 
-                        {/* Divider – hide on very small screens */}
-                        <div className="hidden sm:block h-8 w-px bg-white/5 mt-1 shrink-0" />
+                        {/* Divider */}
+                        <div className="hidden sm:block h-5 w-px bg-white/[0.08] shrink-0" />
 
-                        {/* Project selector */}
-                        <div
-                            className="flex flex-col gap-0.5 mt-1 relative min-w-0"
-                            ref={projectDropdownRef}
-                        >
-                            <div className="hidden sm:flex items-center gap-1 text-[9px] font-bold text-zinc-500 uppercase tracking-widest pl-0.5">
-                                <div className="w-2.5 h-[1.5px] bg-zinc-700 rounded-full" />
-                                Projects
-                            </div>
+                        {/* ── Project Selector ── */}
+                        <div className="relative" ref={projectDropdownRef}>
                             <button
                                 onClick={() => setIsProjectDropdownOpen((v) => !v)}
-                                className="flex items-center gap-2 px-2.5 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 transition-all border border-white/5 group max-w-[130px] sm:max-w-[180px]"
+                                className={`
+                                    flex items-center gap-2 h-9 pl-2 pr-3 rounded-xl border transition-all duration-200 group
+                                    ${isProjectDropdownOpen
+                                        ? "bg-emerald-500/10 border-emerald-500/30 text-white"
+                                        : "bg-white/[0.04] border-white/[0.06] text-zinc-300 hover:bg-white/[0.08] hover:border-white/10 hover:text-white"
+                                    }
+                                `}
                             >
-                                <div className="w-2.5 h-2.5 shrink-0 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.4)]" />
-                                <span className="text-xs font-semibold text-zinc-400 group-hover:text-white transition-colors truncate">
-                                    {currentProject?.projectName ||
-                                        (isProjectsLoading ? "Loading…" : "Project")}
+                                <div className={`w-2 h-2 shrink-0 rounded-full ${isProjectDropdownOpen ? "bg-emerald-400" : "bg-emerald-500"} shadow-[0_0_8px_rgba(16,185,129,0.5)]`} />
+                                <span className="hidden sm:block text-xs font-semibold truncate max-w-[90px] md:max-w-[130px]">
+                                    {currentProject?.projectName || (isProjectsLoading ? "Loading…" : "Project")}
                                 </span>
-                                <ChevronDown
-                                    className={`h-3.5 w-3.5 shrink-0 text-zinc-500 group-hover:text-zinc-300 transition-transform ${isProjectDropdownOpen ? "rotate-180" : ""}`}
-                                />
+                                <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 text-zinc-500 group-hover:text-zinc-300 ${isProjectDropdownOpen ? "rotate-180 text-emerald-400" : ""}`} />
                             </button>
 
+                            {/* Project Dropdown */}
                             {isProjectDropdownOpen && (
-                                <div className="absolute top-full left-0 mt-2 w-64 bg-[#14171f] border border-white/5 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
-                                    <div className="p-2 max-h-60 overflow-y-auto">
-                                        <div className="px-3 py-2 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
-                                            Workspace Projects
-                                        </div>
+                                <div className="absolute top-full left-0 mt-2 w-64 bg-[#14171f] border border-white/[0.07] rounded-2xl shadow-2xl shadow-black/40 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                                    <div className="px-4 pt-3 pb-1.5">
+                                        <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest">Projects</p>
+                                    </div>
+                                    <div className="p-1.5 max-h-56 overflow-y-auto">
                                         {projects?.length === 0 ? (
-                                            <div className="px-4 py-3 text-xs text-zinc-500">
-                                                No projects in this workspace
+                                            <div className="flex flex-col items-center gap-1.5 py-6 px-4 text-center">
+                                                <FolderOpen className="w-6 h-6 text-zinc-700" />
+                                                <p className="text-xs text-zinc-500">No projects yet</p>
                                             </div>
                                         ) : (
                                             projects?.map((p: Project) => (
                                                 <button
                                                     key={p._id}
                                                     onClick={() => handleSwitchProject(p)}
-                                                    className={`w-full flex items-center gap-3 px-3 py-2 rounded-xl text-sm transition-all ${
+                                                    className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm transition-all ${
                                                         currentProject?._id === p._id
                                                             ? "bg-emerald-500/10 text-emerald-400"
                                                             : "text-zinc-400 hover:text-white hover:bg-white/5"
                                                     }`}
                                                 >
-                                                    <div
-                                                        className={`w-1.5 h-1.5 shrink-0 rounded-full ${
-                                                            currentProject?._id === p._id
-                                                                ? "bg-emerald-500"
-                                                                : "bg-zinc-700"
-                                                        }`}
-                                                    />
-                                                    <span className="flex-1 text-left truncate font-medium">
-                                                        {p.projectName}
-                                                    </span>
-                                                    {currentProject?._id === p._id && (
-                                                        <Check className="h-3.5 w-3.5 shrink-0" />
-                                                    )}
+                                                    <div className={`w-1.5 h-1.5 shrink-0 rounded-full ${currentProject?._id === p._id ? "bg-emerald-500" : "bg-zinc-600"}`} />
+                                                    <span className="flex-1 text-left truncate font-medium">{p.projectName}</span>
+                                                    {currentProject?._id === p._id && <Check className="h-3.5 w-3.5 shrink-0 text-emerald-400" />}
                                                 </button>
                                             ))
                                         )}
                                     </div>
-                                    <div className="p-2 border-t border-white/5 bg-[#14171f]">
+                                    <div className="p-1.5 pt-0 border-t border-white/[0.06] mt-1">
                                         <button
-                                            onClick={() => setIsCreateModalOpen(true)}
-                                            className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white/5 hover:bg-white/10 text-white text-xs font-semibold rounded-xl transition-all border border-white/5 hover:border-white/10"
+                                            onClick={() => { setIsCreateModalOpen(true); setIsProjectDropdownOpen(false); }}
+                                            className="w-full flex items-center justify-center gap-2 px-3 py-2.5 bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white text-xs font-semibold rounded-xl transition-all border border-dashed border-white/[0.08] hover:border-white/20"
                                         >
                                             <Plus className="h-3.5 w-3.5" />
-                                            Create New Project
+                                            New Project
                                         </button>
                                     </div>
                                 </div>
@@ -305,93 +269,116 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         </div>
                     </div>
 
-                    {/* ── Right side ── */}
-                    <div className="flex items-center gap-2 lg:gap-4 shrink-0">
+                    {/* ── Right: actions + user ── */}
+                    <div className="flex items-center gap-1 shrink-0">
 
                         {/* Notifications */}
                         <div className="relative">
                             <button
                                 onClick={() => setIsNotificationModalOpen((v) => !v)}
-                                className={`relative p-2.5 rounded-xl hover:bg-white/5 transition-all ${
+                                className={`relative flex items-center justify-center w-9 h-9 rounded-xl transition-all ${
                                     isNotificationModalOpen
-                                        ? "text-white bg-white/5"
-                                        : "text-zinc-400 hover:text-white"
+                                        ? "bg-white/10 text-white"
+                                        : "text-zinc-400 hover:text-white hover:bg-white/5"
                                 }`}
+                                aria-label="Notifications"
                             >
                                 <Bell className="h-5 w-5" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute top-2.5 right-2.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-[#0b0e14]" />
+                                    <span className="absolute top-1.5 right-1.5 w-[7px] h-[7px] bg-rose-500 rounded-full border-[1.5px] border-[#0b0e14] shadow-lg" />
                                 )}
                             </button>
-
                             <NotificationModal
                                 isOpen={isNotificationModalOpen}
                                 onClose={() => setIsNotificationModalOpen(false)}
                             />
                         </div>
 
-                        {/* Settings – hide on small screens to save space */}
-                        <button className="hidden sm:flex p-2.5 rounded-xl hover:bg-white/5 text-zinc-400 hover:text-white transition-all">
+                        {/* Settings (hidden xs) */}
+                        <button
+                            className="hidden sm:flex items-center justify-center w-9 h-9 rounded-xl text-zinc-400 hover:text-white hover:bg-white/5 transition-all"
+                            aria-label="Settings"
+                        >
                             <SettingsIcon className="h-5 w-5" />
                         </button>
 
-                        <div className="hidden sm:block h-8 w-px bg-white/5" />
+                        {/* Divider */}
+                        <div className="hidden sm:block h-5 w-px bg-white/[0.08] mx-1" />
 
-                        {/* User avatar + menu */}
-                        <div className="relative" ref={userMenuRef}>
+                        {/* User area */}
+                        <div className="relative flex items-center" ref={userMenuRef}>
+                            {/* Avatar button (opens menu) */}
                             <button
                                 onClick={() => setIsUserMenuOpen((v) => !v)}
-                                className="flex items-center gap-2 p-1 rounded-xl hover:bg-white/5 transition-all group"
+                                className={`flex items-center justify-center w-9 h-9 rounded-xl overflow-hidden border-2 transition-all duration-200 ${
+                                    isUserMenuOpen
+                                        ? "border-blue-500/60 ring-2 ring-blue-500/20 scale-105"
+                                        : "border-zinc-700/60 hover:border-zinc-500 hover:scale-105"
+                                } bg-gradient-to-br from-blue-600 to-blue-700 text-white text-xs font-bold shadow-lg shadow-blue-500/10`}
+                                aria-label="User menu"
                             >
-                                <div className="w-8 h-8 lg:w-9 lg:h-9 rounded-xl bg-blue-600 flex items-center justify-center text-white text-xs font-bold shadow-[0_0_15px_rgba(37,99,235,0.3)] group-hover:scale-105 transition-transform overflow-hidden shrink-0">
-                                    {user?.avatarUrl ? (
-                                        <img
-                                            src={user.avatarUrl}
-                                            alt="Avatar"
-                                            className="w-full h-full object-cover"
-                                        />
-                                    ) : (
-                                        <>
-                                            {user?.firstName?.[0] || "A"}
-                                            {user?.lastName?.[0] || "M"}
-                                        </>
-                                    )}
-                                </div>
+                                {user?.avatarUrl ? (
+                                    <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                ) : (
+                                    <span className="text-[11px] font-black">
+                                        {user?.firstName?.[0] || "A"}{user?.lastName?.[0] || "M"}
+                                    </span>
+                                )}
                             </button>
 
-                            {/* Logout shortcut (always visible beside avatar) */}
+                            {/* Logout shortcut */}
                             <button
                                 onClick={handleLogout}
-                                className="p-2 rounded-lg hover:bg-red-500/10 text-zinc-500 hover:text-red-400 transition-all"
-                                title="Logout"
+                                className="flex items-center justify-center w-9 h-9 rounded-xl text-zinc-500 hover:text-red-400 hover:bg-red-500/10 transition-all duration-200"
+                                title="Sign out"
+                                aria-label="Sign out"
                             >
-                                <LogOut className="h-5 w-5" />
+                                <LogOut className="h-4.5 w-4.5" />
                             </button>
 
+                            {/* User dropdown */}
                             {isUserMenuOpen && (
-                                <div className="absolute right-0 mt-3 w-64 bg-[#14171f] border border-white/5 rounded-2xl shadow-2xl py-3 overflow-hidden animate-in fade-in slide-in-from-top-2 z-50">
-                                    <div className="px-5 py-3 border-b border-white/5">
-                                        <p className="text-sm font-bold text-white">
-                                            {user?.firstName} {user?.lastName}
-                                        </p>
-                                        <p className="text-[11px] text-zinc-500 font-medium mt-0.5">
-                                            {user?.email}
-                                        </p>
+                                <div className="absolute right-0 top-full mt-2 w-64 bg-[#14171f] border border-white/[0.07] rounded-2xl shadow-2xl shadow-black/50 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+                                    {/* Profile header */}
+                                    <div className="px-5 py-4 border-b border-white/[0.06] flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shrink-0 shadow-lg">
+                                            {user?.avatarUrl ? (
+                                                <img src={user.avatarUrl} alt="Avatar" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-xs font-black text-white">
+                                                    {user?.firstName?.[0] || "A"}{user?.lastName?.[0] || "M"}
+                                                </span>
+                                            )}
+                                        </div>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-bold text-white truncate">
+                                                {user?.firstName} {user?.lastName}
+                                            </p>
+                                            <p className="text-[11px] text-zinc-500 truncate mt-0.5">{user?.email}</p>
+                                        </div>
                                     </div>
-                                    <div className="p-2">
+
+                                    <div className="p-1.5">
                                         <button
                                             className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all"
-                                            onClick={() => {
-                                                navigate(FRONTEND_ROUTES.PROFILE);
-                                                setIsUserMenuOpen(false);
-                                            }}
+                                            onClick={() => { navigate(FRONTEND_ROUTES.PROFILE); setIsUserMenuOpen(false); }}
                                         >
-                                            <User className="h-4 w-4" />
+                                            <User className="h-4 w-4 shrink-0" />
                                             <span className="font-medium">Account Settings</span>
                                         </button>
                                         <button className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-zinc-400 hover:text-white hover:bg-white/5 rounded-xl transition-all">
-                                            <SettingsIcon className="h-4 w-4" />
-                                            <span className="font-medium">Preference</span>
+                                            <SettingsIcon className="h-4 w-4 shrink-0" />
+                                            <span className="font-medium">Preferences</span>
+                                        </button>
+                                    </div>
+
+                                    <div className="p-1.5 pt-0 border-t border-white/[0.06] mt-0.5">
+                                        <button
+                                            onClick={handleLogout}
+                                            className="flex items-center gap-3 w-full px-4 py-2.5 text-sm text-red-400 hover:text-red-300 hover:bg-red-500/10 rounded-xl transition-all"
+                                        >
+                                            <LogOut className="h-4 w-4 shrink-0" />
+                                            <span className="font-medium">Sign out</span>
                                         </button>
                                     </div>
                                 </div>

@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import DashboardLayout from "@/components/Layout/DashboardLayout";
-import { Plus } from "lucide-react";
+import { Plus, SlidersHorizontal } from "lucide-react";
 import { AddMemberDropdown } from "@/components/Project/AddMemberDropdown";
 import { CreateEpicModal } from "@/components/Issue/CreateEpicModal";
 import { CreateIssueModal } from "@/components/Issue/CreateIssueModal";
@@ -67,7 +67,7 @@ export const BacklogPage = () => {
     const [expandedSprints, setExpandedSprints] = useState<Record<string, boolean>>({});
     const [isBacklogOpen, setIsBacklogOpen] = useState(true);
     const [expandedEpic, setExpandedEpic] = useState<string | null>(null);
-    const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(true);
+    const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(false);
     const [isMemberDropdownOpen, setIsMemberDropdownOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [preparingMember, setPreparingMember] = useState<User | null>(null);
@@ -80,6 +80,7 @@ export const BacklogPage = () => {
     const [activeStatusDropdownId, setActiveStatusDropdownId] = useState<string | null>(null);
     const [showCompletedSprints, setShowCompletedSprints] = useState(false);
     const [activeFilter, setActiveFilter] = useState<Omit<GetAllIssuesFilterProps, 'projectId'>>({});
+    const [showFilters, setShowFilters] = useState(false);
     const dispatch = useDispatch();
     const queryClient = useQueryClient();
     const location = useLocation();
@@ -154,16 +155,13 @@ export const BacklogPage = () => {
         const issueId = active.id as string;
         const overId = over.id as string;
 
-        // Find the target sprint ID or 'backlog'
         let targetSprintId: string | null = null;
 
-        // If dropped over a container itself
         if (overId === 'backlog') {
             targetSprintId = null;
         } else if (sprintsResponse?.data?.some((s: ISprintEntity) => s._id === overId)) {
             targetSprintId = overId;
         } else {
-            // If dropped over another issue, find its container
             const overIssue = allIssues.find(i => i._id === overId);
             if (overIssue) {
                 targetSprintId = overIssue.sprintId || null;
@@ -172,7 +170,7 @@ export const BacklogPage = () => {
 
         const activeIssueObj = allIssues.find(i => i._id === issueId);
         if (activeIssueObj && activeIssueObj.sprintId === (targetSprintId || null)) {
-            return; // No change needed
+            return;
         }
 
         moveIssueToSprint({
@@ -184,7 +182,6 @@ export const BacklogPage = () => {
             },
             onError: (err: unknown) => {
                 toast.error(getErrorMessage(err) || "Failed to move issue");
-                console.error(err);
             }
         });
     };
@@ -192,9 +189,7 @@ export const BacklogPage = () => {
     const dropAnimation = {
         sideEffects: defaultDropAnimationSideEffects({
             styles: {
-                active: {
-                    opacity: '0.5',
-                },
+                active: { opacity: '0.5' },
             },
         }),
     };
@@ -210,16 +205,10 @@ export const BacklogPage = () => {
             projectId: currentProject._id,
             workspaceId: currentProject.workspaceId
         }, {
-            onSuccess: () => {
-                toast.success("Sprint created successfully");
-            },
-            onError: (err: unknown) => {
-                toast.error(getErrorMessage(err) || "Failed to create sprint");
-                console.error(err);
-            }
+            onSuccess: () => { toast.success("Sprint created"); },
+            onError: (err: unknown) => { toast.error(getErrorMessage(err) || "Failed to create sprint"); }
         });
     };
-
 
     const handleAddMember = () => {
         if (!currentProject) return;
@@ -283,7 +272,6 @@ export const BacklogPage = () => {
             },
             onError: (err: unknown) => {
                 toast.error(getErrorMessage(err) || "Failed to create issue");
-                console.error(err);
             }
         });
     };
@@ -299,13 +287,11 @@ export const BacklogPage = () => {
         }));
 
     const getChildTasks = (parentId: string) => {
-        return allIssues.filter(
-            (issue) => issue.parentIssueId === parentId
-        );
+        return allIssues.filter((issue) => issue.parentIssueId === parentId);
     };
 
     const getCompletedCount = (tasks: IssueItem[]) => {
-        return tasks.filter(t => t.status === 'done' || t.status === 'Done' || t.status === 'DONE' || t.status === 'completed' || t.status === 'Completed').length;
+        return tasks.filter(t => ['done', 'Done', 'DONE', 'completed', 'Completed'].includes(t.status || '')).length;
     };
 
     const handleCreateEpicSubmit = (formData: EpicFormData) => {
@@ -334,160 +320,181 @@ export const BacklogPage = () => {
         });
     };
 
+    const hasActiveFilter = Object.keys(activeFilter).length > 0;
+
     return (
         <>
             <DashboardLayout>
                 <div className="flex flex-col h-full bg-[#0b0e14] text-white min-h-[calc(100vh-5rem)]">
-                    {/* Header Section */}
-                    <div className="px-8 py-6">
+
+                    {/* ── Header ── */}
+                    <div className="px-4 sm:px-8 py-4 sm:py-6 border-b border-white/5">
                         {isLoadingSprints && (
                             <div className="mb-4 p-4 bg-zinc-900/20 border border-white/5 rounded-2xl animate-pulse">
                                 <div className="h-4 w-32 bg-zinc-800 rounded mb-2" />
-                                <div className="h-20 bg-zinc-800/50 rounded-xl" />
+                                <div className="h-12 bg-zinc-800/50 rounded-xl" />
                             </div>
                         )}
-                        <div className="flex items-center justify-between mb-8">
-                            <div className="flex items-center gap-4">
-                                <h1 className="text-2xl font-bold">Backlog</h1>
-                            </div>
 
-                            <div className="flex items-center gap-6">
-                                <div className="flex items-center gap-2">
-                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
-                                        <Filter className="w-3 h-3 text-zinc-500" />
-                                        <select
-                                            value={activeFilter.assigneeId || ''}
-                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, assigneeId: e.target.value || undefined }))}
-                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none min-w-[90px]"
-                                        >
-                                            <option value="" className="bg-[#0b0e14]">All Assignees</option>
-                                            {currentProject?.members?.map(m => (
-                                                <option key={m.userId} value={m.userId} className="bg-[#0b0e14]">
-                                                    {m.user?.userName || 'Unknown'}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                        {/* Row 1: Title + action buttons */}
+                        <div className="flex items-center justify-between gap-3 mb-4">
+                            <h1 className="text-xl sm:text-2xl font-bold">Backlog</h1>
 
-                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
-                                        <Hash className="w-3 h-3 text-zinc-500" />
-                                        <select
-                                            value={activeFilter.issueType || ''}
-                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, issueType: e.target.value || undefined }))}
-                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
-                                        >
-                                            <option value="" className="bg-[#0b0e14]">All Types</option>
-                                            {Object.values(IssueType).map(type => (
-                                                <option key={type} value={type} className="bg-[#0b0e14]">
-                                                    {type}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </div>
+                            <div className="flex items-center gap-2">
+                                {/* Filter toggle (mobile) */}
+                                <button
+                                    onClick={() => setShowFilters(v => !v)}
+                                    className={`sm:hidden flex items-center justify-center w-8 h-8 rounded-xl border transition-all ${hasActiveFilter ? 'bg-blue-500/10 border-blue-500/30 text-blue-400' : 'bg-white/5 border-white/5 text-zinc-400 hover:text-white'}`}
+                                >
+                                    <SlidersHorizontal className="w-4 h-4" />
+                                </button>
 
-                                    <div className="flex items-center gap-1.5 px-2 py-1 bg-zinc-900/50 border border-white/5 rounded-xl">
-                                        <Calendar className="w-3 h-3 text-zinc-500" />
-                                        <select
-                                            value={activeFilter.dateFilter || ''}
-                                            onChange={(e) => setActiveFilter(prev => ({ ...prev, dateFilter: (e.target.value as GetAllIssuesFilterProps['dateFilter']) || undefined }))}
-                                            className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                {/* Members stack (hidden xs) */}
+                                <div className="hidden sm:flex items-center -space-x-2">
+                                    {currentProject?.members?.slice(0, 4).map((member) => (
+                                        <div
+                                            key={member.userId}
+                                            className="w-7 h-7 rounded-full border-2 border-[#0b0e14] bg-zinc-800 flex items-center justify-center overflow-hidden"
+                                            title={member.user?.userName}
                                         >
-                                            <option value="" className="bg-[#0b0e14]">All Time</option>
-                                            <option value="RECENT" className="bg-[#0b0e14]">Recent (7d)</option>
-                                            <option value="DUE_SOON" className="bg-[#0b0e14]">Due Soon (3d)</option>
-                                        </select>
-                                    </div>
-
-                                    {Object.keys(activeFilter).length > 0 && (
-                                        <button
-                                            onClick={() => setActiveFilter({})}
-                                            className="p-1 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-rose-400 transition-colors"
-                                            title="Clear filters"
-                                        >
-                                            <X className="w-3.5 h-3.5" />
-                                        </button>
+                                            {member.user?.profilePicture ? (
+                                                <img src={member.user.profilePicture} alt="" className="w-full h-full object-cover" />
+                                            ) : (
+                                                <span className="text-[9px] font-bold text-zinc-400">
+                                                    {member.user?.userName?.charAt(0).toUpperCase()}
+                                                </span>
+                                            )}
+                                        </div>
+                                    ))}
+                                    {(currentProject?.members?.length || 0) > 4 && (
+                                        <div className="w-7 h-7 rounded-full border-2 border-[#0b0e14] bg-zinc-900 flex items-center justify-center">
+                                            <span className="text-[9px] font-bold text-zinc-500">+{(currentProject?.members?.length || 0) - 4}</span>
+                                        </div>
                                     )}
                                 </div>
 
-                                <div className="h-6 w-px bg-zinc-800 mx-2" />
-
-                                {/* Members Stack */}
-                                <div className="flex items-center">
-                                    <div className="flex -space-x-2 mr-4">
-                                        {currentProject?.members?.slice(0, 5).map((member) => (
-                                            <div
-                                                key={member.userId}
-                                                className="w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-800 flex items-center justify-center overflow-hidden"
-                                                title={member.user?.userName}
-                                            >
-                                                {member.user?.profilePicture ? (
-                                                    <img src={member.user.profilePicture} alt="" className="w-full h-full object-cover" />
-                                                ) : (
-                                                    <span className="text-[10px] font-bold text-zinc-400">
-                                                        {member.user?.userName?.charAt(0).toUpperCase()}
-                                                    </span>
-                                                )}
-                                            </div>
-                                        ))}
-                                        {(currentProject?.members?.length || 0) > 5 && (
-                                            <div className="w-8 h-8 rounded-full border-2 border-[#0b0e14] bg-zinc-900 flex items-center justify-center">
-                                                <span className="text-[10px] font-bold text-zinc-500">
-                                                    +{(currentProject?.members?.length || 0) - 5}
-                                                </span>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="relative">
-                                        <button
-                                            onClick={() => setIsMemberDropdownOpen(!isMemberDropdownOpen)}
-                                            className={`w-8 h-8 rounded-full border border-dashed transition-all flex items-center justify-center ${isMemberDropdownOpen ? 'border-blue-500 bg-blue-500/10 rotate-45' : 'border-zinc-700 hover:border-blue-500 hover:bg-blue-500/5 hover:scale-110'}`}
-                                            title="Add members"
-                                        >
-                                            <Plus className={`w-4 h-4 ${isMemberDropdownOpen ? 'text-blue-400' : 'text-zinc-500 hover:text-blue-500'}`} />
-                                        </button>
-
-                                        <AddMemberDropdown
-                                            isOpen={isMemberDropdownOpen}
-                                            preparingMember={preparingMember}
-                                            onMemberSelect={handlePrepareAdd}
-                                            preparingRoleId={preparingRoleId}
-                                            onRoleChange={setPreparingRoleId}
-                                            searchQuery={searchQuery}
-                                            onSearchChange={setSearchQuery}
-                                            roles={roles}
-                                            members={availableMembers}
-                                            isLoading={isLoadingMembers}
-                                            onConfirm={handleAddMember}
-                                            onCancel={() => {
-                                                setPreparingMember(null);
-                                            }}
-                                            onClose={() => setIsMemberDropdownOpen(false)}
-                                            isAdding={addMemberMutation.isPending}
-                                        />
-                                    </div>
+                                {/* Add member */}
+                                <div className="relative">
+                                    <button
+                                        onClick={() => setIsMemberDropdownOpen(!isMemberDropdownOpen)}
+                                        className={`w-8 h-8 rounded-full border border-dashed transition-all flex items-center justify-center ${isMemberDropdownOpen ? 'border-blue-500 bg-blue-500/10 rotate-45' : 'border-zinc-700 hover:border-blue-500 hover:bg-blue-500/5'}`}
+                                        title="Add members"
+                                    >
+                                        <Plus className={`w-3.5 h-3.5 ${isMemberDropdownOpen ? 'text-blue-400' : 'text-zinc-500'}`} />
+                                    </button>
+                                    <AddMemberDropdown
+                                        isOpen={isMemberDropdownOpen}
+                                        preparingMember={preparingMember}
+                                        onMemberSelect={handlePrepareAdd}
+                                        preparingRoleId={preparingRoleId}
+                                        onRoleChange={setPreparingRoleId}
+                                        searchQuery={searchQuery}
+                                        onSearchChange={setSearchQuery}
+                                        roles={roles}
+                                        members={availableMembers}
+                                        isLoading={isLoadingMembers}
+                                        onConfirm={handleAddMember}
+                                        onCancel={() => setPreparingMember(null)}
+                                        onClose={() => setIsMemberDropdownOpen(false)}
+                                        isAdding={addMemberMutation.isPending}
+                                    />
                                 </div>
 
-                                <div className="h-6 w-px bg-zinc-800" />
+                                <div className="h-5 w-px bg-zinc-800 hidden sm:block" />
 
+                                {/* Epic Panel toggle */}
                                 <button
                                     onClick={() => setIsEpicSidebarOpen(!isEpicSidebarOpen)}
-                                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${isEpicSidebarOpen ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                    className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${isEpicSidebarOpen ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
                                 >
-                                    Epic Panel
+                                    <span className="hidden sm:inline">Epic Panel</span>
+                                    <span className="sm:hidden">Epics</span>
                                 </button>
 
+                                {/* Completed Sprints toggle */}
                                 <button
                                     onClick={() => setShowCompletedSprints(!showCompletedSprints)}
-                                    className={`px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${showCompletedSprints ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
+                                    className={`px-2.5 sm:px-3 py-1.5 rounded-xl text-[10px] font-bold transition-all ${showCompletedSprints ? 'bg-emerald-500 text-white shadow-lg shadow-emerald-500/20' : 'bg-transparent border border-white/5 text-zinc-400 hover:text-white'}`}
                                 >
-                                    Completed Sprints
+                                    <span className="hidden sm:inline">Completed Sprints</span>
+                                    <span className="sm:hidden">Done</span>
                                 </button>
                             </div>
                         </div>
+
+                        {/* Row 2: Filters (always visible sm+, togglable on mobile) */}
+                        <div className={`flex flex-wrap items-center gap-2 ${showFilters ? 'flex' : 'hidden sm:flex'}`}>
+                            {/* Assignee filter */}
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                <Filter className="w-3 h-3 text-zinc-500 shrink-0" />
+                                <select
+                                    value={activeFilter.assigneeId || ''}
+                                    onChange={(e) => setActiveFilter(prev => ({ ...prev, assigneeId: e.target.value || undefined }))}
+                                    className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none min-w-[80px]"
+                                >
+                                    <option value="" className="bg-[#0b0e14]">All Assignees</option>
+                                    {currentProject?.members?.map(m => (
+                                        <option key={m.userId} value={m.userId} className="bg-[#0b0e14]">
+                                            {m.user?.userName || 'Unknown'}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Type filter */}
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                <Hash className="w-3 h-3 text-zinc-500 shrink-0" />
+                                <select
+                                    value={activeFilter.issueType || ''}
+                                    onChange={(e) => setActiveFilter(prev => ({ ...prev, issueType: e.target.value || undefined }))}
+                                    className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                >
+                                    <option value="" className="bg-[#0b0e14]">All Types</option>
+                                    {Object.values(IssueType).map(type => (
+                                        <option key={type} value={type} className="bg-[#0b0e14]">{type}</option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Date filter */}
+                            <div className="flex items-center gap-1.5 px-2.5 py-1.5 bg-zinc-900/50 border border-white/5 rounded-xl">
+                                <Calendar className="w-3 h-3 text-zinc-500 shrink-0" />
+                                <select
+                                    value={activeFilter.dateFilter || ''}
+                                    onChange={(e) => setActiveFilter(prev => ({ ...prev, dateFilter: (e.target.value as GetAllIssuesFilterProps['dateFilter']) || undefined }))}
+                                    className="bg-transparent text-[10px] font-medium text-zinc-300 focus:outline-none"
+                                >
+                                    <option value="" className="bg-[#0b0e14]">All Time</option>
+                                    <option value="RECENT" className="bg-[#0b0e14]">Recent (7d)</option>
+                                    <option value="DUE_SOON" className="bg-[#0b0e14]">Due Soon (3d)</option>
+                                </select>
+                            </div>
+
+                            {hasActiveFilter && (
+                                <button
+                                    onClick={() => setActiveFilter({})}
+                                    className="p-1.5 hover:bg-white/5 rounded-lg text-zinc-500 hover:text-rose-400 transition-colors"
+                                    title="Clear filters"
+                                >
+                                    <X className="w-3.5 h-3.5" />
+                                </button>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="flex gap-6">
+                    {/* ── Main content: Epic sidebar + Sections ── */}
+                    <div className="flex flex-col md:flex-row gap-4 p-4 sm:p-6 min-h-0 flex-1">
+
+                        {/* Epic Sidebar — overlay on mobile, inline on desktop */}
+                        {isEpicSidebarOpen && (
+                            <>
+                                {/* Mobile overlay backdrop */}
+                                <div
+                                    className="fixed inset-0 z-30 bg-black/60 backdrop-blur-sm md:hidden"
+                                    onClick={() => setIsEpicSidebarOpen(false)}
+                                />
+                            </>
+                        )}
                         <EpicSidebar
                             isOpen={isEpicSidebarOpen}
                             onClose={() => setIsEpicSidebarOpen(false)}
@@ -512,8 +519,10 @@ export const BacklogPage = () => {
                             onDragStart={handleDragStart}
                             onDragEnd={handleDragEnd}
                         >
-                            <div className="flex-1 space-y-6">
-                                {sprintsResponse?.data?.filter((s: ISprintEntity) => showCompletedSprints ? s.status === "COMPLETED" : s.status !== "COMPLETED").map((sprint: ISprintEntity) => (
+                            <div className="flex-1 min-w-0 space-y-4">
+                                {sprintsResponse?.data?.filter((s: ISprintEntity) =>
+                                    showCompletedSprints ? s.status === "COMPLETED" : s.status !== "COMPLETED"
+                                ).map((sprint: ISprintEntity) => (
                                     <SprintSection
                                         key={sprint._id}
                                         sprint={sprint}
@@ -537,18 +546,9 @@ export const BacklogPage = () => {
                                             setIsIssueDrawerOpen(true);
                                         }}
                                         onUpdateStatus={(id, status) => {
-                                            updateIssue({
-                                                epicId: id,
-                                                status,
-                                                projectId: currentProject?._id || "",
-                                            }, {
-                                                onSuccess: () => {
-                                                    toast.success(`Status updated to ${status.replace("_", " ")}`);
-                                                },
-                                                onError: (err: unknown) => {
-                                                    toast.error(getErrorMessage(err) || "Failed to update status");
-                                                    console.error(err);
-                                                }
+                                            updateIssue({ epicId: id, status, projectId: currentProject?._id || "" }, {
+                                                onSuccess: () => toast.success(`Status updated`),
+                                                onError: (err: unknown) => toast.error(getErrorMessage(err) || "Failed to update status"),
                                             });
                                         }}
                                     />
@@ -571,18 +571,9 @@ export const BacklogPage = () => {
                                         projectMembers={currentProject?.members || []}
                                         taskDotColors={TASK_DOT_COLORS}
                                         onUpdateStatus={(id, status) => {
-                                            updateIssue({
-                                                epicId: id,
-                                                status,
-                                                projectId: currentProject?._id || "",
-                                            }, {
-                                                onSuccess: () => {
-                                                    toast.success(`Status updated to ${status.replace("_", " ")}`);
-                                                },
-                                                onError: (err: unknown) => {
-                                                    toast.error(getErrorMessage(err) || "Failed to update status");
-                                                    console.error(err);
-                                                }
+                                            updateIssue({ epicId: id, status, projectId: currentProject?._id || "" }, {
+                                                onSuccess: () => toast.success(`Status updated`),
+                                                onError: (err: unknown) => toast.error(getErrorMessage(err) || "Failed to update status"),
                                             });
                                         }}
                                     />
@@ -648,4 +639,3 @@ export const BacklogPage = () => {
         </>
     );
 };
-
