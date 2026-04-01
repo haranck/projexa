@@ -143,10 +143,8 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         </button>
 
                         {/* Mobile Branding */}
-                        <div className="lg:hidden flex items-center shrink-0 mr-1 sm:mr-3">
-                            <span className="font-bold text-lg tracking-tight bg-linear-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent hidden sm:block">Projexa</span>
-                            <img src="/logo.png" alt="P" className="h-6 w-auto sm:hidden object-contain" onError={(e) => { e.currentTarget.style.display = 'none'; e.currentTarget.nextElementSibling?.classList.remove('hidden'); }} />
-                            <span className="font-bold text-[17px] tracking-tight text-white sm:hidden hidden">Projexa</span>
+                        <div className="lg:hidden flex items-center shrink-0 mr-2 -ml-1">
+                            <img src="/logo.png" alt="ProJexa" className="h-10 w-auto object-contain brightness-110" />
                         </div>
 
                         {/* ── Workspace Selector ── */}
@@ -160,6 +158,8 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                                         : "bg-white/[0.04] border-white/[0.06] text-zinc-300 hover:bg-white/[0.08] hover:border-white/10 hover:text-white"
                                     }
                                 `}
+
+                                
                             >
                                 {/* Avatar */}
                                 <div className="w-5 h-5 shrink-0 rounded-md bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center text-[9px] font-black text-white shadow-lg shadow-blue-500/25">

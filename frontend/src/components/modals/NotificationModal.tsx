@@ -111,7 +111,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
             </div>
 
             {/* List */}
-            <div className="flex-1 overflow-y-auto custom-scrollbar max-h-[400px]">
+            <div className="flex-1 overflow-y-auto custom-scrollbar max-h-[65vh] sm:max-h-[400px]">
                 {isLoading ? (
                     <div className="p-8 flex flex-col items-center justify-center gap-3">
                         <div className="w-8 h-8 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
