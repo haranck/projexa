@@ -20,7 +20,7 @@ export class CreateCheckoutSessionUseCase implements ICreateCheckoutSessionUseCa
 
     async execute(dto: CreateCheckoutSessionUseCaseDTO): Promise<string> {
         const lockKey = `payment_lock:${dto.userId}`;
-        const lockAcquired = await this._redisLockService.acquireLock(lockKey, 600);
+        const lockAcquired = await this._redisLockService.acquireLock(lockKey, 120);
 
         if (!lockAcquired) {
             throw new Error(SUBSCRIPTION_ERRORS.PAYMENT_ALREADY_IN_PROGRESS);

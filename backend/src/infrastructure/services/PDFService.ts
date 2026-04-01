@@ -5,7 +5,7 @@ export class PDFService {
     async generateSalesReportPDF(payments: AdminPaymentResponseDTO[]): Promise<Buffer> {
         return new Promise((resolve, reject) => {
             try {
-                const doc = new PDFDocument({ margin: 50, size: 'A4' });
+                const doc = new PDFDocument({ margin: 50, size: 'A4', bufferPages: true });
                 const chunks: Buffer[] = [];
 
                 doc.on('data', (chunk) => chunks.push(chunk));
@@ -71,23 +71,25 @@ export class PDFService {
                     doc.text(date, xPos, yPos, { width: colWidths.date, align: 'left' });
                     xPos += colWidths.date;
 
-                    doc.text(payment.userName, xPos, yPos, { width: colWidths.customer, align: 'left', ellipsis: true });
+                    doc.text(payment.userName || 'N/A', xPos, yPos, { width: colWidths.customer, align: 'left', ellipsis: true });
                     xPos += colWidths.customer;
 
-                    doc.text(payment.workspaceName, xPos, yPos, { width: colWidths.workspace, align: 'left', ellipsis: true });
+                    doc.text(payment.workspaceName || 'N/A', xPos, yPos, { width: colWidths.workspace, align: 'left', ellipsis: true });
                     xPos += colWidths.workspace;
 
-                    const amount = `₹${payment.amount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
+                    const amountVal = payment.amount || 0;
+                    const amount = `₹${amountVal.toLocaleString('en-IN', { minimumFractionDigits: 2 })}`;
                     doc.text(amount, xPos, yPos, { width: colWidths.amount, align: 'right' });
                     xPos += colWidths.amount;
 
-                    doc.text(payment.status, xPos, yPos, { width: colWidths.status, align: 'center' });
+                    doc.text(payment.status || 'N/A', xPos, yPos, { width: colWidths.status, align: 'center' });
                     xPos += colWidths.status;
 
-                    doc.text(payment.invoiceId.slice(0, 15) + '...', xPos, yPos, { width: colWidths.invoice, align: 'left' });
+                    const invId = payment.invoiceId || '';
+                    doc.text(invId.length > 15 ? invId.slice(0, 15) + '...' : invId, xPos, yPos, { width: colWidths.invoice, align: 'left' });
                     xPos += colWidths.invoice;
 
-                    doc.text(payment.paymentMethod, xPos, yPos, { width: colWidths.method, align: 'left', ellipsis: true });
+                    doc.text(payment.paymentMethod || 'N/A', xPos, yPos, { width: colWidths.method, align: 'left', ellipsis: true });
 
                     yPos += 20;
 
