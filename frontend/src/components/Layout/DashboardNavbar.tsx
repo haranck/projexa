@@ -145,7 +145,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
 
                         {/* Mobile Branding */}
                         <div className="lg:hidden flex items-center shrink-0 mr-2 -ml-1">
-                            <img src="/logo.png" alt="ProJexa" className="h-10 w-auto object-contain brightness-110" />
+                            <img src="/logo.png" alt="ProJexa" className="h-15 w-auto object-contain brightness-110" />
                         </div>
 
                         {/* ── Workspace Selector ── */}
