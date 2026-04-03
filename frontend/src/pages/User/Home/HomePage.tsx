@@ -160,7 +160,7 @@ export const HomePage = () => {
                         <div>
                             <div className="flex items-center gap-2 mb-1">
                                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                                <span className="text-xs font-medium text-emerald-500">Liveeeeee</span>
+                                <span className="text-xs font-medium text-emerald-500">Live</span>
                                 <span className="text-xs text-zinc-600">·</span>
                                 <span className="text-xs text-zinc-500">{currentProject?.projectName}</span>
                             </div>

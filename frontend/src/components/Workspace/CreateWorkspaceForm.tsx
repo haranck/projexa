@@ -32,12 +32,10 @@ export const CreateWorkspaceForm = () => {
       }
     })
   }
-
   return (
 
     <div className="w-full max-w-md mx-auto">
 
-      {/* Back button — always visible on all screen sizes */}
       <button
         type="button"
         onClick={() => navigate(FRONTEND_ROUTES.HOME)}
@@ -81,45 +79,6 @@ export const CreateWorkspaceForm = () => {
           />
           {errors.description && <p className="text-red-500 text-[10px] mt-1">{errors.description.message}</p>}
         </div>
-
-        {/* <div className="space-y-2">
-          <label className="text-zinc-400 text-xs font-medium uppercase tracking-wider">Workspace Type</label>
-          <Controller
-            control={control}
-            name="workspaceType"
-            render={({ field }) => (
-              <div className="grid grid-cols-2 gap-4">
-                <button
-                  type="button"
-                  onClick={() => field.onChange("individual")}
-                  className={cn(
-                    "flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all duration-300 bg-[#0d1117]",
-                    field.value === "individual"
-                      ? "border-[#4dabf7] bg-[#4dabf7]/5 shadow-[0_0_15px_rgba(77,171,247,0.1)]"
-                      : "border-zinc-800 hover:border-zinc-700"
-                  )}
-                >
-                  <User className={cn("w-6 h-6", field.value === "individual" ? "text-[#4dabf7]" : "text-zinc-500")} />
-                  <span className={cn("text-xs font-bold", field.value === "individual" ? "text-white" : "text-zinc-500")}>Individual</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => field.onChange("company")}
-                  className={cn(
-                    "flex flex-col items-center justify-center gap-2 p-4 rounded-xl border transition-all duration-300 bg-[#0d1117]",
-                    field.value === "company"
-                      ? "border-[#4dabf7] bg-[#4dabf7]/5 shadow-[0_0_15px_rgba(77,171,247,0.1)]"
-                      : "border-zinc-800 hover:border-zinc-700"
-                  )}
-                >
-                  <Building2 className={cn("w-6 h-6", field.value === "company" ? "text-blue-500" : "text-zinc-500")} />
-                  <span className={cn("text-xs font-bold", field.value === "company" ? "text-white" : "text-zinc-500")}>Company</span>
-                </button>
-              </div>
-            )}
-          />
-          {errors.workspaceType && <p className="text-red-500 text-[10px] mt-1">{errors.workspaceType.message}</p>}
-        </div> */}
 
         <button
           type="submit"

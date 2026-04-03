@@ -4,9 +4,10 @@ import type { Meeting } from "./types";
 
 interface RecentMeetingsProps {
     meetings: Meeting[];
+    onViewSummary?: (meeting: Meeting) => void;
 }
 
-const RecentMeetings = ({ meetings }: RecentMeetingsProps) => {
+const RecentMeetings = ({ meetings, onViewSummary }: RecentMeetingsProps) => {
     return (
         <div className="space-y-4 max-w-5xl">
             {meetings.length === 0 ? (
@@ -66,6 +67,17 @@ const RecentMeetings = ({ meetings }: RecentMeetingsProps) => {
                                 </div>
                             </div>
                         </div>
+
+                        {meeting.status === 'completed' && (
+                            <div className="flex justify-end pt-2">
+                                <button 
+                                    onClick={() => onViewSummary?.(meeting)}
+                                    className="px-6 py-2 bg-blue-500/10 hover:bg-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-widest rounded-2xl border border-blue-500/20 transition-all active:scale-95"
+                                >
+                                    View Summary
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
                 ))
