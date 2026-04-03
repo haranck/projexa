@@ -58,10 +58,41 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
 
         if (comment) {
             const user = await this._userRepo.findById(userId);
+            
+            const mentionRegex = /@([^@\s,.;:!?"]+)/g;
+            const mentionMatches = comment.match(mentionRegex) || [];
+            const mentions: string[] = [];
+
+            if (mentionMatches.length > 0) {
+                const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
+                const projectUserIds = projectMembers.map(m => m.userId);
+                
+                const projectUsers = await Promise.all(
+                    projectUserIds.map(id => this._userRepo.findById(id))
+                );
+                
+                for (const match of mentionMatches) {
+                    const mentionName = match.substring(1).toLowerCase();
+                    
+                    const matchedUser = projectUsers.find(u => {
+                        if (!u) return false;
+                        const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim().toLowerCase();
+                        return (u.firstName?.toLowerCase() === mentionName) || 
+                               (u.lastName?.toLowerCase() === mentionName) || 
+                               (fullName === mentionName);
+                    });
+                    
+                    if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
+                        mentions.push(matchedUser._id);
+                    }
+                }
+            }
+
             const newComment: IComment = {
                 userId: userId,
                 userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
                 text: comment,
+                mentions: mentions.length > 0 ? mentions : undefined,
                 createdAt: new Date()
             };
             
