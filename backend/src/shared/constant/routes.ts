@@ -91,6 +91,7 @@ export const ROUTES = {
         SCHEDULE: "/meetings/schedule",
         GET_PROJECT_MEETINGS: "/meetings/project/:projectId",
         JOIN_MEETING: "/meetings/:meetingId/join",
-        LEAVE_MEETING: "/meetings/:meetingId/leave"
+        LEAVE_MEETING: "/meetings/:meetingId/leave",
+        MEET_ENDED: "/meetings/ended"
     }
 };

@@ -25,5 +25,6 @@ router.post(ROUTES.MEETINGS.SCHEDULE, authMiddleware.authenticate, meetingContro
 router.get(ROUTES.MEETINGS.GET_PROJECT_MEETINGS, authMiddleware.authenticate, meetingController.getProjectMeetings.bind(meetingController))
 router.patch(ROUTES.MEETINGS.JOIN_MEETING, authMiddleware.authenticate, meetingController.joinMeeting.bind(meetingController))
 router.patch(ROUTES.MEETINGS.LEAVE_MEETING, authMiddleware.authenticate, meetingController.leaveMeeting.bind(meetingController))
+router.post(ROUTES.MEETINGS.MEET_ENDED, meetingController.handleMeetingEnded.bind(meetingController))
 
 export default router;

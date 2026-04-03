@@ -60,4 +60,14 @@ export class MeetingRepository extends BaseRepo<IMeetingEntity> implements IMeet
 
         return doc ? MeetingMapper.toEntity(doc) : null;
     }
+
+    async updateMeetingRecording(meetingId: string, data: Partial<IMeetingEntity>): Promise<IMeetingEntity | null> {
+        const doc = await this.model.findByIdAndUpdate(
+            meetingId,
+            { $set: data },
+            { new: true }
+        ).lean<IMeetingDocument>();
+
+        return doc ? MeetingMapper.toEntity(doc) : null;
+    }
 }
