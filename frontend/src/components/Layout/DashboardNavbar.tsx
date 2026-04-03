@@ -40,6 +40,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
     const workspaceDropdownRef = useRef<HTMLDivElement>(null);
     const projectDropdownRef = useRef<HTMLDivElement>(null);
     const userMenuRef = useRef<HTMLDivElement>(null);
+    const notificationButtonRef = useRef<HTMLButtonElement>(null);
     const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
     const { data: notificationsResponse } = useNotifications() as { data: NotificationResponse | undefined };
     const { projects, currentProject } = useSelector((state: RootState) => state.project);
@@ -282,6 +283,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                         {/* Notifications */}
                         <div className="relative">
                             <button
+                                ref={notificationButtonRef}
                                 onClick={() => setIsNotificationModalOpen((v) => !v)}
                                 className={`relative flex items-center justify-center w-9 h-9 rounded-xl transition-all ${
                                     isNotificationModalOpen
@@ -298,6 +300,7 @@ const DashboardNavbar = ({ onMenuToggle }: DashboardNavbarProps) => {
                             <NotificationModal
                                 isOpen={isNotificationModalOpen}
                                 onClose={() => setIsNotificationModalOpen(false)}
+                                anchorRect={notificationButtonRef.current?.getBoundingClientRect()}
                             />
                         </div>
 
