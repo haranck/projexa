@@ -45,7 +45,7 @@ const Navbar = () => {
               <img
                 src="/logo.png"
                 alt="ProJexa Logo"
-                className="h-12 md:h-20 w-auto object-contain transition-transform group-hover:scale-105"
+                className="h-16 mt-2 ml-2 mr-2 md:h-20 w-auto object-contain transition-transform group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-indigo-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
