@@ -107,7 +107,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             if (lastComment.mentions && lastComment.mentions.length > 0) {
                 const mentions = lastComment.mentions;
                 for (const mentionedUserId of mentions) {
-                    if (mentionedUserId !== userId) {
+                    if (mentionedUserId.toString() !== userId.toString()) {
                         await this._sendNotification.execute({
                             recipientId: mentionedUserId,
                             eventType: NotificationEventType.ISSUE_MENTIONED,
