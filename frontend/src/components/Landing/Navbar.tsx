@@ -33,8 +33,8 @@ const Navbar = () => {
     <nav
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b ${
         scrolled
-          ? "bg-[#0a0a0a]/70 backdrop-blur-xl border-white/5 py-4"
-          : "bg-transparent border-transparent py-6"
+          ? "bg-[#0a0a0a]/70 backdrop-blur-xl border-white/5 py-3 md:py-4"
+          : "bg-transparent border-transparent py-4 md:py-6"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -45,7 +45,7 @@ const Navbar = () => {
               <img
                 src="/logo.png"
                 alt="ProJexa Logo"
-                className="h-20 w-auto object-contain transition-transform group-hover:scale-105"
+                className="h-12 md:h-20 w-auto object-contain transition-transform group-hover:scale-105"
               />
               <div className="absolute inset-0 bg-indigo-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
             </div>
