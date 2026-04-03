@@ -76,10 +76,13 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                     
                     const matchedUser = projectUsers.find(u => {
                         if (!u) return false;
-                        const fullName = `${u.firstName || ""} ${u.lastName || ""}`.trim().toLowerCase();
-                        return (u.firstName?.toLowerCase() === mentionName) || 
-                               (u.lastName?.toLowerCase() === mentionName) || 
-                               (fullName === mentionName);
+                        const firstName = (u.firstName || "").toLowerCase();
+                        const lastName = (u.lastName || "").toLowerCase();
+                        const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
+                        
+                        return (firstName === mentionName) || 
+                               (lastName === mentionName) || 
+                               (fullNameNoSpaces === mentionName);
                     });
                     
                     if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
@@ -107,7 +110,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             if (lastComment.mentions && lastComment.mentions.length > 0) {
                 const mentions = lastComment.mentions;
                 for (const mentionedUserId of mentions) {
-                    if (mentionedUserId.toString() !== userId.toString()) {
+                    if (mentionedUserId !== userId) {
                         await this._sendNotification.execute({
                             recipientId: mentionedUserId,
                             eventType: NotificationEventType.ISSUE_MENTIONED,
