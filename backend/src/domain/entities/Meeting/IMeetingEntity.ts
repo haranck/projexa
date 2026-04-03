@@ -11,13 +11,6 @@ export interface IMeetingEntity {
     participants: IMeetingParticipantEntity[];
     status: 'upcoming' | 'completed' | 'cancelled';
     roomName: string;
-    recordingUrl?: string;
-    transcript?: string;
-    summary?: string;
-    summaryMetadata?: {
-        actionItems: string[];
-        decisions: string[];
-    };
     createdAt?: Date;
     updatedAt?: Date;
 }

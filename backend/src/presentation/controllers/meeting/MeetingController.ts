@@ -7,7 +7,6 @@ import { ScheduleMeetingDTO } from "../../../application/dtos/project/requestDTO
 import { IJoinMeetingUseCase } from "../../../application/interface/meeting/IJoinMeetingUseCase";
 import { ILeaveMeetingUseCase } from "../../../application/interface/meeting/ILeaveMeetingUseCase";
 import { AuthRequest } from "../../../presentation/middleware/auth/authMiddleware";
-import { MeetingProcessorQueue } from "../../../infrastructure/scheduler/MeetingProcessorQueue";
 
 @injectable()
 export class MeetingController {
@@ -15,8 +14,7 @@ export class MeetingController {
         @inject("IScheduleMeetingUseCase") private scheduleMeetingUseCase: IScheduleMeetingUseCase,
         @inject("IGetProjectMeetingsUseCase") private getProjectMeetingsUseCase: IGetProjectMeetingsUseCase,
         @inject("IJoinMeetingUseCase") private joinMeetingUseCase: IJoinMeetingUseCase,
-        @inject("ILeaveMeetingUseCase") private leaveMeetingUseCase: ILeaveMeetingUseCase,
-        private meetingProcessorQueue: MeetingProcessorQueue
+        @inject("ILeaveMeetingUseCase") private leaveMeetingUseCase: ILeaveMeetingUseCase
     ) { }
 
     async scheduleMeeting(req: AuthRequest, res: Response): Promise<void> {
@@ -87,28 +85,6 @@ export class MeetingController {
                 success: true,
                 message: "Left meeting successfully",
                 data: meeting
-            });
-        } catch (error: unknown) {
-            const err = error as { status?: number; message: string };
-            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
-        }
-    }
-
-    async handleMeetingEnded(req: AuthRequest, res: Response): Promise<void> {
-        try {
-            const { meetingId, recordingPath } = req.body;
-            
-            if (!meetingId || !recordingPath) {
-                res.status(HTTP_STATUS.BAD_REQUEST).json({ message: "Missing required fields" });
-                return;
-            }
-
-            // Trigger background job
-            await this.meetingProcessorQueue.addJob(meetingId, recordingPath);
-
-            res.status(HTTP_STATUS.ACCEPTED).json({
-                success: true,
-                message: "Meeting processing started"
             });
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };

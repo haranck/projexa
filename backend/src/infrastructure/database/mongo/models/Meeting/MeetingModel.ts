@@ -17,13 +17,6 @@ export interface IMeetingDocument extends Document {
     participants: IMeetingParticipantDocument[];
     status: 'upcoming' | 'completed' | 'cancelled';
     roomName: string;
-    recordingUrl?: string;
-    transcript?: string;
-    summary?: string;
-    summaryMetadata?: {
-        actionItems: string[];
-        decisions: string[];
-    };
 }
 
 const ParticipantSchema = new Schema({
@@ -50,14 +43,7 @@ const MeetingSchema = new mongoose.Schema({
         enum: ['upcoming', 'completed', 'cancelled'],
         default: 'upcoming'
     },
-    roomName: { type: String, required: true, unique: true },
-    recordingUrl: { type: String, default: null },
-    transcript: { type: String, default: null },
-    summary: { type: String, default: null },
-    summaryMetadata: {
-        actionItems: [String],
-        decisions: [String]
-    }
+    roomName: { type: String, required: true, unique: true }
 }, { timestamps: true });
 
 MeetingSchema.index({ projectId: 1 });

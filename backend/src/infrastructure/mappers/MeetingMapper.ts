@@ -19,10 +19,6 @@ export class MeetingMapper {
             })),
             status: doc.status,
             roomName: doc.roomName,
-            recordingUrl: doc.recordingUrl,
-            transcript: doc.transcript,
-            summary: doc.summary,
-            summaryMetadata: doc.summaryMetadata
         }
     }
 }
