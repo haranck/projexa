@@ -261,7 +261,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                         )}
                         <button
                             onClick={onClose}
-                            className="sm:hidden w-8 h-8 flex items-center justify-center rounded-xl bg-white/[0.06] text-zinc-400 active:bg-white/10 transition-colors"
+                            className="sm:hidden w-8 h-8 flex items-center justify-center rounded-xl bg-white/6 text-zinc-400 active:bg-white/10 transition-colors"
                         >
                             <X className="h-4 w-4" />
                         </button>
@@ -300,7 +300,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                 </div>
             </div>
 
-            <div className="h-px bg-white/[0.05] shrink-0" />
+            <div className="h-px bg-white/5 shrink-0" />
 
             {/* ── Scrollable list ── */}
             <div
