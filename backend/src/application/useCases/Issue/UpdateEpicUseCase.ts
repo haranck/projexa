@@ -102,6 +102,24 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
 
         const updatedIssue = await this._issueRepository.updateIssue(issueId, finalUpdateData)
 
+        if (finalUpdateData.comments && finalUpdateData.comments.length > 0) {
+            const lastComment = finalUpdateData.comments[finalUpdateData.comments.length - 1];
+            if (lastComment.mentions && lastComment.mentions.length > 0) {
+                const mentions = lastComment.mentions;
+                for (const mentionedUserId of mentions) {
+                    if (mentionedUserId !== userId) {
+                        await this._sendNotification.execute({
+                            recipientId: mentionedUserId,
+                            eventType: NotificationEventType.ISSUE_MENTIONED,
+                            message: `${lastComment.userName} mentioned you in issue "${updatedIssue.title}"`,
+                            resourceId: updatedIssue._id,
+                            resourceType: "issue"
+                        }).catch(err => console.error("Failed to send mention notification:", err));
+                    }
+                }
+            }
+        }
+
         if (dto.assigneeId && dto.assigneeId !== issue.assigneeId) {
             await this._sendNotification.execute({
                 recipientId: dto.assigneeId,
