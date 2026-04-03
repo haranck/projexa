@@ -16,7 +16,6 @@ import {
     Users,
     Zap
 } from "lucide-react";
-import { Button } from "../../../components/ui/button";
 import DashboardLayout from "../../../components/Layout/DashboardLayout";
 import { CreateProjectModal } from "../../../components/modals/CreateProjectModal";
 import { StatsCard } from "../../../components/Dashboard/StatsCard";
@@ -385,7 +384,7 @@ export const HomePage = () => {
                                 Dashboard
                             </h1>
                             <p style={{ fontSize:13, color:"rgba(161,161,170,0.6)", marginTop:4 }}>
-                                Track your project's performance and team activity.
+                                Track your projects performance and team activity.
                             </p>
                         </div>
 
@@ -548,7 +547,7 @@ export const HomePage = () => {
                                                 }}>
                                                     <Video style={{ width:14, height:14, color:"#60a5fa" }} />
                                                 </div>
-                                                <span style={{ fontSize:14, fontWeight:600, color:"#fff" }}>Today's Meetings</span>
+                                                <span style={{ fontSize:14, fontWeight:600, color:"#fff" }}>Todays Meetings</span>
                                                 <span style={{
                                                     padding:"2px 8px", borderRadius:99,
                                                     background:"rgba(59,130,246,0.12)",
