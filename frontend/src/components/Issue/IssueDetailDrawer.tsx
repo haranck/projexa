@@ -311,8 +311,9 @@ const handleUpdateIssue = (newStatus?: string) => {
     const textAfterCursor = commentText.substring(cursorPos);
 
     const words = textBeforeCursor.split(/\s/);
-    // Replace the current @mention with the selected user
-    words[words.length - 1] = `@${member.user?.userName || "User"} `;
+    // Remove spaces from name for easier backend parsing
+    const nameTag = (member.user?.userName || "User").replace(/\s/g, "");
+    words[words.length - 1] = `@${nameTag} `;
 
     const newText = words.join(" ") + textAfterCursor;
     setCommentText(newText);
@@ -330,7 +331,7 @@ const handleUpdateIssue = (newStatus?: string) => {
 
   const renderCommentWithMentions = (text: string) => {
     if (!text) return null;
-    const parts = text.split(/(@\w+)/g);
+    const parts = text.split(/(@[A-Za-z0-9]+)/g);
     return parts.map((part, i) => {
       if (part.startsWith("@")) {
         return (
@@ -424,27 +425,6 @@ const handleUpdateIssue = (newStatus?: string) => {
   const filteredMembers = members.filter((m) =>
     (m.user?.userName || "").toLowerCase().includes(mentionSearch.toLowerCase()),
   );
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (showMentionDropdown && commentTextareaRef.current && !commentTextareaRef.current.contains(e.target as Node)) {
-        setShowMentionDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showMentionDropdown]);
-
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      // Close dropdown if clicking outside the textarea ref
-      if (showMentionDropdown && commentTextareaRef.current && !commentTextareaRef.current.contains(e.target as Node)) {
-        setShowMentionDropdown(false);
-      }
-    };
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [showMentionDropdown]);
 
   const issueColor = issue?.color || "bg-blue-500";
   const issueType = issue?.issueType || "task";
@@ -1076,7 +1056,7 @@ const handleUpdateIssue = (newStatus?: string) => {
               <div className="space-y-2 relative">
                 {showMentionDropdown && filteredMembers.length > 0 && (
                   <div
-                    className="absolute bottom-full left-0 mb-2 w-full bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-2 z-60 max-h-[150px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-bottom-2"
+                    className="absolute bottom-full left-0 mb-2 w-full bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-2 z-[60] max-h-[150px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-bottom-2"
                   >
                     {filteredMembers.map((member: ProjectMember, idx: number) => (
                       <button
@@ -1136,10 +1116,7 @@ const handleUpdateIssue = (newStatus?: string) => {
                 {commentText.trim() && (
                   <div className="flex justify-end">
                     <button
-                      onClick={() => {
-                        setShowMentionDropdown(false);
-                        handleUpdateIssue();
-                      }}
+                      onClick={() => handleUpdateIssue()}
                       disabled={isUpdatingIssue}
                       className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition-all"
                     >
