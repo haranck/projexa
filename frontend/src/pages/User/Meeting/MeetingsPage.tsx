@@ -131,19 +131,20 @@ export const MeetingsPage = () => {
 
     return (
         <DashboardLayout>
-            <div className="min-h-full bg-[#0b0e14] p-8 overflow-y-auto custom-scrollbar">
+            <div className="min-h-full bg-[#0b0e14] p-4 sm:p-8 overflow-y-auto custom-scrollbar">
+                <div className="max-w-5xl mx-auto">
                 {/* Header */}
-                <div className="mb-12">
-                    <h1 className="text-4xl font-black text-white tracking-tight mb-2">Meetings</h1>
+                <div className="mb-8 sm:mb-12">
+                    <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight mb-2">Meetings</h1>
                     <p className="text-zinc-500 font-medium">Coordinate and launch your project transmissions.</p>
                 </div>
 
                 {/* Tabs Navigation */}
-                <div className="flex items-center justify-between mb-8 border-b border-zinc-800/50">
-                    <div className="flex gap-12">
+                <div className="flex items-center justify-between mb-6 sm:mb-8 border-b border-zinc-800/50 overflow-x-auto">
+                    <div className="flex gap-4 sm:gap-12 shrink-0">
                         <button
                             onClick={() => setActiveTab("upcoming")}
-                            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative ${activeTab === "upcoming" ? "text-blue-500" : "text-zinc-500 hover:text-zinc-300"
+                            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === "upcoming" ? "text-blue-500" : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                         >
                             <Clock className="size-4" />
@@ -152,7 +153,7 @@ export const MeetingsPage = () => {
                         </button>
                         <button
                             onClick={() => setActiveTab("schedule")}
-                            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative ${activeTab === "schedule" ? "text-blue-500" : "text-zinc-500 hover:text-zinc-300"
+                            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === "schedule" ? "text-blue-500" : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                         >
                             <Plus className="size-4" />
@@ -161,7 +162,7 @@ export const MeetingsPage = () => {
                         </button>
                         <button
                             onClick={() => setActiveTab("recent")}
-                            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative ${activeTab === "recent" ? "text-blue-500" : "text-zinc-500 hover:text-zinc-300"
+                            className={`flex items-center gap-2 pb-4 text-sm font-bold transition-all relative whitespace-nowrap ${activeTab === "recent" ? "text-blue-500" : "text-zinc-500 hover:text-zinc-300"
                                 }`}
                         >
                             <CheckSquare className="size-4" />
@@ -169,7 +170,7 @@ export const MeetingsPage = () => {
                             {activeTab === "recent" && <div className="absolute bottom-0 left-0 w-full h-0.5 bg-blue-500 shadow-[0_0_10px_rgba(59,130,246,0.5)]" />}
                         </button>
                     </div>
-                    <div className="pb-4">
+                    <div className="pb-4 shrink-0">
                         <Button variant="ghost" size="sm" className="text-zinc-500 hover:text-white">
                             <Calendar className="size-5" />
                         </Button>
@@ -179,7 +180,7 @@ export const MeetingsPage = () => {
                 {/* Main Content Area */}
                 <div className="mt-4">
                     {!currentProject?._id ? (
-                        <div className="flex flex-col items-center justify-center p-20 text-center border-2 border-dashed border-zinc-800 rounded-3xl">
+                        <div className="flex flex-col items-center justify-center p-12 sm:p-20 text-center border-2 border-dashed border-zinc-800 rounded-3xl">
                              <p className="text-zinc-500 font-medium tracking-wide">Please select a project to view transmissions.</p>
                         </div>
                     ) : isLoading ? (
@@ -198,6 +199,7 @@ export const MeetingsPage = () => {
                             {activeTab === "recent" && <RecentMeetings meetings={recentMeetings} />}
                         </>
                     )}
+                </div>
                 </div>
             </div>
 

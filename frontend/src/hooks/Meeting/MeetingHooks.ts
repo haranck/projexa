@@ -1,8 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { scheduleMeeting, getProjectMeetings, joinMeeting, leaveMeeting, triggerMeetingSummary } from "../../services/Meeting/meetingService";
+import { scheduleMeeting, getProjectMeetings, joinMeeting, leaveMeeting } from "../../services/Meeting/meetingService";
 import type { ScheduleMeetingProps } from "../../services/Meeting/meetingService";
-import { toast } from "react-hot-toast";
-import { getErrorMessage } from "@/utils/errorHandler";
 
 export const useScheduleMeeting = () => {
     const queryClient = useQueryClient();
@@ -38,22 +36,6 @@ export const useLeaveMeeting = () => {
         mutationFn: (meetingId: string) => leaveMeeting(meetingId),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["meetings"] });
-        }
-    });
-};
-
-export const useTriggerMeetingSummary = () => {
-    const queryClient = useQueryClient();
-    return useMutation({
-        mutationFn: ({ meetingId, recordingPath }: { meetingId: string; recordingPath: string }) => 
-            triggerMeetingSummary(meetingId, recordingPath),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["meetings"] });
-            toast.success("Meeting summary processing started");
-        },
-        onError: (error: unknown) => {
-            const err = getErrorMessage(error);
-            toast.error(err || "Failed to start meeting summary");
         }
     });
 };

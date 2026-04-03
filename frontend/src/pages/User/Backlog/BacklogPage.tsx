@@ -67,7 +67,7 @@ export const BacklogPage = () => {
     const [expandedSprints, setExpandedSprints] = useState<Record<string, boolean>>({});
     const [isBacklogOpen, setIsBacklogOpen] = useState(true);
     const [expandedEpic, setExpandedEpic] = useState<string | null>(null);
-    const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(false);
+    const [isEpicSidebarOpen, setIsEpicSidebarOpen] = useState(() => window.innerWidth >= 768);
     const [isMemberDropdownOpen, setIsMemberDropdownOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [preparingMember, setPreparingMember] = useState<User | null>(null);

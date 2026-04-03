@@ -135,6 +135,15 @@ export const ChatPage = () => {
         sendMessage(message.trim(), user.id);
         setMessage("");
         setShowEmojiPicker(false);
+        // Stop typing indicator immediately on send
+        if (isTyping) {
+            setIsTyping(false);
+            stopTyping(selectedProject?._id);
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+                typingTimeoutRef.current = null;
+            }
+        }
     };
 
     const handleEmojiClick = (emojiData: { emoji: string }) => {
@@ -210,6 +219,15 @@ export const ChatPage = () => {
     };
 
     const handleProjectSelect = (project: Project) => {
+        // Clear typing state from the old project before switching
+        if (isTyping) {
+            stopTyping(selectedProject?._id);
+            setIsTyping(false);
+            if (typingTimeoutRef.current) {
+                clearTimeout(typingTimeoutRef.current);
+                typingTimeoutRef.current = null;
+            }
+        }
         setSelectedProject(project);
         if (isMobile) {
             setShowChatList(false);
@@ -484,6 +502,29 @@ export const ChatPage = () => {
                                 )}
                             </div>
 
+                            {/* Typing Indicator — animated bubble above input */}
+                            {selectedProject && roomId && typingUsers[selectedProject._id]?.length > 0 && (
+                                <div className="px-4 lg:px-8 pb-2 flex items-center gap-2">
+                                    <div className="flex items-center gap-2 bg-zinc-900/80 backdrop-blur-xl border border-white/5 px-4 py-2 rounded-2xl rounded-bl-sm shadow-lg">
+                                        <span className="text-[11px] text-zinc-400 font-medium">
+                                            {(() => {
+                                                const typers = typingUsers[selectedProject._id];
+                                                if (typers.length === 1) {
+                                                    const m = selectedProject.members?.find(mem => mem.userId === typers[0]);
+                                                    return (m?.user?.userName || 'Someone') + ' is typing';
+                                                }
+                                                return `${typers.length} people are typing`;
+                                            })()}
+                                        </span>
+                                        <span className="flex gap-[3px] items-end">
+                                            <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0ms', animationDuration: '0.8s' }} />
+                                            <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '160ms', animationDuration: '0.8s' }} />
+                                            <span className="w-1 h-1 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '320ms', animationDuration: '0.8s' }} />
+                                        </span>
+                                    </div>
+                                </div>
+                            )}
+
                             {/* Input Area */}
                             <div className="p-3 lg:p-6 bg-[#0b0e14]/95 backdrop-blur-md z-20 border-t border-zinc-800/50 sticky bottom-0">
                                 <div className="max-w-4xl mx-auto flex items-center gap-2 lg:gap-3">
@@ -518,8 +559,6 @@ export const ChatPage = () => {
                                                 if (e.key === "Enter" && !e.shiftKey) {
                                                     e.preventDefault();
                                                     handleSendMessage();
-                                                    setIsTyping(false);
-                                                    stopTyping(selectedProject?._id);
                                                 }
                                             }}
                                             onBlur={handleBlur}

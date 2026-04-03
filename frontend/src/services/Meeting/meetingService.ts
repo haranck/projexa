@@ -31,8 +31,3 @@ export const leaveMeeting = async (meetingId: string) => {
     const response = await AxiosInstance.patch(API_ROUTES.PROJECTS.LEAVE_MEETING.replace(":meetingId", meetingId))
     return response.data
 }
-
-export const triggerMeetingSummary = async (meetingId: string, recordingPath: string) => {
-    const response = await AxiosInstance.post(API_ROUTES.PROJECTS.MEET_ENDED, { meetingId, recordingPath })
-    return response.data
-}
