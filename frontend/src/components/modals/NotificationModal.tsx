@@ -17,6 +17,7 @@ interface NotificationModalProps {
 
 type Tab = 'unread' | 'all';
 
+/* ─── helpers ─── */
 const getIcon = (type: NotificationEventType) => {
     switch (type) {
         case NOTIFICATION_EVENT_TYPES.ISSUE_CREATED:
@@ -36,7 +37,7 @@ const getIcon = (type: NotificationEventType) => {
 const getTitle = (type: NotificationEventType) =>
     type.replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, (l) => l.toUpperCase());
 
-/* ─── Reusable notification row ─── */
+/* ─── Notification row ─── */
 const NotificationRow: React.FC<{
     notification: Notification;
     onClick: (n: Notification) => void;
@@ -46,58 +47,53 @@ const NotificationRow: React.FC<{
     return (
         <div
             onClick={() => onClick(notification)}
-            className={`
-                group relative flex items-start gap-3 px-4 py-3.5 border-b border-white/[0.04]
-                cursor-pointer transition-all duration-200 active:scale-[0.985]
-                ${unread
-                    ? 'bg-blue-500/[0.04] hover:bg-blue-500/[0.08]'
-                    : 'hover:bg-white/[0.03]'}
-            `}
+            style={{ WebkitTapHighlightColor: 'transparent' }}
+            className={[
+                'group relative flex items-start gap-3 px-4 py-4',
+                'border-b border-white/[0.05] cursor-pointer',
+                'transition-colors duration-150 active:bg-white/[0.05]',
+                unread ? 'bg-blue-500/[0.05]' : '',
+            ].join(' ')}
         >
-            {/* Unread dot accent on left edge */}
+            {/* left accent stripe */}
             {unread && (
-                <span className="absolute left-0 top-0 bottom-0 w-0.5 bg-gradient-to-b from-blue-500 to-blue-400/0 rounded-r" />
+                <span className="absolute left-0 top-3 bottom-3 w-[3px] bg-blue-500 rounded-r-full" />
             )}
 
-            {/* Icon badge */}
-            <div className={`
-                mt-0.5 w-9 h-9 shrink-0 rounded-xl flex items-center justify-center transition-colors duration-200
-                ${unread ? 'bg-blue-500/10 group-hover:bg-blue-500/15' : 'bg-white/[0.05] group-hover:bg-white/[0.08]'}
-            `}>
+            {/* icon */}
+            <div className={[
+                'mt-0.5 w-9 h-9 shrink-0 rounded-xl flex items-center justify-center',
+                unread ? 'bg-blue-500/10' : 'bg-white/[0.06]',
+            ].join(' ')}>
                 {getIcon(notification.eventType)}
             </div>
 
-            {/* Content */}
+            {/* text */}
             <div className="flex-1 min-w-0">
                 <div className="flex items-start justify-between gap-2">
-                    <p className={`text-[13px] font-semibold leading-tight ${unread ? 'text-white' : 'text-zinc-400'}`}>
+                    <p className={`text-[13px] font-semibold leading-snug ${unread ? 'text-white' : 'text-zinc-400'}`}>
                         {getTitle(notification.eventType)}
                     </p>
-                    <span className="text-[10px] text-zinc-600 font-medium whitespace-nowrap mt-0.5">
+                    <span className="text-[10px] text-zinc-600 font-medium whitespace-nowrap pt-0.5 shrink-0">
                         {formatTimeAgo(notification.createdAt)}
                     </span>
                 </div>
-                <p className="text-xs text-zinc-500 mt-1 leading-relaxed line-clamp-2">
+                <p className="text-[12px] text-zinc-500 mt-1 leading-relaxed">
                     {notification.message}
                 </p>
             </div>
 
-            {/* Mark-as-read button */}
+            {/* mark-read btn — always visible on mobile, hover-only on desktop */}
             {unread && (
                 <button
                     onClick={(e) => onMarkRead(notification._id, e)}
                     title="Mark as read"
-                    className="
-                        shrink-0 mt-0.5 w-7 h-7 flex items-center justify-center rounded-lg
-                        bg-blue-500/10 text-blue-400
-                        hover:bg-blue-500 hover:text-white
-                        active:scale-90
-                        transition-all duration-200
-                        shadow-[0_0_8px_rgba(59,130,246,0.15)]
-                        hover:shadow-[0_0_12px_rgba(59,130,246,0.4)]
-                        opacity-0 group-hover:opacity-100 focus:opacity-100
-                        sm:opacity-100
-                    "
+                    className={[
+                        'shrink-0 mt-0.5 w-8 h-8 flex items-center justify-center rounded-lg',
+                        'bg-blue-500/10 text-blue-400 active:scale-90',
+                        'transition-all duration-200',
+                        'sm:opacity-0 sm:group-hover:opacity-100 sm:focus:opacity-100',
+                    ].join(' ')}
                 >
                     <CheckCheck className="h-3.5 w-3.5" />
                 </button>
@@ -108,7 +104,7 @@ const NotificationRow: React.FC<{
 
 /* ─── Empty state ─── */
 const EmptyState: React.FC<{ tab: Tab }> = ({ tab }) => (
-    <div className="flex flex-col items-center justify-center gap-4 py-14 px-6 text-center">
+    <div className="flex flex-col items-center justify-center gap-4 py-16 px-6 text-center">
         <div className="w-14 h-14 rounded-2xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center">
             {tab === 'unread'
                 ? <Bell className="h-6 w-6 text-zinc-600" />
@@ -127,7 +123,7 @@ const EmptyState: React.FC<{ tab: Tab }> = ({ tab }) => (
     </div>
 );
 
-/* ─── Main component ─── */
+/* ─── Main Modal ─── */
 export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, onClose }) => {
     const modalRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
@@ -140,28 +136,26 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
     const notifications: Notification[] = notificationsResponse?.data || [];
     const unread = notifications.filter((n) => !n.isRead);
     const unreadCount = unread.length;
-
     const displayed = activeTab === 'unread' ? unread : notifications;
 
-    /* Handle click-outside (desktop) */
+    /* click-outside (desktop only — mobile uses backdrop) */
     useEffect(() => {
-        const handleClickOutside = (e: MouseEvent) => {
+        const handler = (e: MouseEvent) => {
             if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
                 onClose();
             }
         };
-        if (isOpen) document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        if (isOpen) document.addEventListener('mousedown', handler);
+        return () => document.removeEventListener('mousedown', handler);
     }, [isOpen, onClose]);
 
-    /* Reset to unread tab on open */
+    /* reset tab on each open */
     useEffect(() => {
         if (isOpen) setActiveTab('unread');
     }, [isOpen]);
 
     const handleNotificationClick = (notification: Notification) => {
         if (!notification.isRead) markAsRead(notification._id);
-
         if (notification.resourceType === 'issue' || notification.eventType.includes('ISSUE')) {
             navigate(FRONTEND_ROUTES.BACKLOG, { state: { selectedIssueId: notification.resourceId } });
         } else if (notification.resourceType === 'project' || notification.eventType.includes('PROJECT')) {
@@ -181,45 +175,61 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
 
     return (
         <>
-            {/* ── Mobile backdrop ── */}
+            {/* ── Mobile dim backdrop ── */}
             <div
                 className="fixed inset-0 bg-black/70 backdrop-blur-sm z-40 sm:hidden"
                 onClick={onClose}
             />
 
-            {/* ── Panel ── */}
+            {/*
+             * ── Panel ──
+             *
+             * MOBILE  : fixed, anchored to bottom, HEIGHT = 82vh so flex children
+             *           can calculate their space. The list (flex-1 + overflow-y-auto)
+             *           will fill correctly.
+             *
+             * DESKTOP : absolute dropdown, max-height capped.
+             */}
             <div
                 ref={modalRef}
-                className="
-                    fixed bottom-0 left-0 right-0
-                    sm:absolute sm:top-full sm:bottom-auto sm:left-auto sm:right-0 sm:mt-3
-                    w-full sm:w-[420px]
-                    bg-[#0f1117]/98 backdrop-blur-2xl
-                    border-t sm:border border-white/[0.08]
-                    rounded-t-[2rem] sm:rounded-2xl
-                    shadow-[0_-4px_60px_rgba(0,0,0,0.5)] sm:shadow-[0_20px_60px_rgba(0,0,0,0.5)]
-                    z-50 flex flex-col
-                    animate-in slide-in-from-bottom-full duration-300
-                    sm:slide-in-from-bottom-0 sm:slide-in-from-top-2 sm:fade-in sm:duration-200
-                "
-                style={{ maxHeight: '88vh', paddingBottom: 'env(safe-area-inset-bottom)' }}
+                className={[
+                    /* shared */
+                    'bg-[#0d0f16] border-white/[0.08]',
+                    'z-50 flex flex-col',
+                    /* mobile — bottom sheet */
+                    'fixed bottom-0 left-0 right-0',
+                    'h-[82vh]',                       /* ← KEY: explicit height on mobile */
+                    'rounded-t-[28px]',
+                    'border-t',
+                    'shadow-[0_-8px_40px_rgba(0,0,0,0.6)]',
+                    /* desktop override */
+                    'sm:fixed-none sm:h-auto sm:max-h-[520px]',
+                    'sm:absolute sm:top-full sm:bottom-auto sm:left-auto sm:right-0 sm:mt-3',
+                    'sm:w-[420px] sm:rounded-2xl sm:border',
+                    'sm:shadow-[0_20px_60px_rgba(0,0,0,0.5)]',
+                ].join(' ')}
+                style={{
+                    /* safe-area for notched phones */
+                    paddingBottom: 'env(safe-area-inset-bottom, 0px)',
+                }}
             >
-                {/* ── Mobile drag handle ── */}
+                {/* ── drag handle (mobile) ── */}
                 <div
-                    className="w-full pt-3 pb-1 flex items-center justify-center sm:hidden shrink-0 cursor-grab active:cursor-grabbing"
+                    className="sm:hidden w-full py-3 flex justify-center shrink-0"
                     onClick={onClose}
                 >
-                    <div className="w-10 h-1 bg-zinc-700 rounded-full" />
+                    <div className="w-10 h-1 rounded-full bg-zinc-700" />
                 </div>
 
                 {/* ── Header ── */}
-                <div className="px-4 pt-3 pb-0 shrink-0">
+                <div className="px-4 pb-3 shrink-0">
                     <div className="flex items-center justify-between mb-3">
+                        {/* title + badge */}
                         <div className="flex items-center gap-2">
                             <div className="relative">
                                 <Bell className="h-[18px] w-[18px] text-white" />
                                 {unreadCount > 0 && (
-                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-[#0f1117] animate-pulse" />
+                                    <span className="absolute -top-1 -right-1 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-[#0d0f16] animate-pulse" />
                                 )}
                             </div>
                             <h3 className="font-bold text-white text-[15px]">Notifications</h3>
@@ -230,20 +240,20 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
                             )}
                         </div>
 
+                        {/* actions */}
                         <div className="flex items-center gap-2">
                             {unreadCount > 0 && (
                                 <button
                                     onClick={() => markAllAsRead()}
-                                    className="flex items-center gap-1 text-[11px] font-semibold text-zinc-500 hover:text-blue-400 transition-colors"
+                                    className="flex items-center gap-1.5 text-[11px] font-semibold text-zinc-500 hover:text-blue-400 active:text-blue-300 transition-colors"
                                 >
                                     <CheckCheck className="h-3.5 w-3.5" />
-                                    <span className="hidden sm:inline">Mark all read</span>
+                                    <span>Mark all read</span>
                                 </button>
                             )}
-                            {/* Close button — mobile only */}
                             <button
                                 onClick={onClose}
-                                className="sm:hidden w-7 h-7 flex items-center justify-center rounded-lg bg-white/[0.05] text-zinc-500 hover:text-white transition-colors"
+                                className="sm:hidden w-8 h-8 flex items-center justify-center rounded-xl bg-white/[0.06] text-zinc-400 active:bg-white/10 transition-colors"
                             >
                                 <X className="h-4 w-4" />
                             </button>
@@ -251,22 +261,30 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
                     </div>
 
                     {/* ── Tabs ── */}
-                    <div className="relative flex rounded-xl bg-white/[0.04] p-1 gap-1">
+                    <div className="flex rounded-xl bg-white/[0.05] p-1 gap-1">
                         {(['unread', 'all'] as Tab[]).map((tab) => (
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`
-                                    relative flex-1 py-2 rounded-lg text-[12px] font-semibold transition-all duration-200
-                                    ${activeTab === tab
-                                        ? 'bg-white/[0.08] text-white shadow-sm'
-                                        : 'text-zinc-500 hover:text-zinc-300'}
-                                `}
+                                style={{ WebkitTapHighlightColor: 'transparent' }}
+                                className={[
+                                    'flex-1 flex items-center justify-center gap-1.5',
+                                    'py-2.5 rounded-lg text-[13px] font-semibold',
+                                    'transition-all duration-200',
+                                    activeTab === tab
+                                        ? 'bg-white/[0.09] text-white'
+                                        : 'text-zinc-500 hover:text-zinc-300',
+                                ].join(' ')}
                             >
                                 {tab === 'unread' ? 'Unread' : 'All'}
                                 {tab === 'unread' && unreadCount > 0 && (
-                                    <span className="ml-1.5 inline-flex items-center justify-center w-4 h-4 rounded-full bg-blue-500 text-white text-[9px] font-bold">
+                                    <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-blue-500 text-white text-[9px] font-bold">
                                         {unreadCount > 9 ? '9+' : unreadCount}
+                                    </span>
+                                )}
+                                {tab === 'all' && notifications.length > 0 && (
+                                    <span className="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-white/10 text-zinc-400 text-[9px] font-bold">
+                                        {notifications.length}
                                     </span>
                                 )}
                             </button>
@@ -274,53 +292,50 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({ isOpen, on
                     </div>
                 </div>
 
-                {/* ── List ── */}
-                <div className="flex-1 overflow-y-auto mt-2 custom-scrollbar" style={{ minHeight: 0 }}>
+                {/* ── Divider ── */}
+                <div className="h-px bg-white/[0.05] shrink-0" />
+
+                {/*
+                 * ── Scrollable list ──
+                 * flex-1 + overflow-y-auto works because the PARENT now has a
+                 * defined height (h-[82vh] on mobile, max-h on desktop).
+                 */}
+                <div className="flex-1 overflow-y-auto overscroll-contain" style={{ WebkitOverflowScrolling: 'touch' }}>
                     {isLoading ? (
-                        <div className="py-12 flex flex-col items-center justify-center gap-3">
+                        <div className="py-16 flex flex-col items-center justify-center gap-3">
                             <div className="w-7 h-7 border-2 border-blue-500/20 border-t-blue-500 rounded-full animate-spin" />
-                            <p className="text-xs text-zinc-600 font-medium">Loading…</p>
+                            <p className="text-xs text-zinc-600 font-medium">Loading notifications…</p>
                         </div>
                     ) : displayed.length === 0 ? (
                         <EmptyState tab={activeTab} />
                     ) : (
-                        <div>
-                            {displayed.map((notification) => (
-                                <NotificationRow
-                                    key={notification._id}
-                                    notification={notification}
-                                    onClick={handleNotificationClick}
-                                    onMarkRead={handleMarkRead}
-                                />
-                            ))}
-                        </div>
+                        displayed.map((n) => (
+                            <NotificationRow
+                                key={n._id}
+                                notification={n}
+                                onClick={handleNotificationClick}
+                                onMarkRead={handleMarkRead}
+                            />
+                        ))
                     )}
                 </div>
 
                 {/* ── Footer ── */}
-                <div className="px-4 py-3 border-t border-white/[0.05] shrink-0">
-                    {activeTab === 'unread' && unreadCount > 0 && (
+                <div className="shrink-0 px-4 py-3 border-t border-white/[0.05]">
+                    {activeTab === 'unread' && unreadCount > 0 ? (
                         <button
                             onClick={() => setActiveTab('all')}
-                            className="
-                                w-full py-2.5 rounded-xl
-                                bg-white/[0.04] hover:bg-white/[0.07]
-                                text-zinc-400 hover:text-white
-                                text-[12px] font-semibold
-                                transition-all duration-200 active:scale-[0.98]
-                                flex items-center justify-center gap-2
-                            "
+                            style={{ WebkitTapHighlightColor: 'transparent' }}
+                            className="w-full py-3 rounded-xl bg-white/[0.04] active:bg-white/[0.08] text-zinc-400 text-[13px] font-semibold transition-colors flex items-center justify-center gap-2"
                         >
                             View all {notifications.length} notification{notifications.length !== 1 ? 's' : ''}
                         </button>
-                    )}
-                    {activeTab === 'all' && notifications.length > 0 && (
-                        <p className="text-center text-[11px] text-zinc-700 font-medium">
-                            {notifications.length} notification{notifications.length !== 1 ? 's' : ''} total
+                    ) : (
+                        <p className="text-center text-[11px] text-zinc-700 font-medium py-1">
+                            {notifications.length > 0
+                                ? `${notifications.length} notification${notifications.length !== 1 ? 's' : ''} total`
+                                : 'No notifications'}
                         </p>
-                    )}
-                    {notifications.length === 0 && !isLoading && (
-                        <p className="text-center text-[11px] text-zinc-700 font-medium">No notifications</p>
                     )}
                 </div>
             </div>
