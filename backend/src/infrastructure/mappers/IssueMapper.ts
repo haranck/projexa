@@ -22,6 +22,7 @@ export class IssueMapper {
                 userId: c.userId,
                 userName: c.userName,
                 text: c.text,
+                mentions: c.mentions?.map(m => m.toString()) || [],
                 createdAt: c.createdAt
             })),
             createdBy: doc.createdBy.toString(),

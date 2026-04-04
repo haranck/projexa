@@ -10,4 +10,5 @@ export interface UpdateEpicDTO {
     startDate?: Date | null;
     endDate?: Date | null;
     comment?: string;
+    mentionedUserIds?: string[];
 }

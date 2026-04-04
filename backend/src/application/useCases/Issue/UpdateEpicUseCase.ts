@@ -53,7 +53,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }
         }
 
-        const { comment, ...updateData } = dto;
+        const { comment, mentionedUserIds, ...updateData } = dto;
         const finalUpdateData: Partial<IIssueEntity> = { ...updateData };
 
         if (comment) {
@@ -63,11 +63,31 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                 userId: userId,
                 userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
                 text: comment,
+                mentions: mentionedUserIds || [],
                 createdAt: new Date()
             };
             
             const existingComments = issue.comments || [];
             finalUpdateData.comments = [...existingComments, newComment];
+
+            // Send notifications to mentioned users
+            if (mentionedUserIds && mentionedUserIds.length > 0) {
+                const uniqueMentionedIds = [...new Set(mentionedUserIds)].filter(id => id !== userId);
+                
+                for (const mentionId of uniqueMentionedIds) {
+                    const isMember = await this._projectMemberRepo.findProjectAndUser(issue.projectId, mentionId);
+                    if (isMember) {
+                        await this._sendNotification.execute({
+                            recipientId: mentionId,
+                            senderId: userId,
+                            eventType: NotificationEventType.ISSUE_MENTIONED,
+                            message: `${newComment.userName} mentioned you in issue "${issue.title}"`,
+                            resourceId: issue._id,
+                            resourceType: "issue"
+                        }).catch(err => console.error("Failed to send mention notification:", err));
+                    }
+                }
+            }
         }
 
         const updatedIssue = await this._issueRepository.updateIssue(issueId, finalUpdateData)
