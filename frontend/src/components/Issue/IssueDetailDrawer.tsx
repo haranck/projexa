@@ -281,7 +281,7 @@ const handleUpdateIssue = (newStatus?: string) => {
   const handleCreateChildSubmit = (data: CreateIssueProps) => {
     createIssue(data, {
       onSuccess: () => {
-        toast.success("Issue created successfully");
+        toast.success("Child issue created successfully");
         setIsCreateChildModalOpen(false);
       },
       onError: (err: unknown) => {
