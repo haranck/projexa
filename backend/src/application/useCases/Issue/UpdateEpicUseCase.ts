@@ -53,7 +53,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }
         }
 
-        const { comment, ...updateData } = dto;
+        const { comment, mentions: dtoMentions, ...updateData } = dto;
         const finalUpdateData: Partial<IIssueEntity> = { ...updateData };
 
         if (comment) {
@@ -61,9 +61,9 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             
             const mentionRegex = /@([^@\s,.;:!?"]+)/g;
             const mentionMatches = comment.match(mentionRegex) || [];
-            const mentions: string[] = [];
+            const mentions: string[] = dtoMentions || [];
 
-            if (mentionMatches.length > 0) {
+            if (mentionMatches.length > 0 && (!dtoMentions || dtoMentions.length === 0)) {
                 const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
                 const projectUserIds = projectMembers.map(m => m.userId);
                 
