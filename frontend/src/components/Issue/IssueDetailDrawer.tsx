@@ -12,6 +12,9 @@ import {
   ChevronDown,
   ArrowLeft,
   AlertCircle,
+  MessageSquare,
+  Send,
+  Clock,
 } from "lucide-react";
 import {
   useUpdateEpic,
@@ -975,62 +978,97 @@ const handleUpdateIssue = (newStatus?: string) => {
             <div className="border-t border-white/5" />
 
             {/* ── Comments Section ── */}
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h3 className="text-xs font-bold text-white tracking-tight">
+            <div className="space-y-5">
+              <div className="flex items-center gap-2 px-1">
+                <MessageSquare className="w-4 h-4 text-blue-400" />
+                <h3 className="text-xs font-extrabold text-white uppercase tracking-wider">
                   Comments
                 </h3>
-                <span className="text-[10px] font-bold text-zinc-600">
-                  {issue?.comments?.length || 0}
+                <div className="h-4 w-px bg-white/10 mx-1" />
+                <span className="text-[10px] font-bold text-zinc-500">
+                  {issue?.comments?.length || 0} Total
                 </span>
-                <textarea
-                  ref={commentTextareaRef}
-                  value={commentText}
-                  onChange={handleCommentChange}
-                  placeholder="Add a comment..."
-                  rows={2}
-                  className="w-full bg-white/4 border border-white/10 rounded-xl px-4 py-2 text-[11px] text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500/50 transition-all resize-none"
-                />
-                {commentText.trim() && (
+              </div>
+
+              {/* Add Comment Input */}
+              <div className="flex gap-4 group">
+                <div className="w-8 h-8 rounded-full bg-zinc-800 border border-white/5 flex items-center justify-center shrink-0">
+                  <User className="w-4 h-4 text-zinc-500" />
+                </div>
+                <div className="flex-1 space-y-3">
+                  <div className="relative group/input">
+                    <textarea
+                      ref={commentTextareaRef}
+                      value={commentText}
+                      onChange={handleCommentChange}
+                      placeholder="Write a message..."
+                      rows={2}
+                      className="w-full bg-white/4 border border-white/10 rounded-2xl px-4 py-3 text-[12px] text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500/40 focus:ring-4 focus:ring-blue-500/5 transition-all resize-none block"
+                    />
+                    <div className="absolute top-0 right-0 p-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity">
+                      <div className="text-[10px] text-zinc-600 font-bold px-2 py-1">
+                        Markdown supported
+                      </div>
+                    </div>
+                  </div>
                   <div className="flex justify-end">
                     <button
                       onClick={() => handleUpdateIssue()}
-                      disabled={isUpdatingIssue}
-                      className="px-3 py-1 bg-blue-600 hover:bg-blue-500 text-white text-[10px] font-bold rounded-lg transition-all"
+                      disabled={isUpdatingIssue || !commentText.trim()}
+                      className="px-4 py-1.5 bg-blue-600 hover:bg-blue-500 disabled:bg-white/5 disabled:text-zinc-600 text-white text-[11px] font-bold rounded-xl transition-all flex items-center gap-2 active:scale-95 border border-blue-500/20 shadow-lg shadow-blue-500/10"
                     >
-                      Post Comment
+                      {isUpdatingIssue ? (
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                      ) : (
+                        <>
+                          <span>Post Comment</span>
+                          <Send className="w-3 h-3" />
+                        </>
+                      )}
                     </button>
                   </div>
-                )}
+                </div>
               </div>
 
               {/* Comments List */}
-              <div className="space-y-3 max-h-[300px] overflow-y-auto custom-scrollbar pr-1">
+              <div className="space-y-4 pr-1 mt-6">
                 {issue?.comments?.length ? (
                   [...issue.comments].reverse().map((comment, i) => (
-                    <div key={i} className="bg-white/3 rounded-xl p-3 border border-white/5 space-y-2">
-                      <div className="flex items-center justify-between">
+                    <div key={i} className="flex gap-3 group animate-in fade-in slide-in-from-top-1">
+                      <div className="w-8 h-8 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-[10px] font-bold text-blue-400 capitalize shrink-0">
+                        {comment.userName.charAt(0)}
+                      </div>
+                      <div className="flex-1 min-w-0 space-y-1">
                         <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full bg-blue-500/20 flex items-center justify-center text-[8px] font-bold text-blue-400 capitalize">
-                            {comment.userName.charAt(0)}
-                          </div>
-                          <span className="text-[10px] font-bold text-zinc-300">
+                          <span className="text-[11px] font-extrabold text-zinc-100">
                             {comment.userName}
                           </span>
+                          <span className="text-[10px] text-zinc-500 font-bold flex items-center gap-1">
+                            <Clock className="w-2.5 h-2.5" />
+                            {new Date(comment.createdAt).toLocaleDateString(undefined, { 
+                              month: 'short', 
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </span>
                         </div>
-                        <span className="text-[8px] text-zinc-600 font-medium">
-                          {new Date(comment.createdAt).toLocaleString()}
-                        </span>
+                        <div className="bg-white/3 border border-white/5 rounded-2xl p-3 hover:bg-white/5 transition-all">
+                          <p className="text-[12px] text-zinc-300 leading-relaxed wrap-break-word">
+                            {comment.text}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-[11px] text-zinc-400 leading-relaxed wrap-break-word">
-                        {comment.text}
-                      </p>
                     </div>
                   ))
                 ) : (
-                  <p className="text-[10px] text-zinc-600 italic text-center py-4">
-                    No comments yet.
-                  </p>
+                  <div className="flex flex-col items-center justify-center py-12 px-6 border-2 border-dashed border-white/5 rounded-3xl bg-white/1">
+                    <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-3">
+                      <MessageSquare className="w-6 h-6 text-zinc-700" />
+                    </div>
+                    <p className="text-sm font-bold text-zinc-400 mb-1">No feedback yet</p>
+                    <p className="text-[11px] text-zinc-600 text-center">Be the first to share your thoughts on this task.</p>
+                  </div>
                 )}
               </div>
             </div>
