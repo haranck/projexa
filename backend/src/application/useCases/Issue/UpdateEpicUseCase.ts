@@ -25,7 +25,6 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
     ) { }
 
     async execute(issueId: string, dto: UpdateEpicDTO, userId: string): Promise<IIssueEntity> {
-        console.log("UpdateEpicUseCase.execute - dto:", JSON.stringify(dto, null, 2));
 
         const issue = await this._issueRepository.findIssueById(issueId)
         if (!issue) throw new Error(PROJECT_ERRORS.ISSUE_NOT_FOUND)
@@ -61,8 +60,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             const user = await this._userRepo.findById(userId);
             
             const mentions: string[] = dtoMentions || [];
-
-            // Robust mention extraction: also parse the text for manual @mentions
+            
             const mentionRegex = /@([^@\s,.;:!?"]+)/g;
             const mentionMatches = comment.match(mentionRegex) || [];
 
@@ -93,8 +91,6 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                     }
                 }
             }
-            
-            console.log("UpdateEpicUseCase - final mentions list:", mentions);
 
             const newComment: IComment = {
                 userId: userId,
