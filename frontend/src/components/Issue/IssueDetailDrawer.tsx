@@ -57,13 +57,12 @@ export interface IssueData {
   issueType: string;
   assigneeId?: string | null;
   parentIssueId?: string | null;
-    comments?: Array<{
-      userId: string;
-      userName: string;
-      text: string;
-      mentions?: string[];
-      createdAt: string | Date;
-    }>;
+  comments?: Array<{
+    userId: string;
+    userName: string;
+    text: string;
+    createdAt: string | Date;
+  }>;
 }
 
 interface IssueDetailDrawerProps {
@@ -146,10 +145,6 @@ export const IssueDetailDrawer = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [linkName, setLinkName] = useState("");
   const [commentText, setCommentText] = useState("");
-  const [selectedMentionIds, setSelectedMentionIds] = useState<string[]>([]);
-  const [showMentionDropdown, setShowMentionDropdown] = useState(false);
-  const [mentionSearch, setMentionSearch] = useState("");
-  const [activeMentionIndex, setActiveMentionIndex] = useState(0);
   const commentTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -188,11 +183,6 @@ const handleUpdateIssue = (newStatus?: string) => {
 
     if (newStatus) setStatus(newStatus);
 
-    // DEBUG: Show what is being sent
-    if (selectedMentionIds.length > 0) {
-      toast(`Sending mentions: ${selectedMentionIds.join(", ")}`, { icon: "🔍" });
-    }
-
     updateIssue(
       {
         epicId: issue._id,
@@ -204,15 +194,12 @@ const handleUpdateIssue = (newStatus?: string) => {
         endDate: endDate ? new Date(endDate) : null,
         attachments,
         comment: commentText.trim() || undefined,
-        mentions: selectedMentionIds.length > 0 ? selectedMentionIds : undefined,
         projectId,
       },
       {
         onSuccess: () => {
           toast.success("Issue updated successfully");
           setCommentText(""); // Clear comment after success
-          setSelectedMentionIds([]); // Clear mentions
-          setShowMentionDropdown(false);
         },
         onError: (err: unknown) => {
           toast.error(getErrorMessage(err) || "Failed to update issue");
@@ -290,73 +277,9 @@ const handleUpdateIssue = (newStatus?: string) => {
   };
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const text = e.target.value;
-    setCommentText(text);
-
-    const cursorPos = e.target.selectionStart;
-    const textBeforeCursor = text.substring(0, cursorPos);
-    const words = textBeforeCursor.split(/\s/);
-    const lastWord = words[words.length - 1];
-
-    if (lastWord.startsWith("@")) {
-      setMentionSearch(lastWord.substring(1));
-      setShowMentionDropdown(true);
-      setActiveMentionIndex(0);
-
-      // Selection logic
-      if (commentTextareaRef.current) {
-        // Dropdown is positioned absolutely relative to container
-      }
-    } else {
-      setShowMentionDropdown(false);
-    }
+    setCommentText(e.target.value);
   };
 
-  const selectUser = (member: ProjectMember) => {
-    if (!commentTextareaRef.current) return;
-
-    const cursorPos = commentTextareaRef.current.selectionStart;
-    const textBeforeCursor = commentText.substring(0, cursorPos);
-    const textAfterCursor = commentText.substring(cursorPos);
-
-    const words = textBeforeCursor.split(/\s/);
-    // Remove spaces from name for easier backend parsing
-    const nameTag = (member.user?.userName || "User").replace(/\s/g, "");
-    words[words.length - 1] = `@${nameTag} `;
-
-    const newText = words.join(" ") + textAfterCursor;
-    setCommentText(newText);
-    
-    if (member.userId && !selectedMentionIds.includes(member.userId)) {
-      setSelectedMentionIds(prev => [...prev, member.userId]);
-    }
-    
-    setShowMentionDropdown(false);
-
-    // Focus back to textarea
-    setTimeout(() => {
-      if (commentTextareaRef.current) {
-        commentTextareaRef.current.focus();
-        const newPos = words.join(" ").length;
-        commentTextareaRef.current.setSelectionRange(newPos, newPos);
-      }
-    }, 0);
-  };
-
-  const renderCommentWithMentions = (text: string) => {
-    if (!text) return null;
-    const parts = text.split(/(@[A-Za-z0-9]+)/g);
-    return parts.map((part, i) => {
-      if (part.startsWith("@")) {
-        return (
-          <span key={i} className="text-blue-400 font-bold bg-blue-500/10 px-1 rounded">
-            {part}
-          </span>
-        );
-      }
-      return part;
-    });
-  };
 
   const handleUpdateSubtaskStatus = (subtask: ChildTask, newStatus: string) => {
     updateIssue(
@@ -434,12 +357,6 @@ const handleUpdateIssue = (newStatus?: string) => {
     };
   }, [isOpen]);
 
-  const displayTasks: ChildTask[] = childTasks;
-
-  const filteredMembers = members.filter((m) =>
-    (m.user?.userName || "").toLowerCase().includes(mentionSearch.toLowerCase()),
-  );
-
   const issueColor = issue?.color || "bg-blue-500";
   const issueType = issue?.issueType || "task";
 
@@ -452,6 +369,8 @@ const handleUpdateIssue = (newStatus?: string) => {
     "bg-cyan-500": "#06b6d4",
   };
   const dotHex = dotColorMap[issueColor] || "#3b82f6";
+
+  const displayTasks: ChildTask[] = childTasks;
 
   return (
     <>
@@ -769,7 +688,7 @@ const handleUpdateIssue = (newStatus?: string) => {
                   <span className="text-[10px] font-bold text-zinc-600">
                     {
                       displayTasks.filter(
-                        (t) => t.status?.toUpperCase() === "DONE",
+                        (t: ChildTask) => t.status?.toUpperCase() === "DONE",
                       ).length
                     }
                     /{displayTasks.length}
@@ -777,7 +696,7 @@ const handleUpdateIssue = (newStatus?: string) => {
                 </div>
 
                 <div className="space-y-1">
-                  {displayTasks.map((task) => {
+                  {displayTasks.map((task: ChildTask) => {
                     const badge = getTypeBadge(task.issueType);
 
                     return (
@@ -1064,66 +983,11 @@ const handleUpdateIssue = (newStatus?: string) => {
                 <span className="text-[10px] font-bold text-zinc-600">
                   {issue?.comments?.length || 0}
                 </span>
-              </div>
-
-              {/* Add Comment Input */}
-              <div className="space-y-2 relative">
-                {showMentionDropdown && filteredMembers.length > 0 && (
-                  <div
-                    className="absolute bottom-full left-0 mb-2 w-full bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-2 z-[60] max-h-[150px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-bottom-2"
-                  >
-                    {filteredMembers.map((member: ProjectMember, idx: number) => (
-                      <button
-                        key={member.userId}
-                        onClick={() => selectUser(member)}
-                        onMouseEnter={() => setActiveMentionIndex(idx)}
-                        className={`w-full flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-all text-left ${
-                          idx === activeMentionIndex ? "bg-white/5" : ""
-                        }`}
-                      >
-                        <div className="w-5 h-5 rounded-full overflow-hidden border border-white/10 shrink-0">
-                          {member.user?.profilePicture ? (
-                            <img
-                              src={member.user.profilePicture}
-                              alt=""
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <div className="w-full h-full bg-blue-500/20 flex items-center justify-center text-[7px] font-bold text-blue-400">
-                              {member.user?.userName?.charAt(0) || "U"}
-                            </div>
-                          )}
-                        </div>
-                        <span className="text-[11px] text-zinc-300">
-                          {member.user?.userName || "Unknown User"}
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                )}
                 <textarea
                   ref={commentTextareaRef}
                   value={commentText}
                   onChange={handleCommentChange}
-                  onKeyDown={(e) => {
-                    if (showMentionDropdown && filteredMembers.length > 0) {
-                      if (e.key === "ArrowDown") {
-                        e.preventDefault();
-                        setActiveMentionIndex((prev) => (prev + 1) % filteredMembers.length);
-                      } else if (e.key === "ArrowUp") {
-                        e.preventDefault();
-                        setActiveMentionIndex(
-                          (prev) => (prev - 1 + filteredMembers.length) % filteredMembers.length,
-                        );
-                      } else if (e.key === "Enter" || e.key === "Tab") {
-                        e.preventDefault();
-                        selectUser(filteredMembers[activeMentionIndex]);
-                      } else if (e.key === "Escape") {
-                        setShowMentionDropdown(false);
-                      }
-                    }
-                  }}
-                  placeholder="Add a comment... (Type @ to mention)"
+                  placeholder="Add a comment..."
                   rows={2}
                   className="w-full bg-white/4 border border-white/10 rounded-xl px-4 py-2 text-[11px] text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500/50 transition-all resize-none"
                 />
@@ -1159,7 +1023,7 @@ const handleUpdateIssue = (newStatus?: string) => {
                         </span>
                       </div>
                       <p className="text-[11px] text-zinc-400 leading-relaxed wrap-break-word">
-                        {renderCommentWithMentions(comment.text)}
+                        {comment.text}
                       </p>
                     </div>
                   ))
