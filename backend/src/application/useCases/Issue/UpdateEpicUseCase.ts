@@ -76,17 +76,22 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                     
                     const matchedUser = projectUsers.find(u => {
                         if (!u) return false;
-                        const firstName = (u.firstName || "").toLowerCase();
-                        const lastName = (u.lastName || "").toLowerCase();
+                        const firstName = (u.firstName || "").toLowerCase().trim();
+                        const lastName = (u.lastName || "").toLowerCase().trim();
                         const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
+                        const fullNameNoSpacesReversed = (lastName + firstName).replace(/\s/g, "");
                         
                         return (firstName === mentionName) || 
                                (lastName === mentionName) || 
-                               (fullNameNoSpaces === mentionName);
+                               (fullNameNoSpaces === mentionName) ||
+                               (fullNameNoSpacesReversed === mentionName);
                     });
                     
-                    if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
-                        mentions.push(matchedUser._id);
+                    if (matchedUser && matchedUser._id) {
+                        const userIdStr = matchedUser._id.toString();
+                        if (!mentions.includes(userIdStr)) {
+                            mentions.push(userIdStr);
+                        }
                     }
                 }
             }
@@ -110,12 +115,13 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             if (lastComment.mentions && lastComment.mentions.length > 0) {
                 const mentions = lastComment.mentions;
                 for (const mentionedUserId of mentions) {
-                    if (mentionedUserId !== userId) {
+                    // Ensure robust ID comparison
+                    if (mentionedUserId.toString() !== userId.toString()) {
                         await this._sendNotification.execute({
-                            recipientId: mentionedUserId,
+                            recipientId: mentionedUserId.toString(),
                             eventType: NotificationEventType.ISSUE_MENTIONED,
                             message: `${lastComment.userName} mentioned you in issue "${updatedIssue.title}"`,
-                            resourceId: updatedIssue._id,
+                            resourceId: updatedIssue._id.toString(),
                             resourceType: "issue"
                         }).catch(err => console.error("Failed to send mention notification:", err));
                     }
