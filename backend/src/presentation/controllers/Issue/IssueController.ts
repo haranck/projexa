@@ -61,12 +61,15 @@ export class IssueController {
         try {
             const { issueId } = req.params
             const userId = req.user?.userId
+            console.log(`[IssueController] Received updateEpic request for issueId: ${issueId} from userId: ${userId}`);
             if (!userId) throw new Error(ERROR_MESSAGES.UNAUTHORIZED)
             const dto: UpdateEpicDTO = req.body
+            console.log(`[IssueController] Request body:`, JSON.stringify(dto, null, 2));
             const result = await this._updateEpicUseCase.execute(issueId as string, dto, userId)
             res.status(HTTP_STATUS.OK).json({ message: MESSAGES.ISSUE.EPIC_UPDATED_SUCCESSFULLY, data: result })
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };
+            console.error(`[IssueController] Error in updateEpic:`, err);
             res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }

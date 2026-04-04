@@ -25,7 +25,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
     ) { }
 
     async execute(issueId: string, dto: UpdateEpicDTO, userId: string): Promise<IIssueEntity> {
-
+        console.log(`[UpdateEpicUseCase] Executing for issueId: ${issueId}, userId: ${userId}`);
         const issue = await this._issueRepository.findIssueById(issueId)
         if (!issue) throw new Error(PROJECT_ERRORS.ISSUE_NOT_FOUND)
 
@@ -121,7 +121,6 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                 const mentions = lastComment.mentions;
                 console.log(`[UpdateEpicUseCase] Notifying ${mentions.length} mentioned users:`, mentions);
                 for (const mentionedUserId of mentions) {
-                    // Ensure robust ID comparison
                     if (mentionedUserId.toString() !== userId.toString()) {
                         console.log(`[UpdateEpicUseCase] Sending mention notification to user: ${mentionedUserId}`);
                         await this._sendNotification.execute({
