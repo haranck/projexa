@@ -113,9 +113,10 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             if (lastComment.mentions && lastComment.mentions.length > 0) {
                 const mentions = lastComment.mentions;
                 for (const mentionedUserId of mentions) {
-                    if (mentionedUserId !== userId) {
+                    if (String(mentionedUserId) !== String(userId)) {
                         await this._sendNotification.execute({
                             recipientId: mentionedUserId,
+                            senderId: userId,
                             eventType: NotificationEventType.ISSUE_MENTIONED,
                             message: `${lastComment.userName} mentioned you in issue "${updatedIssue.title}"`,
                             resourceId: updatedIssue._id,
