@@ -188,6 +188,11 @@ const handleUpdateIssue = (newStatus?: string) => {
 
     if (newStatus) setStatus(newStatus);
 
+    // DEBUG: Show what is being sent
+    if (selectedMentionIds.length > 0) {
+      toast(`Sending mentions: ${selectedMentionIds.join(", ")}`, { icon: "🔍" });
+    }
+
     updateIssue(
       {
         epicId: issue._id,

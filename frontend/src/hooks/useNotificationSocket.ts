@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { socket } from '../socket/socket';
 import type { RootState } from '../store/store';
 import { NOTIFICATION_EVENTS } from '../constants/notification.events';
+import { toast } from 'react-hot-toast';
 import { showNotificationToast } from '../utils/customToast';
 
 export const useNotificationSocket = () => {
@@ -22,8 +23,10 @@ export const useNotificationSocket = () => {
             });
 
             socket.on(NOTIFICATION_EVENTS.RECEIVED, (notification) => {
+                console.log("Socket Received Notification:", notification);
                 if (notification && notification.message) {
                     showNotificationToast(notification);
+                    toast.success("Real-time Notification Received!");
                     console.log('notification message : ', notification.message)
                     queryClient.invalidateQueries({ queryKey: ["notifications"] });
                 }
