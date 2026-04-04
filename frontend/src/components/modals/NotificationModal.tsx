@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
 import {
     Bell, CheckCheck, Calendar, UserPlus, FileText,
-    AlertTriangle, X, Inbox, AtSign
+    AlertTriangle, X, Inbox
 } from 'lucide-react';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/Notification/NotificationHooks';
 import { formatTimeAgo } from '../../utils/timeAgo';
@@ -32,8 +32,7 @@ const getIcon = (type: NotificationEventType) => {
             return <Calendar className="h-4 w-4 text-violet-400" />;
         case NOTIFICATION_EVENT_TYPES.PROJECT_MEMBER_ADDED:
             return <UserPlus className="h-4 w-4 text-sky-400" />;
-        case NOTIFICATION_EVENT_TYPES.ISSUE_MENTIONED:
-            return <AtSign className="h-4 w-4 text-pink-400" />;
+
         default:
             return <Bell className="h-4 w-4 text-zinc-400" />;
     }
