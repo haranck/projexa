@@ -25,7 +25,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
     ) { }
 
     async execute(issueId: string, dto: UpdateEpicDTO, userId: string): Promise<IIssueEntity> {
-        console.log(`[UpdateEpicUseCase] Executing for issueId: ${issueId}, userId: ${userId}`);
+
         const issue = await this._issueRepository.findIssueById(issueId)
         if (!issue) throw new Error(PROJECT_ERRORS.ISSUE_NOT_FOUND)
 
@@ -53,7 +53,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }
         }
 
-        const { comment, mentions: dtoMentions, ...updateData } = dto;
+        const { comment, ...updateData } = dto;
         const finalUpdateData: Partial<IIssueEntity> = { ...updateData };
 
         if (comment) {
@@ -61,14 +61,9 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             
             const mentionRegex = /@([^@\s,.;:!?"]+)/g;
             const mentionMatches = comment.match(mentionRegex) || [];
-            const mentions: string[] = dtoMentions || [];
+            const mentions: string[] = [];
 
-            console.log(`[UpdateEpicUseCase] Comment: "${comment}"`);
-            console.log(`[UpdateEpicUseCase] Found ${mentionMatches.length} mention matches from regex.`);
-            console.log(`[UpdateEpicUseCase] DTO Mentions provided:`, dtoMentions);
-
-            if (mentionMatches.length > 0 && (!dtoMentions || dtoMentions.length === 0)) {
-                console.log(`[UpdateEpicUseCase] Parsing mentions from text...`);
+            if (mentionMatches.length > 0) {
                 const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
                 const projectUserIds = projectMembers.map(m => m.userId);
                 
@@ -81,22 +76,17 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                     
                     const matchedUser = projectUsers.find(u => {
                         if (!u) return false;
-                        const firstName = (u.firstName || "").toLowerCase().trim();
-                        const lastName = (u.lastName || "").toLowerCase().trim();
+                        const firstName = (u.firstName || "").toLowerCase();
+                        const lastName = (u.lastName || "").toLowerCase();
                         const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
-                        const fullNameNoSpacesReversed = (lastName + firstName).replace(/\s/g, "");
                         
                         return (firstName === mentionName) || 
                                (lastName === mentionName) || 
-                               (fullNameNoSpaces === mentionName) ||
-                               (fullNameNoSpacesReversed === mentionName);
+                               (fullNameNoSpaces === mentionName);
                     });
                     
-                    if (matchedUser && matchedUser._id) {
-                        const userIdStr = matchedUser._id.toString();
-                        if (!mentions.includes(userIdStr)) {
-                            mentions.push(userIdStr);
-                        }
+                    if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
+                        mentions.push(matchedUser._id);
                     }
                 }
             }
@@ -119,24 +109,17 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             const lastComment = finalUpdateData.comments[finalUpdateData.comments.length - 1];
             if (lastComment.mentions && lastComment.mentions.length > 0) {
                 const mentions = lastComment.mentions;
-                console.log(`[UpdateEpicUseCase] Notifying ${mentions.length} mentioned users:`, mentions);
                 for (const mentionedUserId of mentions) {
-                    if (mentionedUserId.toString() !== userId.toString()) {
-                        console.log(`[UpdateEpicUseCase] Sending mention notification to user: ${mentionedUserId}`);
+                    if (mentionedUserId !== userId) {
                         await this._sendNotification.execute({
-                            recipientId: mentionedUserId.toString(),
+                            recipientId: mentionedUserId,
                             eventType: NotificationEventType.ISSUE_MENTIONED,
                             message: `${lastComment.userName} mentioned you in issue "${updatedIssue.title}"`,
-                            resourceId: updatedIssue._id.toString(),
+                            resourceId: updatedIssue._id,
                             resourceType: "issue"
-                        }).then(() => console.log(`[UpdateEpicUseCase] Notification sent successfully to: ${mentionedUserId}`))
-                        .catch(err => console.error(`[UpdateEpicUseCase] Failed to send mention notification to ${mentionedUserId}:`, err));
-                    } else {
-                        console.log(`[UpdateEpicUseCase] Skipping notification for self-mention: ${userId}`);
+                        }).catch(err => console.error("Failed to send mention notification:", err));
                     }
                 }
-            } else {
-                console.log(`[UpdateEpicUseCase] No mentions found in the last comment.`);
             }
         }
 
