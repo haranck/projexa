@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { FRONTEND_ROUTES } from '../../constants/frontendRoutes';
 import {
     Bell, CheckCheck, Calendar, UserPlus, FileText,
-    AlertTriangle, X, Inbox
+    AlertTriangle, X, Inbox, AtSign
 } from 'lucide-react';
 import { useNotifications, useMarkAsRead, useMarkAllAsRead } from '../../hooks/Notification/NotificationHooks';
 import { formatTimeAgo } from '../../utils/timeAgo';
@@ -28,6 +28,8 @@ const getIcon = (type: NotificationEventType) => {
             return <FileText className="h-4 w-4 text-orange-400" />;
         case NOTIFICATION_EVENT_TYPES.ISSUE_DELETED:
             return <AlertTriangle className="h-4 w-4 text-red-400" />;
+        case "ISSUE_MENTIONED" as NotificationEventType:
+            return <AtSign className="h-4 w-4 text-blue-400" />;
         case NOTIFICATION_EVENT_TYPES.PROJECT_CREATED:
             return <Calendar className="h-4 w-4 text-violet-400" />;
         case NOTIFICATION_EVENT_TYPES.PROJECT_MEMBER_ADDED:

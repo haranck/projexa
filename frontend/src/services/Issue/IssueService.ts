@@ -49,6 +49,7 @@ export interface UpdateEpicProps {
   startDate?: Date | null;
   endDate?: Date | null;
   comment?: string;
+  mentionedUserIds?: string[];
   projectId: string;
 }
 

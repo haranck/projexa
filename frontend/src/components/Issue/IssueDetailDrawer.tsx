@@ -15,6 +15,7 @@ import {
   MessageSquare,
   Send,
   Clock,
+  AtSign,
 } from "lucide-react";
 import {
   useUpdateEpic,
@@ -64,6 +65,7 @@ export interface IssueData {
     userId: string;
     userName: string;
     text: string;
+    mentions?: string[];
     createdAt: string | Date;
   }>;
 }
@@ -151,6 +153,14 @@ export const IssueDetailDrawer = ({
   const commentTextareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  const [mentionSearch, setMentionSearch] = useState("");
+  const [showMentionDropdown, setShowMentionDropdown] = useState(false);
+  const [mentionDropdownPosition, setMentionDropdownPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  const [mentionedUserIds, setMentionedUserIds] = useState<string[]>([]);
+
   const { mutate: updateIssue, isPending: isUpdatingIssue } = useUpdateEpic();
   const { mutate: deleteIssueMutation, isPending: isDeletingIssue } =
     useDeleteIssue();
@@ -197,12 +207,14 @@ const handleUpdateIssue = (newStatus?: string) => {
         endDate: endDate ? new Date(endDate) : null,
         attachments,
         comment: commentText.trim() || undefined,
+        mentionedUserIds: mentionedUserIds.length > 0 ? mentionedUserIds : undefined,
         projectId,
       },
       {
         onSuccess: () => {
           toast.success("Issue updated successfully");
           setCommentText(""); // Clear comment after success
+          setMentionedUserIds([]); // Clear mentions
         },
         onError: (err: unknown) => {
           toast.error(getErrorMessage(err) || "Failed to update issue");
@@ -280,7 +292,56 @@ const handleUpdateIssue = (newStatus?: string) => {
   };
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setCommentText(e.target.value);
+    const value = e.target.value;
+    const cursor = e.target.selectionStart;
+    setCommentText(value);
+
+    // Mention detection
+    const lastAt = value.lastIndexOf("@", cursor - 1);
+    const textAfterAt = value.slice(lastAt + 1, cursor);
+    const hasSpaceAfterAt = /\s/.test(textAfterAt);
+
+    if (lastAt !== -1 && !hasSpaceAfterAt) {
+      setMentionSearch(textAfterAt.toLowerCase());
+      setShowMentionDropdown(true);
+
+      // Simple relative positioning
+      const textarea = commentTextareaRef.current;
+      if (textarea) {
+        // Approximate position for simple UI
+        setMentionDropdownPosition({
+          top: -150, // Above textarea
+          left: 0,
+        });
+      }
+    } else {
+      setShowMentionDropdown(false);
+    }
+  };
+
+  const handleSelectMention = (member: ProjectMember) => {
+    const cursor = commentTextareaRef.current?.selectionStart || 0;
+    const lastAt = commentText.lastIndexOf("@", cursor - 1);
+
+    if (lastAt !== -1) {
+      const beforeAt = commentText.slice(0, lastAt);
+      const afterAt = commentText.slice(cursor);
+      const mentionName = member.user?.userName || "User";
+      const newText = beforeAt + "@" + mentionName + " " + afterAt;
+
+      setCommentText(newText);
+      setMentionedUserIds((prev) => [...new Set([...prev, member.userId])]);
+      setShowMentionDropdown(false);
+
+      // Focus back with cursor after mention
+      setTimeout(() => {
+        if (commentTextareaRef.current) {
+          commentTextareaRef.current.focus();
+          const newCursor = beforeAt.length + mentionName.length + 2;
+          commentTextareaRef.current.setSelectionRange(newCursor, newCursor);
+        }
+      }, 0);
+    }
   };
 
 
@@ -1005,6 +1066,57 @@ const handleUpdateIssue = (newStatus?: string) => {
                       rows={2}
                       className="w-full bg-white/4 border border-white/10 rounded-2xl px-4 py-3 text-[12px] text-white placeholder-zinc-600 focus:outline-none focus:border-blue-500/40 focus:ring-4 focus:ring-blue-500/5 transition-all resize-none block"
                     />
+
+                    {/* Mention Dropdown */}
+                    {showMentionDropdown && (
+                      <div
+                        className="absolute z-[100] bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-2 max-h-[180px] overflow-y-auto custom-scrollbar animate-in fade-in slide-in-from-bottom-2 w-[200px]"
+                        style={{
+                          top: mentionDropdownPosition.top,
+                          left: mentionDropdownPosition.left,
+                        }}
+                      >
+                        <div className="px-4 py-1 mb-1 border-b border-white/5 flex items-center gap-2">
+                          <AtSign className="w-3 h-3 text-blue-400" />
+                          <span className="text-[10px] font-bold text-zinc-500 uppercase tracking-wider">Mention</span>
+                        </div>
+                        {members
+                          .filter((m) =>
+                            (m.user?.userName || "").toLowerCase().includes(mentionSearch)
+                          )
+                          .map((member) => (
+                            <button
+                              key={member.userId}
+                              onClick={() => handleSelectMention(member)}
+                              className="w-full flex items-center gap-3 px-4 py-2 hover:bg-white/5 transition-all text-left"
+                            >
+                              <div className="w-6 h-6 rounded-full overflow-hidden border border-white/10 shrink-0">
+                                {member.user?.profilePicture ? (
+                                  <img
+                                    src={member.user.profilePicture}
+                                    alt=""
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full bg-blue-500/20 flex items-center justify-center text-[9px] font-bold text-blue-400 capitalize">
+                                    {member.user?.userName?.charAt(0) || "U"}
+                                  </div>
+                                )}
+                              </div>
+                              <span className="text-[12px] text-zinc-300 font-medium truncate">
+                                {member.user?.userName}
+                              </span>
+                            </button>
+                          ))}
+                        {members.filter((m) =>
+                          (m.user?.userName || "").toLowerCase().includes(mentionSearch)
+                        ).length === 0 && (
+                          <div className="px-4 py-2 text-[11px] text-zinc-500 italic">
+                            No members found
+                          </div>
+                        )}
+                      </div>
+                    )}
                     <div className="absolute top-0 right-0 p-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity">
                       <div className="text-[10px] text-zinc-600 font-bold px-2 py-1">
                         Markdown supported
@@ -1055,7 +1167,19 @@ const handleUpdateIssue = (newStatus?: string) => {
                         </div>
                         <div className="bg-white/3 border border-white/5 rounded-2xl p-3 hover:bg-white/5 transition-all">
                           <p className="text-[12px] text-zinc-300 leading-relaxed wrap-break-word">
-                            {comment.text}
+                            {comment.text.split(/(@\w+)/g).map((part, index) => {
+                              if (part.startsWith("@")) {
+                                return (
+                                  <span
+                                    key={index}
+                                    className="text-blue-400 font-bold bg-blue-500/10 px-1 rounded cursor-default"
+                                  >
+                                    {part}
+                                  </span>
+                                );
+                              }
+                              return part;
+                            })}
                           </p>
                         </div>
                       </div>
