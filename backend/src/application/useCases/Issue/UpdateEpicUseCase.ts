@@ -72,19 +72,24 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
 
             // Send notifications to mentioned users
             if (mentionedUserIds && mentionedUserIds.length > 0) {
-                const uniqueMentionedIds = [...new Set(mentionedUserIds)].filter(id => id !== userId);
+                const currentUserIdStr = userId.toString();
+                const uniqueMentionedIds = [...new Set(mentionedUserIds)].filter(id => id.toString() !== currentUserIdStr);
                 
                 for (const mentionId of uniqueMentionedIds) {
-                    const isMember = await this._projectMemberRepo.findProjectAndUser(issue.projectId, mentionId);
-                    if (isMember) {
-                        await this._sendNotification.execute({
-                            recipientId: mentionId,
-                            senderId: userId,
-                            eventType: NotificationEventType.ISSUE_MENTIONED,
-                            message: `${newComment.userName} mentioned you in issue "${issue.title}"`,
-                            resourceId: issue._id,
-                            resourceType: "issue"
-                        }).catch(err => console.error("Failed to send mention notification:", err));
+                    try {
+                        const isMember = await this._projectMemberRepo.findProjectAndUser(issue.projectId, mentionId);
+                        if (isMember) {
+                            await this._sendNotification.execute({
+                                recipientId: mentionId.toString(),
+                                senderId: currentUserIdStr,
+                                eventType: NotificationEventType.ISSUE_MENTIONED,
+                                message: `${newComment.userName} mentioned you in issue "${issue.title}"`,
+                                resourceId: issue._id,
+                                resourceType: "issue"
+                            });
+                        }
+                    } catch (err) {
+                        console.error(`Failed to send mention notification to ${mentionId}:`, err);
                     }
                 }
             }

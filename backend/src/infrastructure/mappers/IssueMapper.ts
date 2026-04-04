@@ -6,7 +6,7 @@ export class IssueMapper {
         return {
             _id: doc._id.toString(),
             workspaceId: doc.workspaceId,
-            projectId: doc.projectId,
+            projectId: doc.projectId.toString(),
             parentIssueId: doc.parentIssueId?.toString() || null,
             sprintId: doc.sprintId?.toString() || null,
             key: doc.key,

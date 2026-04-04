@@ -53,6 +53,9 @@ export class ProjectMemberRepository extends BaseRepo<IProjectMemberEntity> impl
     }
 
     async findProjectAndUser(projectId: string, userId: string): Promise<IProjectMemberEntity | null> {
+        if (!Types.ObjectId.isValid(projectId) || !Types.ObjectId.isValid(userId)) {
+            return null;
+        }
         const doc = await ProjectMemberModel.findOne({
             projectId: new Types.ObjectId(projectId),
             userId: new Types.ObjectId(userId)
