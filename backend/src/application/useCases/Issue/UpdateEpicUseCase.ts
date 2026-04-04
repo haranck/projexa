@@ -25,6 +25,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
     ) { }
 
     async execute(issueId: string, dto: UpdateEpicDTO, userId: string): Promise<IIssueEntity> {
+        console.log("UpdateEpicUseCase.execute - dto:", JSON.stringify(dto, null, 2));
 
         const issue = await this._issueRepository.findIssueById(issueId)
         if (!issue) throw new Error(PROJECT_ERRORS.ISSUE_NOT_FOUND)
@@ -61,38 +62,39 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             
             const mentions: string[] = dtoMentions || [];
 
-            if (!dtoMentions || dtoMentions.length === 0) {
-                const mentionRegex = /@([^@\s,.;:!?"]+)/g;
-                const mentionMatches = comment.match(mentionRegex) || [];
+            // Robust mention extraction: also parse the text for manual @mentions
+            const mentionRegex = /@([^@\s,.;:!?"]+)/g;
+            const mentionMatches = comment.match(mentionRegex) || [];
 
-                if (mentionMatches.length > 0) {
-                    const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
-                    const projectUserIds = projectMembers.map(m => m.userId);
+            if (mentionMatches.length > 0) {
+                const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
+                const projectUserIds = projectMembers.map(m => m.userId);
+                
+                const projectUsers = await Promise.all(
+                    projectUserIds.map(id => this._userRepo.findById(id))
+                );
+                
+                for (const match of mentionMatches) {
+                    const mentionName = match.substring(1).toLowerCase();
                     
-                    const projectUsers = await Promise.all(
-                        projectUserIds.map(id => this._userRepo.findById(id))
-                    );
+                    const matchedUser = projectUsers.find(u => {
+                        if (!u) return false;
+                        const firstName = (u.firstName || "").toLowerCase();
+                        const lastName = (u.lastName || "").toLowerCase();
+                        const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
+                        
+                        return (firstName === mentionName) || 
+                               (lastName === mentionName) || 
+                               (fullNameNoSpaces === mentionName);
+                    });
                     
-                    for (const match of mentionMatches) {
-                        const mentionName = match.substring(1).toLowerCase();
-                        
-                        const matchedUser = projectUsers.find(u => {
-                            if (!u) return false;
-                            const firstName = (u.firstName || "").toLowerCase();
-                            const lastName = (u.lastName || "").toLowerCase();
-                            const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
-                            
-                            return (firstName === mentionName) || 
-                                   (lastName === mentionName) || 
-                                   (fullNameNoSpaces === mentionName);
-                        });
-                        
-                        if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
-                            mentions.push(matchedUser._id);
-                        }
+                    if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
+                        mentions.push(matchedUser._id);
                     }
                 }
             }
+            
+            console.log("UpdateEpicUseCase - final mentions list:", mentions);
 
             const newComment: IComment = {
                 userId: userId,
