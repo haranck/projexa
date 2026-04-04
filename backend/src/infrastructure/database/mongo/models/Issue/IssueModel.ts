@@ -20,7 +20,6 @@ export interface IssueDocument extends Document {
         userId: string;
         userName: string;
         text: string;
-        mentions?: string[];
         createdAt: Date;
     }[];
     createdBy: string;
@@ -38,7 +37,6 @@ const commentSchema = new mongoose.Schema({
     userId: { type: String, required: true },
     userName: { type: String, required: true },
     text: { type: String, required: true },
-    mentions: { type: [String], default: [] },
     createdAt: { type: Date, default: Date.now }
 }, { _id: false });
 

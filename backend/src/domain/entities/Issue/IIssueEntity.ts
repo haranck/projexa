@@ -10,7 +10,6 @@ export interface IComment {
     userId: string;
     userName: string;
     text: string;
-    mentions?: string[];
     createdAt: Date;
 }
 

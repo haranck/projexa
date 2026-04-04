@@ -53,50 +53,16 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }
         }
 
-        const { comment, mentions: dtoMentions, ...updateData } = dto;
+        const { comment, ...updateData } = dto;
         const finalUpdateData: Partial<IIssueEntity> = { ...updateData };
 
         if (comment) {
             const user = await this._userRepo.findById(userId);
             
-            const mentions: string[] = dtoMentions || [];
-            
-            const mentionRegex = /@([^@\s,.;:!?"]+)/g;
-            const mentionMatches = comment.match(mentionRegex) || [];
-
-            if (mentionMatches.length > 0) {
-                const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
-                const projectUserIds = projectMembers.map(m => m.userId);
-                
-                const projectUsers = await Promise.all(
-                    projectUserIds.map(id => this._userRepo.findById(id))
-                );
-                
-                for (const match of mentionMatches) {
-                    const mentionName = match.substring(1).toLowerCase();
-                    
-                    const matchedUser = projectUsers.find(u => {
-                        if (!u) return false;
-                        const firstName = (u.firstName || "").toLowerCase();
-                        const lastName = (u.lastName || "").toLowerCase();
-                        const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
-                        
-                        return (firstName === mentionName) || 
-                               (lastName === mentionName) || 
-                               (fullNameNoSpaces === mentionName);
-                    });
-                    
-                    if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
-                        mentions.push(matchedUser._id);
-                    }
-                }
-            }
-
             const newComment: IComment = {
                 userId: userId,
                 userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
                 text: comment,
-                mentions: mentions.length > 0 ? mentions : undefined,
                 createdAt: new Date()
             };
             
@@ -106,24 +72,6 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
 
         const updatedIssue = await this._issueRepository.updateIssue(issueId, finalUpdateData)
 
-        if (finalUpdateData.comments && finalUpdateData.comments.length > 0) {
-            const lastComment = finalUpdateData.comments[finalUpdateData.comments.length - 1];
-            if (lastComment.mentions && lastComment.mentions.length > 0) {
-                const mentions = lastComment.mentions;
-                for (const mentionedUserId of mentions) {
-                    if (String(mentionedUserId) !== String(userId)) {
-                        await this._sendNotification.execute({
-                            recipientId: mentionedUserId,
-                            senderId: userId,
-                            eventType: NotificationEventType.ISSUE_MENTIONED,
-                            message: `${lastComment.userName} mentioned you in issue "${updatedIssue.title}"`,
-                            resourceId: updatedIssue._id,
-                            resourceType: "issue"
-                        }).catch(err => console.error("Failed to send mention notification:", err));
-                    }
-                }
-            }
-        }
 
         if (dto.assigneeId && dto.assigneeId !== issue.assigneeId) {
             await this._sendNotification.execute({
