@@ -57,12 +57,13 @@ export interface IssueData {
   issueType: string;
   assigneeId?: string | null;
   parentIssueId?: string | null;
-  comments?: Array<{
-    userId: string;
-    userName: string;
-    text: string;
-    createdAt: string | Date;
-  }>;
+    comments?: Array<{
+      userId: string;
+      userName: string;
+      text: string;
+      mentions?: string[];
+      createdAt: string | Date;
+    }>;
 }
 
 interface IssueDetailDrawerProps {
@@ -145,6 +146,7 @@ export const IssueDetailDrawer = ({
   const [linkUrl, setLinkUrl] = useState("");
   const [linkName, setLinkName] = useState("");
   const [commentText, setCommentText] = useState("");
+  const [selectedMentionIds, setSelectedMentionIds] = useState<string[]>([]);
   const [showMentionDropdown, setShowMentionDropdown] = useState(false);
   const [mentionSearch, setMentionSearch] = useState("");
   const [activeMentionIndex, setActiveMentionIndex] = useState(0);
@@ -197,12 +199,14 @@ const handleUpdateIssue = (newStatus?: string) => {
         endDate: endDate ? new Date(endDate) : null,
         attachments,
         comment: commentText.trim() || undefined,
+        mentions: selectedMentionIds.length > 0 ? selectedMentionIds : undefined,
         projectId,
       },
       {
         onSuccess: () => {
           toast.success("Issue updated successfully");
           setCommentText(""); // Clear comment after success
+          setSelectedMentionIds([]); // Clear mentions
           setShowMentionDropdown(false);
         },
         onError: (err: unknown) => {
@@ -317,6 +321,11 @@ const handleUpdateIssue = (newStatus?: string) => {
 
     const newText = words.join(" ") + textAfterCursor;
     setCommentText(newText);
+    
+    if (member.userId && !selectedMentionIds.includes(member.userId)) {
+      setSelectedMentionIds(prev => [...prev, member.userId]);
+    }
+    
     setShowMentionDropdown(false);
 
     // Focus back to textarea

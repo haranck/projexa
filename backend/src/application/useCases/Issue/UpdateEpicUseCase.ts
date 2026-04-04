@@ -53,40 +53,43 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             }
         }
 
-        const { comment, ...updateData } = dto;
+        const { comment, mentions: dtoMentions, ...updateData } = dto;
         const finalUpdateData: Partial<IIssueEntity> = { ...updateData };
 
         if (comment) {
             const user = await this._userRepo.findById(userId);
             
-            const mentionRegex = /@([^@\s,.;:!?"]+)/g;
-            const mentionMatches = comment.match(mentionRegex) || [];
-            const mentions: string[] = [];
+            const mentions: string[] = dtoMentions || [];
 
-            if (mentionMatches.length > 0) {
-                const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
-                const projectUserIds = projectMembers.map(m => m.userId);
-                
-                const projectUsers = await Promise.all(
-                    projectUserIds.map(id => this._userRepo.findById(id))
-                );
-                
-                for (const match of mentionMatches) {
-                    const mentionName = match.substring(1).toLowerCase();
+            if (!dtoMentions || dtoMentions.length === 0) {
+                const mentionRegex = /@([^@\s,.;:!?"]+)/g;
+                const mentionMatches = comment.match(mentionRegex) || [];
+
+                if (mentionMatches.length > 0) {
+                    const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
+                    const projectUserIds = projectMembers.map(m => m.userId);
                     
-                    const matchedUser = projectUsers.find(u => {
-                        if (!u) return false;
-                        const firstName = (u.firstName || "").toLowerCase();
-                        const lastName = (u.lastName || "").toLowerCase();
-                        const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
+                    const projectUsers = await Promise.all(
+                        projectUserIds.map(id => this._userRepo.findById(id))
+                    );
+                    
+                    for (const match of mentionMatches) {
+                        const mentionName = match.substring(1).toLowerCase();
                         
-                        return (firstName === mentionName) || 
-                               (lastName === mentionName) || 
-                               (fullNameNoSpaces === mentionName);
-                    });
-                    
-                    if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
-                        mentions.push(matchedUser._id);
+                        const matchedUser = projectUsers.find(u => {
+                            if (!u) return false;
+                            const firstName = (u.firstName || "").toLowerCase();
+                            const lastName = (u.lastName || "").toLowerCase();
+                            const fullNameNoSpaces = (firstName + lastName).replace(/\s/g, "");
+                            
+                            return (firstName === mentionName) || 
+                                   (lastName === mentionName) || 
+                                   (fullNameNoSpaces === mentionName);
+                        });
+                        
+                        if (matchedUser && matchedUser._id && !mentions.includes(matchedUser._id)) {
+                            mentions.push(matchedUser._id);
+                        }
                     }
                 }
             }
