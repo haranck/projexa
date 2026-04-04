@@ -63,7 +63,12 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             const mentionMatches = comment.match(mentionRegex) || [];
             const mentions: string[] = dtoMentions || [];
 
+            console.log(`[UpdateEpicUseCase] Comment: "${comment}"`);
+            console.log(`[UpdateEpicUseCase] Found ${mentionMatches.length} mention matches from regex.`);
+            console.log(`[UpdateEpicUseCase] DTO Mentions provided:`, dtoMentions);
+
             if (mentionMatches.length > 0 && (!dtoMentions || dtoMentions.length === 0)) {
+                console.log(`[UpdateEpicUseCase] Parsing mentions from text...`);
                 const projectMembers = await this._projectMemberRepo.findByProjectId(issue.projectId);
                 const projectUserIds = projectMembers.map(m => m.userId);
                 
@@ -114,18 +119,25 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             const lastComment = finalUpdateData.comments[finalUpdateData.comments.length - 1];
             if (lastComment.mentions && lastComment.mentions.length > 0) {
                 const mentions = lastComment.mentions;
+                console.log(`[UpdateEpicUseCase] Notifying ${mentions.length} mentioned users:`, mentions);
                 for (const mentionedUserId of mentions) {
                     // Ensure robust ID comparison
                     if (mentionedUserId.toString() !== userId.toString()) {
+                        console.log(`[UpdateEpicUseCase] Sending mention notification to user: ${mentionedUserId}`);
                         await this._sendNotification.execute({
                             recipientId: mentionedUserId.toString(),
                             eventType: NotificationEventType.ISSUE_MENTIONED,
                             message: `${lastComment.userName} mentioned you in issue "${updatedIssue.title}"`,
                             resourceId: updatedIssue._id.toString(),
                             resourceType: "issue"
-                        }).catch(err => console.error("Failed to send mention notification:", err));
+                        }).then(() => console.log(`[UpdateEpicUseCase] Notification sent successfully to: ${mentionedUserId}`))
+                        .catch(err => console.error(`[UpdateEpicUseCase] Failed to send mention notification to ${mentionedUserId}:`, err));
+                    } else {
+                        console.log(`[UpdateEpicUseCase] Skipping notification for self-mention: ${userId}`);
                     }
                 }
+            } else {
+                console.log(`[UpdateEpicUseCase] No mentions found in the last comment.`);
             }
         }
 
