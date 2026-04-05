@@ -11,6 +11,10 @@ export interface ScheduleMeetingProps {
     invitees: string[];
 }
 
+export interface RescheduleMeetingProps extends Partial<ScheduleMeetingProps> {
+    meetingId: string;
+}
+
 
 export const scheduleMeeting = async (meetingData: ScheduleMeetingProps) => {
     const response = await AxiosInstance.post(API_ROUTES.PROJECTS.SCHEDULE_MEETING, meetingData)
@@ -29,5 +33,10 @@ export const joinMeeting = async (meetingId: string) => {
 
 export const leaveMeeting = async (meetingId: string) => {
     const response = await AxiosInstance.patch(API_ROUTES.PROJECTS.LEAVE_MEETING.replace(":meetingId", meetingId))
+    return response.data
+}
+
+export const rescheduleMeeting = async (meetingData: RescheduleMeetingProps) => {
+    const response = await AxiosInstance.patch(API_ROUTES.PROJECTS.RESCHEDULE_MEETING, meetingData)
     return response.data
 }

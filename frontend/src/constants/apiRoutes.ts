@@ -61,6 +61,7 @@ export const API_ROUTES = {
     GET_PROJECT_MEETINGS: "/project/meetings/project/:projectId",
     JOIN_MEETING: "/project/meetings/:meetingId/join",
     LEAVE_MEETING: "/project/meetings/:meetingId/leave",
+    RESCHEDULE_MEETING: "/project/meetings/reschedule",
   },
   ISSUE: {
     CREATE_ISSUE: "/project/issues/create-issue/:projectId",

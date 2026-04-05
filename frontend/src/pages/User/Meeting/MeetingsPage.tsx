@@ -11,8 +11,9 @@ import type { Meeting } from "@/components/meetings/types";
 import UpcomingMeetings from "@/components/meetings/UpcomingMeetings";
 import ScheduleMeeting from "@/components/meetings/ScheduleMeeting";
 import RecentMeetings from "@/components/meetings/RecentMeetings";
+import RescheduleMeetingModal from "@/components/meetings/RescheduleMeetingModal";
 import { useGetProjectMeetings } from "@/hooks/Meeting/MeetingHooks";
-import { useGetWorkspaceMembers } from "@/hooks/Workspace/WorkspaceHooks";
+import { useGetWorkspaceMembers, useGetRoles } from "@/hooks/Workspace/WorkspaceHooks";
 import { Loader2 } from "lucide-react";
 
 interface BackendMeeting {
@@ -39,9 +40,21 @@ export const MeetingsPage = () => {
     const currentWorkspace = useSelector((state: RootState) => state.workspace.currentWorkspace);
     const [activeTab, setActiveTab] = useState<"upcoming" | "schedule" | "recent">("upcoming");
     const [activeMeeting, setActiveMeeting] = useState<Meeting | null>(null);
+    const [isRescheduleModalOpen, setIsRescheduleModalOpen] = useState(false);
+    const [meetingToReschedule, setMeetingToReschedule] = useState<Meeting | null>(null);
 
     const { data: meetingsData, isLoading } = useGetProjectMeetings(currentProject?._id || "");
     const { data: membersData } = useGetWorkspaceMembers(currentWorkspace?._id || "");
+    const { data: rolesData } = useGetRoles();
+
+    const isProjectManager = (() => {
+        if (!currentProject || !user) return false;
+        const userMember = currentProject.members.find(m => m.userId === user.id);
+        if (!userMember) return false;
+        if (currentProject.createdBy === user.id) return true;
+        const pmRole = rolesData?.data?.find((r: { _id: string; name: string }) => r.name === "Project Manager");
+        return userMember.roleId === pmRole?._id;
+    })();
 
     const formatTime = (date: Date | string) => {
         return new Date(date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -118,6 +131,11 @@ export const MeetingsPage = () => {
             host,
             attendees: m.participants?.map((p: { userId: string }) => getMemberInfo(p.userId)) || [],
             projectId: m.projectId,
+            hostId: m.hostId,
+            description: m.description,
+            startTime: m.startTime,
+            endTime: m.endTime,
+            invitees: m.participants?.map((p: { userId: string }) => p.userId) || [],
             status: m.currentUserStatus || m.status
         };
     };
@@ -193,6 +211,12 @@ export const MeetingsPage = () => {
                                 <UpcomingMeetings 
                                     meetings={upcomingMeetings} 
                                     onJoinCall={handleJoinCall} 
+                                    onReschedule={(m) => {
+                                        setMeetingToReschedule(m);
+                                        setIsRescheduleModalOpen(true);
+                                    }}
+                                    currentUserId={user?.id || ""}
+                                    isProjectManager={isProjectManager}
                                 />
                             )}
                             {activeTab === "schedule" && <ScheduleMeeting />}
@@ -212,6 +236,18 @@ export const MeetingsPage = () => {
                     userName={user ? `${user.firstName} ${user.lastName}` : "Team Member"}
                     userEmail={user?.email || "team@projexa.com"}
                     onClose={() => setActiveMeeting(null)}
+                />
+            )}
+
+            {/* Reschedule Modal */}
+            {isRescheduleModalOpen && meetingToReschedule && (
+                <RescheduleMeetingModal 
+                    open={isRescheduleModalOpen}
+                    onClose={() => {
+                        setIsRescheduleModalOpen(false);
+                        setMeetingToReschedule(null);
+                    }}
+                    meeting={meetingToReschedule}
                 />
             )}
 

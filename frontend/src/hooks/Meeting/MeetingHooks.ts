@@ -1,11 +1,21 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { scheduleMeeting, getProjectMeetings, joinMeeting, leaveMeeting } from "../../services/Meeting/meetingService";
-import type { ScheduleMeetingProps } from "../../services/Meeting/meetingService";
+import { scheduleMeeting, getProjectMeetings, joinMeeting, leaveMeeting,rescheduleMeeting } from "../../services/Meeting/meetingService";
+import type { ScheduleMeetingProps, RescheduleMeetingProps } from "../../services/Meeting/meetingService";
 
 export const useScheduleMeeting = () => {
     const queryClient = useQueryClient();
     return useMutation({
         mutationFn: (data: ScheduleMeetingProps) => scheduleMeeting(data),
+        onSuccess: (_, variables) => {
+            queryClient.invalidateQueries({ queryKey: ["meetings", variables.projectId] });
+        }
+    });
+};
+
+export const useRescheduleMeeting = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (data: RescheduleMeetingProps) => rescheduleMeeting(data),
         onSuccess: (_, variables) => {
             queryClient.invalidateQueries({ queryKey: ["meetings", variables.projectId] });
         }
@@ -39,3 +49,4 @@ export const useLeaveMeeting = () => {
         }
     });
 };
+
