@@ -58,7 +58,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
 
         if (comment) {
             const user = await this._userRepo.findById(userId);
-            
+
             const newComment: IComment = {
                 userId: userId,
                 userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
@@ -66,7 +66,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
                 mentions: mentionedUserIds || [],
                 createdAt: new Date()
             };
-            
+
             const existingComments = issue.comments || [];
             finalUpdateData.comments = [...existingComments, newComment];
 
@@ -74,7 +74,7 @@ export class UpdateEpicUseCase implements IUpdateEpicUseCase {
             if (mentionedUserIds && mentionedUserIds.length > 0) {
                 const currentUserIdStr = userId.toString();
                 const uniqueMentionedIds = [...new Set(mentionedUserIds)].filter(id => id.toString() !== currentUserIdStr);
-                
+
                 for (const mentionId of uniqueMentionedIds) {
                     try {
                         const isMember = await this._projectMemberRepo.findProjectAndUser(issue.projectId, mentionId);

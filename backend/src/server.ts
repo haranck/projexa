@@ -24,7 +24,7 @@ app.use(cookieParser());
 
 const allowedOrigins = [
   "https://www.projexa.haranck.online",
-  "https://projexa.haranck.online"
+  "https://projexa.haranck.online",
 ];
 
 app.use(
