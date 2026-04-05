@@ -8,7 +8,7 @@ import { ISendNotificationUseCase } from "../../interface/notification/ISendNoti
 import { NotificationEventType } from "../../../domain/enums/NotificationEventType";
 import { IProjectRepository } from "../../../domain/interfaces/repositories/ProjectRepo/IProjectRepository";
 import { IRoleRepository } from "../../../domain/interfaces/repositories/IRoleRepository";
-import { ProjectRole } from "../../../domain/enums/ProjectRole";
+// import { ProjectRole } from "../../../domain/enums/ProjectRole";
 
 @injectable()
 export class RescheduleMeetingUseCase implements IRescheduleMeetingUseCase {

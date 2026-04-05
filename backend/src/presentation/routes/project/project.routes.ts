@@ -21,10 +21,10 @@ router.delete(ROUTES.ISSUES.DELETE_ISSUE, authMiddleware.authenticate, issueCont
 router.get(ROUTES.ISSUES.GET_ALL_ISSUES, authMiddleware.authenticate, issueController.getAllIssues)
 
 // project meetings routes
-router.post(ROUTES.MEETINGS.SCHEDULE, authMiddleware.authenticate, meetingController.scheduleMeeting)
-router.patch(ROUTES.MEETINGS.RESCHEDULE, authMiddleware.authenticate, meetingController.rescheduleMeeting)
-router.get(ROUTES.MEETINGS.GET_PROJECT_MEETINGS, authMiddleware.authenticate, meetingController.getProjectMeetings)
-router.patch(ROUTES.MEETINGS.JOIN_MEETING, authMiddleware.authenticate, meetingController.joinMeeting)
-router.patch(ROUTES.MEETINGS.LEAVE_MEETING, authMiddleware.authenticate, meetingController.leaveMeeting)
+router.post(ROUTES.MEETINGS.SCHEDULE, authMiddleware.authenticate, meetingController.scheduleMeeting.bind(meetingController))
+router.post(ROUTES.MEETINGS.RESCHEDULE, authMiddleware.authenticate, meetingController.rescheduleMeeting.bind(meetingController))
+router.get(ROUTES.MEETINGS.GET_PROJECT_MEETINGS, authMiddleware.authenticate, meetingController.getProjectMeetings.bind(meetingController))
+router.patch(ROUTES.MEETINGS.JOIN_MEETING, authMiddleware.authenticate, meetingController.joinMeeting.bind(meetingController))
+router.patch(ROUTES.MEETINGS.LEAVE_MEETING, authMiddleware.authenticate, meetingController.leaveMeeting.bind(meetingController))
 
 export default router;

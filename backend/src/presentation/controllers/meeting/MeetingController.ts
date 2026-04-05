@@ -19,7 +19,7 @@ export class MeetingController {
         @inject("IRescheduleMeetingUseCase") private rescheduleMeetingUseCase: IRescheduleMeetingUseCase
     ) { }
 
-    scheduleMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
+    async scheduleMeeting(req: AuthRequest, res: Response): Promise<void> {
         try {
             const dto: ScheduleMeetingDTO = req.body;
             if (!req.user || !req.user.userId) {
@@ -38,8 +38,7 @@ export class MeetingController {
             res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
-
-    rescheduleMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
+    async rescheduleMeeting(req: AuthRequest, res: Response): Promise<void> {
         try {
             const dto: RescheduleMeetingDTO = req.body;
             if (!req.user || !req.user.userId) {
@@ -59,7 +58,7 @@ export class MeetingController {
         }
     }
 
-    getProjectMeetings = async (req: AuthRequest, res: Response): Promise<void> => {
+    async getProjectMeetings(req: AuthRequest, res: Response): Promise<void> {
         try {
             const { projectId } = req.params;
             if (!req.user || !req.user.userId) {
@@ -79,7 +78,7 @@ export class MeetingController {
         }
     }
 
-    joinMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
+    async joinMeeting(req: AuthRequest, res: Response): Promise<void> {
         try {
             const { meetingId } = req.params;
             if (!req.user || !req.user.userId) throw new Error("User not found");
@@ -96,7 +95,7 @@ export class MeetingController {
         }
     }
 
-    leaveMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
+    async leaveMeeting(req: AuthRequest, res: Response): Promise<void> {
         try {
             const { meetingId } = req.params;
             if (!req.user || !req.user.userId) throw new Error("User not found");
