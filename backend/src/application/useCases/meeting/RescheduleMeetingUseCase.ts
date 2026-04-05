@@ -23,18 +23,18 @@ export class RescheduleMeetingUseCase implements IRescheduleMeetingUseCase {
         const meeting = await this.meetingRepo.getMeetingById(dto.meetingId);
         if (!meeting) throw new Error(MEETING_ERRORS.MEETING_NOT_FOUND);
 
-        let isAuthorized = meeting.hostId === dto.hostId;
+        // let isAuthorized = meeting.hostId === dto.hostId;
 
-        if (!isAuthorized) {
-            const project = await this.projectRepo.getProjectById(meeting.projectId);
-            const member = project?.members?.find(m => m.userId === dto.hostId);
-            if (member) {
-                const role = await this.roleRepo.getRoleById(member.roleId);
-                if (role?.name === ProjectRole.PROJECT_MANAGER) isAuthorized = true;
-            }
-        }
+        // if (!isAuthorized) {
+        //     const project = await this.projectRepo.getProjectById(meeting.projectId);
+        //     const member = project?.members?.find(m => m.userId === dto.hostId);
+        //     if (member) {
+        //         const role = await this.roleRepo.getRoleById(member.roleId);
+        //         if (role?.name === ProjectRole.PROJECT_MANAGER) isAuthorized = true;
+        //     }
+        // }
 
-        if (!isAuthorized) throw new Error(MEETING_ERRORS.ONLY_HOST_CAN_RESCHEDULE);
+        // if (!isAuthorized) throw new Error(MEETING_ERRORS.ONLY_HOST_CAN_RESCHEDULE);
 
         if (dto.startTime && new Date(dto.startTime) <= new Date()) {
             throw new Error(MEETING_ERRORS.MEETING_INVALID_DATES);
