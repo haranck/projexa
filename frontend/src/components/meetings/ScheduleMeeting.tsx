@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Calendar, UserPlus, X, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSelector } from "react-redux";
@@ -11,16 +10,8 @@ import { useScheduleMeeting } from "@/hooks/Meeting/MeetingHooks";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
 
-const scheduleMeetingSchema = z.object({
-    title: z.string().min(3, "Title must be at least 3 characters"),
-    description: z.string().optional(),
-    date: z.string().min(1, "Date is required"),
-    startTime: z.string().min(1, "Start time is required"),
-    endTime: z.string().min(1, "End time is required"),
-    invitees: z.array(z.string()).min(1, "Select at least one attendee"),
-});
-
-type ScheduleMeetingFormValues = z.infer<typeof scheduleMeetingSchema>;
+import { scheduleMeetingSchema } from "@/lib/validations/meeting.schema";
+import type { ScheduleMeetingFormValues } from "@/lib/validations/meeting.schema";
 
 const ScheduleMeeting = () => {
     const currentProject = useSelector((state: RootState) => state.project.currentProject);

@@ -34,7 +34,8 @@ import type {
 import type { ProjectMember } from "@/types/project";
 import { toast } from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
-import { issueSchema } from "@/lib/validations/issue.schema";
+// import { issueSchema } from "@/lib/validations/issue.schema";
+import { updateIssueSchema } from "@/lib/validations/updateIssue.schema";
 
 export interface ChildTask {
   _id: string;
@@ -166,11 +167,11 @@ export const IssueDetailDrawer = ({
     useDeleteIssue();
   const { mutate: createIssue, isPending: isCreatingIssue } = useCreateIssue();
 
-const handleUpdateIssue = (newStatus?: string) => {
+  const handleUpdateIssue = (newStatus?: string) => {
     if (!issue?._id) return;
     const statusToUpdate = newStatus || status;
 
-    const validation = issueSchema.safeParse({
+    const validation = updateIssueSchema.safeParse({
       title,
       description,
       startDate: startDate || null,
@@ -213,8 +214,8 @@ const handleUpdateIssue = (newStatus?: string) => {
       {
         onSuccess: () => {
           toast.success("Issue updated successfully");
-          setCommentText(""); // Clear comment after success
-          setMentionedUserIds([]); // Clear mentions
+          setCommentText("");
+          setMentionedUserIds([]); 
         },
         onError: (err: unknown) => {
           toast.error(getErrorMessage(err) || "Failed to update issue");
@@ -439,18 +440,16 @@ const handleUpdateIssue = (newStatus?: string) => {
   return (
     <>
       <div
-        className={`fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${
-          isOpen
+        className={`fixed inset-0 z-50 bg-black/50 backdrop-blur-sm transition-opacity duration-300 ${isOpen
             ? "opacity-100 pointer-events-auto"
             : "opacity-0 pointer-events-none"
-        }`}
+          }`}
         onClick={onClose}
       />
 
       <div
-        className={`fixed top-0 right-0 z-50 h-full w-[460px] max-w-[90vw] bg-[#0f1117] border-l border-white/10 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
-          isOpen ? "translate-x-0" : "translate-x-full"
-        }`}
+        className={`fixed top-0 right-0 z-50 h-full w-[460px] max-w-[90vw] bg-[#0f1117] border-l border-white/10 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? "translate-x-0" : "translate-x-full"
+          }`}
       >
         <div className="flex items-center justify-between px-7 py-5 border-b border-white/5">
           <div className="flex flex-col gap-1">
@@ -531,15 +530,14 @@ const handleUpdateIssue = (newStatus?: string) => {
               <div className="relative">
                 <button
                   onClick={() => setIsStatusDropdownOpen(!isStatusDropdownOpen)}
-                  className={`w-full flex items-center justify-between border rounded-xl px-4 py-2.5 transition-all group ${
-                    status === "TODO"
+                  className={`w-full flex items-center justify-between border rounded-xl px-4 py-2.5 transition-all group ${status === "TODO"
                       ? "bg-zinc-500/10 border-zinc-500/30 text-zinc-400"
                       : status === "IN_PROGRESS"
                         ? "bg-blue-500/10 border-blue-500/30 text-blue-400"
                         : status === "HOLD"
                           ? "bg-blue-500/10 border-blue-500/30 text-blue-400"
                           : "bg-emerald-500/10 border-emerald-500/30 text-emerald-400"
-                  }`}
+                    }`}
                 >
                   <span className="text-[11px] font-bold uppercase tracking-wider">
                     {status.replace("_", " ")}
@@ -551,7 +549,7 @@ const handleUpdateIssue = (newStatus?: string) => {
 
                 {isStatusDropdownOpen && (
                   <div className="absolute top-full left-0 right-0 mt-2 z-70 bg-[#1a1c22] border border-white/10 rounded-xl shadow-2xl py-2 animate-in fade-in slide-in-from-top-2">
-                    {["TODO", "IN_PROGRESS", "DONE","HOLD"].map((s) => (
+                    {["TODO", "IN_PROGRESS", "DONE", "HOLD"].map((s) => (
                       <button
                         key={s}
                         onClick={() => {
@@ -744,158 +742,156 @@ const handleUpdateIssue = (newStatus?: string) => {
               issueType === "STORY" ||
               issueType === "TASK" ||
               issueType === "HOLD") && (
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-xs font-bold text-white tracking-tight">
-                    {issueType === "EPIC" ? "Child Work Items" : "Subtasks"}
-                  </h3>
-                  <span className="text-[10px] font-bold text-zinc-600">
-                    {
-                      displayTasks.filter(
-                        (t: ChildTask) => t.status?.toUpperCase() === "DONE",
-                      ).length
-                    }
-                    /{displayTasks.length}
-                  </span>
-                </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-xs font-bold text-white tracking-tight">
+                      {issueType === "EPIC" ? "Child Work Items" : "Subtasks"}
+                    </h3>
+                    <span className="text-[10px] font-bold text-zinc-600">
+                      {
+                        displayTasks.filter(
+                          (t: ChildTask) => t.status?.toUpperCase() === "DONE",
+                        ).length
+                      }
+                      /{displayTasks.length}
+                    </span>
+                  </div>
 
-                <div className="space-y-1">
-                  {displayTasks.map((task: ChildTask) => {
-                    const badge = getTypeBadge(task.issueType);
+                  <div className="space-y-1">
+                    {displayTasks.map((task: ChildTask) => {
+                      const badge = getTypeBadge(task.issueType);
 
-                    return (
-                      <div
-                        key={task._id}
-                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/3 transition-colors group"
-                      >
-                        {/* Type Icon (Replacing Checkbox) */}
+                      return (
                         <div
-                          className={`w-4.5 h-4.5 rounded-md flex items-center justify-center shrink-0 border border-white/5 bg-white/5`}
+                          key={task._id}
+                          className="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-white/3 transition-colors group"
                         >
-                          {task.issueType?.toLowerCase() === "story" && (
-                            <FileText className="w-2.5 h-2.5 text-emerald-400" />
-                          )}
-                          {task.issueType?.toLowerCase() === "task" && (
-                            <Check className="w-2.5 h-2.5 text-blue-400" />
-                          )}
-                          {task.issueType?.toLowerCase() === "bug" && (
-                            <Trash2 className="w-2.5 h-2.5 text-red-400" />
-                          )}
-                          {task.issueType?.toLowerCase() === "subtask" && (
-                            <Plus className="w-2.5 h-2.5 text-violet-400" />
-                          )}
-                          {task.issueType?.toLowerCase() === "hold" && (
-                            <Plus className="w-2.5 h-2.5 text-violet-400" />
-                          )}
-                        </div>
+                          {/* Type Icon (Replacing Checkbox) */}
+                          <div
+                            className={`w-4.5 h-4.5 rounded-md flex items-center justify-center shrink-0 border border-white/5 bg-white/5`}
+                          >
+                            {task.issueType?.toLowerCase() === "story" && (
+                              <FileText className="w-2.5 h-2.5 text-emerald-400" />
+                            )}
+                            {task.issueType?.toLowerCase() === "task" && (
+                              <Check className="w-2.5 h-2.5 text-blue-400" />
+                            )}
+                            {task.issueType?.toLowerCase() === "bug" && (
+                              <Trash2 className="w-2.5 h-2.5 text-red-400" />
+                            )}
+                            {task.issueType?.toLowerCase() === "subtask" && (
+                              <Plus className="w-2.5 h-2.5 text-violet-400" />
+                            )}
+                            {task.issueType?.toLowerCase() === "hold" && (
+                              <Plus className="w-2.5 h-2.5 text-violet-400" />
+                            )}
+                          </div>
 
-                        {/* Subtask Row - Clickable for details */}
-                        <div
-                          className="flex-1 min-w-0 cursor-pointer"
-                          onClick={() => onSubtaskClick?.(task._id)}
-                        >
+                          {/* Subtask Row - Clickable for details */}
+                          <div
+                            className="flex-1 min-w-0 cursor-pointer"
+                            onClick={() => onSubtaskClick?.(task._id)}
+                          >
+                            <span
+                              className={`text-[12px] block truncate transition-all ${task.status?.toUpperCase() === "DONE"
+                                  ? "line-through text-zinc-600"
+                                  : "text-zinc-300 group-hover:text-blue-400"
+                                }`}
+                            >
+                              {task.title}
+                            </span>
+                          </div>
+
+                          {/* Type Badge */}
                           <span
-                            className={`text-[12px] block truncate transition-all ${
-                              task.status?.toUpperCase() === "DONE"
-                                ? "line-through text-zinc-600"
-                                : "text-zinc-300 group-hover:text-blue-400"
-                            }`}
+                            className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badge.bg} ${badge.text} uppercase shrink-0`}
                           >
-                            {task.title}
+                            {badge.label}
                           </span>
+
+                          {/* Status Dropdown for Subtask */}
+                          <div className="relative">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenSubtaskStatusId(
+                                  openSubtaskStatusId === task._id
+                                    ? null
+                                    : task._id,
+                                );
+                              }}
+                              className={`px-2 py-1 rounded text-[9px] font-bold border transition-all flex items-center gap-1 ${task.status?.toUpperCase() === "TODO"
+                                  ? "bg-zinc-500/10 border-zinc-500/20 text-zinc-400"
+                                  : task.status?.toUpperCase() === "IN_PROGRESS"
+                                    ? "bg-blue-500/10 border-blue-500/20 text-blue-400"
+                                    : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
+                                }`}
+                            >
+                              {task.status?.toUpperCase().replace("_", " ") ||
+                                "TODO"}
+                              <ChevronDown className="w-2.5 h-2.5" />
+                            </button>
+
+                            {openSubtaskStatusId === task._id && (
+                              <div className="absolute top-full right-0 mt-1 z-80 bg-[#1a1c22] border border-white/10 rounded-lg shadow-2xl py-1 min-w-[100px] animate-in fade-in slide-in-from-top-1">
+                                {["TODO", "IN_PROGRESS", "DONE", "HOLD"].map((s) => (
+                                  <button
+                                    key={s}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleUpdateSubtaskStatus(task, s);
+                                    }}
+                                    className={`w-full px-3 py-1.5 transition-all text-left text-[9px] font-bold uppercase flex items-center justify-between hover:bg-white/5 ${task.status?.toUpperCase() === s ? "text-white bg-white/5" : "text-zinc-500"}`}
+                                  >
+                                    {s.replace("_", " ")}
+                                  </button>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
+                          {/* Assignee Avatar */}
+                          <div className="w-6 h-6 rounded-full overflow-hidden border border-white/10 shrink-0 flex items-center justify-center bg-zinc-800">
+                            {task.assigneeId &&
+                              members.find((m) => m.userId === task.assigneeId)
+                                ?.user?.profilePicture ? (
+                              <img
+                                src={
+                                  members.find(
+                                    (m) => m.userId === task.assigneeId,
+                                  )?.user?.profilePicture
+                                }
+                                alt=""
+                                className="w-full h-full object-cover"
+                              />
+                            ) : (
+                              <User className="w-3.5 h-3.5 text-zinc-600" />
+                            )}
+                          </div>
                         </div>
+                      );
+                    })}
+                  </div>
 
-                        {/* Type Badge */}
-                        <span
-                          className={`text-[9px] font-bold px-2 py-0.5 rounded-full ${badge.bg} ${badge.text} uppercase shrink-0`}
-                        >
-                          {badge.label}
-                        </span>
-
-                        {/* Status Dropdown for Subtask */}
-                        <div className="relative">
-                          <button
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenSubtaskStatusId(
-                                openSubtaskStatusId === task._id
-                                  ? null
-                                  : task._id,
-                              );
-                            }}
-                            className={`px-2 py-1 rounded text-[9px] font-bold border transition-all flex items-center gap-1 ${
-                              task.status?.toUpperCase() === "TODO"
-                                ? "bg-zinc-500/10 border-zinc-500/20 text-zinc-400"
-                                : task.status?.toUpperCase() === "IN_PROGRESS"
-                                  ? "bg-blue-500/10 border-blue-500/20 text-blue-400"
-                                  : "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
-                            }`}
-                          >
-                            {task.status?.toUpperCase().replace("_", " ") ||
-                              "TODO"}
-                            <ChevronDown className="w-2.5 h-2.5" />
-                          </button>
-
-                          {openSubtaskStatusId === task._id && (
-                            <div className="absolute top-full right-0 mt-1 z-80 bg-[#1a1c22] border border-white/10 rounded-lg shadow-2xl py-1 min-w-[100px] animate-in fade-in slide-in-from-top-1">
-                              {["TODO", "IN_PROGRESS", "DONE","HOLD"].map((s) => (
-                                <button
-                                  key={s}
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    handleUpdateSubtaskStatus(task, s);
-                                  }}
-                                  className={`w-full px-3 py-1.5 transition-all text-left text-[9px] font-bold uppercase flex items-center justify-between hover:bg-white/5 ${task.status?.toUpperCase() === s ? "text-white bg-white/5" : "text-zinc-500"}`}
-                                >
-                                  {s.replace("_", " ")}
-                                </button>
-                              ))}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Assignee Avatar */}
-                        <div className="w-6 h-6 rounded-full overflow-hidden border border-white/10 shrink-0 flex items-center justify-center bg-zinc-800">
-                          {task.assigneeId &&
-                          members.find((m) => m.userId === task.assigneeId)
-                            ?.user?.profilePicture ? (
-                            <img
-                              src={
-                                members.find(
-                                  (m) => m.userId === task.assigneeId,
-                                )?.user?.profilePicture
-                              }
-                              alt=""
-                              className="w-full h-full object-cover"
-                            />
-                          ) : (
-                            <User className="w-3.5 h-3.5 text-zinc-600" />
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })}
+                  {/* Create Subtask Button */}
+                  <button
+                    onClick={() => setIsCreateChildModalOpen(true)}
+                    className="flex items-center gap-2 text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition-colors px-3 py-2 rounded-lg hover:bg-blue-500/5"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    {issueType === "EPIC"
+                      ? "Create child work item"
+                      : "Create subtask"}
+                  </button>
                 </div>
-
-                {/* Create Subtask Button */}
-                <button
-                  onClick={() => setIsCreateChildModalOpen(true)}
-                  className="flex items-center gap-2 text-[11px] font-semibold text-blue-400 hover:text-blue-300 transition-colors px-3 py-2 rounded-lg hover:bg-blue-500/5"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  {issueType === "EPIC"
-                    ? "Create child work item"
-                    : "Create subtask"}
-                </button>
-              </div>
-            )}
+              )}
 
             {/* ── Divider ── */}
             {(issueType === "EPIC" ||
               issueType === "STORY" ||
               issueType === "TASK") && (
-              <div className="border-t border-white/5" />
-            )}
+                <div className="border-t border-white/5" />
+              )}
 
             {/* ── Attachments ── */}
             <div className="space-y-3">
@@ -911,11 +907,10 @@ const handleUpdateIssue = (newStatus?: string) => {
                     <button
                       key={tab}
                       onClick={() => setActiveAttachTab(tab)}
-                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex-1 justify-center ${
-                        activeAttachTab === tab
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-semibold transition-all flex-1 justify-center ${activeAttachTab === tab
                           ? "bg-white/8 text-white shadow-sm"
                           : "text-zinc-500 hover:text-zinc-300"
-                      }`}
+                        }`}
                     >
                       <Icon className="w-3.5 h-3.5" />
                       {tab}
@@ -1111,10 +1106,10 @@ const handleUpdateIssue = (newStatus?: string) => {
                         {members.filter((m) =>
                           (m.user?.userName || "").toLowerCase().includes(mentionSearch)
                         ).length === 0 && (
-                          <div className="px-4 py-2 text-[11px] text-zinc-500 italic">
-                            No members found
-                          </div>
-                        )}
+                            <div className="px-4 py-2 text-[11px] text-zinc-500 italic">
+                              No members found
+                            </div>
+                          )}
                       </div>
                     )}
                     <div className="absolute top-0 right-0 p-2 opacity-0 group-focus-within/input:opacity-100 transition-opacity">
@@ -1157,8 +1152,8 @@ const handleUpdateIssue = (newStatus?: string) => {
                           </span>
                           <span className="text-[10px] text-zinc-500 font-bold flex items-center gap-1">
                             <Clock className="w-2.5 h-2.5" />
-                            {new Date(comment.createdAt).toLocaleDateString(undefined, { 
-                              month: 'short', 
+                            {new Date(comment.createdAt).toLocaleDateString(undefined, {
+                              month: 'short',
                               day: 'numeric',
                               hour: '2-digit',
                               minute: '2-digit'
