@@ -159,6 +159,8 @@ import { IGetProjectMeetingsUseCase } from "../../application/interface/meeting/
 import { GetProjectMeetingsUseCase } from "../../application/useCases/meeting/GetProjectMeetingsUseCase";
 import { IGetAdminDashboardStatsUseCase } from "../../application/interface/admin/IGetAdminDashboardStatsUseCase";
 import { GetAdminDashboardStatsUseCase } from "../../application/useCases/admin/GetAdminDashboardStatsUseCase";
+import { IRescheduleMeetingUseCase } from "../../application/interface/meeting/IRescheduleMeetingUseCase";
+import { RescheduleMeetingUseCase } from "../../application/useCases/meeting/RescheduleMeetingUseCase";
 
 export class UseCaseModule {    
     static registerModules(): void {
@@ -493,6 +495,10 @@ export class UseCaseModule {
 
         container.register<IGetProjectMeetingsUseCase>("IGetProjectMeetingsUseCase", {
             useClass: GetProjectMeetingsUseCase
+        });
+
+        container.register<IRescheduleMeetingUseCase>("IRescheduleMeetingUseCase", {
+            useClass: RescheduleMeetingUseCase
         });
 
     }

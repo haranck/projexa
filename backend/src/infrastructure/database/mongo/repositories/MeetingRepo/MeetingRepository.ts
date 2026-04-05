@@ -12,7 +12,7 @@ export class MeetingRepository extends BaseRepo<IMeetingEntity> implements IMeet
     constructor() {
         super(MeetingModel as unknown as Model<IMeetingEntity>);
     }
-
+    
     async createMeeting(meeting: IMeetingEntity): Promise<IMeetingEntity> {
         const id = await super.create(meeting);
         const doc = await super.findById(id);
@@ -55,6 +55,16 @@ export class MeetingRepository extends BaseRepo<IMeetingEntity> implements IMeet
         const doc = await this.model.findOneAndUpdate(
             { _id: meetingId, "participants.userId": userId },
             { $set: updateData },
+            { new: true }
+        ).lean<IMeetingDocument>();
+
+        return doc ? MeetingMapper.toEntity(doc) : null;
+    }
+
+    async updateMeeting(meetingId: string, meeting: Partial<IMeetingEntity>): Promise<IMeetingEntity | null> {
+        const doc = await this.model.findByIdAndUpdate(
+            meetingId,
+            { $set: meeting },
             { new: true }
         ).lean<IMeetingDocument>();
 

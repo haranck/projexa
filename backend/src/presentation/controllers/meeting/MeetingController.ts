@@ -3,10 +3,11 @@ import { inject, injectable } from "tsyringe";
 import { IScheduleMeetingUseCase } from "../../../application/interface/meeting/IScheduleMeetingUseCase";
 import { IGetProjectMeetingsUseCase } from "../../../application/interface/meeting/IGetProjectMeetingsUseCase";
 import { HTTP_STATUS } from "../../../domain/constants/httpStatus";
-import { ScheduleMeetingDTO } from "../../../application/dtos/project/requestDTOs/ScheduleMeetingDTO";
+import { ScheduleMeetingDTO, RescheduleMeetingDTO } from "../../../application/dtos/project/requestDTOs/ScheduleMeetingDTO";
 import { IJoinMeetingUseCase } from "../../../application/interface/meeting/IJoinMeetingUseCase";
 import { ILeaveMeetingUseCase } from "../../../application/interface/meeting/ILeaveMeetingUseCase";
 import { AuthRequest } from "../../../presentation/middleware/auth/authMiddleware";
+import { IRescheduleMeetingUseCase } from "../../../application/interface/meeting/IRescheduleMeetingUseCase";
 
 @injectable()
 export class MeetingController {
@@ -14,7 +15,8 @@ export class MeetingController {
         @inject("IScheduleMeetingUseCase") private scheduleMeetingUseCase: IScheduleMeetingUseCase,
         @inject("IGetProjectMeetingsUseCase") private getProjectMeetingsUseCase: IGetProjectMeetingsUseCase,
         @inject("IJoinMeetingUseCase") private joinMeetingUseCase: IJoinMeetingUseCase,
-        @inject("ILeaveMeetingUseCase") private leaveMeetingUseCase: ILeaveMeetingUseCase
+        @inject("ILeaveMeetingUseCase") private leaveMeetingUseCase: ILeaveMeetingUseCase,
+        @inject("IRescheduleMeetingUseCase") private rescheduleMeetingUseCase: IRescheduleMeetingUseCase
     ) { }
 
     async scheduleMeeting(req: AuthRequest, res: Response): Promise<void> {
@@ -26,10 +28,28 @@ export class MeetingController {
             dto.hostId = req.user.userId;
 
             const meeting = await this.scheduleMeetingUseCase.execute(dto);
-            console.log('meeting ', meeting)
             res.status(HTTP_STATUS.CREATED).json({
                 success: true,
                 message: "Meeting scheduled successfully",
+                data: meeting
+            });
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+        }
+    }
+    async rescheduleMeeting(req: AuthRequest, res: Response): Promise<void> {
+        try {
+            const dto: RescheduleMeetingDTO = req.body;
+            if (!req.user || !req.user.userId) {
+                throw new Error("User not found");
+            }
+            dto.hostId = req.user.userId;
+
+            const meeting = await this.rescheduleMeetingUseCase.execute(dto);
+            res.status(HTTP_STATUS.CREATED).json({
+                success: true,
+                message: "Meeting rescheduled successfully",
                 data: meeting
             });
         } catch (error: unknown) {

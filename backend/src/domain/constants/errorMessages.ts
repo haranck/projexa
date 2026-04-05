@@ -251,4 +251,6 @@ export const MEETING_ERRORS = {
     MEETING_SPRINT_NOT_ACTIVE: "Sprint is not active !",
     MEETING_ONLY_ACTIVE_SPRINT_CAN_BE_COMPLETED: "Only active sprint can be completed !",
     MEETING_FAILED_TO_SEND_NOTIFICATIONS: "Failed to send notifications",
-}
+    ONLY_HOST_CAN_RESCHEDULE: "Only host can reschedule the meeting",
+    FAILED_TO_UPDATE_MEETING: "Failed to update meeting",
+}

@@ -10,4 +10,5 @@ export interface IMeetingRepository {
         userId: string,
         status: 'joined' | 'left' | 'missed'
     ): Promise<IMeetingEntity | null>;
+    updateMeeting(meetingId: string, meeting: Partial<IMeetingEntity>): Promise<IMeetingEntity | null>;
 }

@@ -89,6 +89,7 @@ export const ROUTES = {
     },
     MEETINGS: {
         SCHEDULE: "/meetings/schedule",
+        RESCHEDULE: "/meetings/reschedule",
         GET_PROJECT_MEETINGS: "/meetings/project/:projectId",
         JOIN_MEETING: "/meetings/:meetingId/join",
         LEAVE_MEETING: "/meetings/:meetingId/leave"
