@@ -72,7 +72,6 @@ export const MeetingsPage = () => {
     };
 
     const getMemberInfo = (userId: string): { name: string; avatar: string } => {
-        // Try workspace members first (detailed names)
         const workspaceMember = membersData?.data?.find((m: { member?: { _id: string } }) => m?.member?._id === userId);
         if (workspaceMember) {
             return {

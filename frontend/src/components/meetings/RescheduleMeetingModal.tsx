@@ -31,9 +31,14 @@ interface RescheduleMeetingModalProps {
 
 const RescheduleMeetingModal = ({ open, onClose, meeting }: RescheduleMeetingModalProps) => {
     const currentWorkspace = useSelector((state: RootState) => state.workspace.currentWorkspace);
+    const currentProject = useSelector((state: RootState) => state.project.currentProject);
     const { data: membersData } = useGetWorkspaceMembers(currentWorkspace?._id || "");
     const { mutate: reschedule, isPending } = useRescheduleMeeting();
     const [showMemberDropdown, setShowMemberDropdown] = useState(false);
+
+    const projectMembers = membersData?.data?.filter((m: WorkspaceMember) => 
+        currentProject?.members.some(pm => pm.userId === m?.member?._id)
+    ) || [];
 
     const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ScheduleMeetingFormValues>({
         resolver: zodResolver(scheduleMeetingSchema),
@@ -146,7 +151,7 @@ const RescheduleMeetingModal = ({ open, onClose, meeting }: RescheduleMeetingMod
                                 <div className="ml-auto text-blue-500 text-[10px] font-bold flex items-center gap-1"><UserPlus className="size-3" /> Add</div>
                                 {showMemberDropdown && (
                                     <div className="absolute top-full left-0 w-full mt-2 bg-zinc-900 border border-white/10 rounded-xl shadow-2xl z-50 py-2 max-h-48 overflow-y-auto" onClick={(e) => e.stopPropagation()}>
-                                        {membersData?.data?.map((m: WorkspaceMember) => (
+                                        {projectMembers.map((m: WorkspaceMember) => (
                                             <div key={m.member._id} onClick={() => toggleInvitee(m.member._id)} className={`flex items-center gap-3 px-4 py-2 hover:bg-white/5 cursor-pointer ${selectedInvitees.includes(m.member._id) ? 'bg-blue-600/10' : ''}`}>
                                                 <img src={m.member.profilePicture || `https://ui-avatars.com/api/?name=${encodeURIComponent(m.member.firstName)}&background=18181b&color=71717a`} className="size-6 rounded-full" />
                                                 <span className="text-xs text-zinc-300">{m.member.firstName} {m.member.lastName}</span>
