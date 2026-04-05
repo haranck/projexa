@@ -36,8 +36,17 @@ export class RescheduleMeetingUseCase implements IRescheduleMeetingUseCase {
 
         // if (!isAuthorized) throw new Error(MEETING_ERRORS.ONLY_HOST_CAN_RESCHEDULE);
 
-        if (dto.startTime && new Date(dto.startTime) <= new Date()) {
-            throw new Error(MEETING_ERRORS.MEETING_INVALID_DATES);
+        // Allow meetings starting within 5 minutes (small buffer for imminent reschedules)
+        if (dto.startTime) {
+            const startDate = new Date(dto.startTime);
+            const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+            if (startDate < fiveMinutesAgo) {
+                throw new Error(MEETING_ERRORS.MEETING_INVALID_DATES);
+            }
+            dto.startTime = startDate;
+        }
+        if (dto.endTime) {
+            dto.endTime = new Date(dto.endTime);
         }
 
         const participants = dto.invitees?.map(userId =>

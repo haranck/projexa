@@ -47,7 +47,7 @@ export class MeetingController {
             dto.hostId = req.user.userId;
 
             const meeting = await this.rescheduleMeetingUseCase.execute(dto);
-            res.status(HTTP_STATUS.CREATED).json({
+            res.status(HTTP_STATUS.OK).json({
                 success: true,
                 message: "Meeting rescheduled successfully",
                 data: meeting
