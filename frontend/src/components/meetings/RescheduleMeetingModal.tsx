@@ -9,8 +9,8 @@ import { useGetWorkspaceMembers } from "@/hooks/Workspace/WorkspaceHooks";
 import { useRescheduleMeeting } from "@/hooks/Meeting/MeetingHooks";
 import toast from "react-hot-toast";
 import { getErrorMessage } from "@/utils/errorHandler";
-import { scheduleMeetingSchema } from "@/lib/validations/meeting.schema";
-import type { ScheduleMeetingFormValues } from "@/lib/validations/meeting.schema";
+import { rescheduleMeetingSchema } from "@/lib/validations/meeting.schema";
+import type { RescheduleMeetingFormValues } from "@/lib/validations/meeting.schema";
 import type { Meeting } from "./types";
 
 interface WorkspaceMember {
@@ -40,21 +40,36 @@ const RescheduleMeetingModal = ({ open, onClose, meeting }: RescheduleMeetingMod
         currentProject?.members.some(pm => pm.userId === m?.member?._id)
     ) || [];
 
-    const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<ScheduleMeetingFormValues>({
-        resolver: zodResolver(scheduleMeetingSchema),
+    const toLocalDateStr = (date: Date | string): string => {
+        const d = new Date(date);
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    };
+
+    const toLocalTimeStr = (date: Date | string): string => {
+        const d = new Date(date);
+        const hours = String(d.getHours()).padStart(2, '0');
+        const minutes = String(d.getMinutes()).padStart(2, '0');
+        return `${hours}:${minutes}`;
+    };
+
+    const { register, handleSubmit, setValue, watch, formState: { errors } } = useForm<RescheduleMeetingFormValues>({
+        resolver: zodResolver(rescheduleMeetingSchema),
         defaultValues: {
             title: meeting.title,
             description: meeting.description || "",
-            date: new Date(meeting.startTime).toISOString().split('T')[0],
-            startTime: new Date(meeting.startTime).toTimeString().slice(0, 5),
-            endTime: new Date(meeting.endTime).toTimeString().slice(0, 5),
+            date: toLocalDateStr(meeting.startTime),
+            startTime: toLocalTimeStr(meeting.startTime),
+            endTime: toLocalTimeStr(meeting.endTime),
             invitees: meeting.invitees || [],
         }
     });
 
     const selectedInvitees = watch("invitees");
 
-    const onSubmit = (data: ScheduleMeetingFormValues) => {
+    const onSubmit = (data: RescheduleMeetingFormValues) => {
         const startDateTime = new Date(`${data.date}T${data.startTime}`);
         const endDateTime = new Date(`${data.date}T${data.endTime}`);
 
