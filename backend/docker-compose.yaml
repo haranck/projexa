@@ -1,6 +1,5 @@
 services:
   backend:
-    image: haranck/projexa-backend:latest
     # build: .
     ports:
       - "4000:4000"
