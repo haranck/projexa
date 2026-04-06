@@ -1,4 +1,6 @@
 import 'reflect-metadata'
+import dotenv from 'dotenv'
+dotenv.config()
 
 import { env } from './config/envValidation'
 import express from "express";
@@ -25,6 +27,7 @@ app.use(cookieParser());
 const allowedOrigins = [
   "https://www.projexa.haranck.online",
   "https://projexa.haranck.online",
+  "http://localhost:5173",
 ];
 
 app.use(

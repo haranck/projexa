@@ -58,10 +58,10 @@ export const API_ROUTES = {
     UPDATE_PROJECT_MEMBER_ROLE: "/project/update-member-role/:projectId",
     GET_PROJECT_DASHBOARD_DATA: "/project/get-project-dashboard-data/:projectId",
     SCHEDULE_MEETING: "/project/meetings/schedule",
+    RESCHEDULE_MEETING: "/project/meetings/reschedule",
     GET_PROJECT_MEETINGS: "/project/meetings/project/:projectId",
     JOIN_MEETING: "/project/meetings/:meetingId/join",
     LEAVE_MEETING: "/project/meetings/:meetingId/leave",
-    RESCHEDULE_MEETING: "/project/meetings/reschedule",
   },
   ISSUE: {
     CREATE_ISSUE: "/project/issues/create-issue/:projectId",
