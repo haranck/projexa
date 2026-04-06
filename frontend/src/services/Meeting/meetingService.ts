@@ -37,6 +37,6 @@ export const leaveMeeting = async (meetingId: string) => {
 }
 
 export const rescheduleMeeting = async (meetingData: RescheduleMeetingProps) => {
-    const response = await AxiosInstance.post(API_ROUTES.PROJECTS.RESCHEDULE_MEETING, meetingData)
+    const response = await AxiosInstance.patch(API_ROUTES.PROJECTS.RESCHEDULE_MEETING, meetingData)
     return response.data
 }
