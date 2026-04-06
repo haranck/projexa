@@ -1,6 +1,6 @@
 services:
   backend:
-    # build: . ----removed 
+    build: .
     ports:
       - "4000:4000"
     environment:
