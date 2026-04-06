@@ -21,6 +21,18 @@ jobs:
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
             cd /home/ec2-user/projexa/backend
+            echo "Pull latest code"
             git pull origin main
+            echo "Stop containers"
             docker-compose down
-            docker-compose up -d --build
+            echo "Pull latest image"
+            docker pull haranck/projexa-backend:latest
+            echo "Start containers"
+            docker-compose up -d
+          # script: |
+          #   cd /home/ec2-user/projexa/backend
+          #   git pull origin main
+          #   docker-compose down
+          #   docker rmi haranck/projexa-backend:latest
+          #   docker pull haranck/projexa-backend:latest
+          #   docker-compose up -d --build
