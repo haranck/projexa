@@ -31,8 +31,6 @@ export class DeleteIssueUseCase implements IDeleteIssueUseCase {
             await this._issueRepository.updateIssue(child._id, { parentIssueId: null })
         }
 
-        console.log("issueId", issueId)
-
         await this._issueRepository.deleteIssue(issueId)
     }
 }
