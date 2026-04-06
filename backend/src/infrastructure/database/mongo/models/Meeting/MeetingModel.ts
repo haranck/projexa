@@ -2,7 +2,7 @@ import mongoose, { Schema, model, Document } from "mongoose";
 
 export interface IMeetingParticipantDocument extends Document {
     userId: string;
-    status: 'joined' | 'left' | 'missed';
+    status: 'invited' | 'joined' | 'left' | 'missed';
     joinedAt?: Date;
     leftAt?: Date;
 }
