@@ -22,7 +22,7 @@ router.get(ROUTES.ISSUES.GET_ALL_ISSUES, authMiddleware.authenticate, issueContr
 
 // project meetings routes
 router.post(ROUTES.MEETINGS.SCHEDULE, authMiddleware.authenticate, meetingController.scheduleMeeting)
-router.patch(ROUTES.MEETINGS.RESCHEDULE, authMiddleware.authenticate, meetingController.rescheduleMeeting)
+router.patch('/meetings/reschedule', authMiddleware.authenticate, meetingController.rescheduleMeeting)
 router.get(ROUTES.MEETINGS.GET_PROJECT_MEETINGS, authMiddleware.authenticate, meetingController.getProjectMeetings)
 router.patch(ROUTES.MEETINGS.JOIN_MEETING, authMiddleware.authenticate, meetingController.joinMeeting)
 router.patch(ROUTES.MEETINGS.LEAVE_MEETING, authMiddleware.authenticate, meetingController.leaveMeeting)
