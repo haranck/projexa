@@ -57,7 +57,7 @@
 // export default UserRoutes
 
 
-import { Routes, Route } from 'react-router-dom'
+import { Route } from 'react-router-dom'
 import { LandingPage } from '../../pages/User/Landing/LandingPage'
 import { SignupPage } from '../../pages/Auth/SignupPage'
 import { LoginPage } from '../../pages/Auth/LoginPage'
@@ -83,7 +83,8 @@ import { AcceptInvitePage } from '@/pages/User/Teams/AcceptInvitePage'
 
 const UserRoutes = () => {
   return (
-    <Routes>
+    // <Routes>
+    <>
       <Route element={<PublicRoute />}>
         <Route path={FRONTEND_ROUTES.LANDING} element={<LandingPage />} />
         <Route path={FRONTEND_ROUTES.SIGNUP} element={<SignupPage />} />
@@ -109,7 +110,8 @@ const UserRoutes = () => {
         <Route path={FRONTEND_ROUTES.WORKSPACE.PAYMENT_SUCCESS} element={<PaymentSuccess />} />
         <Route path={FRONTEND_ROUTES.WORKSPACE.PAYMENT_CANCEL} element={<PaymentCancel />} />
       </Route>
-    </Routes>
+    </>
+    // </Routes> 
   )
 }
 
