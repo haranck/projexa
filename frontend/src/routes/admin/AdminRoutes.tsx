@@ -27,7 +27,8 @@
 // };
 
 // export default AdminRoutes;
-import { Route } from "react-router-dom";
+
+import { Routes, Route } from "react-router-dom";
 import { AdminLoginPage } from "../../pages/Auth/AdminLoginPage";
 import { FRONTEND_ROUTES } from "../../constants/frontendRoutes";
 import { Dashboard } from "../../pages/Admin/Dashboard/Dashboard";
@@ -42,7 +43,7 @@ const toRelative = (path: string) => path.replace(/^\/admin\//, '');
 
 const AdminRoutes = () => {
   return (
-    <>
+    <Routes>
       <Route path={toRelative(FRONTEND_ROUTES.ADMIN_LOGIN)} element={<AdminLoginPage />} />
 
       <Route element={<AdminDashboardLayout />}>
@@ -53,7 +54,7 @@ const AdminRoutes = () => {
         <Route path={toRelative(FRONTEND_ROUTES.ADMIN_WORKSPACES)} element={<Workspace />} />
         <Route path={toRelative(FRONTEND_ROUTES.ADMIN_PAYMENTS_DETAILS)} element={<PaymentDetails />} />
       </Route>
-    </>
+    </Routes>
   );
 };
 
