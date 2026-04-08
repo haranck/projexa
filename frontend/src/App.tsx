@@ -43,10 +43,13 @@ export const App = () => {
         }}
       />
       <Routes>
-        <Route path="/*" element={<UserRoutes />} />
+        <UserRoutes />
 
-        <Route path="/admin/*" element={<AdminRoutes />} />
+        <Route path="/admin">
+          <AdminRoutes />
+        </Route>
       </Routes>
+
     </>
   )
 }
