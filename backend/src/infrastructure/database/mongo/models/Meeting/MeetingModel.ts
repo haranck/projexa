@@ -17,6 +17,7 @@ export interface IMeetingDocument extends Document {
     participants: IMeetingParticipantDocument[];
     status: 'upcoming' | 'completed' | 'cancelled';
     roomName: string;
+    reminderSent: boolean;
 }
 
 const ParticipantSchema = new Schema({
@@ -43,7 +44,8 @@ const MeetingSchema = new mongoose.Schema({
         enum: ['upcoming', 'completed', 'cancelled'],
         default: 'upcoming'
     },
-    roomName: { type: String, required: true, unique: true }
+    roomName: { type: String, required: true, unique: true },
+    reminderSent: { type: Boolean, default: false }
 }, { timestamps: true });
 
 MeetingSchema.index({ projectId: 1 });

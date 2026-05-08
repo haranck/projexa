@@ -11,6 +11,7 @@ export interface IMeetingEntity {
     participants: IMeetingParticipantEntity[];
     status: 'upcoming' | 'completed' | 'cancelled';
     roomName: string;
+    reminderSent?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
 }

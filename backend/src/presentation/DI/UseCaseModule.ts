@@ -161,6 +161,7 @@ import { IGetAdminDashboardStatsUseCase } from "../../application/interface/admi
 import { GetAdminDashboardStatsUseCase } from "../../application/useCases/admin/GetAdminDashboardStatsUseCase";
 import { IRescheduleMeetingUseCase } from "../../application/interface/meeting/IRescheduleMeetingUseCase";
 import { RescheduleMeetingUseCase } from "../../application/useCases/meeting/RescheduleMeetingUseCase";
+import { MeetingReminderCron } from "../../infrastructure/cron/MeetingReminderCron";
 
 export class UseCaseModule {    
     static registerModules(): void {
@@ -500,6 +501,8 @@ export class UseCaseModule {
         container.register<IRescheduleMeetingUseCase>("IRescheduleMeetingUseCase", {
             useClass: RescheduleMeetingUseCase
         });
+        
+        container.registerSingleton<MeetingReminderCron>(MeetingReminderCron);
 
     }
 }

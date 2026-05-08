@@ -19,6 +19,7 @@ export class MeetingMapper {
             })),
             status: doc.status,
             roomName: doc.roomName,
+            reminderSent: doc.reminderSent,
         }
     }
 }

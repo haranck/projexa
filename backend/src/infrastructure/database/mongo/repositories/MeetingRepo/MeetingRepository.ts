@@ -70,4 +70,19 @@ export class MeetingRepository extends BaseRepo<IMeetingEntity> implements IMeet
 
         return doc ? MeetingMapper.toEntity(doc) : null;
     }
+
+    async getUpcomingMeetings(startTime: Date, endTime: Date): Promise<IMeetingEntity[]> {
+        const docs = await this.model.find({
+            startTime: { $gte: startTime, $lte: endTime },
+            status: 'upcoming',
+            reminderSent: { $ne: true }
+        }).lean<IMeetingDocument[]>();
+        return docs.map(doc => MeetingMapper.toEntity(doc));
+    }
+
+    async markReminderAsSent(meetingId: string): Promise<void> {
+        await this.model.findByIdAndUpdate(meetingId, {
+            reminderSent: true
+        });
+    }
 }

@@ -18,7 +18,7 @@ import chatRoutes from "./presentation/routes/chat/chat.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
 import { initSocket } from './presentation/webSocket/server/socketServer';
 import http from 'http'
-import { activityResetScheduler } from './presentation/DI/resolver';
+import { activityResetScheduler, meetingReminderCron } from './presentation/DI/resolver';
 
 const app = express();
 
@@ -29,7 +29,7 @@ const allowedOrigins = [
   "https://projexa.haranck.online",
   "http://localhost:5173",
 ];
-
+ 
 app.use(
   cors({
     origin: function (origin, callback) {
@@ -59,6 +59,7 @@ app.use(env.CHAT_API_PREFIX, chatRoutes);
 const startServer = async () => {
   await connectMongoDB();
   activityResetScheduler.initialize();
+  meetingReminderCron.start();
   const server = http.createServer(app);
   initSocket(server)
   server.listen(env.PORT, () => {

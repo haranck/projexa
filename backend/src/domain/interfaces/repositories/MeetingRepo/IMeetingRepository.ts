@@ -11,4 +11,6 @@ export interface IMeetingRepository {
         status: 'joined' | 'left' | 'missed'
     ): Promise<IMeetingEntity | null>;
     updateMeeting(meetingId: string, meeting: Partial<IMeetingEntity>): Promise<IMeetingEntity | null>;
+    getUpcomingMeetings(startTime: Date, endTime: Date): Promise<IMeetingEntity[]>;
+    markReminderAsSent(meetingId: string): Promise<void>;
 }
