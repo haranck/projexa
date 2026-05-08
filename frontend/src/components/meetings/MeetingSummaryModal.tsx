@@ -53,10 +53,8 @@ const MeetingSummaryModal = ({ meetingId, meetingTitle, onClose }: MeetingSummar
 
     useEffect(() => {
         fetchSummary();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [meetingId]);
 
-    // Auto-poll while pending or processing (every 8 seconds, max 15 polls)
     useEffect(() => {
         if (!summary) return;
         if (summary.status === "completed" || summary.status === "failed") return;
@@ -68,7 +66,6 @@ const MeetingSummaryModal = ({ meetingId, meetingTitle, onClose }: MeetingSummar
         }, 8000);
 
         return () => clearTimeout(timer);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [summary, pollingCount]);
 
     const isProcessing = summary?.status === "pending" || summary?.status === "processing";
