@@ -33,6 +33,8 @@ import { IUserActivityRepository } from "../../domain/interfaces/repositories/Us
 import { UserActivityRepository } from "../../infrastructure/database/mongo/repositories/UserActivity/UserActivityRepository";
 import { IMeetingRepository } from "../../domain/interfaces/repositories/MeetingRepo/IMeetingRepository";
 import { MeetingRepository } from "../../infrastructure/database/mongo/repositories/MeetingRepo/MeetingRepository";
+import { IMeetingSummaryRepository } from "../../domain/interfaces/repositories/MeetingRepo/IMeetingSummaryRepository";
+import { MeetingSummaryRepository } from "../../infrastructure/database/mongo/repositories/MeetingRepo/MeetingSummaryRepository";
 
 export class RepositoryModule {
     static registerModules(): void {
@@ -101,6 +103,9 @@ export class RepositoryModule {
         });
         container.register<IMeetingRepository>("IMeetingRepository", {
             useClass: MeetingRepository
+        });
+        container.register<IMeetingSummaryRepository>("IMeetingSummaryRepository", {
+            useClass: MeetingSummaryRepository
         });
     }
 }

@@ -105,5 +105,16 @@ export const MESSAGES = {
         ROOM_FETCHED_SUCCESSFULLY: "Chat room fetched successfully",
         MESSAGES_FETCHED_SUCCESSFULLY: "Messages fetched successfully",
         UPLOAD_URL_GENERATED_SUCCESSFULLY: "Chat attachment upload URL generated successfully"
+    },
+    MEETING: {
+        MEETING_SCHEDULED_SUCCESSFULLY: "Meeting scheduled successfully",
+        MEETING_RESCHEDULED_SUCCESSFULLY: "Meeting rescheduled successfully",
+        MEETING_ENDED_SUCCESSFULLY: "Meeting ended successfully. Summary is being generated.",
+        MEETING_JOINED_SUCCESSFULLY: "Joined meeting successfully",
+        MEETING_LEFT_SUCCESSFULLY: "Left meeting successfully",
+        MEETINGS_FETCHED_SUCCESSFULLY: "Meetings fetched successfully",
+        SUMMARY_FETCHED_SUCCESSFULLY: "Meeting summary fetched successfully",
+        TRANSCRIPT_FETCHED_SUCCESSFULLY: "Meeting transcript fetched successfully",
+        SUMMARY_GENERATION_QUEUED: "Meeting summary generation has been queued",
     }
 };

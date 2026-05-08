@@ -26,5 +26,7 @@ router.patch(ROUTES.MEETINGS.RESCHEDULE, authMiddleware.authenticate, meetingCon
 router.get(ROUTES.MEETINGS.GET_PROJECT_MEETINGS, authMiddleware.authenticate, meetingController.getProjectMeetings)
 router.patch(ROUTES.MEETINGS.JOIN_MEETING, authMiddleware.authenticate, meetingController.joinMeeting)
 router.patch(ROUTES.MEETINGS.LEAVE_MEETING, authMiddleware.authenticate, meetingController.leaveMeeting)
+router.patch(ROUTES.MEETINGS.END_MEETING, authMiddleware.authenticate, meetingController.endMeeting)
+router.get(ROUTES.MEETINGS.GET_MEETING_SUMMARY, authMiddleware.authenticate, meetingController.getMeetingSummary)
 
 export default router;

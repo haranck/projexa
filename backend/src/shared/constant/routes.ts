@@ -92,6 +92,8 @@ export const ROUTES = {
         RESCHEDULE: "/meetings/reschedule",
         GET_PROJECT_MEETINGS: "/meetings/project/:projectId",
         JOIN_MEETING: "/meetings/:meetingId/join",
-        LEAVE_MEETING: "/meetings/:meetingId/leave"
+        LEAVE_MEETING: "/meetings/:meetingId/leave",
+        END_MEETING: "/meetings/:meetingId/end",
+        GET_MEETING_SUMMARY: "/meetings/:meetingId/summary",
     }
 };

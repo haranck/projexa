@@ -18,6 +18,7 @@ import { DashboardController } from '../controllers/dashboard/DashboardControlle
 import { ActivityResetScheduler } from '../../infrastructure/scheduler/ActivityResetScheduler'
 import { MeetingController } from '../controllers/meeting/MeetingController'
 import { MeetingReminderCron } from '../../infrastructure/cron/MeetingReminderCron'
+import { meetingSummaryWorker } from '../../infrastructure/queue/MeetingSummaryWorker'
 
 
 ContainerSetup.registerAll();
@@ -39,3 +40,4 @@ export const dashboardController = container.resolve(DashboardController)
 export const activityResetScheduler = container.resolve(ActivityResetScheduler)
 export const meetingController = container.resolve(MeetingController)
 export const meetingReminderCron = container.resolve(MeetingReminderCron)
+export { meetingSummaryWorker }

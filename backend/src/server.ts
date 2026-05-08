@@ -18,7 +18,7 @@ import chatRoutes from "./presentation/routes/chat/chat.routes";
 import { connectMongoDB } from "./infrastructure/database/mongo/mongoConnection";
 import { initSocket } from './presentation/webSocket/server/socketServer';
 import http from 'http'
-import { activityResetScheduler, meetingReminderCron } from './presentation/DI/resolver';
+import { activityResetScheduler, meetingReminderCron, meetingSummaryWorker } from './presentation/DI/resolver';
 
 const app = express();
 
@@ -60,6 +60,7 @@ const startServer = async () => {
   await connectMongoDB();
   activityResetScheduler.initialize();
   meetingReminderCron.start();
+  meetingSummaryWorker.start();
   const server = http.createServer(app);
   initSocket(server)
   server.listen(env.PORT, () => {

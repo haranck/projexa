@@ -161,6 +161,10 @@ import { IGetAdminDashboardStatsUseCase } from "../../application/interface/admi
 import { GetAdminDashboardStatsUseCase } from "../../application/useCases/admin/GetAdminDashboardStatsUseCase";
 import { IRescheduleMeetingUseCase } from "../../application/interface/meeting/IRescheduleMeetingUseCase";
 import { RescheduleMeetingUseCase } from "../../application/useCases/meeting/RescheduleMeetingUseCase";
+import { IEndMeetingUseCase } from "../../application/interface/meeting/IEndMeetingUseCase";
+import { EndMeetingUseCase } from "../../application/useCases/meeting/EndMeetingUseCase";
+import { IGetMeetingSummaryUseCase } from "../../application/interface/meeting/IGetMeetingSummaryUseCase";
+import { GetMeetingSummaryUseCase } from "../../application/useCases/meeting/GetMeetingSummaryUseCase";
 import { MeetingReminderCron } from "../../infrastructure/cron/MeetingReminderCron";
 
 export class UseCaseModule {    
@@ -500,6 +504,14 @@ export class UseCaseModule {
 
         container.register<IRescheduleMeetingUseCase>("IRescheduleMeetingUseCase", {
             useClass: RescheduleMeetingUseCase
+        });
+
+        container.register<IEndMeetingUseCase>("IEndMeetingUseCase", {
+            useClass: EndMeetingUseCase
+        });
+
+        container.register<IGetMeetingSummaryUseCase>("IGetMeetingSummaryUseCase", {
+            useClass: GetMeetingSummaryUseCase
         });
         
         container.registerSingleton<MeetingReminderCron>(MeetingReminderCron);

@@ -253,4 +253,12 @@ export const MEETING_ERRORS = {
     MEETING_FAILED_TO_SEND_NOTIFICATIONS: "Failed to send notifications",
     ONLY_HOST_CAN_RESCHEDULE: "Only host can reschedule the meeting",
     FAILED_TO_UPDATE_MEETING: "Failed to update meeting",
+    ONLY_HOST_CAN_END_MEETING: "Only host can end the meeting",
+    MEETING_ALREADY_COMPLETED: "Meeting is already completed",
+    MEETING_NOT_IN_PROGRESS: "Meeting is not in progress or upcoming",
+    SUMMARY_NOT_FOUND: "Meeting summary not found",
+    SUMMARY_GENERATION_FAILED: "Failed to generate meeting summary",
+    SUMMARY_STILL_PROCESSING: "Meeting summary is still being generated",
+    TRANSCRIPT_NOT_FOUND: "Meeting transcript not found",
+    INVALID_MEETING_ID: "Invalid meeting ID provided",
 }

@@ -9,7 +9,7 @@ export interface IMeetingEntity {
     projectId: string;
     hostId: string;
     participants: IMeetingParticipantEntity[];
-    status: 'upcoming' | 'completed' | 'cancelled';
+    status: 'upcoming' | 'in_progress' | 'completed' | 'cancelled';
     roomName: string;
     reminderSent?: boolean;
     createdAt?: Date;

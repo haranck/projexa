@@ -8,6 +8,8 @@ import { IJoinMeetingUseCase } from "../../../application/interface/meeting/IJoi
 import { ILeaveMeetingUseCase } from "../../../application/interface/meeting/ILeaveMeetingUseCase";
 import { AuthRequest } from "../../../presentation/middleware/auth/authMiddleware";
 import { IRescheduleMeetingUseCase } from "../../../application/interface/meeting/IRescheduleMeetingUseCase";
+import { IEndMeetingUseCase } from "../../../application/interface/meeting/IEndMeetingUseCase";
+import { IGetMeetingSummaryUseCase } from "../../../application/interface/meeting/IGetMeetingSummaryUseCase";
 
 @injectable()
 export class MeetingController {
@@ -16,7 +18,9 @@ export class MeetingController {
         @inject("IGetProjectMeetingsUseCase") private getProjectMeetingsUseCase: IGetProjectMeetingsUseCase,
         @inject("IJoinMeetingUseCase") private joinMeetingUseCase: IJoinMeetingUseCase,
         @inject("ILeaveMeetingUseCase") private leaveMeetingUseCase: ILeaveMeetingUseCase,
-        @inject("IRescheduleMeetingUseCase") private rescheduleMeetingUseCase: IRescheduleMeetingUseCase
+        @inject("IRescheduleMeetingUseCase") private rescheduleMeetingUseCase: IRescheduleMeetingUseCase,
+        @inject("IEndMeetingUseCase") private endMeetingUseCase: IEndMeetingUseCase,
+        @inject("IGetMeetingSummaryUseCase") private getMeetingSummaryUseCase: IGetMeetingSummaryUseCase
     ) { }
 
     scheduleMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -38,6 +42,7 @@ export class MeetingController {
             res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
         }
     }
+
     rescheduleMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
         try {
             const dto: RescheduleMeetingDTO = req.body;
@@ -105,6 +110,40 @@ export class MeetingController {
                 success: true,
                 message: "Left meeting successfully",
                 data: meeting
+            });
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+        }
+    }
+
+    endMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const { meetingId } = req.params;
+            if (!req.user || !req.user.userId) throw new Error("User not found");
+
+            const result = await this.endMeetingUseCase.execute(meetingId as string, req.user.userId);
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: "Meeting ended. AI summary is being generated.",
+                data: result
+            });
+        } catch (error: unknown) {
+            const err = error as { status?: number; message: string };
+            res.status(err.status || HTTP_STATUS.INTERNAL_SERVER_ERROR).json({ message: err.message });
+        }
+    }
+
+    getMeetingSummary = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const { meetingId } = req.params;
+            if (!req.user || !req.user.userId) throw new Error("User not found");
+
+            const summary = await this.getMeetingSummaryUseCase.execute(meetingId as string);
+            res.status(HTTP_STATUS.OK).json({
+                success: true,
+                message: "Meeting summary fetched successfully",
+                data: summary
             });
         } catch (error: unknown) {
             const err = error as { status?: number; message: string };

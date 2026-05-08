@@ -22,6 +22,12 @@ import { IDashboardService } from "../../domain/interfaces/services/IDashboardSe
 import { DashboardService } from "../../infrastructure/services/DashboardService";
 import { IRedisLockService } from "../../domain/interfaces/services/IRedisLockService";
 import { RedisLockService } from "../../infrastructure/services/RedisLockService";
+import { IAIService } from "../../domain/interfaces/services/IAIService";
+import { GeminiAIService } from "../../infrastructure/services/GeminiAIService";
+import { ITranscriptionService } from "../../domain/interfaces/services/ITranscriptionService";
+import { WhisperTranscriptionService } from "../../infrastructure/services/WhisperTranscriptionService";
+import { IMeetingSummaryQueueService } from "../../domain/interfaces/services/IMeetingSummaryQueueService";
+import { MeetingSummaryQueueService } from "../../infrastructure/queue/MeetingSummaryQueueService";
 
 export class ServiceModule {
     static registerModules(): void {
@@ -72,6 +78,18 @@ export class ServiceModule {
 
         container.register<IRedisLockService>("IRedisLockService", {
             useClass: RedisLockService
+        });
+
+        container.register<IAIService>("IAIService", {
+            useClass: GeminiAIService
+        });
+
+        container.register<ITranscriptionService>("ITranscriptionService", {
+            useClass: WhisperTranscriptionService
+        });
+
+        container.register<IMeetingSummaryQueueService>("IMeetingSummaryQueueService", {
+            useClass: MeetingSummaryQueueService
         });
     }
 }
