@@ -17,7 +17,7 @@ const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
     const endMeetingMutation = useMutation({
         mutationFn: (meetingId: string) => endMeeting(meetingId),
         onSuccess: () => {
-            void queryClient.invalidateQueries({ queryKey: ["project-meetings"] });
+            void queryClient.invalidateQueries({ queryKey: ["meetings"] });
         },
     });
 
@@ -55,7 +55,7 @@ const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
                                             <button
                                                 onClick={() => endMeetingMutation.mutate(meeting.id)}
                                                 disabled={isEnding}
-                                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                                className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20 hover:border-red-500/30 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-red-500/5"
                                             >
                                                 {isEnding ? (
                                                     <Loader2 className="size-3.5 animate-spin" />
@@ -70,9 +70,9 @@ const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
                                         {isCompleted && (
                                             <button
                                                 onClick={() => setSummaryModal({ meetingId: meeting.id, title: meeting.title })}
-                                                className="flex items-center gap-1.5 px-4 py-1.5 rounded-xl text-xs font-bold bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 hover:border-violet-500/30 transition-all"
+                                                className="flex items-center gap-2 px-5 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest bg-violet-600 text-white hover:bg-violet-500 transition-all shadow-lg shadow-violet-600/20 active:scale-95 group/btn"
                                             >
-                                                <FileText className="size-3.5" />
+                                                <FileText className="size-3.5 group-hover/btn:scale-110 transition-transform" />
                                                 View Summary
                                             </button>
                                         )}

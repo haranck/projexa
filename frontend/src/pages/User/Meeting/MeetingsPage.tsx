@@ -135,7 +135,8 @@ export const MeetingsPage = () => {
             startTime: m.startTime,
             endTime: m.endTime,
             invitees: m.participants?.map((p: { userId: string }) => p.userId) || [],
-            status: m.currentUserStatus || m.status
+            status: m.status,
+            userStatus: m.currentUserStatus
         };
     };
 
@@ -234,6 +235,7 @@ export const MeetingsPage = () => {
                     roomName={activeMeeting.title}
                     userName={user ? `${user.firstName} ${user.lastName}` : "Team Member"}
                     userEmail={user?.email || "team@projexa.com"}
+                    isHost={activeMeeting.hostId === user?.id}
                     onClose={() => setActiveMeeting(null)}
                 />
             )}

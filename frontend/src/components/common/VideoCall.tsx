@@ -1,8 +1,10 @@
 import { JaaSMeeting } from '@jitsi/react-sdk';
-import { X, PhoneOff } from 'lucide-react';
+import { X, PhoneOff, Loader2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { useEffect } from 'react';
 import { useJoinMeeting, useLeaveMeeting } from '@/hooks/Meeting/MeetingHooks';
+import { endMeeting } from '@/services/Meeting/meetingService';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 interface VideoCallProps {
     meetingId: string;
@@ -10,12 +12,22 @@ interface VideoCallProps {
     roomName: string;
     userName: string;
     userEmail: string;
+    isHost?: boolean;
     onClose: () => void;
 }
 
-const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, onClose }: VideoCallProps) => {
+const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, isHost, onClose }: VideoCallProps) => {
+    const queryClient = useQueryClient();
     const { mutate: joinMeeting } = useJoinMeeting();
     const { mutate: leaveMeeting } = useLeaveMeeting();
+
+    const endMeetingMutation = useMutation({
+        mutationFn: (id: string) => endMeeting(id),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["meetings"] });
+            onClose();
+        }
+    });
 
     useEffect(() => {
         joinMeeting(meetingId);
@@ -37,16 +49,30 @@ const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, onClose }
                         {roomName} <span className="hidden sm:inline text-zinc-500 font-medium">— Production Session</span>
                     </h2>
                 </div>
-                <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={handleClose}
-                    className="text-zinc-400 hover:text-white hover:bg-red-500/10 border border-zinc-800/50 hover:border-red-500/50 transition-all gap-2 h-9 px-3 rounded-xl shrink-0"
-                >
-                    <X className="size-4 hidden sm:block" />
-                    <PhoneOff className="size-4 sm:hidden text-red-400" />
-                    <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Leave</span>
-                </Button>
+                <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                    {isHost && (
+                        <Button 
+                            variant="ghost" 
+                            size="sm" 
+                            disabled={endMeetingMutation.isPending}
+                            onClick={() => endMeetingMutation.mutate(meetingId)}
+                            className="text-red-400 hover:text-white hover:bg-red-500/10 border border-red-500/20 hover:border-red-500/50 transition-all gap-2 h-9 px-3 rounded-xl hidden sm:flex"
+                        >
+                            {endMeetingMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <PhoneOff className="size-4" />}
+                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">End Meeting</span>
+                        </Button>
+                    )}
+                    <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={handleClose}
+                        className="text-zinc-400 hover:text-white hover:bg-zinc-800 border border-zinc-800/50 hover:border-zinc-700/50 transition-all gap-2 h-9 px-3 rounded-xl shrink-0"
+                    >
+                        <X className="size-4 hidden sm:block" />
+                        <PhoneOff className="size-4 sm:hidden text-zinc-400" />
+                        <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">Leave</span>
+                    </Button>
+                </div>
             </div>
 
             {/* Video Container */}

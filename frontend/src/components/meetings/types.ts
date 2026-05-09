@@ -11,7 +11,8 @@ export interface Meeting {
         avatar: string;
     };
     attendees: { name: string; avatar: string }[];
-    status?: 'upcoming' | 'in_progress' | 'completed' | 'cancelled' | 'joined' | 'left' | 'missed' | 'invited'; 
+    status?: 'upcoming' | 'in_progress' | 'completed' | 'cancelled';
+    userStatus?: 'joined' | 'left' | 'missed' | 'invited';
     projectId: string; 
     hostId: string;
     description?: string;
