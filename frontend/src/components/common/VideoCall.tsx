@@ -42,8 +42,12 @@ const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, isHost, i
     }, [meetingId, joinMeeting]);
 
     const handleClose = () => {
-        leaveMeeting(meetingId);
-        onClose();
+        if (isHost || isPM) {
+            endMeetingMutation.mutate(meetingId);
+        } else {
+            leaveMeeting(meetingId);
+            onClose();
+        }
     };
     const JAAS_APP_ID = "vpaas-magic-cookie-ef558a1b4a5d43e6bcf8bb62ffff89b4";
 

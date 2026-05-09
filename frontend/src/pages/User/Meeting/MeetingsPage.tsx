@@ -49,11 +49,11 @@ export const MeetingsPage = () => {
 
     const isProjectManager = (() => {
         if (!currentProject || !user) return false;
-        const userMember = currentProject.members.find(m => m.userId === user.id);
+        const userMember = currentProject.members.find(m => String(m.userId) === String(user.id));
         if (!userMember) return false;
-        if (currentProject.createdBy === user.id) return true;
+        if (String(currentProject.createdBy) === String(user.id)) return true;
         const pmRole = rolesData?.data?.find((r: { _id: string; name: string }) => r.name === "Project Manager");
-        return userMember.roleId === pmRole?._id;
+        return String(userMember.roleId) === String(pmRole?._id);
     })();
 
     const formatTime = (date: Date | string) => {
