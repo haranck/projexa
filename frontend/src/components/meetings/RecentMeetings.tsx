@@ -38,8 +38,8 @@ const RecentMeetings = ({ meetings, currentUserId, isPM }: RecentMeetingsProps) 
                 ) : (
                     meetings.map((meeting) => {
                         const isHost = String(meeting.hostId) === String(currentUserId);
-                        const isCompleted = meeting.status === "completed";
-                        const isActive = meeting.status === "upcoming" || meeting.status === "in_progress";
+                        const isCompleted = meeting.status === "completed" || meeting.tag.toLowerCase().includes("completed");
+                        const isActive = meeting.status === "upcoming" || meeting.status === "in_progress" || meeting.tag.toLowerCase().includes("today");
                         const isEnding = endMeetingMutation.isPending && endMeetingMutation.variables === meeting.id;
 
                         return (
