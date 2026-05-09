@@ -236,7 +236,10 @@ export const MeetingsPage = () => {
                     userName={user ? `${user.firstName} ${user.lastName}` : "Team Member"}
                     userEmail={user?.email || "team@projexa.com"}
                     isHost={activeMeeting.hostId === user?.id}
-                    onClose={() => setActiveMeeting(null)}
+                    onClose={() => {
+                        setActiveMeeting(null);
+                        setActiveTab("recent");
+                    }}
                 />
             )}
 

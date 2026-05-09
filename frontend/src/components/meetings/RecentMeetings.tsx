@@ -4,6 +4,8 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Meeting } from "./types";
 import MeetingSummaryModal from "./MeetingSummaryModal";
 import { endMeeting } from "../../services/Meeting/meetingService";
+import { toast } from "react-hot-toast";
+import { getErrorMessage } from "@/utils/errorHandler";
 
 interface RecentMeetingsProps {
     meetings: Meeting[];
@@ -18,7 +20,11 @@ const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
         mutationFn: (meetingId: string) => endMeeting(meetingId),
         onSuccess: () => {
             void queryClient.invalidateQueries({ queryKey: ["meetings"] });
+            toast.success("Meeting ended. Summary is being generated.");
         },
+        onError: (err: unknown) => {
+            toast.error(getErrorMessage(err) || "Failed to end meeting.");
+        }
     });
 
     return (

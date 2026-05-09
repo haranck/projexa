@@ -5,6 +5,8 @@ import { useEffect } from 'react';
 import { useJoinMeeting, useLeaveMeeting } from '@/hooks/Meeting/MeetingHooks';
 import { endMeeting } from '@/services/Meeting/meetingService';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'react-hot-toast';
+import { getErrorMessage } from '@/utils/errorHandler';
 
 interface VideoCallProps {
     meetingId: string;
@@ -25,7 +27,12 @@ const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, isHost, o
         mutationFn: (id: string) => endMeeting(id),
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["meetings"] });
+            toast.success("Meeting ended successfully. View the summary in the Recent tab.");
             onClose();
+        },
+        onError: (err: unknown) => {
+            toast.error(getErrorMessage(err) || "Failed to end the meeting.");
+            console.error("End meeting error:", err);
         }
     });
 
@@ -56,10 +63,10 @@ const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, isHost, o
                             size="sm" 
                             disabled={endMeetingMutation.isPending}
                             onClick={() => endMeetingMutation.mutate(meetingId)}
-                            className="text-red-400 hover:text-white hover:bg-red-500/10 border border-red-500/20 hover:border-red-500/50 transition-all gap-2 h-9 px-3 rounded-xl hidden sm:flex"
+                            className="text-red-400 hover:text-white hover:bg-red-500/10 border border-red-500/20 hover:border-red-500/50 transition-all gap-2 h-9 px-3 rounded-xl flex"
                         >
                             {endMeetingMutation.isPending ? <Loader2 className="size-4 animate-spin" /> : <PhoneOff className="size-4" />}
-                            <span className="text-[10px] sm:text-xs font-bold uppercase tracking-wider">End Meeting</span>
+                            <span className="hidden xs:inline text-[10px] sm:text-xs font-bold uppercase tracking-wider">End Meeting</span>
                         </Button>
                     )}
                     <Button 
