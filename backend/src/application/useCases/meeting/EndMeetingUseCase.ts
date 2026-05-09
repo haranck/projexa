@@ -48,9 +48,12 @@ export class EndMeetingUseCase implements IEndMeetingUseCase {
             throw new Error(MEETING_ERRORS.FAILED_TO_UPDATE_MEETING);
         }
 
-        // Create a pending summary record immediately
-        const summary = await this.summaryRepo.createSummary(meetingId);
-
+        // Ensure a summary record exists
+        let summary = await this.summaryRepo.getSummaryByMeetingId(meetingId);
+        if (!summary) {
+            summary = await this.summaryRepo.createSummary(meetingId);
+        }  
+ 
         // Enqueue the background AI job
         await this.queueService.addSummaryJob({
             meetingId,
