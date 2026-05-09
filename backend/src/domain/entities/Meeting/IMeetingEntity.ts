@@ -1,7 +1,7 @@
 import { IMeetingParticipantEntity } from "./IMeetingParticipantEntity";
 
 export interface IMeetingEntity {
-    _id?: string;
+    _id?: string; 
     title: string;
     description?: string;
     startTime: Date;
