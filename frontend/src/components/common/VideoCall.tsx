@@ -55,6 +55,11 @@ const VideoCall = ({ meetingId, roomId, roomName, userName, userEmail, isHost, o
                     <h2 className="text-white font-bold tracking-tight truncate text-sm sm:text-base">
                         {roomName} <span className="hidden sm:inline text-zinc-500 font-medium">— Production Session</span>
                     </h2>
+                    {isHost && (
+                        <div className="px-2 py-0.5 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-bold uppercase tracking-wider hidden xs:block">
+                            Host
+                        </div>
+                    )}
                 </div>
                 <div className="flex items-center gap-2 sm:gap-4 shrink-0">
                     {isHost && (

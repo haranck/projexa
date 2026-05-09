@@ -220,7 +220,12 @@ export const MeetingsPage = () => {
                                 />
                             )}
                             {activeTab === "schedule" && <ScheduleMeeting />}
-                            {activeTab === "recent" && <RecentMeetings meetings={recentMeetings} />}
+                            {activeTab === "recent" && (
+                                <RecentMeetings 
+                                    meetings={recentMeetings} 
+                                    currentUserId={user?.id}
+                                />
+                            )}
                         </>
                     )}
                 </div>
