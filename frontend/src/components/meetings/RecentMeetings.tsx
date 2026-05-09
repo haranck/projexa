@@ -10,9 +10,10 @@ import { getErrorMessage } from "@/utils/errorHandler";
 interface RecentMeetingsProps {
     meetings: Meeting[];
     currentUserId?: string;
+    isPM?: boolean;
 }
 
-const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
+const RecentMeetings = ({ meetings, currentUserId, isPM }: RecentMeetingsProps) => {
     const queryClient = useQueryClient();
     const [summaryModal, setSummaryModal] = useState<{ meetingId: string; title: string } | null>(null);
 
@@ -36,7 +37,7 @@ const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
                     </div>
                 ) : (
                     meetings.map((meeting) => {
-                        const isHost = meeting.hostId === currentUserId;
+                        const isHost = String(meeting.hostId) === String(currentUserId);
                         const isCompleted = meeting.status === "completed";
                         const isActive = meeting.status === "upcoming" || meeting.status === "in_progress";
                         const isEnding = endMeetingMutation.isPending && endMeetingMutation.variables === meeting.id;
@@ -56,8 +57,8 @@ const RecentMeetings = ({ meetings, currentUserId }: RecentMeetingsProps) => {
                                             {meeting.tag}
                                         </span>
 
-                                        {/* End Meeting button — only for host on active meetings */}
-                                        {isHost && isActive && (
+                                        {/* End Meeting button — only for host or PM on active meetings */}
+                                        {(isHost || isPM) && isActive && (
                                             <button
                                                 onClick={() => endMeetingMutation.mutate(meeting.id)}
                                                 disabled={isEnding}

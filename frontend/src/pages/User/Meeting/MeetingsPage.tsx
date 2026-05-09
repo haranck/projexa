@@ -224,6 +224,7 @@ export const MeetingsPage = () => {
                                 <RecentMeetings 
                                     meetings={recentMeetings} 
                                     currentUserId={user?.id}
+                                    isPM={isProjectManager}
                                 />
                             )}
                         </>
@@ -240,7 +241,8 @@ export const MeetingsPage = () => {
                     roomName={activeMeeting.title}
                     userName={user ? `${user.firstName} ${user.lastName}` : "Team Member"}
                     userEmail={user?.email || "team@projexa.com"}
-                    isHost={activeMeeting.hostId === user?.id}
+                    isHost={String(activeMeeting.hostId) === String(user?.id)}
+                    isPM={isProjectManager}
                     onClose={() => {
                         setActiveMeeting(null);
                         setActiveTab("recent");
