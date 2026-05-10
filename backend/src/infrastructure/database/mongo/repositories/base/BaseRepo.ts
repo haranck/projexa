@@ -5,6 +5,10 @@ export type WithId = {
   _id?: string | Types.ObjectId;
 };
 
+
+
+
+
 export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
   constructor(protected readonly model: Model<T>) { }
 
