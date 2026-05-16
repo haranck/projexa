@@ -1,177 +1,179 @@
-# 🚀 Projexa
-
-Projexa is a **collaborative project management platform** designed to help teams plan, track, and manage work efficiently.
-
-It is built as a **real-world SaaS-style application**, focusing on scalability, clean architecture, and modern development practices.
+<div align="center">
+  <a href="https://www.projexa.haranck.online/">
+    <img src="https://img.shields.io/badge/Projexa-Project%20Management-blue?style=for-the-badge&logo=react" alt="Projexa Logo">
+  </a>
+  <h1 align="center">Projexa</h1>
+  <p align="center">
+    <strong>A Next-Generation Project Management & Collaboration Platform</strong>
+    <br />
+    <a href="https://www.projexa.haranck.online/">View Demo</a>
+    ·
+    <a href="https://github.com/haranck/projexa/issues">Report Bug</a>
+    ·
+    <a href="https://github.com/haranck/projexa/issues">Request Feature</a>
+  </p>
+</div>
 
 ---
 
-## 🌟 Vision
+## 🌟 About The Project
 
-To build a production-ready project management system similar to tools like **Jira, Notion, and ClickUp**, while maintaining clean code, strong architecture, and extensibility.
+Projexa is an advanced, full-stack project management and collaboration platform designed to streamline team workflows, enhance communication, and boost productivity. 
+
+Built as a **real-world SaaS-style application**, it focuses on scalability, clean architecture, and modern development practices—similar to tools like Jira, Notion, and ClickUp.
+
+**Live Demo:** [https://www.projexa.haranck.online/](https://www.projexa.haranck.online/)
+
+### ✨ Core Features
+
+- **🔐 Authentication:** Secure User authentication & authorization.
+- **🏢 Workspaces:** Workspace-based project and role management.
+- **📊 Kanban Boards:** Drag-and-drop task management using `@dnd-kit`.
+- **💬 Real-time Collaboration:** Instant updates and team communication powered by `Socket.IO`.
+- **📹 Integrated Video Meetings:** Seamless team meetings via Jitsi integration.
+- **🤖 AI Capabilities:** Smart task summarization and assistance using OpenAI and Google Generative AI.
+- **📈 Analytics & Reporting:** Interactive charts and project insights with `Recharts`.
+- **💳 Premium Features:** Subscription and billing management via Stripe.
+- **☁️ Cloud Storage:** Secure file attachments and storage using AWS S3.
 
 ---
 
-## 🛠️ Tech Stack
+## 💻 Tech Stack
+
+Projexa leverages a powerful, modern technology stack.
 
 ### Frontend
-
-* React
-* TypeScript
-* Tailwind CSS
+- **Framework:** React 19 (Vite)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS, Radix UI Primitives
+- **State Management:** Redux Toolkit, RTK Query
+- **Forms & Validation:** React Hook Form, Zod
+- **Drag & Drop:** dnd-kit
 
 ### Backend
+- **Runtime:** Node.js
+- **Framework:** Express.js
+- **Language:** TypeScript
+- **Database:** MongoDB (Mongoose)
+- **Caching & Queues:** Redis, BullMQ
+- **Real-time:** Socket.IO
+- **Architecture:** Clean Architecture with Dependency Injection (`tsyringe`)
 
-* Node.js
-* Express.js
-* TypeScript
-* MongoDB
-* JWT Authentication
-
-### Architecture
-
-* Clean Architecture
-* SOLID Principles
-* Dependency Injection
-* Modular & Scalable Design
-
----
-
-## ✨ Core Features
-
-* 🔐 User authentication & authorization
-* 🏢 Workspace-based project management
-* 👥 Role & permission management
-* 📌 Projects, tasks, and issues tracking
-* 💬 Team collaboration & activity logs
-* 🔔 Real-time notifications system
-* 📅 Meetings & scheduling
-* 💳 Subscription & payment handling
-* 🛠️ Admin dashboard & controls
+### External Services
+- AWS S3 (Storage)
+- Stripe (Payments)
+- OpenAI & Google Gemini (AI Integration)
+- Jitsi (Video Conferencing)
 
 ---
 
 ## 🧠 Architecture Highlights
 
-* Clear separation of concerns
-* Domain-driven design principles
-* Use cases for business logic
-* Interface-based repositories
-* Framework-independent core logic
+- **Clean Architecture** with SOLID Principles.
+- Clear separation of concerns and Domain-driven design principles.
+- Use cases for business logic and Interface-based repositories.
+- Framework-independent core logic.
 
 ---
 
-## 📦 Getting Started
+## 🚀 Getting Started
 
-### 1. Clone the Repository
+To get a local copy up and running, follow these simple steps.
 
-```bash
-git clone https://github.com/haranck/projexa.git
-cd projexa
-```
+### Prerequisites
 
----
+Ensure you have the following installed on your local machine:
+- Node.js (v18 or higher)
+- npm or yarn
+- MongoDB
+- Redis
 
-### 2. Install Dependencies
+### Installation
 
-#### Backend
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/haranck/projexa.git
+   cd projexa/project_management
+   ```
 
-```bash
-cd backend
-npm install
-```
+2. **Install Backend Dependencies**
+   ```bash
+   cd backend
+   npm install
+   ```
 
-#### Frontend
+3. **Install Frontend Dependencies**
+   ```bash
+   cd ../frontend
+   npm install
+   ```
 
-```bash
-cd frontend
-npm install
-```
-
----
-
-### 3. Setup Environment Variables
+### Configuration
 
 Create a `.env` file in the **backend** folder:
 
 ```env
 PORT=5000
-MONGO_URI=your_mongodb_connection
+MONGODB_URI=your_mongodb_connection
 JWT_SECRET=your_secret_key
 REDIS_URL=your_redis_url
+AWS_ACCESS_KEY=your_aws_key
+AWS_SECRET_KEY=your_aws_secret
+S3_BUCKET_NAME=your_bucket_name
+STRIPE_SECRET_KEY=your_stripe_key
+OPENAI_API_KEY=your_openai_key
+GEMINI_API_KEY=your_gemini_key
 ```
 
----
+Create a `.env` in the **frontend** folder similarly based on required vars.
 
-### 4. Run the Project
+### Running Locally
 
-#### Backend
+1. **Start the backend server**
+   ```bash
+   cd backend
+   npm run dev
+   ```
 
-```bash
-npm run dev
-```
+2. **Start the frontend application**
+   ```bash
+   cd frontend
+   npm run dev
+   ```
 
-#### Frontend
-
-```bash
-npm run dev
-```
+3. Open your browser and navigate to `http://localhost:5173`.
 
 ---
 
 ## 📁 Project Structure
 
-```
-
+```text
 projexa/
-│
-├── backend/
-│   ├── src/
-│   │   ├── application/
-│   │   ├── config/
-│   │   ├── domain/
-│   │   ├── infrastructure/
-│   │   ├── presentation/
-│   │   ├── shared/
-│   │   ├── types/
-│   │   └── server.ts
-│
-├── frontend/
-│   ├── src/
-│   │   ├── axios/
-│   │   ├── components/
-│   │   ├── constants/
-│   │   ├── hooks/
-│   │   ├── lib/
-│   │   ├── pages/
-│   │   ├── routes/
-│   │   ├── services/
-│   │   ├── socket/
-│   │   ├── store/
-│   │   ├── types/
-│   │   ├── utils/
-│   │   ├── App.tsx
-│   │   └── main.tsx
+├── project_management/
+│   ├── backend/
+│   │   ├── src/
+│   │   │   ├── application/    # Use cases and interfaces
+│   │   │   ├── domain/         # Entities and domain logic
+│   │   │   ├── infrastructure/ # External services, DB schemas
+│   │   │   ├── presentation/   # Routes, Controllers, Middleware
+│   │   │   └── server.ts       # App entry point
+│   │   └── package.json
 │   │
-│   └── public/
-│
-└── README.md
+│   ├── frontend/
+│   │   ├── src/
+│   │   │   ├── components/     # Reusable UI components
+│   │   │   ├── pages/          # Application views
+│   │   │   ├── store/          # Redux setup and slices
+│   │   │   ├── hooks/          # Custom React hooks
+│   │   │   └── App.tsx         # Root component
+│   │   └── package.json
 ```
-
----
-
-## 🚧 Project Status
-
-🚧 In active development
-
-This project is being built step-by-step with a focus on **quality over speed** and real-world engineering practices.
 
 ---
 
 ## 🎯 Why Projexa?
 
 Projexa is not just a demo project — it is a **portfolio-defining application** that demonstrates:
-
 * Real-world system design
 * Clean Architecture in practice
 * Scalable backend development
@@ -200,17 +202,17 @@ git push origin feature/your-feature
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.
+This project is licensed under the **MIT License**. See `LICENSE` for more information.
 
 ---
 
 ## 👤 Author
 
-**Haran**
-🔗 GitHub: https://github.com/haranck
+**Haran**  
+🔗 GitHub: [https://github.com/haranck](https://github.com/haranck)
 
 ---
 
-## ⭐ Support
-
-If you like this project, consider giving it a ⭐ on GitHub!
+<div align="center">
+  <p>If you like this project, consider giving it a ⭐ on GitHub!</p>
+</div>
