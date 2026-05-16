@@ -14,5 +14,4 @@ export interface IMeetingEntity {
     reminderSent?: boolean;
     createdAt?: Date;
     updatedAt?: Date;
-    //
 }

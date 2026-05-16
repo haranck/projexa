@@ -6,9 +6,6 @@ export type WithId = {
 };
 
 
-
-
-
 export abstract class BaseRepo<T extends WithId> implements IBaseRepository<T> {
   constructor(protected readonly model: Model<T>) { }
 
