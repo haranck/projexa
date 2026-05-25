@@ -1,94 +1,109 @@
 <div align="center">
+
+  <img src="https://img.shields.io/badge/Status-Active%20Development-success?style=for-the-badge" alt="Status" />
+  <img src="https://img.shields.io/badge/License-MIT-blue?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/badge/Version-1.0.0-purple?style=for-the-badge" alt="Version" />
+
+  <br />
+  <br />
+
   <a href="https://www.projexa.haranck.online/">
-    <img src="https://img.shields.io/badge/Projexa-Project%20Management-blue?style=for-the-badge&logo=react" alt="Projexa Logo">
+    <h1 align="center">🚀 Projexa</h1>
   </a>
-  <h1 align="center">Projexa</h1>
+
   <p align="center">
     <strong>A Next-Generation Project Management & Collaboration Platform</strong>
     <br />
-    <a href="https://www.projexa.haranck.online/">View Demo</a>
+    <br />
+    <a href="https://www.projexa.haranck.online/"><b>Live Demo</b></a>
     ·
-    <a href="https://github.com/haranck/projexa/issues">Report Bug</a>
+    <a href="https://github.com/haranck/projexa/issues"><b>Report Bug</b></a>
     ·
-    <a href="https://github.com/haranck/projexa/issues">Request Feature</a>
+    <a href="https://github.com/haranck/projexa/issues"><b>Request Feature</b></a>
   </p>
+
+  <br />
+
+  <div>
+    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+    <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" />
+    <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+    <img src="https://img.shields.io/badge/Express.js-000000?style=for-the-badge&logo=express&logoColor=white" alt="Express.js" />
+    <img src="https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+    <img src="https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" />
+    <img src="https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socketdotio&logoColor=white" alt="Socket.io" />
+  </div>
 </div>
 
 ---
 
 ## 🌟 About The Project
 
-Projexa is an advanced, full-stack project management and collaboration platform designed to streamline team workflows, enhance communication, and boost productivity. 
+**Projexa** is an advanced, enterprise-grade project management and real-time collaboration platform designed to streamline team workflows, enhance communication, and boost overall productivity. 
 
-Built as a **real-world SaaS-style application**, it focuses on scalability, clean architecture, and modern development practices—similar to tools like Jira, Notion, and ClickUp.
+Built as a **real-world SaaS-style application**, it focuses on scalability, clean architecture, and modern development practices—similar to industry-leading tools like Jira, Notion, and ClickUp.
 
-**Live Demo:** [https://www.projexa.haranck.online/](https://www.projexa.haranck.online/)
-
-### ✨ Core Features
-
-- **🔐 Authentication:** Secure User authentication & authorization.
-- **🏢 Workspaces:** Workspace-based project and role management.
-- **📊 Kanban Boards:** Drag-and-drop task management using `@dnd-kit`.
-- **💬 Real-time Collaboration:** Instant updates and team communication powered by `Socket.IO`.
-- **📹 Integrated Video Meetings:** Seamless team meetings via Jitsi integration.
-- **🤖 AI Capabilities:** Smart task summarization and assistance using OpenAI and Google Generative AI.
-- **📈 Analytics & Reporting:** Interactive charts and project insights with `Recharts`.
-- **💳 Premium Features:** Subscription and billing management via Stripe.
-- **☁️ Cloud Storage:** Secure file attachments and storage using AWS S3.
+> **Explore the Live App:** [https://www.projexa.haranck.online/](https://www.projexa.haranck.online/)
 
 ---
 
-## 💻 Tech Stack
+## ✨ Core Features
 
-Projexa leverages a powerful, modern technology stack.
+| Feature | Description |
+|---------|-------------|
+| 🔐 **Authentication** | Secure User authentication & authorization with JWT. |
+| 🏢 **Workspaces** | Complete workspace-based project and team role management. |
+| 📊 **Kanban Boards** | Interactive, drag-and-drop task management powered by `@dnd-kit`. |
+| 💬 **Real-time Collaboration** | Instant updates, messaging, and activity logs via `Socket.IO`. |
+| 📹 **Integrated Meetings** | Seamless team video meetings utilizing Jitsi integration. |
+| 🤖 **AI Capabilities** | Smart task summarization and assistance using **OpenAI** and **Google Generative AI**. |
+| 📈 **Analytics & Reporting** | Interactive charts and deep project insights rendered with `Recharts`. |
+| 💳 **Premium Subscriptions** | Automated subscription and billing lifecycle management via **Stripe**. |
+| ☁️ **Cloud Storage** | Secure, scalable file attachments and storage handled by **AWS S3**. |
 
-### Frontend
+---
+
+## 💻 Tech Stack & Architecture
+
+Projexa leverages a powerful, meticulously selected modern technology stack to ensure top-tier performance and exceptional user experience.
+
+### 🎨 Frontend
 - **Framework:** React 19 (Vite)
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS, Radix UI Primitives
 - **State Management:** Redux Toolkit, RTK Query
 - **Forms & Validation:** React Hook Form, Zod
-- **Drag & Drop:** dnd-kit
 
-### Backend
+### ⚙️ Backend
 - **Runtime:** Node.js
 - **Framework:** Express.js
 - **Language:** TypeScript
 - **Database:** MongoDB (Mongoose)
 - **Caching & Queues:** Redis, BullMQ
-- **Real-time:** Socket.IO
-- **Architecture:** Clean Architecture with Dependency Injection (`tsyringe`)
+- **Architecture:** Clean Architecture, Dependency Injection (`tsyringe`), SOLID Principles
 
-### External Services
-- AWS S3 (Storage)
-- Stripe (Payments)
-- OpenAI & Google Gemini (AI Integration)
-- Jitsi (Video Conferencing)
-
----
-
-## 🧠 Architecture Highlights
-
-- **Clean Architecture** with SOLID Principles.
-- Clear separation of concerns and Domain-driven design principles.
-- Use cases for business logic and Interface-based repositories.
-- Framework-independent core logic.
+### 🔌 External Services & Integrations
+- **AWS S3:** Scalable cloud storage
+- **Stripe:** Payment & subscription gateway
+- **OpenAI & Google Gemini:** Artificial Intelligence processing
+- **Jitsi:** Video conferencing infrastructure
 
 ---
 
 ## 🚀 Getting Started
 
-To get a local copy up and running, follow these simple steps.
+Follow these instructions to set up your local development environment.
 
 ### Prerequisites
 
 Ensure you have the following installed on your local machine:
 - Node.js (v18 or higher)
 - npm or yarn
-- MongoDB
+- MongoDB (running locally or via Atlas)
 - Redis
 
-### Installation
+### Installation & Setup
 
 1. **Clone the repository**
    ```bash
@@ -108,9 +123,9 @@ Ensure you have the following installed on your local machine:
    npm install
    ```
 
-### Configuration
+### Environment Configuration
 
-Create a `.env` file in the **backend** folder:
+Create a `.env` file in the **backend** directory:
 
 ```env
 PORT=5000
@@ -125,94 +140,63 @@ OPENAI_API_KEY=your_openai_key
 GEMINI_API_KEY=your_gemini_key
 ```
 
-Create a `.env` in the **frontend** folder similarly based on required vars.
-
 ### Running Locally
 
-1. **Start the backend server**
-   ```bash
-   cd backend
-   npm run dev
-   ```
+Open two separate terminal windows/tabs:
 
-2. **Start the frontend application**
-   ```bash
-   cd frontend
-   npm run dev
-   ```
-
-3. Open your browser and navigate to `http://localhost:5173`.
-
----
-
-## 📁 Project Structure
-
-```text
-projexa/
-├── project_management/
-│   ├── backend/
-│   │   ├── src/
-│   │   │   ├── application/    # Use cases and interfaces
-│   │   │   ├── domain/         # Entities and domain logic
-│   │   │   ├── infrastructure/ # External services, DB schemas
-│   │   │   ├── presentation/   # Routes, Controllers, Middleware
-│   │   │   └── server.ts       # App entry point
-│   │   └── package.json
-│   │
-│   ├── frontend/
-│   │   ├── src/
-│   │   │   ├── components/     # Reusable UI components
-│   │   │   ├── pages/          # Application views
-│   │   │   ├── store/          # Redux setup and slices
-│   │   │   ├── hooks/          # Custom React hooks
-│   │   │   └── App.tsx         # Root component
-│   │   └── package.json
+**Terminal 1: Backend**
+```bash
+cd backend
+npm run dev
 ```
+
+**Terminal 2: Frontend**
+```bash
+cd frontend
+npm run dev
+```
+
+> **Note:** Open your browser and navigate to `http://localhost:5173` to view the application.
 
 ---
 
 ## 🎯 Why Projexa?
 
 Projexa is not just a demo project — it is a **portfolio-defining application** that demonstrates:
-* Real-world system design
-* Clean Architecture in practice
-* Scalable backend development
-* Modern frontend patterns
-* Production-ready thinking
+- **Real-world system design** handling complex domain logic.
+- **Clean Architecture** in practice with strict separation of concerns.
+- **Scalable backend development** using queues (BullMQ) and caching (Redis).
+- **Modern frontend patterns** with real-time UI updates.
+- **Production-ready engineering** suitable for scalable SaaS deployments.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are welcome!
+Contributions make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
 
-```bash
-# Fork the repo
-# Create your feature branch
-git checkout -b feature/your-feature
-
-# Commit your changes
-git commit -m "Add your feature"
-
-# Push to the branch
-git push origin feature/your-feature
-```
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License**. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
 
 ## 👤 Author
 
 **Haran**  
-🔗 GitHub: [https://github.com/haranck](https://github.com/haranck)
+🔗 **GitHub:** [https://github.com/haranck](https://github.com/haranck)
 
 ---
 
 <div align="center">
   <p>If you like this project, consider giving it a ⭐ on GitHub!</p>
+  <p>Built with ❤️ by Haran</p>
 </div>
