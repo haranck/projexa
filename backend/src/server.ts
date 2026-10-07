@@ -5,6 +5,7 @@ dotenv.config()
 import { env } from './config/envValidation'
 import express from "express";
 import cors from "cors";
+import { allowedOrigins } from "./config/allowedOrigins";
 import cookieParser from "cookie-parser";
 import authRoutes from "./presentation/routes/auth.routes";
 import adminRoutes from "./presentation/routes/admin/admin.routes";
@@ -24,11 +25,6 @@ const app = express();
 
 app.use(cookieParser());
 
-const allowedOrigins = [
-  "https://www.projexa.haranck.online",
-  "https://projexa.haranck.online",
-  "http://localhost:5173",
-];
  
 app.use(
   cors({

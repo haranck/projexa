@@ -7,13 +7,14 @@ import { redisClient } from "../../../infrastructure/cache/redisClient";
 import { container } from "tsyringe";
 import { IUserActivityRepository } from "../../../domain/interfaces/repositories/UserActivity/IUserActivityRepository";
 import { CHAT_EVENTS } from "../../../shared/constant/chat.events";
+import { allowedOrigins } from "../../../config/allowedOrigins";
 
 let io: Server;
 
 export const initSocket = (server: http.Server) => {
     io = new Server(server, {
         cors: {
-            origin: process.env.FRONTEND_URL,
+            origin: allowedOrigins,
             credentials: true,
         },
     });

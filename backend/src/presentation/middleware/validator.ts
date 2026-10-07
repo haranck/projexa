@@ -13,8 +13,18 @@ export const validateRequest = (schema: ZodTypeAny) => {
 
             // Assign coerced/validated values back to the request object safely without 'any'
             req.body = parsed.body;
-            req.query = parsed.query as Record<string, string | string[] | undefined>;
-            req.params = parsed.params as Record<string, string>;
+            // Express 5 exposes req.query as a getter, so it can't be assigned directly
+            if (parsed.query !== undefined) {
+                Object.defineProperty(req, "query", {
+                    value: parsed.query,
+                    writable: true,
+                    enumerable: true,
+                    configurable: true,
+                });
+            }
+            if (parsed.params !== undefined) {
+                req.params = parsed.params as Record<string, string>;
+            }
 
             next();
         } catch (error) {
